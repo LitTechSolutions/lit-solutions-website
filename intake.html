@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+(function(){
+  try{
+    var saved = localStorage.getItem('lts-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  }catch(e){}
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New Client Intake Form — Little Technical Solutions LLC</title>
+<meta name="description" content="Tell us about your project. Little Technical Solutions LLC will follow up within one business day.">
+<link rel="canonical" href="https://lit-solutions.tech/intake.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Little Technical Solutions LLC">
+<meta property="og:title" content="New Client Intake Form — Little Technical Solutions LLC">
+<meta property="og:description" content="Tell us about your project. Little Technical Solutions LLC will follow up within one business day.">
+<meta property="og:url" content="https://lit-solutions.tech/intake.html">
+<meta property="og:image" content="https://lit-solutions.tech/assets/logo-full.png">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Little Technical Solutions LLC","image":"https://lit-solutions.tech/assets/logo-full.png","telephone":"+16364260289","email":"dylan@lit-solutions.tech","url":"https://lit-solutions.tech/","priceRange":"$$","areaServed":[{"@type":"City","name":"Montross, VA"},{"@type":"City","name":"Colonial Beach, VA"},{"@type":"City","name":"King George, VA"},{"@type":"City","name":"Dahlgren, VA"}],"sameAs":["https://www.facebook.com/profile.php?id=61591618750945","https://www.google.com/search?q=Little+Technical+Solutions+LLC&stick=H4sIAAAAAAAA_-NgU1IxqDA0N0s1sUgyT0yxTE1NTLMyqEg2sTRLNTZOTTS1NDIzSUxaxCrnk1lSkpOqEJKanJGXmZyYoxCcn1NakpmfV6zg4-MMAGRkPw5JAAAA&hl=en&mat=CWEgdKX6xe4RElcBa0lj_4PsrYDUx2O2vFBpnokVltXIVrcy43xjezZrcYTprxRsgJGT1ATelPpH5ss3Sn-4VrXJHi_xxw10Eq_jzvWCxQfPf2G4feie7XZe-MJ3uWuSvN4&authuser=0"]}</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header" id="siteHeader">
+  <div class="wrap header-inner">
+    <a href="index.html" class="logo" aria-label="Little Technical Solutions LLC — home">
+      <span class="logo-mark" aria-hidden="true">
+        <img src="assets/logo-icon.png" alt="" width="40" height="40">
+      </span>
+      <span class="logo-text">
+        <span class="logo-line1">Little Technical</span>
+        <span class="logo-line2">Solutions <span class="logo-llc">LLC</span></span>
+      </span>
+    </a>
+
+    <nav class="main-nav" id="mainNav" aria-label="Primary">
+      <div class="nav-dropdown">
+        <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-controls="servicesDropdown">
+          Services
+          <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="nav-dropdown-menu" id="servicesDropdown">
+          <a href="services.html">All Services</a>
+          <a href="service-website.html">Website Design &amp; Development</a>
+          <a href="service-computer.html">Computer Repair</a>
+          <a href="service-networking.html">Networking</a>
+          <a href="service-cybersecurity.html">Cybersecurity</a>
+          <a href="service-business-it.html">Small Business IT</a>
+        </div>
+      </div>
+      <a href="about.html">About</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="heroes-pricing.html">Heroes Discount</a>
+      <div class="nav-dropdown">
+        <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-controls="resourcesDropdown">
+          Resources
+          <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="nav-dropdown-menu" id="resourcesDropdown">
+          <a href="service-area.html">Service Area</a>
+          <a href="testimonials.html">Testimonials</a>
+          <a href="team.html">Our Team</a>
+          <a href="portfolio.html">Portfolio</a>
+          <a href="gallery.html">Gallery</a>
+          <a href="faq.html">FAQ</a>
+          <a href="blog.html">Blog</a>
+          <a href="booking.html">Booking</a>
+        </div>
+      </div>
+      <a href="payment.html">Payments</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <a href="search.html" class="search-toggle" aria-label="Search this site" title="Search this site">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-3.8-3.8"/></svg>
+      </a>
+      <a href="myaccount.html" class="search-toggle" aria-label="My Account" title="My Account">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </a>
+      <a href="tel:+16364260289" class="phone-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        636-426-0289
+      </a>
+      <a href="intake.html" class="btn btn-primary btn-small">Get a quote</a>
+    </div>
+
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+  <section class="intake-hero">
+    <div class="wrap">
+      <p class="eyebrow">New client intake</p>
+      <h1>Tell us what you need.</h1>
+      <p class="section-lede">Every field needs an answer before submitting — if something doesn't apply, just type 4. Parts 3 and 4 only apply if you check the relevant boxes, and will expand automatically when you do.</p>
+    </div>
+  </section>
+
+  <section class="intake-form-section">
+    <div class="wrap">
+      <form class="intake-form" id="intakeForm" name="intake" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+        <input type="hidden" name="form-name" value="intake">
+        <p class="visually-hidden">
+          <label>Don't fill this out if you're human: <input name="bot-field"></label>
+        </p>
+
+        <div class="form-instructions">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v4M12 17h.01M12 3l9 4.5v5c0 5-3.5 9-9 10-5.5-1-9-5-9-10v-5z"/></svg>
+          <span>Every field below needs an answer before you can submit. If a question doesn't apply to you or you're not sure, just type <strong>4</strong> or <strong>N/A</strong> &mdash; either one works fine. Parts 3 and 4 only need to be filled out if you check the boxes that apply to them below; otherwise, feel free to skip past them (you can still open them to look, no pressure to fill them in). Section 5 at the very bottom is optional.</span>
+        </div>
+
+        <div class="intake-block">
+          <h2 class="intake-block-title"><span class="intake-block-num">1</span> Contact Information</h2>
+
+          <div class="form-row form-row--split">
+            <div>
+              <label for="full_name">Full Name *</label>
+              <input type="text" id="full_name" name="full_name" autocomplete="name" required data-required="always">
+            </div>
+            <div>
+              <label for="business_name">Business / Organization</label>
+              <input type="text" id="business_name" name="business_name" autocomplete="organization" data-required="always">
+            </div>
+          </div>
+
+          <div class="form-row form-row--split">
+            <div>
+              <label for="email">Email Address *</label>
+              <input type="email" id="email" name="email" autocomplete="email" required data-required="always">
+            </div>
+            <div>
+              <label for="phone">Phone Number *</label>
+              <input type="tel" id="phone" name="phone" autocomplete="tel" required data-required="always">
+            </div>
+          </div>
+
+          <div class="form-row form-row--split">
+            <div>
+              <label for="address_city">Service Address or City</label>
+              <input type="text" id="address_city" name="address_city" data-required="always">
+            </div>
+            <div>
+              <label for="referral_source">How did you hear about us?</label>
+              <input type="text" id="referral_source" name="referral_source" data-required="always">
+            </div>
+          </div>
+
+          <div class="form-row" data-required="always" data-label="Preferred contact method">
+            <label>Preferred contact method</label>
+            <div class="radio-row">
+              <label class="radio-pill"><input type="radio" name="contact_method" value="Phone Call"> Phone Call</label>
+              <label class="radio-pill"><input type="radio" name="contact_method" value="Text Message"> Text Message</label>
+              <label class="radio-pill"><input type="radio" name="contact_method" value="Email"> Email</label>
+              <label class="radio-pill"><input type="radio" name="contact_method" value="No preference"> No preference</label>
+            </div>
+          </div>
+
+          <div class="form-row" data-required="always" data-label="Best time to reach you">
+            <label>Best time to reach you</label>
+            <div class="radio-row">
+              <label class="radio-pill"><input type="radio" name="best_time" value="7:00–9:00 AM"> 7:00–9:00 AM</label>
+              <label class="radio-pill"><input type="radio" name="best_time" value="9:00–11:00 AM"> 9:00–11:00 AM</label>
+              <label class="radio-pill"><input type="radio" name="best_time" value="11:00 AM–1:00 PM"> 11:00 AM–1:00 PM</label>
+              <label class="radio-pill"><input type="radio" name="best_time" value="1:00–3:00 PM"> 1:00–3:00 PM</label>
+              <label class="radio-pill"><input type="radio" name="best_time" value="3:00–5:00 PM"> 3:00–5:00 PM</label>
+              <label class="radio-pill"><input type="radio" name="best_time" value="5:00–7:00 PM"> 5:00–7:00 PM</label>
+              <label class="radio-pill"><input type="radio" name="best_time" value="No preference"> No preference</label>
+            </div>
+          </div>
+
+          <div class="form-row form-row--checkbox-trigger">
+            <label class="checkbox-pill">
+              <input type="checkbox" id="govContractingTrigger" name="gov_contracting_interest" value="Yes">
+              This inquiry involves government contracting (I may need to display UEI, NAICS codes, SAM.gov info, or certifications)
+            </label>
+          </div>
+        </div>
+
+        <div class="intake-block">
+          <h2 class="intake-block-title"><span class="intake-block-num">2</span> What do you need help with?</h2>
+          <div class="checkbox-grid" data-required="always" data-label="Services needed">
+            <label class="checkbox-pill"><input type="checkbox" id="websiteServicesTrigger" name="services" value="Website Services"> Website Services</label>
+            <label class="checkbox-pill"><input type="checkbox" name="services" value="Computer Services"> Computer Services</label>
+            <label class="checkbox-pill"><input type="checkbox" name="services" value="Networking"> Networking</label>
+            <label class="checkbox-pill"><input type="checkbox" name="services" value="Cybersecurity"> Cybersecurity</label>
+            <label class="checkbox-pill"><input type="checkbox" name="services" value="Small Business IT"> Small Business IT</label>
+            <label class="checkbox-pill"><input type="checkbox" name="services" value="Not sure yet"> Not sure yet</label>
+          </div>
+
+          <div class="form-row" style="margin-top:1.25rem">
+            <label for="general_notes">Briefly describe what you need</label>
+            <textarea id="general_notes" name="general_notes" rows="4" data-required="always"></textarea>
+          </div>
+        </div>
+
+        <div class="intake-block intake-block--collapsible" id="websiteBlock">
+          <button type="button" class="intake-block-toggle" id="websiteBlockToggle" aria-expanded="false" aria-controls="websiteBlockContent">
+            <span class="intake-block-toggle-left">
+              <span class="intake-block-num">3</span>
+              <span class="intake-block-title-text">Website Project Details</span>
+            </span>
+            <span class="intake-block-toggle-right">
+              <span class="intake-block-status" id="websiteBlockStatus">Required only if you checked "Website Services" above</span>
+              <svg class="intake-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
+            </span>
+          </button>
+          <div class="intake-block-content" id="websiteBlockContent">
+            <div class="intake-block-content-inner">
+
+          <div class="form-row">
+            <label for="current_website">Do you already have a website? If yes, what's the URL?</label>
+            <input type="text" id="current_website" name="current_website" data-required="website">
+          </div>
+
+          <div class="form-row">
+            <label for="requested_domain">What domain should the new site be built for? (e.g. yourbusiness.com — doesn't need to be registered yet)</label>
+            <input type="text" id="requested_domain" name="requested_domain" data-required="website">
+          </div>
+
+          <div class="form-row">
+            <label for="business_description">What does your business do? (one or two sentences)</label>
+            <textarea id="business_description" name="business_description" rows="2" data-required="website"></textarea>
+          </div>
+
+          <div class="form-row">
+            <label for="target_customers">Who are your typical customers?</label>
+            <input type="text" id="target_customers" name="target_customers" data-required="website">
+          </div>
+
+          <div class="form-row">
+            <label for="must_have_pages">What pages or sections do you need? (e.g. Home, Services, About, Contact, Gallery, Booking)</label>
+            <textarea id="must_have_pages" name="must_have_pages" rows="2" data-required="website"></textarea>
+          </div>
+
+          <div class="form-row">
+            <label for="must_have_features">Any must-have features? (e.g. contact form, online booking, photo gallery, store)</label>
+            <textarea id="must_have_features" name="must_have_features" rows="2" data-required="website"></textarea>
+          </div>
+
+          <div class="form-row">
+            <label for="style_preference">Colors, style, or mood you want (e.g. bold and modern, clean and professional, rustic)</label>
+            <input type="text" id="style_preference" name="style_preference" data-required="website">
+          </div>
+
+          <div class="form-row">
+            <label for="inspiration_sites">Any websites you like the look of? (share URLs if possible)</label>
+            <input type="text" id="inspiration_sites" name="inspiration_sites" data-required="website">
+          </div>
+
+          <div class="form-row">
+            <label for="existing_content">Any existing content we should reuse or reference? (e.g. LinkedIn page, brochure text, previous website copy, company statement)</label>
+            <textarea id="existing_content" name="existing_content" rows="2" data-required="website"></textarea>
+          </div>
+
+          <div class="form-row">
+            <label for="photos_imagery">Any photos or images you'd like included? Describe them or note where we can get them.</label>
+            <textarea id="photos_imagery" name="photos_imagery" rows="2" data-required="website"></textarea>
+          </div>
+
+          <div class="form-row form-row--split3">
+            <div data-required="website" data-label="Do you have a logo?">
+              <label>Do you have a logo?</label>
+              <div class="radio-row">
+                <label class="radio-pill"><input type="radio" name="has_logo" value="Yes"> Yes</label>
+                <label class="radio-pill"><input type="radio" name="has_logo" value="Need one"> Need one</label>
+              </div>
+            </div>
+            <div data-required="website" data-label="Is content ready?">
+              <label>Is content ready?</label>
+              <div class="radio-row">
+                <label class="radio-pill"><input type="radio" name="has_content" value="Ready"> Ready</label>
+                <label class="radio-pill"><input type="radio" name="has_content" value="Need help"> Need help</label>
+              </div>
+            </div>
+            <div data-required="website" data-label="Own a domain?">
+              <label>Own a domain?</label>
+              <div class="radio-row">
+                <label class="radio-pill"><input type="radio" name="has_domain" value="Yes"> Yes</label>
+                <label class="radio-pill"><input type="radio" name="has_domain" value="Need help"> Need help</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row form-row--split">
+            <div>
+              <label for="timeline">Target timeline</label>
+              <input type="text" id="timeline" name="timeline" data-required="website">
+            </div>
+            <div>
+              <label for="budget_range">Budget range</label>
+              <input type="text" id="budget_range" name="budget_range" data-required="website">
+            </div>
+          </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="intake-block intake-block--collapsible" id="govBlock">
+          <button type="button" class="intake-block-toggle" id="govBlockToggle" aria-expanded="false" aria-controls="govBlockContent">
+            <span class="intake-block-toggle-left">
+              <span class="intake-block-num">4</span>
+              <span class="intake-block-title-text">Government Contracting Info</span>
+            </span>
+            <span class="intake-block-toggle-right">
+              <span class="intake-block-status" id="govBlockStatus">Required only if you checked the government contracting box above</span>
+              <svg class="intake-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
+            </span>
+          </button>
+          <div class="intake-block-content" id="govBlockContent">
+            <div class="intake-block-content-inner">
+
+          <p class="pay-block-copy">If your site needs to display contracting credentials for government or DoD-facing partners, fill out what applies below.</p>
+
+          <div class="form-row form-row--split">
+            <div>
+              <label for="uei_number">UEI (Unique Entity ID)</label>
+              <input type="text" id="uei_number" name="uei_number" data-required="govcontract">
+            </div>
+            <div>
+              <label for="naics_codes">NAICS code(s)</label>
+              <input type="text" id="naics_codes" name="naics_codes" data-required="govcontract">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label for="sam_gov_info">What SAM.gov information should be public on the site?</label>
+            <textarea id="sam_gov_info" name="sam_gov_info" rows="2" data-required="govcontract"></textarea>
+          </div>
+
+          <div class="form-row">
+            <label for="certifications">Relevant certifications (e.g. SDVOSB, 8(a), HUBZone, WOSB)</label>
+            <input type="text" id="certifications" name="certifications" data-required="govcontract">
+          </div>
+
+          <p class="gov-info-note">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+            Please don't include your Tax ID, SSN, or other sensitive identifiers here — we'll never publish those on your site, and this form isn't a secure place to send them.
+          </p>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="intake-block">
+          <h2 class="intake-block-title"><span class="intake-block-num">5</span> Anything else we should know? <span class="intake-block-optional">(optional)</span></h2>
+          <div class="form-row">
+            <textarea id="additional_notes" name="additional_notes" rows="4"></textarea>
+          </div>
+        </div>
+
+        <p class="form-note form-note--missing" id="missingFieldsNote" role="alert" aria-live="assertive"></p>
+        <button type="submit" class="btn btn-primary btn-block">Submit Request</button>
+        <p class="form-note" id="formNote" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <img src="assets/logo-icon.png" alt="Little Technical Solutions LLC" width="36" height="36" class="footer-logo">
+      <span class="logo-line1">Little Technical Solutions LLC</span>
+      <p>Websites, computers, networks, and security — handled by one call.</p>
+    </div>
+    <nav class="footer-nav" aria-label="Footer">
+      <a href="services.html">Services</a>
+      <a href="about.html">About</a>
+      <a href="team.html">Our Team</a>
+      <a href="portfolio.html">Portfolio</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="heroes-pricing.html">Heroes Discount</a>
+      <a href="service-area.html">Service Area</a>
+      <a href="testimonials.html">Testimonials</a>
+      <a href="faq.html">FAQ</a>
+      <a href="blog.html">Blog</a>
+      <a href="booking.html">Booking</a>
+      <a href="payment.html">Payments</a>
+      <a href="contact.html">Contact</a>
+      <a href="intake.html">New Client Form</a>
+      <a href="search.html">Search</a>
+      <a href="sitemap.html">Sitemap</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms &amp; Conditions</a>
+      <a href="patch-notes.html">Patch Notes</a>
+      <a href="#" id="manageConsentLink">Cookie Notice</a>
+    </nav>
+    <nav class="footer-social" aria-label="Social">
+      <a href="https://www.facebook.com/profile.php?id=61591618750945" rel="noopener" target="_blank" aria-label="Little Technical Solutions LLC on Facebook">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>
+        <span>Facebook</span>
+      </a>
+      <a href="https://www.google.com/search?q=Little+Technical+Solutions+LLC&stick=H4sIAAAAAAAA_-NgU1IxqDA0N0s1sUgyT0yxTE1NTLMyqEg2sTRLNTZOTTS1NDIzSUxaxCrnk1lSkpOqEJKanJGXmZyYoxCcn1NakpmfV6zg4-MMAGRkPw5JAAAA&hl=en&mat=CWEgdKX6xe4RElcBa0lj_4PsrYDUx2O2vFBpnokVltXIVrcy43xjezZrcYTprxRsgJGT1ATelPpH5ss3Sn-4VrXJHi_xxw10Eq_jzvWCxQfPf2G4feie7XZe-MJ3uWuSvN4&authuser=0" rel="noopener" target="_blank" aria-label="Little Technical Solutions LLC on Google">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 12.23c0-.75-.07-1.47-.19-2.18H12v4.13h5.4a4.6 4.6 0 0 1-2 3.02v2.5h3.24c1.9-1.75 3-4.32 3-7.47z"/><path d="M12 22c2.7 0 4.97-.9 6.63-2.44l-3.24-2.5c-.9.6-2.05.96-3.39.96-2.6 0-4.8-1.76-5.6-4.12H3.05v2.58A10 10 0 0 0 12 22z"/><path d="M6.4 13.9a6 6 0 0 1 0-3.8V7.52H3.05a10 10 0 0 0 0 8.96l3.35-2.58z"/><path d="M12 6.08c1.47 0 2.79.5 3.83 1.5l2.87-2.87A10 10 0 0 0 3.05 7.52L6.4 10.1c.8-2.36 3-4.02 5.6-4.02z"/></svg>
+        <span>Find us on Google</span>
+      </a>
+    </nav>
+  </div>
+  <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. All rights reserved.</p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version 1.18</a></p>
+  <p class="footer-version"><a href="admin.html">Staff Sign In</a></p>
+</footer>
+
+<div id="cookie-banner" class="cookie-banner" hidden role="region" aria-label="Cookie notice">
+  <div class="wrap cookie-banner-inner">
+    <p>We use Netlify Analytics (cookie-free, privacy-respecting) to see site traffic, plus a small amount of local storage for things like your dark/light mode choice. Nothing here is used for advertising or sold to anyone. See our <a href="privacy.html">Privacy Policy</a>.</p>
+    <div class="cookie-banner-actions">
+      <button type="button" class="btn btn-primary btn-small" data-consent="dismiss">Got it</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+<script src="js/intake.js"></script>
+</body>
+</html>

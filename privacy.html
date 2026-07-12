@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+(function(){
+  try{
+    var saved = localStorage.getItem('lts-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  }catch(e){}
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Policy — Little Technical Solutions LLC</title>
+<meta name="description" content="What Little Technical Solutions LLC collects, how it's used, and how to control it.">
+<link rel="canonical" href="https://lit-solutions.tech/privacy.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Little Technical Solutions LLC">
+<meta property="og:title" content="Privacy Policy — Little Technical Solutions LLC">
+<meta property="og:description" content="What Little Technical Solutions LLC collects, how it's used, and how to control it.">
+<meta property="og:url" content="https://lit-solutions.tech/privacy.html">
+<meta property="og:image" content="https://lit-solutions.tech/assets/logo-full.png">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Little Technical Solutions LLC","image":"https://lit-solutions.tech/assets/logo-full.png","telephone":"+16364260289","email":"dylan@lit-solutions.tech","url":"https://lit-solutions.tech/","priceRange":"$$","areaServed":[{"@type":"City","name":"Montross, VA"},{"@type":"City","name":"Colonial Beach, VA"},{"@type":"City","name":"King George, VA"},{"@type":"City","name":"Dahlgren, VA"}],"sameAs":["https://www.facebook.com/profile.php?id=61591618750945","https://www.google.com/search?q=Little+Technical+Solutions+LLC&stick=H4sIAAAAAAAA_-NgU1IxqDA0N0s1sUgyT0yxTE1NTLMyqEg2sTRLNTZOTTS1NDIzSUxaxCrnk1lSkpOqEJKanJGXmZyYoxCcn1NakpmfV6zg4-MMAGRkPw5JAAAA&hl=en&mat=CWEgdKX6xe4RElcBa0lj_4PsrYDUx2O2vFBpnokVltXIVrcy43xjezZrcYTprxRsgJGT1ATelPpH5ss3Sn-4VrXJHi_xxw10Eq_jzvWCxQfPf2G4feie7XZe-MJ3uWuSvN4&authuser=0"]}</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header" id="siteHeader">
+  <div class="wrap header-inner">
+    <a href="index.html" class="logo" aria-label="Little Technical Solutions LLC — home">
+      <span class="logo-mark" aria-hidden="true">
+        <img src="assets/logo-icon.png" alt="" width="40" height="40">
+      </span>
+      <span class="logo-text">
+        <span class="logo-line1">Little Technical</span>
+        <span class="logo-line2">Solutions <span class="logo-llc">LLC</span></span>
+      </span>
+    </a>
+
+    <nav class="main-nav" id="mainNav" aria-label="Primary">
+      <div class="nav-dropdown">
+        <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-controls="servicesDropdown">
+          Services
+          <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="nav-dropdown-menu" id="servicesDropdown">
+          <a href="services.html">All Services</a>
+          <a href="service-website.html">Website Design &amp; Development</a>
+          <a href="service-computer.html">Computer Repair</a>
+          <a href="service-networking.html">Networking</a>
+          <a href="service-cybersecurity.html">Cybersecurity</a>
+          <a href="service-business-it.html">Small Business IT</a>
+        </div>
+      </div>
+      <a href="about.html">About</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="heroes-pricing.html">Heroes Discount</a>
+      <div class="nav-dropdown">
+        <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-controls="resourcesDropdown">
+          Resources
+          <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="nav-dropdown-menu" id="resourcesDropdown">
+          <a href="service-area.html">Service Area</a>
+          <a href="testimonials.html">Testimonials</a>
+          <a href="team.html">Our Team</a>
+          <a href="portfolio.html">Portfolio</a>
+          <a href="gallery.html">Gallery</a>
+          <a href="faq.html">FAQ</a>
+          <a href="blog.html">Blog</a>
+          <a href="booking.html">Booking</a>
+        </div>
+      </div>
+      <a href="payment.html">Payments</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <a href="search.html" class="search-toggle" aria-label="Search this site" title="Search this site">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-3.8-3.8"/></svg>
+      </a>
+      <a href="myaccount.html" class="search-toggle" aria-label="My Account" title="My Account">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </a>
+      <a href="tel:+16364260289" class="phone-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        636-426-0289
+      </a>
+      <a href="intake.html" class="btn btn-primary btn-small">Get a quote</a>
+    </div>
+
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+<main id="main">
+  <section class="intake-hero">
+    <div class="wrap">
+      <p class="eyebrow">Legal</p>
+      <h1>Privacy Policy</h1>
+      <p class="section-lede">Last updated: July 2026. What we collect, why, and how you can control it.</p>
+    </div>
+  </section>
+
+  <section class="pricing-section">
+    <div class="wrap">
+      <div class="legal-doc">
+
+        <h2>1. What we collect</h2>
+        <p>Little Technical Solutions LLC collects only what you give us directly:</p>
+        <ul>
+          <li><strong>Contact &amp; project forms.</strong> When you use the quick contact form, the project intake form, or the newsletter signup, we receive the name, email, and message/project details you submit.</li>
+          <li><strong>Site analytics.</strong> We use Netlify Analytics, which is server-side and cookie-free — it reports aggregate traffic (pages visited, referring sites, rough location by country/region) without tracking individual visitors across sites or building an ad profile.</li>
+          <li><strong>Local storage, not cookies.</strong> Your dark/light mode choice and whether you've dismissed the cookie notice are saved in your browser's local storage, not a cookie. Nothing here is used to track you across other websites.</li>
+        </ul>
+        <p>We do not collect or store payment card information. Payments are processed directly by Square; see their own privacy policy for how they handle payment data.</p>
+
+        <h2>2. How we use it</h2>
+        <p>Information you submit is used to respond to your inquiry, scope and deliver the service you requested, and — only if you opted in — send the occasional blog update. We do not use your information for anything else, and we do not build advertising profiles.</p>
+
+        <h2>3. How it's shared</h2>
+        <p>We do not sell your personal information. Form submissions and site hosting are processed through Netlify (our hosting and forms provider) and payments through Square (our payment processor) solely to deliver the service you requested. We do not share your information with anyone else except where required by law.</p>
+
+        <h2>4. Cookies &amp; tracking</h2>
+        <p>This site does not set third-party advertising or tracking cookies. The cookie notice you may see on your first visit is a transparency notice, not a tracking opt-in — there's nothing nonessential to opt into beyond the analytics described above, which collects no personal data.</p>
+
+        <h2>5. Data retention &amp; your rights</h2>
+        <p>We retain form submissions and project records for as long as reasonably necessary to deliver the service, maintain business records, and meet legal obligations. You can request access to, correction of, or deletion of your information at any time by contacting us at <strong>636-426-0289</strong> or <strong>dylan@lit-solutions.tech</strong>.</p>
+
+        <h2>6. Security</h2>
+        <p>This site is served entirely over HTTPS. We do not store payment card data. Form data is transmitted and stored through Netlify's infrastructure with reasonable technical safeguards.</p>
+
+        <h2>7. Children's privacy</h2>
+        <p>This site is intended for business owners and adults and is not directed at children under 13. We do not knowingly collect information from children.</p>
+
+        <h2>8. Changes to this policy</h2>
+        <p>We may update this policy from time to time. The version in effect at the time you use this site or submit a form governs that use.</p>
+
+        <h2>9. Contact</h2>
+        <p>Questions about this policy can be directed to Little Technical Solutions LLC at <strong>636-426-0289</strong> or <strong>dylan@lit-solutions.tech</strong>. See also our <a href="terms.html">Terms &amp; Conditions</a>.</p>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <img src="assets/logo-icon.png" alt="Little Technical Solutions LLC" width="36" height="36" class="footer-logo">
+      <span class="logo-line1">Little Technical Solutions LLC</span>
+      <p>Websites, computers, networks, and security — handled by one call.</p>
+    </div>
+    <nav class="footer-nav" aria-label="Footer">
+      <a href="services.html">Services</a>
+      <a href="about.html">About</a>
+      <a href="team.html">Our Team</a>
+      <a href="portfolio.html">Portfolio</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="heroes-pricing.html">Heroes Discount</a>
+      <a href="service-area.html">Service Area</a>
+      <a href="testimonials.html">Testimonials</a>
+      <a href="faq.html">FAQ</a>
+      <a href="blog.html">Blog</a>
+      <a href="booking.html">Booking</a>
+      <a href="payment.html">Payments</a>
+      <a href="contact.html">Contact</a>
+      <a href="intake.html">New Client Form</a>
+      <a href="search.html">Search</a>
+      <a href="sitemap.html">Sitemap</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms &amp; Conditions</a>
+      <a href="patch-notes.html">Patch Notes</a>
+      <a href="#" id="manageConsentLink">Cookie Notice</a>
+    </nav>
+    <nav class="footer-social" aria-label="Social">
+      <a href="https://www.facebook.com/profile.php?id=61591618750945" rel="noopener" target="_blank" aria-label="Little Technical Solutions LLC on Facebook">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>
+        <span>Facebook</span>
+      </a>
+      <a href="https://www.google.com/search?q=Little+Technical+Solutions+LLC&stick=H4sIAAAAAAAA_-NgU1IxqDA0N0s1sUgyT0yxTE1NTLMyqEg2sTRLNTZOTTS1NDIzSUxaxCrnk1lSkpOqEJKanJGXmZyYoxCcn1NakpmfV6zg4-MMAGRkPw5JAAAA&hl=en&mat=CWEgdKX6xe4RElcBa0lj_4PsrYDUx2O2vFBpnokVltXIVrcy43xjezZrcYTprxRsgJGT1ATelPpH5ss3Sn-4VrXJHi_xxw10Eq_jzvWCxQfPf2G4feie7XZe-MJ3uWuSvN4&authuser=0" rel="noopener" target="_blank" aria-label="Little Technical Solutions LLC on Google">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 12.23c0-.75-.07-1.47-.19-2.18H12v4.13h5.4a4.6 4.6 0 0 1-2 3.02v2.5h3.24c1.9-1.75 3-4.32 3-7.47z"/><path d="M12 22c2.7 0 4.97-.9 6.63-2.44l-3.24-2.5c-.9.6-2.05.96-3.39.96-2.6 0-4.8-1.76-5.6-4.12H3.05v2.58A10 10 0 0 0 12 22z"/><path d="M6.4 13.9a6 6 0 0 1 0-3.8V7.52H3.05a10 10 0 0 0 0 8.96l3.35-2.58z"/><path d="M12 6.08c1.47 0 2.79.5 3.83 1.5l2.87-2.87A10 10 0 0 0 3.05 7.52L6.4 10.1c.8-2.36 3-4.02 5.6-4.02z"/></svg>
+        <span>Find us on Google</span>
+      </a>
+    </nav>
+  </div>
+  <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. All rights reserved.</p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version 1.18</a></p>
+  <p class="footer-version"><a href="admin.html">Staff Sign In</a></p>
+</footer>
+
+<div id="cookie-banner" class="cookie-banner" hidden role="region" aria-label="Cookie notice">
+  <div class="wrap cookie-banner-inner">
+    <p>We use Netlify Analytics (cookie-free, privacy-respecting) to see site traffic, plus a small amount of local storage for things like your dark/light mode choice. Nothing here is used for advertising or sold to anyone. See our <a href="privacy.html">Privacy Policy</a>.</p>
+    <div class="cookie-banner-actions">
+      <button type="button" class="btn btn-primary btn-small" data-consent="dismiss">Got it</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>

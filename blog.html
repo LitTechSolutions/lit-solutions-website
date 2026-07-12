@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+(function(){
+  try{
+    var saved = localStorage.getItem('lts-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  }catch(e){}
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog — Little Technical Solutions LLC</title>
+<meta name="description" content="Practical, jargon-free articles on websites, cybersecurity, and networking for small businesses and homeowners.">
+<link rel="canonical" href="https://lit-solutions.tech/blog.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Little Technical Solutions LLC">
+<meta property="og:title" content="Blog — Little Technical Solutions LLC">
+<meta property="og:description" content="Practical, jargon-free articles on websites, cybersecurity, and networking for small businesses and homeowners.">
+<meta property="og:url" content="https://lit-solutions.tech/blog.html">
+<meta property="og:image" content="https://lit-solutions.tech/assets/logo-full.png">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Little Technical Solutions LLC","image":"https://lit-solutions.tech/assets/logo-full.png","telephone":"+16364260289","email":"dylan@lit-solutions.tech","url":"https://lit-solutions.tech/","priceRange":"$$","areaServed":[{"@type":"City","name":"Montross, VA"},{"@type":"City","name":"Colonial Beach, VA"},{"@type":"City","name":"King George, VA"},{"@type":"City","name":"Dahlgren, VA"}],"sameAs":["https://www.facebook.com/profile.php?id=61591618750945","https://www.google.com/search?q=Little+Technical+Solutions+LLC&stick=H4sIAAAAAAAA_-NgU1IxqDA0N0s1sUgyT0yxTE1NTLMyqEg2sTRLNTZOTTS1NDIzSUxaxCrnk1lSkpOqEJKanJGXmZyYoxCcn1NakpmfV6zg4-MMAGRkPw5JAAAA&hl=en&mat=CWEgdKX6xe4RElcBa0lj_4PsrYDUx2O2vFBpnokVltXIVrcy43xjezZrcYTprxRsgJGT1ATelPpH5ss3Sn-4VrXJHi_xxw10Eq_jzvWCxQfPf2G4feie7XZe-MJ3uWuSvN4&authuser=0"]}</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header" id="siteHeader">
+  <div class="wrap header-inner">
+    <a href="index.html" class="logo" aria-label="Little Technical Solutions LLC — home">
+      <span class="logo-mark" aria-hidden="true">
+        <img src="assets/logo-icon.png" alt="" width="40" height="40">
+      </span>
+      <span class="logo-text">
+        <span class="logo-line1">Little Technical</span>
+        <span class="logo-line2">Solutions <span class="logo-llc">LLC</span></span>
+      </span>
+    </a>
+
+    <nav class="main-nav" id="mainNav" aria-label="Primary">
+      <div class="nav-dropdown">
+        <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-controls="servicesDropdown">
+          Services
+          <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="nav-dropdown-menu" id="servicesDropdown">
+          <a href="services.html">All Services</a>
+          <a href="service-website.html">Website Design &amp; Development</a>
+          <a href="service-computer.html">Computer Repair</a>
+          <a href="service-networking.html">Networking</a>
+          <a href="service-cybersecurity.html">Cybersecurity</a>
+          <a href="service-business-it.html">Small Business IT</a>
+        </div>
+      </div>
+      <a href="about.html">About</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="heroes-pricing.html">Heroes Discount</a>
+      <div class="nav-dropdown">
+        <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-controls="resourcesDropdown">
+          Resources
+          <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="nav-dropdown-menu" id="resourcesDropdown">
+          <a href="service-area.html">Service Area</a>
+          <a href="testimonials.html">Testimonials</a>
+          <a href="team.html">Our Team</a>
+          <a href="portfolio.html">Portfolio</a>
+          <a href="gallery.html">Gallery</a>
+          <a href="faq.html">FAQ</a>
+          <a href="blog.html">Blog</a>
+          <a href="booking.html">Booking</a>
+        </div>
+      </div>
+      <a href="payment.html">Payments</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <a href="search.html" class="search-toggle" aria-label="Search this site" title="Search this site">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-3.8-3.8"/></svg>
+      </a>
+      <a href="myaccount.html" class="search-toggle" aria-label="My Account" title="My Account">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </a>
+      <a href="tel:+16364260289" class="phone-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        636-426-0289
+      </a>
+      <a href="intake.html" class="btn btn-primary btn-small">Get a quote</a>
+    </div>
+
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+<main id="main">
+  <section class="page-hero">
+    <div class="wrap">
+      <p class="eyebrow">Blog</p>
+      <h1>Practical write-ups, no jargon.</h1>
+      <p class="section-lede">Short, useful articles on websites, security, and networking — written for people who'd rather fix the problem than read a sales pitch.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="blog-grid">
+        <a href="5-signs-your-website-needs-a-redesign.html" class="blog-card reveal">
+          <div class="blog-card-art"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16v16H4z" opacity="0"/><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M8 13h8M8 16h5"/></svg></div>
+          <div class="blog-card-body">
+            <div class="blog-card-meta">2026-06-15 &middot; Website</div>
+            <h2>5 Signs Your Small Business Website Needs a Redesign</h2>
+            <p>If your site is quietly costing you customers, it's usually one of these five problems.</p>
+            <span class="card__link">Read more &rarr;</span>
+          </div>
+        </a>
+        <a href="why-small-businesses-need-a-password-manager.html" class="blog-card reveal">
+          <div class="blog-card-art"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16v16H4z" opacity="0"/><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M8 13h8M8 16h5"/></svg></div>
+          <div class="blog-card-body">
+            <div class="blog-card-meta">2026-06-22 &middot; Cybersecurity</div>
+            <h2>Why Every Small Business Should Use a Password Manager</h2>
+            <p>The single highest-impact, lowest-cost security upgrade most small businesses haven't made yet.</p>
+            <span class="card__link">Read more &rarr;</span>
+          </div>
+        </a>
+        <a href="wifi-dead-zones-explained.html" class="blog-card reveal">
+          <div class="blog-card-art"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16v16H4z" opacity="0"/><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M8 13h8M8 16h5"/></svg></div>
+          <div class="blog-card-body">
+            <div class="blog-card-meta">2026-07-01 &middot; Networking</div>
+            <h2>Wi-Fi Dead Zones: What's Actually Causing Them</h2>
+            <p>It's rarely your internet plan. Here's what's usually really going on.</p>
+            <span class="card__link">Read more &rarr;</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt-bg">
+    <div class="wrap">
+      <div class="newsletter-box reveal">
+        <div class="newsletter-copy">
+          <h2>Get new articles by email</h2>
+          <p>Occasional, practical write-ups — no spam.</p>
+        </div>
+        <div>
+          <form name="newsletter" class="newsletter-form" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+            <input type="hidden" name="form-name" value="newsletter">
+            <p class="visually-hidden"><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
+            <input type="email" name="email" placeholder="you@email.com" required aria-label="Email address">
+            <button type="submit" class="btn btn-primary">Subscribe</button>
+          </form>
+          <p class="newsletter-status"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <img src="assets/logo-icon.png" alt="Little Technical Solutions LLC" width="36" height="36" class="footer-logo">
+      <span class="logo-line1">Little Technical Solutions LLC</span>
+      <p>Websites, computers, networks, and security — handled by one call.</p>
+    </div>
+    <nav class="footer-nav" aria-label="Footer">
+      <a href="services.html">Services</a>
+      <a href="about.html">About</a>
+      <a href="team.html">Our Team</a>
+      <a href="portfolio.html">Portfolio</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="heroes-pricing.html">Heroes Discount</a>
+      <a href="service-area.html">Service Area</a>
+      <a href="testimonials.html">Testimonials</a>
+      <a href="faq.html">FAQ</a>
+      <a href="blog.html">Blog</a>
+      <a href="booking.html">Booking</a>
+      <a href="payment.html">Payments</a>
+      <a href="contact.html">Contact</a>
+      <a href="intake.html">New Client Form</a>
+      <a href="search.html">Search</a>
+      <a href="sitemap.html">Sitemap</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms &amp; Conditions</a>
+      <a href="patch-notes.html">Patch Notes</a>
+      <a href="#" id="manageConsentLink">Cookie Notice</a>
+    </nav>
+    <nav class="footer-social" aria-label="Social">
+      <a href="https://www.facebook.com/profile.php?id=61591618750945" rel="noopener" target="_blank" aria-label="Little Technical Solutions LLC on Facebook">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>
+        <span>Facebook</span>
+      </a>
+      <a href="https://www.google.com/search?q=Little+Technical+Solutions+LLC&stick=H4sIAAAAAAAA_-NgU1IxqDA0N0s1sUgyT0yxTE1NTLMyqEg2sTRLNTZOTTS1NDIzSUxaxCrnk1lSkpOqEJKanJGXmZyYoxCcn1NakpmfV6zg4-MMAGRkPw5JAAAA&hl=en&mat=CWEgdKX6xe4RElcBa0lj_4PsrYDUx2O2vFBpnokVltXIVrcy43xjezZrcYTprxRsgJGT1ATelPpH5ss3Sn-4VrXJHi_xxw10Eq_jzvWCxQfPf2G4feie7XZe-MJ3uWuSvN4&authuser=0" rel="noopener" target="_blank" aria-label="Little Technical Solutions LLC on Google">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 12.23c0-.75-.07-1.47-.19-2.18H12v4.13h5.4a4.6 4.6 0 0 1-2 3.02v2.5h3.24c1.9-1.75 3-4.32 3-7.47z"/><path d="M12 22c2.7 0 4.97-.9 6.63-2.44l-3.24-2.5c-.9.6-2.05.96-3.39.96-2.6 0-4.8-1.76-5.6-4.12H3.05v2.58A10 10 0 0 0 12 22z"/><path d="M6.4 13.9a6 6 0 0 1 0-3.8V7.52H3.05a10 10 0 0 0 0 8.96l3.35-2.58z"/><path d="M12 6.08c1.47 0 2.79.5 3.83 1.5l2.87-2.87A10 10 0 0 0 3.05 7.52L6.4 10.1c.8-2.36 3-4.02 5.6-4.02z"/></svg>
+        <span>Find us on Google</span>
+      </a>
+    </nav>
+  </div>
+  <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. All rights reserved.</p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version 1.18</a></p>
+  <p class="footer-version"><a href="admin.html">Staff Sign In</a></p>
+</footer>
+
+<div id="cookie-banner" class="cookie-banner" hidden role="region" aria-label="Cookie notice">
+  <div class="wrap cookie-banner-inner">
+    <p>We use Netlify Analytics (cookie-free, privacy-respecting) to see site traffic, plus a small amount of local storage for things like your dark/light mode choice. Nothing here is used for advertising or sold to anyone. See our <a href="privacy.html">Privacy Policy</a>.</p>
+    <div class="cookie-banner-actions">
+      <button type="button" class="btn btn-primary btn-small" data-consent="dismiss">Got it</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+<script src="js/cms.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    window.ltsCms.mountBlogList('.blog-grid');
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+(function(){
+  try{
+    var saved = localStorage.getItem('lts-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  }catch(e){}
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patch Notes — Little Technical Solutions LLC</title>
+<meta name="description" content="Version history and site updates for the Little Technical Solutions LLC website.">
+<link rel="canonical" href="https://lit-solutions.tech/patch-notes.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Little Technical Solutions LLC">
+<meta property="og:title" content="Patch Notes — Little Technical Solutions LLC">
+<meta property="og:description" content="Version history and site updates for the Little Technical Solutions LLC website.">
+<meta property="og:url" content="https://lit-solutions.tech/patch-notes.html">
+<meta property="og:image" content="https://lit-solutions.tech/assets/logo-full.png">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Little Technical Solutions LLC","image":"https://lit-solutions.tech/assets/logo-full.png","telephone":"+16364260289","email":"dylan@lit-solutions.tech","url":"https://lit-solutions.tech/","priceRange":"$$","areaServed":[{"@type":"City","name":"Montross, VA"},{"@type":"City","name":"Colonial Beach, VA"},{"@type":"City","name":"King George, VA"},{"@type":"City","name":"Dahlgren, VA"}],"sameAs":["https://www.facebook.com/profile.php?id=61591618750945","https://www.google.com/search?q=Little+Technical+Solutions+LLC&stick=H4sIAAAAAAAA_-NgU1IxqDA0N0s1sUgyT0yxTE1NTLMyqEg2sTRLNTZOTTS1NDIzSUxaxCrnk1lSkpOqEJKanJGXmZyYoxCcn1NakpmfV6zg4-MMAGRkPw5JAAAA&hl=en&mat=CWEgdKX6xe4RElcBa0lj_4PsrYDUx2O2vFBpnokVltXIVrcy43xjezZrcYTprxRsgJGT1ATelPpH5ss3Sn-4VrXJHi_xxw10Eq_jzvWCxQfPf2G4feie7XZe-MJ3uWuSvN4&authuser=0"]}</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header" id="siteHeader">
+  <div class="wrap header-inner">
+    <a href="index.html" class="logo" aria-label="Little Technical Solutions LLC — home">
+      <span class="logo-mark" aria-hidden="true">
+        <img src="assets/logo-icon.png" alt="" width="40" height="40">
+      </span>
+      <span class="logo-text">
+        <span class="logo-line1">Little Technical</span>
+        <span class="logo-line2">Solutions <span class="logo-llc">LLC</span></span>
+      </span>
+    </a>
+
+    <nav class="main-nav" id="mainNav" aria-label="Primary">
+      <div class="nav-dropdown">
+        <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-controls="servicesDropdown">
+          Services
+          <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="nav-dropdown-menu" id="servicesDropdown">
+          <a href="services.html">All Services</a>
+          <a href="service-website.html">Website Design &amp; Development</a>
+          <a href="service-computer.html">Computer Repair</a>
+          <a href="service-networking.html">Networking</a>
+          <a href="service-cybersecurity.html">Cybersecurity</a>
+          <a href="service-business-it.html">Small Business IT</a>
+        </div>
+      </div>
+      <a href="about.html">About</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="heroes-pricing.html">Heroes Discount</a>
+      <div class="nav-dropdown">
+        <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-controls="resourcesDropdown">
+          Resources
+          <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="nav-dropdown-menu" id="resourcesDropdown">
+          <a href="service-area.html">Service Area</a>
+          <a href="testimonials.html">Testimonials</a>
+          <a href="team.html">Our Team</a>
+          <a href="portfolio.html">Portfolio</a>
+          <a href="gallery.html">Gallery</a>
+          <a href="faq.html">FAQ</a>
+          <a href="blog.html">Blog</a>
+          <a href="booking.html">Booking</a>
+        </div>
+      </div>
+      <a href="payment.html">Payments</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <a href="search.html" class="search-toggle" aria-label="Search this site" title="Search this site">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-3.8-3.8"/></svg>
+      </a>
+      <a href="myaccount.html" class="search-toggle" aria-label="My Account" title="My Account">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </a>
+      <a href="tel:+16364260289" class="phone-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        636-426-0289
+      </a>
+      <a href="intake.html" class="btn btn-primary btn-small">Get a quote</a>
+    </div>
+
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="intake-hero">
+    <div class="wrap">
+      <p class="eyebrow">Site updates</p>
+      <h1>Patch Notes</h1>
+      <p class="section-lede">A running history of what's changed on this website, version by version.</p>
+    </div>
+  </section>
+
+  <section class="pricing-section">
+    <div class="wrap">
+      <div class="patch-list">
+
+        <article class="patch-entry">
+          <div class="patch-entry-head">
+            <span class="patch-version patch-version--current">v1.18</span>
+            <span class="patch-tag">Current</span>
+          </div>
+          <ul class="patch-changes">
+            <li><strong>Added the Gallery page</strong> — a full requirements audit against the master requirements catalog found "Image gallery" was a distinct Mandatory requirement that had been missed (Portfolio covers project write-ups; Gallery is a simple photo grid). Staff can add photos with alt text and an optional caption from a new Gallery tab in the dashboard</li>
+            <li>Fixed a validation bug in the admin content editor: required photo fields (like Gallery's) weren't actually being enforced before saving — now they are</li>
+            <li>Completed a full pass of every requirement in the master requirements catalog (106 items) against the live site, not just the accounts-related ones</li>
+          </ul>
+        </article>
+
+        <article class="patch-entry">
+          <div class="patch-entry-head">
+            <span class="patch-version">v1.17</span>
+          </div>
+          <ul class="patch-changes">
+            <li><strong>Added a Dashboard, Favorites, and Notifications</strong> to "My Account" — a real hub showing document/favorite counts and recently-viewed pages, a bookmark button on blog posts and portfolio items with a dedicated Favorites &amp; saved-searches view, and an in-app notification center with an unread badge on the nav</li>
+            <li><strong>Documents now trigger a notification</strong> automatically when staff upload one — customers see it in-app, and get an email too unless they've turned that off</li>
+            <li>Added <strong>saved searches</strong> — signed-in customers can save a search from the Search page and re-run it later from Favorites</li>
+            <li>Profile now supports <strong>changing your name</strong> (no password needed) and setting <strong>preferences</strong> — language, timezone, and whether to get emailed about new messages/documents</li>
+            <li>Staff can send a customer a one-off <strong>notification</strong> (e.g. "appointment rescheduled") from the Customers tab — separate from a message, for things that don't need a reply</li>
+          </ul>
+        </article>
+
+        <article class="patch-entry">
+          <div class="patch-entry-head">
+            <span class="patch-version">v1.16</span>
+          </div>
+          <ul class="patch-changes">
+            <li><strong>Added email verification.</strong> New accounts (staff or customer) now have to verify their email before they can sign in — the main defense against bot/junk registrations on the open "My Account" sign-up. A "Resend verification email" link appears automatically if someone tries signing in before verifying</li>
+            <li><strong>Added two-way messaging.</strong> Customers can message us directly from their account (<code>myaccount.html#messages</code>) and read our replies; staff see a Customer Inbox in the dashboard with unread counts and can reply from the same place they manage a customer's documents. Separate from the existing Contact page form, which is unchanged</li>
+            <li>The "Customer Documents" staff tab is now just <strong>Customers</strong> — one lookup drives both documents and messages for whoever you pull up</li>
+            <li>A customer can only ever read or send in their own message thread — enforced server-side, verified directly over real HTTP with two separate customer accounts</li>
+          </ul>
+        </article>
+
+        <article class="patch-entry">
+          <div class="patch-entry-head">
+            <span class="patch-version">v1.15</span>
+          </div>
+          <ul class="patch-changes">
+            <li><strong>Added customer accounts.</strong> A new "My Account" link (person icon, next to search) in the header lets customers create their own account and sign in — separate from staff sign-in — to view their invoices, receipts, and other paperwork whenever they want, with download links for any attached file</li>
+            <li>Added a <strong>Customer Documents</strong> tab to the staff dashboard: look up a customer by the email they registered with, then upload invoices, receipts, or paperwork (title, type, amount, paid/unpaid status, date, notes, optional PDF/image attachment) for them to see</li>
+            <li>Customers can only ever see their own documents — enforced server-side, not just hidden in the interface — and can manage their own login email/password the same way staff can</li>
+            <li>This isn't a billing system — payments are still made through the existing Payments page — it's a record locker so paperwork doesn't have to be tracked over email</li>
+          </ul>
+        </article>
+
+        <article class="patch-entry">
+          <div class="patch-entry-head">
+            <span class="patch-version">v1.14</span>
+          </div>
+          <ul class="patch-changes">
+            <li><strong>Merged Payments and Subscriptions into one page.</strong> A single Payments tab with two collapsible sections — One-Time Payment and Subscriptions — replaces the separate Subscriptions page; old links redirect automatically and all 3 Square payment links carried over unchanged</li>
+            <li><strong>Added a sign-in-protected admin content editor</strong> at a low-key "Staff Sign In" link in the footer — lets the business owner add, edit, delete, and reorder blog posts, portfolio items, and testimonials, with photo uploads, from a real dashboard. Changes go live immediately, no rebuild needed. Every page's existing content and honest placeholders are untouched until something is actually added</li>
+            <li>New blog posts get their own page automatically and appear on the Blog list above the 3 original articles; the first portfolio item or testimonial added replaces that page's "still building it out" placeholder</li>
+            <li>Added an <strong>Account Settings</strong> tab so the admin login email and password can be updated directly from the dashboard, without needing the Netlify Blobs dashboard for routine changes</li>
+            <li>Backed by Netlify Functions + Netlify Blobs: hashed passwords, secure HttpOnly session cookies, rate-limited sign-in/register/password-reset, and server-side (not just UI-hidden) permission checks on every write</li>
+          </ul>
+        </article>
+
+        <article class="patch-entry">
+          <div class="patch-entry-head">
+            <span class="patch-version">v1.13</span>
+          </div>
+          <ul class="patch-changes">
+            <li><strong>Business tier compliance pass.</strong> Audited the site against the actual Business package requirements spec and closed every Mandatory gap found — every prior page's real content, links, and behavior stayed exactly as it was; this was additive, not a rebuild</li>
+            <li>Updated contact email to <strong>dylan@lit-solutions.tech</strong> and the site's domain to <strong>lit-solutions.tech</strong>, site-wide</li>
+            <li>Added a <strong>Privacy Policy</strong> page — what's collected, how it's used, cookies/analytics, and your rights (there was previously no privacy page)</li>
+            <li>Added an <strong>Our Team</strong> page, a lighter companion to About, and a <strong>Portfolio</strong> page with an honest "still building it out" placeholder in the same spirit as the existing Testimonials page</li>
+            <li>Added a human-readable <strong>Sitemap</strong> page and a client-side <strong>Search</strong> page covering every page on the site, linked from a new search icon in the header</li>
+            <li>Added a custom <strong>404 page</strong> with a search box and popular links, wired in via <code>netlify.toml</code></li>
+            <li>Added breadcrumbs to the 5 service-detail pages and all 3 blog articles, plus in-page quick-jump navigation on the service-detail pages and FAQ</li>
+            <li>Added Facebook and Google Business Profile links to the footer, and a Google Maps service-area embed plus a short "send a quick message" form directly on the Contact page (the detailed project form is unchanged)</li>
+            <li>Added a site-wide cookie/tracking notice — framed honestly as a transparency notice, since this site doesn't set third-party tracking cookies</li>
+            <li>Added Open Graph tags, Twitter card, canonical URLs, and <code>LocalBusiness</code> structured data to every page, plus <code>sitemap.xml</code>, <code>robots.txt</code>, and <code>netlify.toml</code> (security headers, 404 redirect) at the site root</li>
+            <li>Site now uses Netlify Analytics — cookie-free and enabled from the Netlify dashboard, no client-side script needed</li>
+          </ul>
+        </article>
+
+        <article class="patch-entry">
+          <div class="patch-entry-head">
+            <span class="patch-version">v1.12</span>
+          </div>
+          <ul class="patch-changes">
+            <li><strong>Upgraded the site to the Business tier feature set.</strong> Logo, color theme, fonts, Square payment/subscription links, the American Heroes Discount program, the project intake form, and every existing page's real content and links were kept exactly as they were — this was a structural and feature expansion, not a rebuild from scratch</li>
+            <li>Split the homepage into dedicated pages: <strong>About</strong> (the full veteran-owned story and credentials) and a full <strong>Services</strong> overview and <strong>Contact</strong> page now live on their own URLs, with condensed teaser sections linking to each from the homepage</li>
+            <li>Added five individual service-detail pages — Website Services, Computer Services, Networking, Cybersecurity, and Small Business IT — each with benefits, full service lists, a process walkthrough, and service-specific FAQs</li>
+            <li>Added a <strong>Service Area</strong> page clarifying that on-site work (computer, network, security) is local to Montross, Colonial Beach, King George, and Dahlgren, Virginia, while <strong>website design is available nationwide, fully remote</strong></li>
+            <li>Added the same nationwide-website-design messaging to the homepage, Services page, and Contact page</li>
+            <li>Added a homepage tagline: "Modernizing the Northern Neck, One Small Business at a Time"</li>
+            <li>Added a <strong>Testimonials</strong> page with an honest "new business" placeholder state instead of fabricated reviews, plus verifiable trust signals in the meantime</li>
+            <li>Added an <strong>FAQ</strong> page covering website packages, service area, pricing, payment, and the Heroes Discount</li>
+            <li>Added a <strong>Booking</strong> page, with a clear notice that online self-scheduling isn't connected yet rather than a fake booking link</li>
+            <li>Added a <strong>Blog</strong> with three initial articles (website redesign signs, password manager basics, Wi-Fi dead zones) and an email signup</li>
+            <li>Added dropdown navigation ("Services" and "Resources") to the header so the expanded page set stays organized instead of cluttering a flat menu</li>
+            <li>Added a <strong>Starter vs. Business package comparison</strong> to the Pricing page, showing what's actually included in each website tier side by side</li>
+            <li>Extended the design system with new component styles (package cards, testimonial cards, FAQ accordion, blog cards, service-detail layout, newsletter box) built entirely from the site's existing colors, fonts, and patterns — no new visual language introduced</li>
+          </ul>
+        </article>
+
+        <article class="patch-entry">
+          <div class="patch-entry-head">
+            <span class="patch-version">v1.11</span>
+          </div>
+          <ul class="patch-changes">
+            <li>Fixed a bug where the "Heroes Discount" link was missing entirely from the top navigation on the Subscriptions page</li>
+            <li>Fixed a bug where the "Get a quote" button disappeared once you actually reached the intake form (and the Terms &amp; Conditions page had the same gap) — every nav link and the "Get a quote" button now stay visible on every page. When you're already on the page a link points to, it stays visible but becomes non-clickable instead of vanishing or acting like a normal link</li>
+            <li>The current page now correctly highlights in orange in the top navigation — this didn't work at all before except for scrolling within the homepage</li>
+            <li>Fixed a readability bug where flagged/missing form fields and the "please fill this in" message could become nearly invisible in dark mode (light text on a light background that didn't adapt to the theme)</li>
+            <li>Rebuilt the color system for form states: selected checkboxes/radio buttons now use a teal highlight, and errors use a dedicated red — previously both selection and errors used similar orange tones, which was confusing and part of what made the error state hard to read</li>
+            <li>Section 5 ("Anything else we should know?") on the intake form is no longer required — it's genuinely optional, as originally intended</li>
+            <li>Replaced the free-text "Best time to reach you" field with a clear set of time-range choices (7&ndash;9am through 5&ndash;7pm, or no preference) so a placeholder answer can't be mistaken for an actual appointment time</li>
+            <li>Form guidance now explicitly mentions N/A as an accepted answer alongside "4" for anything that doesn't apply</li>
+            <li>Added a notice to the Website Care Plan subscription clarifying it's only available for websites built by Little Technical Solutions LLC, unless full source code is provided or obtainable for a site built elsewhere</li>
+            <li>Adjusted logo text line spacing in the header for more consistent alignment with the navigation next to it</li>
+          </ul>
+        </article>
+
+        <article class="patch-entry">
+          <div class="patch-entry-head">
+            <span class="patch-version">v1.10</span>
+          </div>
+          <ul class="patch-changes">
+            <li>Wired in live Square Subscription links for both recurring plans — Website Care Plan ($39/mo) and Small Business IT Support ($79/mo) are now fully functional on the Subscriptions page</li>
+            <li>Fixed a header layout bug where the navigation bar overflowed on medium-width screens (roughly 900&ndash;1050px) after the Subscriptions link was added</li>
+            <li>Ran a full site-wide debug pass: tested every page across 8 widths from 320px to 1440px and fixed every horizontal overflow found, including a footer navigation bug that had been overflowing on mobile across the whole site, a subscription card sizing issue, and a pricing table that didn't fit on very narrow phones</li>
+            <li>Reformatted the "Pay for Service" section on the payment page and the "Proof of eligibility required" note on the American Heroes Discount page — both were dense, hard-to-read paragraphs and are now broken into clearly labeled sections</li>
+            <li>Removed an inaccurate claim about no longer sending emailed invoice links, since that was never actually how payments were handled</li>
+            <li>Overhauled the project intake form: added a government contracting checkbox to Contact Information; Website Project Details and Government Contracting Info now stay collapsed until their related checkbox is checked (though anyone can still open them manually to look); every field on the form is now required, with typing "4" as an explicit valid answer for anything that doesn't apply; missing fields are called out by name if you try to submit without filling them in</li>
+          </ul>
+        </article>
+
+        <article class="patch-entry">
+          <div class="patch-entry-head">
+            <span class="patch-version">v1.9</span>
+          </div>
+          <ul class="patch-changes">
+            <li>Expanded the veteran discount into the <strong>American Heroes Discount</strong> — now covering active duty military, veterans, teachers, first responders, doctors, TSA agents, police, firefighters, and Virginia FFL holders, all at the same discounted rates</li>
+            <li>Added an eligibility &amp; verification guide showing exactly what each group needs to provide</li>
+            <li>Added this <strong>Patch Notes</strong> page, linked from the version number in the footer</li>
+            <li>Added a <strong>Government Contracting Info</strong> section to the project intake form (UEI, NAICS codes, SAM.gov info, certifications) for clients who need it, plus new fields for requested domain, existing content to reuse, and photos/imagery</li>
+            <li>Switched the intake form's email notifications from a third-party service to <strong>native Netlify Forms</strong> — submissions now email you directly with no outside service involved, plus basic spam protection</li>
+            <li>Added a new <strong>Subscriptions</strong> page for the Website Care Plan and Small Business IT Support monthly plans</li>
+            <li>Fixed a legal compliance issue: removed all requests to photograph or copy federal government ID cards (military ID/CAC, veteran ID card, TSA credentials), which is prohibited under 18 U.S.C. &sect; 701. Verification for those categories now happens in person; documents that aren't restricted (DD-214, LES, employment letters) can still be emailed</li>
+            <li>Streamlined the payment pages — removed duplicate per-package payment buttons in favor of a single, clearer payment flow</li>
+            <li>Removed the ability to pay directly from the American Heroes Discount page — it's pricing information only now; your discounted total is confirmed after eligibility verification, then paid through the main payment page</li>
+            <li>All payments go through the website's payment page, gated behind the required Terms &amp; Conditions checkbox — no emailed invoice links that could bypass that agreement</li>
+            <li>Renamed and rewrote the general payment section to "Pay for Service," clarifying it covers any quoted or invoiced amount</li>
+            <li>Added a clickable <strong>"Do I qualify?"</strong> button on the American Heroes Discount page that scrolls to the eligibility list; each category is now clickable and expands to show a short thank-you message plus exactly what's needed to verify that status</li>
+          </ul>
+        </article>
+
+        <article class="patch-entry">
+          <div class="patch-entry-head">
+            <span class="patch-version">v1.8</span>
+          </div>
+          <ul class="patch-changes">
+            <li>Added a "Launch Special" banner to the pricing, veteran pricing, and payment pages announcing introductory rates for our first 25 customers</li>
+          </ul>
+        </article>
+
+        <article class="patch-entry">
+          <div class="patch-entry-head">
+            <span class="patch-version">v1.7</span>
+          </div>
+          <ul class="patch-changes">
+            <li>Added the <strong>Make a Payment</strong> page with Square-powered checkout for deposits and website packages</li>
+            <li>Added a Veteran Pricing page with dedicated payment buttons</li>
+            <li>Added full <strong>Terms &amp; Conditions</strong>, including a required agreement checkbox that gates every payment button</li>
+            <li>Added site-wide <strong>dark/light mode</strong> — respects system preference, manual toggle, remembers your choice</li>
+            <li>Fixed inconsistent header/navigation alignment across pages</li>
+            <li>Ran a full accessibility contrast audit and fixed every text-readability issue found, in both light and dark mode</li>
+            <li>Fixed the before/after website slider being too bright in dark mode, and fixed it fighting page-scroll on mobile touch devices</li>
+            <li>Full grammar and copy audit across every page</li>
+          </ul>
+        </article>
+
+        <article class="patch-entry">
+          <div class="patch-entry-head">
+            <span class="patch-version">v1.6</span>
+            <span class="patch-tag patch-tag--launch">Initial Launch</span>
+          </div>
+          <ul class="patch-changes">
+            <li>Website designed and built: homepage with interactive hero, service breakdown, and an interactive drag-to-compare "before/after" website showcase</li>
+            <li>Added the veteran-owned founder section with animated service statistics</li>
+            <li>Added the Pricing page with a full flat-rate price list and a market-rate comparison table</li>
+            <li>Added the client project intake form, connected to email via Formspree</li>
+            <li>Real business logo, favicon, and branding integrated site-wide</li>
+            <li>Business name, contact info, and service area finalized</li>
+          </ul>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <img src="assets/logo-icon.png" alt="Little Technical Solutions LLC" width="36" height="36" class="footer-logo">
+      <span class="logo-line1">Little Technical Solutions LLC</span>
+      <p>Websites, computers, networks, and security — handled by one call.</p>
+    </div>
+    <nav class="footer-nav" aria-label="Footer">
+      <a href="services.html">Services</a>
+      <a href="about.html">About</a>
+      <a href="team.html">Our Team</a>
+      <a href="portfolio.html">Portfolio</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="heroes-pricing.html">Heroes Discount</a>
+      <a href="service-area.html">Service Area</a>
+      <a href="testimonials.html">Testimonials</a>
+      <a href="faq.html">FAQ</a>
+      <a href="blog.html">Blog</a>
+      <a href="booking.html">Booking</a>
+      <a href="payment.html">Payments</a>
+      <a href="contact.html">Contact</a>
+      <a href="intake.html">New Client Form</a>
+      <a href="search.html">Search</a>
+      <a href="sitemap.html">Sitemap</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms &amp; Conditions</a>
+      <a href="patch-notes.html">Patch Notes</a>
+      <a href="#" id="manageConsentLink">Cookie Notice</a>
+    </nav>
+    <nav class="footer-social" aria-label="Social">
+      <a href="https://www.facebook.com/profile.php?id=61591618750945" rel="noopener" target="_blank" aria-label="Little Technical Solutions LLC on Facebook">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>
+        <span>Facebook</span>
+      </a>
+      <a href="https://www.google.com/search?q=Little+Technical+Solutions+LLC&stick=H4sIAAAAAAAA_-NgU1IxqDA0N0s1sUgyT0yxTE1NTLMyqEg2sTRLNTZOTTS1NDIzSUxaxCrnk1lSkpOqEJKanJGXmZyYoxCcn1NakpmfV6zg4-MMAGRkPw5JAAAA&hl=en&mat=CWEgdKX6xe4RElcBa0lj_4PsrYDUx2O2vFBpnokVltXIVrcy43xjezZrcYTprxRsgJGT1ATelPpH5ss3Sn-4VrXJHi_xxw10Eq_jzvWCxQfPf2G4feie7XZe-MJ3uWuSvN4&authuser=0" rel="noopener" target="_blank" aria-label="Little Technical Solutions LLC on Google">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 12.23c0-.75-.07-1.47-.19-2.18H12v4.13h5.4a4.6 4.6 0 0 1-2 3.02v2.5h3.24c1.9-1.75 3-4.32 3-7.47z"/><path d="M12 22c2.7 0 4.97-.9 6.63-2.44l-3.24-2.5c-.9.6-2.05.96-3.39.96-2.6 0-4.8-1.76-5.6-4.12H3.05v2.58A10 10 0 0 0 12 22z"/><path d="M6.4 13.9a6 6 0 0 1 0-3.8V7.52H3.05a10 10 0 0 0 0 8.96l3.35-2.58z"/><path d="M12 6.08c1.47 0 2.79.5 3.83 1.5l2.87-2.87A10 10 0 0 0 3.05 7.52L6.4 10.1c.8-2.36 3-4.02 5.6-4.02z"/></svg>
+        <span>Find us on Google</span>
+      </a>
+    </nav>
+  </div>
+  <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. All rights reserved.</p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version 1.18</a></p>
+  <p class="footer-version"><a href="admin.html">Staff Sign In</a></p>
+</footer>
+
+<div id="cookie-banner" class="cookie-banner" hidden role="region" aria-label="Cookie notice">
+  <div class="wrap cookie-banner-inner">
+    <p>We use Netlify Analytics (cookie-free, privacy-respecting) to see site traffic, plus a small amount of local storage for things like your dark/light mode choice. Nothing here is used for advertising or sold to anyone. See our <a href="privacy.html">Privacy Policy</a>.</p>
+    <div class="cookie-banner-actions">
+      <button type="button" class="btn btn-primary btn-small" data-consent="dismiss">Got it</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>

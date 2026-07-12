@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+(function(){
+  try{
+    var saved = localStorage.getItem('lts-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  }catch(e){}
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Staff Sign In — Little Technical Solutions LLC</title>
+<meta name="robots" content="noindex, nofollow">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<style>
+  /* Admin-only additions -- not part of the public design system in
+     css/style.css, kept here so this stays a single self-contained file. */
+  .admin-header{ background: var(--navy-deep); color:#fff; }
+  .admin-header-inner{ display:flex; align-items:center; justify-content:space-between; padding: 1.1rem 0; }
+  .admin-header a.logo-link{ display:flex; align-items:center; gap:.6rem; color:#fff; font-family:var(--font-display); font-weight:600; }
+  .admin-header a.logo-link img{ width:30px; height:30px; }
+  .admin-header-actions{ display:flex; align-items:center; gap:1.25rem; font-size:.88rem; }
+  .admin-header-actions a{ color: rgba(238,241,245,0.8); }
+  .admin-header-actions a:hover{ color:#fff; }
+  .admin-main{ max-width: 760px; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+  .admin-tabs{ display:flex; flex-wrap:wrap; gap:.6rem; margin-bottom:2rem; }
+  .admin-tabs a{
+    font-size:.85rem; font-weight:600; padding:.55rem 1.1rem; border-radius:999px;
+    border:1px solid var(--line); color: var(--ink-soft); background: var(--paper-alt);
+  }
+  .admin-tabs a.is-active{ border-color: var(--accent-orange); color: var(--accent-orange-text); background: var(--paper); }
+  .admin-card{ background: var(--paper-alt); border:1px solid var(--line); border-radius: var(--radius); padding: 1.75rem; margin-bottom: 1.5rem; }
+  .admin-card h1{ font-size:1.3rem; margin-bottom:.4rem; }
+  .admin-card h2{ font-size:1.05rem; margin-bottom:1rem; }
+  .admin-item-list{ display:flex; flex-direction:column; gap:.9rem; margin-top:1.5rem; }
+  .admin-item{
+    display:flex; gap:1rem; align-items:flex-start; border:1px solid var(--line); border-radius: var(--radius);
+    padding:1rem; background: var(--paper);
+  }
+  .admin-item-thumb{ width:64px; height:64px; border-radius:6px; object-fit:cover; flex-shrink:0; background: var(--line); }
+  .admin-item-body{ flex:1; min-width:0; }
+  .admin-item-body h3{ font-size:.95rem; font-weight:600; margin-bottom:.2rem; }
+  .admin-item-body p{ font-size:.82rem; color: var(--ink-soft); }
+  .admin-item-actions{ display:flex; gap:.5rem; flex-shrink:0; flex-wrap:wrap; }
+  .admin-item-actions button{ font-size:.78rem; padding:.4rem .7rem; margin:0; }
+  .admin-empty{ font-size:.88rem; color: var(--ink-faint); padding: 1rem 0; }
+  .admin-unsaved-banner{
+    display:none; position: sticky; top:0; z-index: 5; background:#FFF1EA; color:#5A3410;
+    border:1px solid #F3C6A8; border-radius: var(--radius); padding:.9rem 1.2rem; margin-bottom:1.5rem;
+    align-items:center; justify-content:space-between; gap:1rem; font-size:.88rem;
+  }
+  :root[data-theme="dark"] .admin-unsaved-banner{ background:#2A1A12; color:#FFB68A; border-color:#5A3410; }
+  .admin-unsaved-banner.is-visible{ display:flex; }
+  .admin-thumb-preview{ width:120px; border-radius:6px; margin-top:.6rem; display:none; }
+  .admin-field-hint{ font-size:.78rem; color: var(--ink-faint); font-weight:400; margin-top:.2rem; }
+  .status{ font-size:.85rem; font-weight:600; margin-top:.75rem; min-height:1.2em; }
+  .status.ok{ color: var(--accent-teal-text); }
+  .status.error{ color: var(--accent-orange-text); }
+  a.linklike{ color: var(--accent-teal-text); cursor:pointer; text-decoration:underline; font-size:.85rem; }
+</style>
+</head>
+<body>
+
+<header class="admin-header">
+  <div class="wrap admin-header-inner">
+    <a href="#dashboard" class="logo-link">
+      <img src="assets/logo-icon.png" alt="">
+      <span>Little Technical Solutions — Staff</span>
+    </a>
+    <nav class="admin-header-actions" id="adminHeaderActions"></nav>
+  </div>
+</header>
+
+<main class="admin-main" id="view"></main>
+
+<script>
+(function () {
+  var API = "/.netlify/functions/";
+  var state = { user: null };
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function el(html) {
+    var d = document.createElement("div");
+    d.innerHTML = html.trim();
+    return d.firstChild;
+  }
+
+  async function api(path, opts) {
+    opts = opts || {};
+    try {
+      var res = await fetch(API + path, Object.assign({ credentials: "same-origin", headers: { "Content-Type": "application/json" } }, opts));
+      var body = null;
+      try { body = await res.json(); } catch (e) {}
+      return { ok: res.ok, status: res.status, body: body };
+    } catch (networkErr) {
+      return { ok: false, status: 0, body: { error: "Could not reach the server. Check your connection and try again." } };
+    }
+  }
+
+  function slugify(s) {
+    return String(s || "").toLowerCase().trim()
+      .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "item";
+  }
+
+  function uid() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  }
+
+  async function loadSession() {
+    var r = await api("content"); // any admin-gated GET works to check the session + role
+    state.user = r.ok ? { role: "admin" } : null;
+    // content GET without a slug requires admin/staff; if that succeeds we
+    // know we have a valid signed-in admin session. A plain "who am I"
+    // endpoint isn't part of this module's scope, so this doubles as one.
+  }
+
+  function renderHeaderActions() {
+    var nav = document.getElementById("adminHeaderActions");
+    if (state.user) {
+      nav.innerHTML = '<a href="index.html">Back to site</a><a href="#" id="signout-link">Sign out</a>';
+      document.getElementById("signout-link").addEventListener("click", async function (e) {
+        e.preventDefault();
+        await api("auth-logout", { method: "POST" });
+        state.user = null;
+        window.location.hash = "#signin";
+      });
+    } else {
+      nav.innerHTML = '<a href="index.html">Back to site</a>';
+    }
+  }
+
+  function requireAuth() {
+    if (!state.user) { window.location.hash = "#signin"; return false; }
+    return true;
+  }
+
+  var views = {};
+
+  views.signin = function () {
+    document.title = "Staff Sign In — Little Technical Solutions LLC";
+    var v = el('<div class="admin-card"><h1>Staff sign in</h1>' +
+      '<div class="form-row"><label for="si-email">Email</label><input id="si-email" type="email"></div>' +
+      '<div class="form-row"><label for="si-password">Password</label><input id="si-password" type="password"></div>' +
+      '<button class="btn btn-primary" id="si-submit">Sign in</button>' +
+      '<p class="status" id="si-status"></p>' +
+      '<p style="margin-top:1rem;"><a class="linklike" href="#reset-request">Forgot password?</a></p>' +
+      '<p style="margin-top:.5rem;"><a class="linklike" href="#register">First time here? Create the staff account</a></p>' +
+      '</div>');
+    v.querySelector("#si-submit").addEventListener("click", async function () {
+      var status = v.querySelector("#si-status");
+      var r = await api("auth-login", { method: "POST", body: JSON.stringify({ email: v.querySelector("#si-email").value, password: v.querySelector("#si-password").value }) });
+      if (r.ok) {
+        status.textContent = "Signed in.";
+        status.className = "status ok";
+        await loadSession();
+        renderHeaderActions();
+        window.location.hash = "#dashboard";
+      } else {
+        status.textContent = (r.body && r.body.error) || "Sign-in failed.";
+        status.className = "status error";
+      }
+    });
+    return v;
+  };
+
+  views.register = function () {
+    document.title = "Create Staff Account — Little Technical Solutions LLC";
+    var v = el('<div class="admin-card"><h1>Create the staff account</h1>' +
+      '<p style="font-size:.88rem; color:var(--ink-soft); margin-bottom:1rem;">This creates a normal account -- it won’t have staff access until you promote it to admin from the Netlify Blobs dashboard (see README_ADMIN_SETUP.md). Customers should register at <a href="myaccount.html#register" style="color:var(--accent-teal-text); text-decoration:underline;">My Account</a> instead, not here.</p>' +
+      '<div class="form-row"><label for="rg-name">Name</label><input id="rg-name" type="text"></div>' +
+      '<div class="form-row"><label for="rg-email">Email</label><input id="rg-email" type="email"></div>' +
+      '<div class="form-row"><label for="rg-password">Password <span class="admin-field-hint">(at least 10 characters)</span></label><input id="rg-password" type="password"></div>' +
+      '<button class="btn btn-primary" id="rg-submit">Create account</button>' +
+      '<p class="status" id="rg-status"></p></div>');
+    v.querySelector("#rg-submit").addEventListener("click", async function () {
+      var status = v.querySelector("#rg-status");
+      var r = await api("auth-register", { method: "POST", body: JSON.stringify({ name: v.querySelector("#rg-name").value, email: v.querySelector("#rg-email").value, password: v.querySelector("#rg-password").value }) });
+      status.textContent = (r.body && (r.body.message || r.body.error)) || "Something went wrong.";
+      status.className = "status " + (r.ok ? "ok" : "error");
+      if (r.ok) window.location.hash = "#signin";
+    });
+    return v;
+  };
+
+  views["reset-request"] = function () {
+    document.title = "Reset Password — Little Technical Solutions LLC";
+    var v = el('<div class="admin-card"><h1>Reset your password</h1>' +
+      '<div class="form-row"><label for="rr-email">Email</label><input id="rr-email" type="email"></div>' +
+      '<button class="btn btn-primary" id="rr-submit">Generate reset link</button>' +
+      '<p class="status" id="rr-status"></p>' +
+      '<p style="font-size:.8rem; color:var(--ink-faint); margin-top:1rem;">Automatic email delivery isn\'t wired up yet -- after requesting, find the token in the Netlify Blobs dashboard (Site &gt; Blobs &gt; "tokens" store) and open <code>admin.html#reset?token=&lt;token&gt;</code> yourself. See README_ADMIN_SETUP.md.</p>' +
+      '</div>');
+    v.querySelector("#rr-submit").addEventListener("click", async function () {
+      var status = v.querySelector("#rr-status");
+      var r = await api("auth-password-reset", { method: "POST", body: JSON.stringify({ action: "request", email: v.querySelector("#rr-email").value }) });
+      status.textContent = (r.body && r.body.message) || "Request sent.";
+      status.className = "status ok";
+    });
+    return v;
+  };
+
+  views.reset = function () {
+    document.title = "Set New Password — Little Technical Solutions LLC";
+    var params = new URLSearchParams(window.location.hash.split("?")[1] || "");
+    var token = params.get("token") || "";
+    var v = el('<div class="admin-card"><h1>Set a new password</h1>' +
+      '<div class="form-row"><label for="rc-password">New password</label><input id="rc-password" type="password"></div>' +
+      '<button class="btn btn-primary" id="rc-submit">Update password</button>' +
+      '<p class="status" id="rc-status"></p></div>');
+    v.querySelector("#rc-submit").addEventListener("click", async function () {
+      var status = v.querySelector("#rc-status");
+      var r = await api("auth-password-reset", { method: "POST", body: JSON.stringify({ action: "confirm", token: token, newPassword: v.querySelector("#rc-password").value }) });
+      status.textContent = (r.body && (r.body.message || r.body.error)) || "Something went wrong.";
+      status.className = "status " + (r.ok ? "ok" : "error");
+      if (r.ok) window.location.hash = "#signin";
+    });
+    return v;
+  };
+
+  views.dashboard = function () {
+    if (!requireAuth()) return el("<div></div>");
+    document.title = "Dashboard — Little Technical Solutions LLC Staff";
+    return el('<div class="admin-card"><h1>What do you want to update?</h1>' +
+      '<p style="font-size:.9rem; color:var(--ink-soft); margin-bottom:1.5rem;">Changes here go live on the site immediately -- no rebuild or redeploy needed.</p>' +
+      '<div class="admin-tabs">' +
+      '<a href="#posts">Blog Posts</a>' +
+      '<a href="#portfolio">Portfolio</a>' +
+      '<a href="#testimonials">Testimonials</a>' +
+      '<a href="#gallery">Gallery</a>' +
+      '<a href="#images">Image Library</a>' +
+      '<a href="#customers">Customers</a>' +
+      '<a href="#account">Account Settings</a>' +
+      '</div></div>');
+  };
+
+  // ---- Generic list-editor factory, shared by Posts / Portfolio / Testimonials ----
+  var EDITORS = {
+    posts: {
+      slug: "blog-posts", title: "Blog Posts", hash: "posts",
+      fields: [
+        { key: "title", label: "Title", type: "text", required: true },
+        { key: "slug", label: "URL slug", type: "text", required: true, hint: "Used in the link, e.g. “hello-world” → blog-post.html?slug=hello-world", auto: function (item) { return slugify(item.title); } },
+        { key: "category", label: "Category", type: "text", hint: "e.g. Website, Cybersecurity, Networking" },
+        { key: "date", label: "Date", type: "date" },
+        { key: "excerpt", label: "Short excerpt", type: "textarea", rows: 2, hint: "Shown on the blog list page" },
+        { key: "body", label: "Full article", type: "textarea", rows: 10, hint: "Leave a blank line between paragraphs" },
+        { key: "imageDataUri", label: "Featured photo (optional)", type: "image" },
+      ],
+      itemLabel: function (item) { return item.title || "(untitled post)"; },
+      itemSub: function (item) { return [item.category, item.date].filter(Boolean).join(" · "); },
+    },
+    portfolio: {
+      slug: "portfolio-items", title: "Portfolio", hash: "portfolio",
+      fields: [
+        { key: "title", label: "Project title", type: "text", required: true },
+        { key: "description", label: "Description", type: "textarea", rows: 4, required: true },
+        { key: "imageDataUri", label: "Photo (optional)", type: "image" },
+      ],
+      itemLabel: function (item) { return item.title || "(untitled project)"; },
+      itemSub: function (item) { return (item.description || "").slice(0, 80); },
+    },
+    testimonials: {
+      slug: "testimonials", title: "Testimonials", hash: "testimonials",
+      fields: [
+        { key: "quote", label: "Quote", type: "textarea", rows: 3, required: true },
+        { key: "author", label: "Author name", type: "text", required: true },
+        { key: "roleOrCompany", label: "Role / company (optional)", type: "text" },
+      ],
+      itemLabel: function (item) { return item.author || "(unnamed)"; },
+      itemSub: function (item) { return '“' + (item.quote || "").slice(0, 80) + '”'; },
+    },
+    gallery: {
+      slug: "gallery-images", title: "Gallery", hash: "gallery",
+      fields: [
+        { key: "imageDataUri", label: "Photo", type: "image", required: true },
+        { key: "altText", label: "Alt text", type: "text", required: true, hint: "Describes the photo for screen readers -- required for every gallery image" },
+        { key: "caption", label: "Caption (optional)", type: "text" },
+      ],
+      itemLabel: function (item) { return item.altText || "(untitled photo)"; },
+      itemSub: function (item) { return item.caption || ""; },
+    },
+  };
+
+  function makeListEditorView(cfg) {
+    return function () {
+      if (!requireAuth()) return el("<div></div>");
+      document.title = cfg.title + " — Little Technical Solutions LLC Staff";
+
+      var items = [];
+      var dirty = false;
+      var editingId = null;
+
+      var v = el('<div>' +
+        '<div class="admin-tabs" id="tabs"></div>' +
+        '<div class="admin-unsaved-banner" id="unsavedBanner"><span>You have unsaved changes.</span><button class="btn btn-primary btn-small" id="saveAllBtn">Save changes</button></div>' +
+        '<div class="admin-card"><h1>' + esc(cfg.title) + '</h1>' +
+        '<h2 id="formTitle">Add new</h2>' +
+        '<form id="itemForm"></form>' +
+        '<p class="status" id="formStatus"></p>' +
+        '</div>' +
+        '<div class="admin-card"><h2>Current items</h2>' +
+        '<p style="font-size:.85rem; color:var(--ink-soft);">Drag order isn\'t supported yet -- use the up/down buttons to reorder. Nothing here is public until you click Save.</p>' +
+        '<div class="admin-item-list" id="itemList"></div>' +
+        '<p class="status" id="listStatus"></p>' +
+        '</div></div>');
+
+      // tabs
+      var tabsEl = v.querySelector("#tabs");
+      Object.keys(EDITORS).forEach(function (key) {
+        var c = EDITORS[key];
+        var a = el('<a href="#' + c.hash + '">' + esc(c.title) + '</a>');
+        if (c.slug === cfg.slug) a.classList.add("is-active");
+        tabsEl.appendChild(a);
+      });
+      tabsEl.appendChild(el('<a href="#images">Image Library</a>'));
+      tabsEl.appendChild(el('<a href="#customers">Customers</a>'));
+      tabsEl.appendChild(el('<a href="#account">Account Settings</a>'));
+      tabsEl.appendChild(el('<a href="#dashboard">Dashboard</a>'));
+
+      function markDirty() {
+        dirty = true;
+        v.querySelector("#unsavedBanner").classList.add("is-visible");
+      }
+      function markClean() {
+        dirty = false;
+        v.querySelector("#unsavedBanner").classList.remove("is-visible");
+      }
+
+      function buildForm(existing) {
+        var form = v.querySelector("#itemForm");
+        form.innerHTML = "";
+        var draft = Object.assign({}, existing);
+        cfg.fields.forEach(function (f) {
+          var row = document.createElement("div");
+          row.className = "form-row";
+          var label = document.createElement("label");
+          label.setAttribute("for", "f-" + f.key);
+          label.innerHTML = esc(f.label) + (f.hint ? ' <span class="admin-field-hint">' + esc(f.hint) + "</span>" : "");
+          row.appendChild(label);
+
+          if (f.type === "textarea") {
+            var ta = document.createElement("textarea");
+            ta.id = "f-" + f.key;
+            ta.rows = f.rows || 4;
+            ta.value = draft[f.key] || "";
+            row.appendChild(ta);
+          } else if (f.type === "image") {
+            var fileInput = document.createElement("input");
+            fileInput.type = "file";
+            fileInput.accept = "image/*";
+            fileInput.id = "f-" + f.key;
+            var preview = document.createElement("img");
+            preview.className = "admin-thumb-preview";
+            if (draft[f.key]) { preview.src = draft[f.key]; preview.style.display = "block"; }
+            fileInput.addEventListener("change", function () {
+              var file = fileInput.files[0];
+              if (!file) return;
+              if (file.size > 3.5 * 1024 * 1024) { alert("Please use an image under about 3.5MB."); fileInput.value = ""; return; }
+              var reader = new FileReader();
+              reader.onload = function () {
+                draft[f.key] = reader.result;
+                preview.src = reader.result;
+                preview.style.display = "block";
+              };
+              reader.readAsDataURL(file);
+            });
+            row.appendChild(fileInput);
+            row.appendChild(preview);
+            if (draft[f.key]) {
+              var removeBtn = document.createElement("button");
+              removeBtn.type = "button";
+              removeBtn.className = "btn btn-ghost btn-small";
+              removeBtn.style.marginTop = ".5rem";
+              removeBtn.textContent = "Remove photo";
+              removeBtn.addEventListener("click", function () { draft[f.key] = ""; preview.style.display = "none"; fileInput.value = ""; });
+              row.appendChild(removeBtn);
+            }
+          } else if (f.type === "date") {
+            var dateInput = document.createElement("input");
+            dateInput.type = "date";
+            dateInput.id = "f-" + f.key;
+            dateInput.value = draft[f.key] || new Date().toISOString().slice(0, 10);
+            row.appendChild(dateInput);
+          } else {
+            var input = document.createElement("input");
+            input.type = "text";
+            input.id = "f-" + f.key;
+            input.value = draft[f.key] || "";
+            row.appendChild(input);
+          }
+          form.appendChild(row);
+        });
+
+        var actions = document.createElement("div");
+        var saveBtn = document.createElement("button");
+        saveBtn.type = "button";
+        saveBtn.className = "btn btn-primary";
+        saveBtn.textContent = editingId ? "Update item" : "Add item";
+        actions.appendChild(saveBtn);
+        if (editingId) {
+          var cancelBtn = document.createElement("button");
+          cancelBtn.type = "button";
+          cancelBtn.className = "btn btn-ghost";
+          cancelBtn.style.marginLeft = ".6rem";
+          cancelBtn.textContent = "Cancel edit";
+          cancelBtn.addEventListener("click", function () { editingId = null; v.querySelector("#formTitle").textContent = "Add new"; buildForm({}); });
+          actions.appendChild(cancelBtn);
+        }
+        form.appendChild(actions);
+
+        saveBtn.addEventListener("click", function () {
+          var statusEl = v.querySelector("#formStatus");
+          var out = {};
+          var missing = [];
+          cfg.fields.forEach(function (f) {
+            if (f.type === "image") {
+              out[f.key] = draft[f.key] || "";
+            } else {
+              var el2 = document.getElementById("f-" + f.key);
+              out[f.key] = el2 ? el2.value.trim() : "";
+            }
+            if (f.required && !out[f.key]) missing.push(f.label);
+          });
+          if (missing.length) {
+            statusEl.textContent = "Please fill in: " + missing.join(", ");
+            statusEl.className = "status error";
+            return;
+          }
+          cfg.fields.forEach(function (f) {
+            if (f.auto && !out[f.key]) out[f.key] = f.auto(out);
+          });
+
+          if (editingId) {
+            var idx = items.findIndex(function (i) { return i.id === editingId; });
+            if (idx !== -1) items[idx] = Object.assign({ id: editingId }, out);
+            editingId = null;
+          } else {
+            items.push(Object.assign({ id: uid() }, out));
+          }
+          markDirty();
+          v.querySelector("#formTitle").textContent = "Add new";
+          buildForm({});
+          renderList();
+          statusEl.textContent = "Added to the list below. Click “Save changes” to publish.";
+          statusEl.className = "status ok";
+        });
+      }
+
+      function renderList() {
+        var listEl = v.querySelector("#itemList");
+        listEl.innerHTML = "";
+        if (!items.length) {
+          listEl.appendChild(el('<p class="admin-empty">Nothing here yet.</p>'));
+          return;
+        }
+        items.forEach(function (item, idx) {
+          var thumb = item.imageDataUri
+            ? '<img class="admin-item-thumb" src="' + item.imageDataUri + '" alt="">'
+            : '<div class="admin-item-thumb"></div>';
+          var row = el('<div class="admin-item">' + thumb +
+            '<div class="admin-item-body"><h3>' + esc(cfg.itemLabel(item)) + '</h3><p>' + esc(cfg.itemSub(item)) + '</p></div>' +
+            '<div class="admin-item-actions">' +
+            '<button type="button" class="btn btn-ghost" data-act="up"' + (idx === 0 ? " disabled" : "") + '>↑</button>' +
+            '<button type="button" class="btn btn-ghost" data-act="down"' + (idx === items.length - 1 ? " disabled" : "") + '>↓</button>' +
+            '<button type="button" class="btn btn-ghost" data-act="edit">Edit</button>' +
+            '<button type="button" class="btn btn-ghost" data-act="delete">Delete</button>' +
+            '</div></div>');
+          row.querySelector('[data-act="edit"]').addEventListener("click", function () {
+            editingId = item.id;
+            v.querySelector("#formTitle").textContent = "Edit item";
+            buildForm(item);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          });
+          row.querySelector('[data-act="delete"]').addEventListener("click", function () {
+            if (!confirm("Delete “" + cfg.itemLabel(item) + "”? This can’t be undone once you save.")) return;
+            items = items.filter(function (i) { return i.id !== item.id; });
+            markDirty();
+            renderList();
+          });
+          row.querySelector('[data-act="up"]').addEventListener("click", function () {
+            if (idx === 0) return;
+            var tmp = items[idx - 1]; items[idx - 1] = items[idx]; items[idx] = tmp;
+            markDirty(); renderList();
+          });
+          row.querySelector('[data-act="down"]').addEventListener("click", function () {
+            if (idx === items.length - 1) return;
+            var tmp = items[idx + 1]; items[idx + 1] = items[idx]; items[idx] = tmp;
+            markDirty(); renderList();
+          });
+          listEl.appendChild(row);
+        });
+      }
+
+      async function saveAll() {
+        var r = await api("content", { method: "POST", body: JSON.stringify({ slug: cfg.slug, data: items }) });
+        var statusEl = v.querySelector("#listStatus");
+        if (r.ok) {
+          markClean();
+          statusEl.textContent = "Saved -- live on the site now.";
+          statusEl.className = "status ok";
+        } else {
+          statusEl.textContent = (r.body && r.body.error) || "Could not save.";
+          statusEl.className = "status error";
+        }
+      }
+      v.querySelector("#saveAllBtn").addEventListener("click", saveAll);
+
+      buildForm({});
+      renderList();
+      api("content?slug=" + encodeURIComponent(cfg.slug)).then(function (r) {
+        items = (r.ok && r.body && r.body.data) || [];
+        renderList();
+      });
+
+      return v;
+    };
+  }
+
+  views.posts = makeListEditorView(EDITORS.posts);
+  views.portfolio = makeListEditorView(EDITORS.portfolio);
+  views.testimonials = makeListEditorView(EDITORS.testimonials);
+  views.gallery = makeListEditorView(EDITORS.gallery);
+
+  views.images = function () {
+    if (!requireAuth()) return el("<div></div>");
+    document.title = "Image Library — Little Technical Solutions LLC Staff";
+    var v = el('<div>' +
+      '<div class="admin-tabs">' +
+      '<a href="#posts">Blog Posts</a><a href="#portfolio">Portfolio</a><a href="#testimonials">Testimonials</a><a href="#gallery">Gallery</a>' +
+      '<a href="#images" class="is-active">Image Library</a><a href="#customers">Customers</a><a href="#account">Account Settings</a><a href="#dashboard">Dashboard</a>' +
+      '</div>' +
+      '<div class="admin-card"><h1>Image library</h1>' +
+      '<p style="font-size:.88rem; color:var(--ink-soft); margin-bottom:1rem;">Photos you’ve uploaded, for reference. To use one on a post or portfolio item, upload it directly in that item’s form instead -- this list is just for keeping track of what’s here.</p>' +
+      '<div class="form-row"><label for="img-upload">Upload an image</label><input id="img-upload" type="file" accept="image/*"></div>' +
+      '<div class="form-row"><label for="img-alt">Alt text</label><input id="img-alt" type="text"></div>' +
+      '<button class="btn btn-primary" id="img-upload-btn">Upload</button>' +
+      '<p class="status" id="img-status"></p>' +
+      '<div class="admin-item-list" id="img-list"></div>' +
+      '</div></div>');
+
+    function loadList() {
+      api("admin-images").then(function (r) {
+        var listEl = v.querySelector("#img-list");
+        listEl.innerHTML = "";
+        if (!r.ok || !r.body.images.length) { listEl.appendChild(el('<p class="admin-empty">No images uploaded yet.</p>')); return; }
+        r.body.images.forEach(function (img) {
+          var row = el('<div class="admin-item"><div class="admin-item-thumb"></div>' +
+            '<div class="admin-item-body"><h3>' + esc(img.alt || "(no alt text)") + '</h3><p>Uploaded ' + esc(new Date(img.uploadedAt).toLocaleDateString()) + '</p></div>' +
+            '<div class="admin-item-actions"><button type="button" class="btn btn-ghost" data-act="delete">Delete</button></div></div>');
+          row.querySelector('[data-act="delete"]').addEventListener("click", async function () {
+            if (!confirm("Delete this image? Posts/items already using it will keep their own copy.")) return;
+            await api("admin-images", { method: "POST", body: JSON.stringify({ action: "delete", imageId: img.id }) });
+            loadList();
+          });
+          listEl.appendChild(row);
+        });
+      });
+    }
+
+    v.querySelector("#img-upload-btn").addEventListener("click", function () {
+      var status = v.querySelector("#img-status");
+      var file = v.querySelector("#img-upload").files[0];
+      if (!file) { status.textContent = "Choose a file first."; status.className = "status error"; return; }
+      if (file.size > 3.5 * 1024 * 1024) { status.textContent = "Please use an image under about 3.5MB."; status.className = "status error"; return; }
+      var reader = new FileReader();
+      reader.onload = async function () {
+        var r = await api("admin-images", { method: "POST", body: JSON.stringify({ action: "upload", dataUri: reader.result, alt: v.querySelector("#img-alt").value }) });
+        status.textContent = r.ok ? "Uploaded." : ((r.body && r.body.error) || "Upload failed.");
+        status.className = "status " + (r.ok ? "ok" : "error");
+        loadList();
+      };
+      reader.readAsDataURL(file);
+    });
+
+    loadList();
+    return v;
+  };
+
+  views.account = function () {
+    if (!requireAuth()) return el("<div></div>");
+    document.title = "Account Settings — Little Technical Solutions LLC Staff";
+    var v = el('<div>' +
+      '<div class="admin-tabs">' +
+      '<a href="#posts">Blog Posts</a><a href="#portfolio">Portfolio</a><a href="#testimonials">Testimonials</a><a href="#gallery">Gallery</a>' +
+      '<a href="#images">Image Library</a><a href="#customers">Customers</a><a href="#account" class="is-active">Account Settings</a><a href="#dashboard">Dashboard</a>' +
+      '</div>' +
+      '<div class="admin-card"><h1>Account settings</h1>' +
+      '<p style="font-size:.88rem; color:var(--ink-soft);" id="acct-current">Loading&hellip;</p>' +
+      '</div>' +
+      '<div class="admin-card"><h2>Change email</h2>' +
+      '<div class="form-row"><label for="acct-new-email">New email</label><input id="acct-new-email" type="email"></div>' +
+      '<div class="form-row"><label for="acct-email-pw">Current password</label><input id="acct-email-pw" type="password"></div>' +
+      '<button class="btn btn-primary" id="acct-email-submit">Update email</button>' +
+      '<p class="status" id="acct-email-status"></p>' +
+      '<p class="admin-field-hint" style="margin-top:.6rem;">You’ll be signed out and need to sign back in with the new email.</p>' +
+      '</div>' +
+      '<div class="admin-card"><h2>Change password</h2>' +
+      '<div class="form-row"><label for="acct-current-pw">Current password</label><input id="acct-current-pw" type="password"></div>' +
+      '<div class="form-row"><label for="acct-new-pw">New password <span class="admin-field-hint">(at least 10 characters)</span></label><input id="acct-new-pw" type="password"></div>' +
+      '<button class="btn btn-primary" id="acct-pw-submit">Update password</button>' +
+      '<p class="status" id="acct-pw-status"></p>' +
+      '<p class="admin-field-hint" style="margin-top:.6rem;">You’ll be signed out and need to sign back in with the new password.</p>' +
+      '</div></div>');
+
+    api("account").then(function (r) {
+      var el2 = v.querySelector("#acct-current");
+      if (r.ok && r.body.user) {
+        el2.textContent = "Signed in as " + r.body.user.name + " (" + r.body.user.email + "), role: " + r.body.user.role + ".";
+      } else {
+        el2.textContent = "Could not load account details.";
+      }
+    });
+
+    v.querySelector("#acct-email-submit").addEventListener("click", async function () {
+      var status = v.querySelector("#acct-email-status");
+      var newEmail = v.querySelector("#acct-new-email").value.trim();
+      var currentPassword = v.querySelector("#acct-email-pw").value;
+      if (!newEmail || !currentPassword) {
+        status.textContent = "Fill in both fields.";
+        status.className = "status error";
+        return;
+      }
+      var r = await api("account", { method: "POST", body: JSON.stringify({ action: "update-email", newEmail: newEmail, currentPassword: currentPassword }) });
+      status.textContent = (r.body && (r.body.message || r.body.error)) || "Something went wrong.";
+      status.className = "status " + (r.ok ? "ok" : "error");
+      if (r.ok) {
+        state.user = null;
+        renderHeaderActions();
+        setTimeout(function () { window.location.hash = "#signin"; }, 1200);
+      }
+    });
+
+    v.querySelector("#acct-pw-submit").addEventListener("click", async function () {
+      var status = v.querySelector("#acct-pw-status");
+      var currentPassword = v.querySelector("#acct-current-pw").value;
+      var newPassword = v.querySelector("#acct-new-pw").value;
+      if (!currentPassword || !newPassword) {
+        status.textContent = "Fill in both fields.";
+        status.className = "status error";
+        return;
+      }
+      var r = await api("account", { method: "POST", body: JSON.stringify({ action: "update-password", newPassword: newPassword, currentPassword: currentPassword }) });
+      status.textContent = (r.body && (r.body.message || r.body.error)) || "Something went wrong.";
+      status.className = "status " + (r.ok ? "ok" : "error");
+      if (r.ok) {
+        state.user = null;
+        renderHeaderActions();
+        setTimeout(function () { window.location.hash = "#signin"; }, 1200);
+      }
+    });
+
+    return v;
+  };
+
+  var DOC_TYPES = [["invoice", "Invoice"], ["receipt", "Receipt"], ["paperwork", "Paperwork"], ["other", "Other"]];
+  var DOC_STATUSES = [["n/a", "N/A"], ["unpaid", "Unpaid"], ["paid", "Paid"]];
+
+  views.customers = function () {
+    if (!requireAuth()) return el("<div></div>");
+    document.title = "Customers — Little Technical Solutions LLC Staff";
+
+    var currentCustomerEmail = null;
+    var pendingFileDataUri = "";
+    var pendingFileName = "";
+
+    var v = el('<div>' +
+      '<div class="admin-tabs">' +
+      '<a href="#posts">Blog Posts</a><a href="#portfolio">Portfolio</a><a href="#testimonials">Testimonials</a><a href="#gallery">Gallery</a>' +
+      '<a href="#images">Image Library</a><a href="#customers" class="is-active">Customers</a><a href="#account">Account Settings</a><a href="#dashboard">Dashboard</a>' +
+      '</div>' +
+      '<div class="admin-card"><h1>Customer inbox</h1>' +
+      '<p style="font-size:.88rem; color:var(--ink-soft); margin-bottom:1rem;">Customers with an open conversation, newest first.</p>' +
+      '<div class="admin-item-list" id="inbox-list"><p class="admin-empty">Loading&hellip;</p></div>' +
+      '</div>' +
+      '<div class="admin-card"><h1>Look up a customer</h1>' +
+      '<p style="font-size:.88rem; color:var(--ink-soft); margin-bottom:1rem;">Enter the email a customer registered with to see (and add to) their documents and messages. They can only see their own -- there\'s no way for one customer to see another\'s records or messages.</p>' +
+      '<div class="form-row"><label for="doc-email">Customer email</label><input id="doc-email" type="email" placeholder="customer@example.com"></div>' +
+      '<button class="btn btn-primary" id="doc-load-btn">Look up customer</button>' +
+      '<p class="status" id="doc-lookup-status"></p>' +
+      '</div>' +
+      '<div class="admin-card" id="msg-panel-card" style="display:none;"><h2 id="msg-panel-heading">Messages</h2>' +
+      '<div class="msg-thread" id="admin-msg-thread" style="margin-bottom:1rem;"></div>' +
+      '<div class="form-row"><label for="admin-msg-body">Reply</label><textarea id="admin-msg-body" rows="3"></textarea></div>' +
+      '<button class="btn btn-primary" id="admin-msg-send-btn">Send reply</button>' +
+      '<p class="status" id="admin-msg-status"></p>' +
+      '</div>' +
+      '<div class="admin-card" id="notif-panel-card" style="display:none;"><h2>Send a notification</h2>' +
+      '<p style="font-size:.88rem; color:var(--ink-soft); margin-bottom:1rem;">A one-way alert that shows up in this customer\'s account (separate from a message -- use this for things like &ldquo;your appointment was rescheduled&rdquo; that don\'t need a reply).</p>' +
+      '<div class="form-row"><label for="notif-title">Title</label><input id="notif-title" type="text" placeholder="e.g. Appointment rescheduled"></div>' +
+      '<div class="form-row"><label for="notif-body">Details <span class="admin-field-hint">(optional)</span></label><textarea id="notif-body" rows="2"></textarea></div>' +
+      '<button class="btn btn-primary" id="notif-send-btn">Send notification</button>' +
+      '<p class="status" id="notif-send-status"></p>' +
+      '</div>' +
+      '<div class="admin-card" id="doc-upload-card" style="display:none;"><h2 id="doc-upload-heading">Upload a document</h2>' +
+      '<div class="form-row"><label for="doc-title">Title</label><input id="doc-title" type="text"></div>' +
+      '<div class="form-row"><label for="doc-type">Type</label><select id="doc-type">' +
+      DOC_TYPES.map(function (t) { return '<option value="' + t[0] + '">' + t[1] + '</option>'; }).join("") +
+      '</select></div>' +
+      '<div class="form-row"><label for="doc-amount">Amount <span class="admin-field-hint">(optional, e.g. $150.00)</span></label><input id="doc-amount" type="text"></div>' +
+      '<div class="form-row"><label for="doc-status">Status</label><select id="doc-status">' +
+      DOC_STATUSES.map(function (s) { return '<option value="' + s[0] + '">' + s[1] + '</option>'; }).join("") +
+      '</select></div>' +
+      '<div class="form-row"><label for="doc-date">Date</label><input id="doc-date" type="date"></div>' +
+      '<div class="form-row"><label for="doc-notes">Notes <span class="admin-field-hint">(optional)</span></label><textarea id="doc-notes" rows="3"></textarea></div>' +
+      '<div class="form-row"><label for="doc-file">Attachment <span class="admin-field-hint">(optional, PDF or image, under ~3.5MB)</span></label><input id="doc-file" type="file" accept="application/pdf,image/*"></div>' +
+      '<button class="btn btn-primary" id="doc-upload-btn">Upload for this customer</button>' +
+      '<p class="status" id="doc-upload-status"></p>' +
+      '</div>' +
+      '<div class="admin-card" id="doc-list-card" style="display:none;"><h2 id="doc-list-heading">This customer\'s documents</h2>' +
+      '<div class="admin-item-list" id="doc-list"></div>' +
+      '</div></div>');
+
+    var dateInput = v.querySelector("#doc-date");
+    dateInput.value = new Date().toISOString().slice(0, 10);
+
+    v.querySelector("#doc-file").addEventListener("change", function () {
+      var file = this.files[0];
+      pendingFileDataUri = "";
+      pendingFileName = "";
+      if (!file) return;
+      if (file.size > 3.5 * 1024 * 1024) { alert("Please use a file under about 3.5MB."); this.value = ""; return; }
+      var reader = new FileReader();
+      reader.onload = function () { pendingFileDataUri = reader.result; pendingFileName = file.name; };
+      reader.readAsDataURL(file);
+    });
+
+    function loadInbox() {
+      api("messages?inbox=1").then(function (r) {
+        var listEl = v.querySelector("#inbox-list");
+        if (!r.ok) { listEl.innerHTML = '<p class="admin-empty">Could not load the inbox.</p>'; return; }
+        var rows = r.body.customers || [];
+        if (!rows.length) { listEl.innerHTML = '<p class="admin-empty">No conversations yet.</p>'; return; }
+        listEl.innerHTML = "";
+        rows.forEach(function (row) {
+          var unreadBit = row.unreadCount ? ' <strong style="color:var(--accent-orange-text);">(' + row.unreadCount + ' unread)</strong>' : "";
+          var item = el('<div class="admin-item"><div class="admin-item-thumb"></div>' +
+            '<div class="admin-item-body"><h3>' + esc(row.customerEmail) + unreadBit + '</h3><p>' + esc(row.lastMessageSnippet) + '</p></div>' +
+            '<div class="admin-item-actions"><button type="button" class="btn btn-ghost" data-act="open">Open</button></div></div>');
+          item.querySelector("button").addEventListener("click", function () {
+            v.querySelector("#doc-email").value = row.customerEmail;
+            lookupCustomer(row.customerEmail);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          });
+          listEl.appendChild(item);
+        });
+      });
+    }
+
+    function loadMessagesFor(email) {
+      api("messages?customerEmail=" + encodeURIComponent(email)).then(function (r) {
+        var panel = v.querySelector("#msg-panel-card");
+        var threadEl = v.querySelector("#admin-msg-thread");
+        if (!r.ok) { panel.style.display = "none"; return; }
+        panel.style.display = "";
+        v.querySelector("#msg-panel-heading").textContent = "Messages with " + r.body.customer.name;
+        var msgs = r.body.messages || [];
+        if (!msgs.length) {
+          threadEl.innerHTML = '<p style="color:var(--ink-faint); font-size:.85rem;">No messages yet.</p>';
+          return;
+        }
+        threadEl.innerHTML = "";
+        msgs.forEach(function (m) {
+          var mine = m.from === "staff";
+          var bubble = el('<div class="msg-bubble ' + (mine ? "msg-bubble--mine" : "msg-bubble--theirs") + '">' +
+            '<p class="msg-bubble-meta">' + esc(mine ? "You" : r.body.customer.name) + ' &middot; ' + esc(new Date(m.createdAt).toLocaleString()) + '</p>' +
+            '<p class="msg-bubble-body"></p></div>');
+          bubble.querySelector(".msg-bubble-body").textContent = m.body;
+          threadEl.appendChild(bubble);
+        });
+        threadEl.scrollTop = threadEl.scrollHeight;
+      });
+    }
+
+    function loadDocsFor(email) {
+      api("documents?customerEmail=" + encodeURIComponent(email)).then(function (r) {
+        var listCard = v.querySelector("#doc-list-card");
+        var listEl = v.querySelector("#doc-list");
+        var uploadCard = v.querySelector("#doc-upload-card");
+        if (!r.ok) { uploadCard.style.display = "none"; listCard.style.display = "none"; return; }
+
+        uploadCard.style.display = "";
+        listCard.style.display = "";
+        v.querySelector("#doc-upload-heading").textContent = "Upload a document for " + r.body.customer.name;
+        v.querySelector("#doc-list-heading").textContent = r.body.customer.name + "'s documents";
+
+        listEl.innerHTML = "";
+        if (!r.body.documents.length) {
+          listEl.appendChild(el('<p class="admin-empty">No documents uploaded for this customer yet.</p>'));
+          return;
+        }
+        r.body.documents.forEach(function (doc) {
+          var sub = [doc.date, doc.amount, doc.status !== "n/a" ? doc.status : null].filter(Boolean).join(" · ");
+          var row = el('<div class="admin-item"><div class="admin-item-thumb"></div>' +
+            '<div class="admin-item-body"><h3>' + esc(doc.title) + ' <span class="admin-field-hint">(' + esc(doc.type) + ')</span></h3><p>' + esc(sub) + '</p></div>' +
+            '<div class="admin-item-actions"><button type="button" class="btn btn-ghost" data-act="delete">Delete</button></div></div>');
+          row.querySelector('[data-act="delete"]').addEventListener("click", async function () {
+            if (!confirm('Delete "' + doc.title + '"? This can\'t be undone.')) return;
+            await api("documents", { method: "POST", body: JSON.stringify({ action: "delete", documentId: doc.id }) });
+            loadDocsFor(email);
+          });
+          listEl.appendChild(row);
+        });
+      });
+    }
+
+    function lookupCustomer(email) {
+      var lookupStatus = v.querySelector("#doc-lookup-status");
+      api("documents?customerEmail=" + encodeURIComponent(email)).then(function (r) {
+        if (!r.ok) {
+          lookupStatus.textContent = (r.body && r.body.error) || "Could not find that customer.";
+          lookupStatus.className = "status error";
+          currentCustomerEmail = null;
+          v.querySelector("#doc-upload-card").style.display = "none";
+          v.querySelector("#doc-list-card").style.display = "none";
+          v.querySelector("#msg-panel-card").style.display = "none";
+          v.querySelector("#notif-panel-card").style.display = "none";
+          return;
+        }
+        currentCustomerEmail = email;
+        lookupStatus.textContent = "Found: " + r.body.customer.name + " (" + r.body.customer.email + ")";
+        lookupStatus.className = "status ok";
+        v.querySelector("#notif-panel-card").style.display = "";
+        loadDocsFor(email);
+        loadMessagesFor(email);
+      });
+    }
+
+    v.querySelector("#doc-load-btn").addEventListener("click", function () {
+      var email = v.querySelector("#doc-email").value.trim();
+      if (!email) return;
+      lookupCustomer(email);
+    });
+
+    v.querySelector("#admin-msg-send-btn").addEventListener("click", async function () {
+      var status = v.querySelector("#admin-msg-status");
+      if (!currentCustomerEmail) { status.textContent = "Look up a customer first."; status.className = "status error"; return; }
+      var textarea = v.querySelector("#admin-msg-body");
+      var text = textarea.value.trim();
+      if (!text) { status.textContent = "Type a message first."; status.className = "status error"; return; }
+      var r = await api("messages", { method: "POST", body: JSON.stringify({ customerEmail: currentCustomerEmail, body: text }) });
+      status.textContent = r.ok ? "" : ((r.body && r.body.error) || "Could not send.");
+      status.className = "status " + (r.ok ? "ok" : "error");
+      if (r.ok) {
+        textarea.value = "";
+        loadMessagesFor(currentCustomerEmail);
+        loadInbox();
+      }
+    });
+
+    v.querySelector("#notif-send-btn").addEventListener("click", async function () {
+      var status = v.querySelector("#notif-send-status");
+      if (!currentCustomerEmail) { status.textContent = "Look up a customer first."; status.className = "status error"; return; }
+      var titleInput = v.querySelector("#notif-title");
+      var title = titleInput.value.trim();
+      if (!title) { status.textContent = "Title is required."; status.className = "status error"; return; }
+      var r = await api("notifications", { method: "POST", body: JSON.stringify({ action: "create", userEmail: currentCustomerEmail, title: title, body: v.querySelector("#notif-body").value.trim() }) });
+      status.textContent = r.ok ? "Sent." : ((r.body && r.body.error) || "Could not send.");
+      status.className = "status " + (r.ok ? "ok" : "error");
+      if (r.ok) {
+        titleInput.value = "";
+        v.querySelector("#notif-body").value = "";
+      }
+    });
+
+    v.querySelector("#doc-upload-btn").addEventListener("click", async function () {
+      var status = v.querySelector("#doc-upload-status");
+      if (!currentCustomerEmail) { status.textContent = "Look up a customer first."; status.className = "status error"; return; }
+      var title = v.querySelector("#doc-title").value.trim();
+      if (!title) { status.textContent = "Title is required."; status.className = "status error"; return; }
+
+      var r = await api("documents", { method: "POST", body: JSON.stringify({
+        action: "upload",
+        customerEmail: currentCustomerEmail,
+        title: title,
+        type: v.querySelector("#doc-type").value,
+        amount: v.querySelector("#doc-amount").value.trim(),
+        status: v.querySelector("#doc-status").value,
+        date: v.querySelector("#doc-date").value,
+        notes: v.querySelector("#doc-notes").value.trim(),
+        fileDataUri: pendingFileDataUri,
+        fileName: pendingFileName,
+      }) });
+      status.textContent = r.ok ? "Uploaded." : ((r.body && r.body.error) || "Could not upload.");
+      status.className = "status " + (r.ok ? "ok" : "error");
+      if (r.ok) {
+        v.querySelector("#doc-title").value = "";
+        v.querySelector("#doc-amount").value = "";
+        v.querySelector("#doc-notes").value = "";
+        v.querySelector("#doc-file").value = "";
+        pendingFileDataUri = "";
+        pendingFileName = "";
+        loadDocsFor(currentCustomerEmail);
+      }
+    });
+
+    loadInbox();
+    return v;
+  };
+
+  function route() {
+    var hash = (window.location.hash || "#signin").split("?")[0].replace("#", "");
+    var view = views[hash];
+    var container = document.getElementById("view");
+    container.innerHTML = "";
+    if (!view) { container.appendChild(el('<div class="admin-card"><p>Unknown page.</p></div>')); return; }
+    container.appendChild(view());
+  }
+
+  window.addEventListener("hashchange", route);
+  loadSession().then(function () { renderHeaderActions(); route(); }).catch(function () { renderHeaderActions(); route(); });
+})();
+</script>
+</body>
+</html>
