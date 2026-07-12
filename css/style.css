@@ -118,6 +118,7 @@ p{ margin:0; }
 /* =========================================================
    Buttons
    ========================================================= */
+.btn[hidden]{ display:none; }
 .btn{
   display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
   font-family: var(--font-display);
@@ -1532,3 +1533,54 @@ textarea{ resize: vertical; }
 .gallery-figure figcaption{ padding:.75rem 1rem; font-size:.85rem; color: var(--ink-soft); }
 @media (max-width:900px){ .gallery-grid{ grid-template-columns: 1fr 1fr; } }
 @media (max-width:560px){ .gallery-grid{ grid-template-columns: 1fr; } }
+
+/* =========================================================
+   v1.19 additions — Website Designer configurator
+   ========================================================= */
+.wd-tool{ padding: 3rem 0 4.5rem; }
+.wd-illustrative-note{ font-size:.78rem; color: var(--ink-faint); font-style:italic; margin-bottom:1.25rem; }
+
+.wd-steps{ display:flex; gap:.5rem; margin-bottom:2rem; border-bottom:1px solid var(--line); }
+.wd-step{
+  background:none; border:none; border-bottom:2px solid transparent; padding:.75rem .25rem; margin-right:1.5rem;
+  font-family: var(--font-display); font-size:.85rem; font-weight:600; color: var(--ink-faint); cursor:pointer;
+}
+.wd-step:disabled{ cursor:default; opacity:.55; }
+.wd-step.is-active{ color: var(--ink); border-bottom-color: var(--accent-orange); }
+
+.wd-layout{ display:grid; grid-template-columns: 1fr 320px; gap:2.5rem; align-items:flex-start; }
+.wd-panel{ display:none; }
+.wd-panel.is-active{ display:block; }
+
+.wd-section-title{ font-size:1.15rem; margin:2rem 0 .3rem; }
+.wd-note{ font-size:.85rem; color: var(--ink-soft); margin-bottom:1rem; }
+.wd-note-inline{ font-size:.78rem; color: var(--ink-faint); font-weight:400; }
+
+.wd-included-card{ margin-bottom:1rem; }
+.wd-included-list{ list-style:none; margin:0; padding:0; columns:2; column-gap:1.5rem; }
+.wd-included-list li{ position:relative; padding-left:1.4rem; margin-bottom:.5rem; font-size:.86rem; color: var(--ink-soft); break-inside: avoid; }
+.wd-included-list li::before{ content:"✓"; position:absolute; left:0; color: var(--accent-teal-text); font-weight:700; }
+@media (max-width:600px){ .wd-included-list{ columns:1; } }
+
+.wd-category{ margin-bottom:1.5rem; }
+.wd-category-title{ font-family: var(--font-display); font-size:.8rem; font-weight:700; letter-spacing:.03em; text-transform:uppercase; color: var(--accent-teal-text); margin-bottom:.6rem; }
+
+.wd-panel-actions{ display:flex; justify-content:space-between; gap:1rem; margin-top:2rem; padding-top:1.5rem; border-top:1px dashed var(--line); }
+
+.wd-summary{ position:sticky; top: calc(var(--header-h) + 1.5rem); padding:1.5rem; }
+.wd-summary h2{ font-size:1.05rem; margin-bottom:.3rem; }
+.wd-summary-line{ display:flex; justify-content:space-between; gap:.5rem; font-size:.88rem; padding:.6rem 0; border-bottom:1px solid var(--line); }
+.wd-summary-base{ font-weight:600; }
+.wd-summary-premium span{ color: var(--accent-orange-text); font-weight:600; }
+.wd-summary-list{ list-style:none; margin:0 0 .75rem; padding:0; }
+.wd-summary-list li{ font-size:.78rem; color: var(--ink-soft); padding:.15rem 0 .15rem .9rem; position:relative; }
+.wd-summary-list li::before{ content:"–"; position:absolute; left:0; color: var(--ink-faint); }
+
+.wd-done-card{ text-align:center; padding:2.5rem; max-width:520px; margin:2rem auto 0; }
+.wd-done-card h2{ margin-bottom:.75rem; }
+.wd-done-card .wd-note{ margin:1rem 0 1.5rem; }
+
+@media (max-width:920px){
+  .wd-layout{ grid-template-columns: 1fr; }
+  .wd-summary{ position:static; order:-1; }
+}
