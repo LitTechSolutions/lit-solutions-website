@@ -8,43 +8,57 @@
           "req_id": "REQ-16",
           "title": "Additional standard pages",
           "priority": "C",
-          "pdf_label": "Additional standard pages"
+          "kind": "content",
+          "pdf_label": "Additional standard pages",
+          "price": 60
         },
         {
           "req_id": "REQ-17",
           "title": "Blog / News section",
           "priority": "C",
-          "pdf_label": "Blog / News section"
+          "kind": "content",
+          "pdf_label": "Blog / News section",
+          "price": 150
         },
         {
           "req_id": "REQ-18",
           "title": "Portfolio / Gallery page",
           "priority": "C",
-          "pdf_label": "Portfolio / Gallery page"
+          "kind": "content",
+          "pdf_label": "Portfolio / Gallery page",
+          "price": 100
         },
         {
           "req_id": "REQ-19",
           "title": "FAQ page",
           "priority": "C",
-          "pdf_label": "FAQ page"
+          "kind": "content",
+          "pdf_label": "FAQ page",
+          "price": 60
         },
         {
           "req_id": "REQ-20",
           "title": "Testimonials / Reviews",
           "priority": "C",
-          "pdf_label": "Testimonials / Reviews"
+          "kind": "content",
+          "pdf_label": "Testimonials / Reviews",
+          "price": 60
         },
         {
           "req_id": "REQ-21",
           "title": "Team / Staff page",
           "priority": "C",
-          "pdf_label": "Team / Staff page"
+          "kind": "content",
+          "pdf_label": "Team / Staff page",
+          "price": 60
         },
         {
           "req_id": "REQ-22",
           "title": "Pricing page",
           "priority": "C",
-          "pdf_label": "Pricing page"
+          "kind": "content",
+          "pdf_label": "Pricing page",
+          "price": 60
         }
       ]
     },
@@ -55,19 +69,25 @@
           "req_id": "REQ-26",
           "title": "Custom graphics & icons",
           "priority": "C",
-          "pdf_label": "Custom graphics & icons"
+          "kind": "content",
+          "pdf_label": "Custom graphics & icons",
+          "price": 80
         },
         {
           "req_id": "REQ-27",
           "title": "Light / dark appearance mode",
           "priority": "C",
-          "pdf_label": "Light / dark appearance mode"
+          "kind": "behavior",
+          "pdf_label": "Light / dark appearance mode",
+          "price": 50
         },
         {
           "req_id": "REQ-28",
           "title": "Motion & transitions",
           "priority": "C",
-          "pdf_label": "Motion & transitions"
+          "kind": "behavior",
+          "pdf_label": "Motion & transitions",
+          "price": 40
         }
       ]
     },
@@ -78,19 +98,25 @@
           "req_id": "REQ-32",
           "title": "Breadcrumb navigation",
           "priority": "C",
-          "pdf_label": "Breadcrumb navigation"
+          "kind": "behavior",
+          "pdf_label": "Breadcrumb navigation",
+          "price": 30
         },
         {
           "req_id": "REQ-33",
           "title": "In-page navigation (anchors)",
           "priority": "C",
-          "pdf_label": "In-page navigation (anchors)"
+          "kind": "behavior",
+          "pdf_label": "In-page navigation (anchors)",
+          "price": 30
         },
         {
           "req_id": "REQ-34",
           "title": "Sitemap page",
           "priority": "C",
-          "pdf_label": "Sitemap page"
+          "kind": "content",
+          "pdf_label": "Sitemap page",
+          "price": 25
         }
       ]
     },
@@ -101,7 +127,9 @@
           "req_id": "REQ-35",
           "title": "Site-wide search",
           "priority": "C",
-          "pdf_label": "Site-wide search"
+          "kind": "behavior",
+          "pdf_label": "Site-wide search",
+          "price": 120
         }
       ]
     },
@@ -112,13 +140,17 @@
           "req_id": "REQ-39",
           "title": "Additional custom forms",
           "priority": "C",
-          "pdf_label": "Additional custom forms"
+          "kind": "content",
+          "pdf_label": "Additional custom forms",
+          "price": 75
         },
         {
           "req_id": "REQ-40",
           "title": "File upload with validation",
           "priority": "C",
-          "pdf_label": "File upload with validation"
+          "kind": "behavior",
+          "pdf_label": "File upload with validation",
+          "price": 60
         }
       ]
     },
@@ -129,13 +161,17 @@
           "req_id": "REQ-46",
           "title": "Map / location embed",
           "priority": "C",
-          "pdf_label": "Map / location embed"
+          "kind": "content",
+          "pdf_label": "Map / location embed",
+          "price": 40
         },
         {
           "req_id": "REQ-47",
           "title": "Newsletter signup",
           "priority": "C",
-          "pdf_label": "Newsletter signup"
+          "kind": "behavior",
+          "pdf_label": "Newsletter signup",
+          "price": 50
         }
       ]
     },
@@ -146,7 +182,9 @@
           "req_id": "REQ-48",
           "title": "SMS / text notifications",
           "priority": "S",
-          "pdf_label": "SMS / text notifications"
+          "kind": null,
+          "pdf_label": "SMS / text notifications",
+          "price": null
         }
       ]
     },
@@ -157,13 +195,17 @@
           "req_id": "REQ-52",
           "title": "Consent management",
           "priority": "C",
-          "pdf_label": "Consent management"
+          "kind": "behavior",
+          "pdf_label": "Consent management",
+          "price": 60
         },
         {
           "req_id": "REQ-53",
           "title": "Advanced privacy (rights, transfers)",
           "priority": "S",
-          "pdf_label": "Advanced privacy (rights, transfers)"
+          "kind": null,
+          "pdf_label": "Advanced privacy (rights, transfers)",
+          "price": null
         }
       ]
     },
@@ -174,37 +216,49 @@
           "req_id": "REQ-57",
           "title": "Structured data (schema)",
           "priority": "C",
-          "pdf_label": "Structured data (schema)"
+          "kind": "behavior",
+          "pdf_label": "Structured data (schema)",
+          "price": 50
         },
         {
           "req_id": "REQ-58",
           "title": "Analytics integration",
           "priority": "C",
-          "pdf_label": "Analytics integration"
+          "kind": "behavior",
+          "pdf_label": "Analytics integration",
+          "price": 40
         },
         {
           "req_id": "REQ-59",
           "title": "Search Console setup",
           "priority": "C",
-          "pdf_label": "Search Console setup"
+          "kind": "process",
+          "pdf_label": "Search Console setup",
+          "price": 30
         },
         {
           "req_id": "REQ-81",
           "title": "Enhanced SEO & Structured Data Package",
           "priority": "S",
-          "pdf_label": "Enhanced SEO & Structured Data Package (separate quote)"
+          "kind": null,
+          "pdf_label": "Enhanced SEO & Structured Data Package (separate quote)",
+          "price": null
         },
         {
           "req_id": "REQ-82",
           "title": "Conversion Tracking & A/B Testing",
           "priority": "S",
-          "pdf_label": "Conversion Tracking & A/B Testing (separate quote)"
+          "kind": null,
+          "pdf_label": "Conversion Tracking & A/B Testing (separate quote)",
+          "price": null
         },
         {
           "req_id": "REQ-83",
           "title": "Multi-Location / International SEO",
           "priority": "S",
-          "pdf_label": "Multi-Location / International SEO (separate quote)"
+          "kind": null,
+          "pdf_label": "Multi-Location / International SEO (separate quote)",
+          "price": null
         }
       ]
     },
@@ -215,25 +269,33 @@
           "req_id": "REQ-68",
           "title": "Rate limiting",
           "priority": "C",
-          "pdf_label": "Rate limiting"
+          "kind": "behavior",
+          "pdf_label": "Rate limiting",
+          "price": 40
         },
         {
           "req_id": "REQ-69",
           "title": "Automated backups",
           "priority": "C",
-          "pdf_label": "Automated backups"
+          "kind": "process",
+          "pdf_label": "Automated backups",
+          "price": 40
         },
         {
           "req_id": "REQ-90",
           "title": "Advanced Security Hardening (WAF & Penetration Testing)",
           "priority": "S",
-          "pdf_label": "Advanced Security Hardening (WAF & Penetration Testing) (separate quote)"
+          "kind": null,
+          "pdf_label": "Advanced Security Hardening (WAF & Penetration Testing) (separate quote)",
+          "price": null
         },
         {
           "req_id": "REQ-91",
           "title": "Uptime & Performance Monitoring",
           "priority": "C",
-          "pdf_label": "Uptime & Performance Monitoring"
+          "kind": "process",
+          "pdf_label": "Uptime & Performance Monitoring",
+          "price": 35
         }
       ]
     },
@@ -244,7 +306,9 @@
           "req_id": "REQ-70",
           "title": "Two-factor authentication",
           "priority": "S",
-          "pdf_label": "Two-factor authentication (separate quote)"
+          "kind": null,
+          "pdf_label": "Two-factor authentication (separate quote)",
+          "price": null
         }
       ]
     },
@@ -255,7 +319,9 @@
           "req_id": "REQ-71",
           "title": "Account lifecycle management",
           "priority": "S",
-          "pdf_label": "Account lifecycle management (separate quote)"
+          "kind": null,
+          "pdf_label": "Account lifecycle management (separate quote)",
+          "price": null
         }
       ]
     },
@@ -266,13 +332,17 @@
           "req_id": "REQ-72",
           "title": "Image gallery",
           "priority": "C",
-          "pdf_label": "Image gallery"
+          "kind": "content",
+          "pdf_label": "Image gallery",
+          "price": 80
         },
         {
           "req_id": "REQ-73",
           "title": "Media library with access control",
           "priority": "S",
-          "pdf_label": "Media library with access control (separate quote)"
+          "kind": null,
+          "pdf_label": "Media library with access control (separate quote)",
+          "price": null
         }
       ]
     },
@@ -283,7 +353,9 @@
           "req_id": "REQ-74",
           "title": "Full administrative suite",
           "priority": "S",
-          "pdf_label": "Full administrative suite (separate quote)"
+          "kind": null,
+          "pdf_label": "Full administrative suite (separate quote)",
+          "price": null
         }
       ]
     },
@@ -294,31 +366,41 @@
           "req_id": "REQ-75",
           "title": "Payment processing",
           "priority": "S",
-          "pdf_label": "Payment processing (separate quote)"
+          "kind": null,
+          "pdf_label": "Payment processing (separate quote)",
+          "price": null
         },
         {
           "req_id": "REQ-76",
           "title": "Shopping cart & checkout",
           "priority": "S",
-          "pdf_label": "Shopping cart & checkout (separate quote)"
+          "kind": null,
+          "pdf_label": "Shopping cart & checkout (separate quote)",
+          "price": null
         },
         {
           "req_id": "REQ-77",
           "title": "Subscriptions & recurring billing",
           "priority": "S",
-          "pdf_label": "Subscriptions & recurring billing (separate quote)"
+          "kind": null,
+          "pdf_label": "Subscriptions & recurring billing (separate quote)",
+          "price": null
         },
         {
           "req_id": "REQ-78",
           "title": "Invoicing & billing records",
           "priority": "S",
-          "pdf_label": "Invoicing & billing records (separate quote)"
+          "kind": null,
+          "pdf_label": "Invoicing & billing records (separate quote)",
+          "price": null
         },
         {
           "req_id": "REQ-85",
           "title": "Product/Service Catalog & Storefront",
           "priority": "S",
-          "pdf_label": "Product/Service Catalog & Storefront (separate quote)"
+          "kind": null,
+          "pdf_label": "Product/Service Catalog & Storefront (separate quote)",
+          "price": null
         }
       ]
     },
@@ -329,13 +411,17 @@
           "req_id": "REQ-79",
           "title": "Support ticket system",
           "priority": "S",
-          "pdf_label": "Support ticket system (separate quote)"
+          "kind": null,
+          "pdf_label": "Support ticket system (separate quote)",
+          "price": null
         },
         {
           "req_id": "REQ-80",
           "title": "Knowledge base",
           "priority": "S",
-          "pdf_label": "Knowledge base (separate quote)"
+          "kind": null,
+          "pdf_label": "Knowledge base (separate quote)",
+          "price": null
         }
       ]
     },
@@ -346,7 +432,9 @@
           "req_id": "REQ-84",
           "title": "Accessibility Audit & VPAT Certification",
           "priority": "S",
-          "pdf_label": "Accessibility Audit & VPAT Certification (separate quote)"
+          "kind": null,
+          "pdf_label": "Accessibility Audit & VPAT Certification (separate quote)",
+          "price": null
         }
       ]
     },
@@ -357,13 +445,17 @@
           "req_id": "REQ-86",
           "title": "Online Booking Request Form",
           "priority": "C",
-          "pdf_label": "Online Booking Request Form"
+          "kind": "content",
+          "pdf_label": "Online Booking Request Form",
+          "price": 90
         },
         {
           "req_id": "REQ-87",
           "title": "Real-Time Calendar & Availability Sync",
           "priority": "S",
-          "pdf_label": "Real-Time Calendar & Availability Sync (separate quote)"
+          "kind": null,
+          "pdf_label": "Real-Time Calendar & Availability Sync (separate quote)",
+          "price": null
         }
       ]
     },
@@ -374,7 +466,9 @@
           "req_id": "REQ-88",
           "title": "Star Ratings on Testimonials",
           "priority": "C",
-          "pdf_label": "Star Ratings on Testimonials"
+          "kind": "behavior",
+          "pdf_label": "Star Ratings on Testimonials",
+          "price": 30
         }
       ]
     },
@@ -385,7 +479,9 @@
           "req_id": "REQ-89",
           "title": "Additional Language Support",
           "priority": "S",
-          "pdf_label": "Additional Language Support (separate quote)"
+          "kind": null,
+          "pdf_label": "Additional Language Support (separate quote)",
+          "price": null
         }
       ]
     },
@@ -396,7 +492,9 @@
           "req_id": "REQ-92",
           "title": "CRM / Business Tool Integration",
           "priority": "S",
-          "pdf_label": "CRM / Business Tool Integration (separate quote)"
+          "kind": null,
+          "pdf_label": "CRM / Business Tool Integration (separate quote)",
+          "price": null
         }
       ]
     }

@@ -192,13 +192,9 @@
           <!-- Step 3: customer details + submit -->
           <div class="wd-panel" id="wdStep3" data-panel="3">
             <h2 class="wd-section-title">Your details</h2>
-            <form name="website-designer" method="POST" data-netlify="true" netlify-honeypot="wd-bot-field" id="wdForm">
-              <p class="honeypot-field" style="position:absolute;left:-9999px;"><label>Don't fill this out: <input name="wd-bot-field"></label></p>
-              <input type="hidden" name="form-name" value="website-designer">
-              <input type="hidden" name="package" id="wdFieldPackage">
-              <input type="hidden" name="estimate_summary" id="wdFieldEstimateSummary">
-              <input type="hidden" name="selected_optional" id="wdFieldOptional">
-              <input type="hidden" name="selected_premium" id="wdFieldPremium">
+            <p class="wd-note">Last step -- this is what gets turned into a project summary PDF and sent straight to us.</p>
+            <form id="wdForm">
+              <p class="honeypot-field" style="position:absolute;left:-9999px;"><label>Don't fill this out: <input name="wd-bot-field" id="wdHoneypot"></label></p>
 
               <div class="form-row form-row--split">
                 <div>
@@ -255,12 +251,30 @@
 
         </div>
 
-        <aside class="wd-summary card" id="wdSummary" aria-label="Your running estimate">
-          <h2>Your estimate</h2>
-          <p class="wd-illustrative-note">Example estimate -- excludes anything marked custom quote.</p>
-          <div id="wdSummaryBody">
-            <p class="wd-note">Choose a package to begin.</p>
+        <aside class="wd-preview-panel" aria-label="Live preview of your website">
+          <div class="wd-price-ticker">
+            <span class="wd-price-ticker-label">Your estimate</span>
+            <span class="wd-price-ticker-amount" id="wdPriceAmount">$0</span>
+            <span class="wd-price-ticker-note" id="wdPriceNote">Choose a package to begin</span>
           </div>
+
+          <div class="wd-browser" id="wdBrowser">
+            <div class="wd-browser-chrome">
+              <span class="wd-browser-dot"></span><span class="wd-browser-dot"></span><span class="wd-browser-dot"></span>
+              <span class="wd-browser-url" id="wdBrowserUrl">yourbusiness.com</span>
+            </div>
+            <div class="wd-browser-viewport" id="wdBrowserViewport">
+              <div class="wd-browser-empty" id="wdBrowserEmpty">
+                <span class="wd-browser-empty-icon">🌱</span>
+                <p>Your website will grow here as you build it.</p>
+              </div>
+              <nav class="wd-preview-nav" id="wdPreviewNav" hidden></nav>
+              <div class="wd-preview-sections" id="wdPreviewSections"></div>
+              <div class="wd-preview-badges" id="wdPreviewBadges"></div>
+            </div>
+          </div>
+
+          <div class="wd-cost-breakdown" id="wdCostBreakdown"></div>
           <button type="button" class="btn btn-ghost btn-block" id="wdDownloadPdf" hidden>Download summary (PDF)</button>
         </aside>
       </div>

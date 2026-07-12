@@ -17,7 +17,7 @@
 // retrieved from the Netlify Blobs dashboard instead of an inbox until
 // then; see the escape hatches documented in README_ADMIN_SETUP.md).
 
-async function sendEmail({ to, subject, html }) {
+async function sendEmail({ to, subject, html, attachments }) {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.EMAIL_FROM;
 
@@ -27,10 +27,14 @@ async function sendEmail({ to, subject, html }) {
   }
 
   try {
+    // attachments: [{ filename, content }] -- content is base64, no data: URI prefix
+    // (Resend's /emails endpoint accepts this directly; see README_ADMIN_SETUP.md)
+    const payload = { from, to, subject, html };
+    if (attachments && attachments.length) payload.attachments = attachments;
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from, to, subject, html }),
+      body: JSON.stringify(payload),
     });
     if (!res.ok) {
       const detail = await res.text().catch(() => "");

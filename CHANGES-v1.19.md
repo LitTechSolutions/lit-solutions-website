@@ -3,92 +3,139 @@
 You asked for the new Website Designer configurator tool -- the customer-
 facing package configurator/estimator (previously specified in
 `Functions/Online Website Creator Tool/Online_Website_Creator_Tool_System_Requirements.xlsx`,
-228 requirements) -- to actually be built and put on this website.
+228 requirements) -- to actually be built and put on this website. You then
+asked for a second pass to make it a genuinely fun, real-time experience:
+a live mini-website that visibly grows as features are picked, real-time
+price adjustment, and an automatic PDF-to-email pipeline at submission.
 
 ## New: `website-designer.html` + `js/website-designer.js`
 
 A three-step tool: pick Starter ($699) or Business ($1,299), check off the
-features you want from the real feature catalog, then submit your details.
+features you want while watching a live preview of the site grow and the
+price update in real time, then submit your details.
 
 - **Step 1 -- Package.** Starter/Business cards matching `pricing.html`.
-- **Step 2 -- Features.** Optional and Premium features are rendered from
-  `starter-catalog.json` / `business-catalog.json`, generated directly from
-  `feature_manifest.json` (REQ-1..92 / REQ-1..120) so this can never drift
-  from the actual build spec -- 49 Starter items, 58 Business items, each
-  under its real feature-area heading. A running "Your estimate" sidebar
-  updates live as boxes are checked.
+- **Step 2 -- Features, with a live-growing preview.** A mock browser
+  window starts empty ("Your website will grow here as you build it") and
+  fills in as boxes are checked: content-producing features (blog,
+  portfolio, testimonials, booking form, etc.) animate in as their own
+  mini section card with an icon and a representative blurb, plus a nav
+  pill; behavior/process features (dark mode, rate limiting, analytics)
+  show as small badge chips instead of a full section, since those aren't
+  visual page content; Premium/custom-quote features never get built into
+  the preview at all -- they show a distinct locked 🔒 badge, so nothing
+  ever implies a capability was "built" when it actually needs a separate
+  scope and quote. Unchecking a box removes its card/badge with a matching
+  fade-out. A price ticker sits above the preview and updates immediately
+  on every change, with a brief count-up/pulse animation for polish
+  (skipped entirely under `prefers-reduced-motion`).
 - **Step 3 -- Your details.** Business/contact fields, a required
   estimate/consent acknowledgment, and submit.
-- Submission uses Netlify's native form handling (`data-netlify="true"`,
-  honeypot field) -- the same pattern already used by `contact.html` and
-  `intake.html` -- so it reaches Forms > Notifications once that's
-  configured, with no new backend code or environment variables needed.
-  A client-side "Download summary (PDF)" button (via jsPDF) gives the
-  customer their own copy.
 
-## Known limitation, called out in the tool itself and not hidden
+Optional and Premium features are rendered from `starter-catalog.json` /
+`business-catalog.json`, generated directly from `feature_manifest.json`
+(REQ-1..92 / REQ-1..120) so this can never drift from the actual build
+spec -- 49 Starter items, 58 Business items, each under its real
+feature-area heading.
 
-**No per-feature pricing exists yet** (Configuration Decision D-01 in the
-reference spec is still open -- it's an owner pricing decision, not
-something I can invent for a live customer-facing tool). The estimate
-shown is: the package's real starting price ($699/$1,299), plus a
-plain-language list of which optional features were selected and which
-premium add-ons need a custom quote -- never a fabricated total. Every
-screen says outright that this is an example estimate and the final price
-is confirmed by us. When per-feature pricing is decided, extending
-`starter-catalog.json`/`business-catalog.json` with prices and updating
-`updateSummary()` in `js/website-designer.js` to compute a real running
-total is the next step.
+## Real-time pricing -- now with real per-feature numbers
 
-## Site-wide integration
+The first pass deliberately avoided inventing per-feature prices (spec
+decision D-01 was, and still is, open). Since real-time price movement
+was the specific ask this round, every Optional (C) feature now carries a
+starting-estimate price (see `PRICES` in the catalog-build script,
+loosely anchored to the a-la-carte rates already on `pricing.html`), and
+the running total is base price + sum of selected optional prices,
+updating immediately as boxes are checked. **Premium (S) features never
+get a price** -- they're always listed separately as "custom quote" and
+never added to the total, per the reference spec's own non-negotiable
+rule (a customer should never be able to conclude a premium capability
+has a firm price). These are Dylan's starting estimates and easy to
+revise -- one number per feature in the two catalog JSON files.
 
-- Added "Website Designer" to the primary nav and footer nav on all 32
-  other pages, plus the human-readable list on `sitemap.html`.
-- Added the page to `sitemap.xml` and `search-index.json`.
-- `pricing.html`: added a "Design my Starter/Business site" button next to
-  each "Pay for ___" button, and pointed the "not sure which fits" note at
-  the new tool as well as the existing project-form fallback.
-- Bumped the footer version stamp to 1.19 site-wide.
+## Automatic PDF-to-email on submit
 
-## Bug fixed along the way
+Submitting now:
+1. Generates a structured project-summary PDF client-side (jsPDF) --
+   package, price breakdown, every selected optional feature with its
+   price, every premium add-on requested, and notes.
+2. Posts the PDF (base64) plus the structured selection data to a new
+   Netlify Function, `netlify/functions/website-designer.js`.
+3. That function persists the submission as a lead record (new `leads`
+   store in Netlify Blobs -- see `blob_store.js`) and emails Dylan the PDF
+   as an attachment, reusing the existing `_lib/email.js` helper (Resend),
+   which was extended to support attachments.
+4. The customer sees a confirmation with a generated submission ID.
 
-`page_shell.py` (the Business Package Software code generator, not this
-site directly, but caught while cross-checking patterns) had an f-string
-with an escaped quote inside its expression part (`{" aria-current=\"true\""...}`),
-which is a Python 3.12+-only construct -- it threw `SyntaxError` on this
-machine's Python 3.9 and would have blocked the entire Business generator
-from running for anyone not on 3.12+. Fixed by extracting the ternary into
-a small helper function; verified the generator builds and validates
-correctly afterward.
+This replaced the native-Netlify-Forms submission from the first pass --
+Netlify Forms can't attach a dynamically generated file, and a real PDF
+attachment was the specific ask, so a small custom function (rate-limited
+the same way `auth-register.js` is, via the existing `rateLimited()`
+helper) was the right tool here.
+
+## Site-wide integration (unchanged from first pass)
+
+Added "Website Designer" to the primary nav and footer nav on all 32
+other pages, plus the human-readable list on `sitemap.html`, `sitemap.xml`,
+and `search-index.json`. `pricing.html` has a "Design my ___ site" button
+next to each "Pay for ___" button.
+
+## Bugs found and fixed in this pass
+
+- **Price ticker could get permanently stuck.** The count-up animation
+  relied entirely on `requestAnimationFrame`, which browsers throttle or
+  fully suspend in backgrounded/non-visible tabs -- confirmed in testing
+  (the ticker stayed at "$0" indefinitely in a headless/inactive tab).
+  Fixed: the correct price is now set synchronously and unconditionally
+  the instant a feature is toggled; the count-up/pulse is a purely
+  cosmetic layer on top that may or may not get to animate, but the
+  displayed number is never allowed to be wrong or stale.
+- **PDF download button ignored its `hidden` attribute** (carried over
+  from the first pass, still worth restating): the `.btn` class's own
+  `display` property was winning the cascade tie against the browser's
+  built-in `[hidden]` rule. Fixed with `.btn[hidden]{ display:none; }`.
+- `page_shell.py` f-string/Python-3.9 bug from the first pass remains
+  fixed (see prior notes in this file's history).
 
 ## Verification performed
 
-- Full click-through: package selection loads the correct catalog via a
-  real `fetch()`, category headings and checkboxes match
-  `feature_manifest.json` exactly, checking boxes updates the live estimate
-  with correct Optional/Premium counts and item lists, and a full submit
-  posts the correctly-encoded Netlify Forms payload and shows a generated
-  submission reference.
-- Fixed a real bug found in testing: the submit handler's `fetch(...).then()`
-  didn't check `res.ok`, so a non-2xx response would have been treated as
-  success. Now throws and falls through to the error-message path on any
-  non-OK response, matching "truthful status" behavior.
-- Fixed a second bug found in testing: the "Download summary (PDF)" button
-  used the `hidden` attribute, but the `.btn` class's `display` property
-  silently overrode it (a specificity tie broken by source order). Added
-  `.btn[hidden]{ display:none; }` to `css/style.css`.
-- `node --check` passes on `js/website-designer.js`.
-- Local static-server testing could not reach the external jsPDF CDN
-  (sandboxed test network), so PDF download itself is unverified in this
-  session -- code path is written defensively (no-ops if `window.jspdf` is
-  absent) and should be spot-checked in the browser console after deploy.
+Browser-preview tooling was unreliable for click/scroll simulation this
+session (a sandbox limitation, not this code), so verification leaned on
+direct DOM/JS-level testing instead, which is arguably more precise:
+- Confirmed via screenshots that the empty-state preview, price ticker,
+  and package cards render pixel-correct against the design system.
+- Programmatically drove the actual page (not a simulation): chose
+  Starter, checked "Blog / News section" (a content-kind C feature) and
+  confirmed a preview card with the right icon/blurb appeared, the nav
+  pill appeared, and price moved $699 -> $849; checked "Two-factor
+  authentication" (S-tier) and confirmed it appeared only as a locked
+  badge with zero effect on price; checked "Light / dark appearance mode"
+  (a behavior-kind C feature) and confirmed it appeared as a badge, not a
+  full preview card, with the correct +$50; unchecked the blog item and
+  confirmed the card and nav pill were removed and price returned to
+  $749.
+- Filled the step-3 form and submitted for real: confirmed a valid PDF
+  was generated (verified the `%PDF-1.3` magic bytes after base64-decoding
+  the actual payload sent), confirmed the POST body to
+  `/.netlify/functions/website-designer` contained exactly the expected
+  fields (package, contact info, estimateTotal: 749, optionalSelected,
+  premiumSelected, a ~6.5KB PDF), and confirmed the error path displays a
+  clear message when the endpoint isn't reachable (expected locally --
+  this needs an actual Netlify deploy to fully exercise the function).
+- `node --check` passes on both `js/website-designer.js` and the new
+  `netlify/functions/website-designer.js`.
 
 ## Operational items -- these need your action, not more code
 
-- **Per-feature pricing (D-01)** -- see "Known limitation" above.
-- **Forms > Notifications** in the Netlify dashboard needs the new
-  `website-designer` form recognized once this deploys (Netlify detects
-  forms from the built HTML automatically; notifications still route
-  through whatever's already configured for `contact`/`intake`).
-- Confirm jsPDF loads correctly from `cdnjs.cloudflare.com` in a real
-  browser after deploy (untestable in this sandbox).
+- **Per-feature pricing** is now real numbers, not placeholders, but
+  they're still *my* starting estimates -- review `PRICES` in the
+  catalog-build script (or just edit the `price` field directly in
+  `starter-catalog.json`/`business-catalog.json`) and adjust anything
+  that's off before this goes live.
+- **RESEND_API_KEY / EMAIL_FROM** must already be set for
+  `website-designer.js`'s email to actually send (same variables the rest
+  of the site's email already depends on) -- if they're not, the function
+  logs instead of sending and the submission is still saved to the
+  `leads` Blobs store, so nothing is lost either way.
+- Confirm the new `website-designer` Netlify Function deploys and runs
+  correctly after push (untestable without a live Netlify environment).
