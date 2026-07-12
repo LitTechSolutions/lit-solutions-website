@@ -30,14 +30,36 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 Never commit this value to the repo. Without it, every function in
 `netlify/functions/` will throw on the first request.
 
-## 3. (Recommended) Set up email sending
+## 3. If functions return 502 with a Blobs error, add a manual token
+
+Netlify normally wires up Blobs storage access to every function
+automatically — no config needed. On some deploys that auto-detection
+doesn't kick in, and every function call fails with `502` and
+`MissingBlobsEnvironmentError` in the function's logs (Site > Logs >
+Functions > pick a function). If you hit that:
+
+1. Netlify dashboard (top-right avatar) > **User settings** > **Applications**
+   > **Personal access tokens** > **New access token**. Name it something
+   like `lit-solutions-blobs`, no expiration needed unless you want one.
+2. Copy the token, then in this site's **Site settings > Environment
+   variables**, add:
+   ```
+   NETLIFY_BLOBS_TOKEN = <the token from step 1>
+   ```
+3. **Deploys** tab > **Trigger deploy** > **Deploy site** (environment
+   variable changes need a fresh deploy to reach already-bundled functions).
+
+`SITE_ID` is already set automatically by Netlify for every function — you
+only need to add the token above.
+
+## 4. (Recommended) Set up email sending
 
 Every new account — staff or customer — now has to verify their email before
 they can sign in, which is the main defense against bot/junk registrations on
 `myaccount.html` (registration is open to the public there). Without an email
 provider configured, verification links just get logged to the function
 console instead of delivered — the site still works, but you'll need to fetch
-tokens from the Netlify Blobs dashboard by hand (see step 6 and "Forgot your
+tokens from the Netlify Blobs dashboard by hand (see step 7 and "Forgot your
 password?" below), which doesn't scale past testing it yourself.
 
 To wire up real delivery, this site uses [Resend](https://resend.com) (a
@@ -65,18 +87,18 @@ etc.), swap the implementation in `_lib/email.js` — everything else in the
 codebase calls `sendEmail({to, subject, html})` and doesn't care which
 provider is behind it.
 
-## 4. Deploy
+## 5. Deploy
 
 Deploy as normal (`netlify deploy` or your usual Git-connected flow).
 `netlify.toml` already has the `[functions]` block pointing at
 `netlify/functions`, so Netlify picks up the functions automatically — nothing
 else to configure there.
 
-## 5. Create your staff account (one time only)
+## 6. Create your staff account (one time only)
 
 1. Go to `https://yourdomain/admin.html#register`.
 2. Fill in your name, email, and a password (10+ characters).
-3. **Verify it.** If you completed step 3 above, check your email for the
+3. **Verify it.** If you completed step 4 above, check your email for the
    verification link. If not, find the token yourself: Netlify dashboard >
    your site > **Blobs** > `tokens` store > find the most recent key (its
    value has `"type":"verify-email"` and your user id), then open
@@ -87,7 +109,7 @@ else to configure there.
    default and has zero staff access unless you promote it yourself in the
    next step.
 
-## 6. Promote yourself to admin
+## 7. Promote yourself to admin
 
 Verifying your email is not the same as becoming staff — there's no
 self-service way to become `admin`, on purpose. To finish setup:
@@ -98,7 +120,7 @@ self-service way to become `admin`, on purpose. To finish setup:
    `"role": "customer"` to `"role": "admin"`.
 4. Save.
 
-## 7. Sign in and use it
+## 8. Sign in and use it
 
 Go to `https://yourdomain/admin.html#signin` (or click **Staff Sign In** in
 the footer of any page — it's deliberately not in the main navigation, since
@@ -131,7 +153,7 @@ this is for you, not visitors). From the dashboard you can manage:
   out afterward so you sign back in with the new credentials). This is the
   normal way to update your login going forward — you only need the
   Netlify Blobs dashboard for the one-time initial promotion to admin in
-  step 6 above.
+  step 7 above.
 
 Everything saves immediately and is live on the site the moment you click
 **Save changes** — no rebuild, no redeploy.
@@ -144,7 +166,7 @@ Separate from your own staff login, customers can create their own accounts:
    (unlike `admin.html`'s registration form, which only you should ever use).
    New accounts default to role `customer` and have no admin/staff access,
    ever, regardless of how they signed up.
-2. They have to verify their email (see step 3 above) before they can sign
+2. They have to verify their email (see step 4 above) before they can sign
    in at all — this is the main anti-bot measure for open registration.
 3. **Documents.** To attach an invoice, receipt, or other document to a
    customer, they need to have registered (and verified) first. Go to
@@ -181,7 +203,7 @@ interface, and was verified directly (see `CHANGES-v1.15.md` through
 
 `admin.html#reset-request` (staff) or `myaccount.html#reset-request`
 (customers) generates a reset token, but automatic email delivery only
-works if you completed step 3 above. Without it, find the token yourself:
+works if you completed step 4 above. Without it, find the token yourself:
 Netlify dashboard > **Blobs** > `tokens` store (most recent key with
 `"type":"password-reset"`), then open `admin.html#reset?token=<that token>`
 or `myaccount.html#reset?token=<that token>`. A customer who can't do this
@@ -193,7 +215,7 @@ themselves will need to call or email you.
   message notifications all work without a provider configured — they just
   log instead of send, meaning you (or the customer) have to fetch the
   token from the Netlify Blobs dashboard by hand. Fine for testing, not for
-  real customers at any real volume — set up Resend (step 3) before you
+  real customers at any real volume — set up Resend (step 4) before you
   expect real people to use `myaccount.html`.
 - **Blog post SEO is templated, not per-page.** The 3 original blog articles
   are real static HTML pages with their own title/description/Open Graph

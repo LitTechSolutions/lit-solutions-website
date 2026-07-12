@@ -26,8 +26,18 @@
 
 const { getStore } = require("@netlify/blobs");
 
+// Netlify normally injects Blobs context (site ID + token) automatically
+// for every Function invocation -- no config needed. On some deploys that
+// auto-detection doesn't kick in (MissingBlobsEnvironmentError), so this
+// falls back to explicit credentials when NETLIFY_BLOBS_TOKEN is set.
+// SITE_ID is already auto-injected by Netlify; the token is a Personal
+// Access Token you create yourself (User settings > Applications >
+// New access token) and add as an env var -- see README_ADMIN_SETUP.md.
 function store(name) {
-  return getStore({ name, consistency: "strong" });
+  const siteID = process.env.SITE_ID;
+  const token = process.env.NETLIFY_BLOBS_TOKEN;
+  const opts = siteID && token ? { name, siteID, token, consistency: "strong" } : { name, consistency: "strong" };
+  return getStore(opts);
 }
 
 async function getJSON(storeName, key) {
