@@ -72,6 +72,52 @@ discount is clearly broken out as its own line in the cost breakdown, the
 PDF, and the email Dylan receives, and it never touches Premium/custom-quote
 items (matching the sitewide "one-time work" scope of the discount).
 
+## Bundle & save -- 10% off a fully-selected category
+
+You asked for a "bundle and save" incentive: if someone selects every
+optional feature in a category, they should save an extra 10% off that
+category, and be told so. That's now real -- and it works whichever way
+someone gets there:
+
+- A dedicated **"Get all N [Category] features"** box sits under each
+  category's header, showing the bundled price crossed out against the
+  full price ("$498 ~~$553~~ save 10%") -- one click selects the whole
+  category, no need to open the dropdown at all.
+- Selecting every item in a category **by hand**, one checkbox at a time,
+  triggers the exact same 10% -- the box lights up and a message appears:
+  "🤝 We've got your back -- saving $55 (10%)!" Nobody has to know the box
+  existed to get the discount.
+- The discount is per-category and stacks with the American Heroes
+  Discount (bundle savings come off the subtotal first, then Heroes takes
+  15% off what's left) -- both show as their own line in the cost
+  breakdown, the PDF, and the email to Dylan.
+- A category needs at least 2 optional features for "bundle" to mean
+  anything, so single-item categories don't show a bundle box.
+
+## Collapsed categories, so this isn't overwhelming on first load
+
+Every category (in both Optional and Premium) is now collapsed by
+default with a one-line summary -- either what's inside ("Blog / News
+section, FAQ page, Team / Staff page +4 more") or, once you've picked
+something, a running count and price ("4 of 7 selected -- $376"). Click
+the row to expand the actual checkboxes. This replaces the original pass,
+which rendered every single feature in every category flat on the page at
+once -- accurate, but a lot to take in on first glance.
+
+## More graphics in the growing preview, personalized to your business
+
+The live preview cards for content-style features (blog, testimonials,
+team, pricing, gallery, FAQ, and so on) now render a small illustrative
+graphic -- a mini blog card, a row of star ratings, a pricing-tier chart,
+a photo grid, an accordion of FAQ rows, a booking calendar -- built from
+CSS, not stock images, so it stays on-brand and themeable in light/dark
+mode. Everything also plugs in whatever's typed in the new **business
+name field**, which now lives permanently next to the live preview
+(instead of buried in the step-3 form) so it can personalize the preview
+from the moment you start picking features, not just at the end. Typing
+or editing the name updates every card already on screen, plus the mock
+browser's URL bar, in real time.
+
 ## Automatic PDF-to-email on submit
 
 Submitting now:
@@ -115,6 +161,15 @@ next to each "Pay for ___" button.
   built-in `[hidden]` rule. Fixed with `.btn[hidden]{ display:none; }`.
 - `page_shell.py` f-string/Python-3.9 bug from the first pass remains
   fixed (see prior notes in this file's history).
+- **Rapid uncheck-then-recheck could permanently desync the preview from
+  the checkbox.** A feature card fades out over ~220ms after unchecking;
+  if it got re-checked inside that window (which the new "select whole
+  category" box does in bulk, and which a fast double-click can do by
+  hand), the re-add saw the still-present card and skipped re-adding it,
+  and its nav pill (removed immediately, not faded) never came back --
+  leaving a checked feature with no card at all. Fixed by cancelling the
+  pending removal and restoring the card/pill in place instead of
+  no-op'ing when a card is still mid-fade-out.
 
 ## Verification performed
 
@@ -143,6 +198,44 @@ direct DOM/JS-level testing instead, which is arguably more precise:
   this needs an actual Netlify deploy to fully exercise the function).
 - `node --check` passes on both `js/website-designer.js` and the new
   `netlify/functions/website-designer.js`.
+- This round: confirmed categories render collapsed by default; expanded
+  "Core Pages" and confirmed its summary line, then selected its
+  bundle box and confirmed all 7 items checked, price moved
+  $699 -> $1,197 (base + $553 optional - $55 bundle discount, exactly
+  10%), the "we've got your back" badge appeared with the right dollar
+  amount, and the cost breakdown showed a separate bundle-discount line.
+  Unchecked one item by hand and confirmed the discount and badge both
+  disappeared and the price recalculated correctly; re-checking it
+  restored the bundle discount. Also reproduced and fixed the rapid
+  uncheck/recheck desync bug above using this exact bundle-box flow.
+  Turned on the Heroes Discount on top of an active bundle and confirmed
+  correct stacking ($1,197 subtotal -> $1,017, i.e. an additional 15% off
+  the already-bundle-discounted subtotal). Typed a business name after
+  cards already existed and confirmed every visible card's text updated
+  live, plus the mock browser's URL bar. Intercepted the real submit
+  `fetch()` and confirmed the JSON payload includes `bundledCategories`
+  and `bundleSavings` alongside the existing fields, and that the
+  generated PDF text stream states the bundle discount and category name.
+
+## Pricing validated against the market
+
+You asked me to check what people pay big companies to build and host a
+website and make sure this business undercuts them. Researched current
+(2026) pricing for Wix/Squarespace/GoDaddy DIY plans and their own
+"done for you" build services, freelance and agency rates, and managed
+WordPress hosting. Verdict: **the $699/$1,299 flat packages are 50-85%
+below typical freelance/agency builds** ($2,500-$15,000 for a 5-10 page
+site) and land right around the cheapest "done for you" option on the
+market (GoDaddy's own design service, ~$500-$1,500) -- a good, citable
+comparison. The $29-$159 a-la-carte add-ons and $59/hr consulting rate
+are comfortably below market too (custom features commonly run $2,000+;
+freelance hourly floors sit around $50). No price changes were needed as
+a result. **One flag, outside this tool's scope**: the existing sitewide
+$39/mo maintenance plan is on the low side compared to the market's
+$95-195/mo "realistic" range for actual maintenance service (and even
+bare managed WordPress hosting alone runs $25-45/mo) -- worth a look
+separately, since it's published on `pricing.html`, not something this
+round touched.
 
 ## Operational items -- these need your action, not more code
 

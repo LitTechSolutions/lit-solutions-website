@@ -14,6 +14,12 @@
 // genuinely adjustable, but real numbers so the running total means
 // something. Premium (S-tier) items never get a price -- always "custom
 // quote," per the reference spec's own non-negotiable rule.
+//
+// Categories are grouped and collapsed by default (a full flat list of
+// every feature was too much to take in at once) with a "bundle & save"
+// box that selects an entire category in one click. Selecting every
+// optional feature in a category -- by hand or via that box -- unlocks an
+// extra 10% off that category's items, on top of any Heroes Discount.
 
 document.addEventListener('DOMContentLoaded', () => {
   const steps = document.querySelectorAll('.wd-step');
@@ -27,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const priceAmountEl = document.getElementById('wdPriceAmount');
   const priceNoteEl = document.getElementById('wdPriceNote');
+  const businessNameEl = document.getElementById('wdBusinessName');
   const browserUrlEl = document.getElementById('wdBrowserUrl');
   const browserEmptyEl = document.getElementById('wdBrowserEmpty');
   const previewNavEl = document.getElementById('wdPreviewNav');
@@ -36,6 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const downloadBtn = document.getElementById('wdDownloadPdf');
   const heroesCheckbox = document.getElementById('wdHeroesDiscount');
   const HEROES_DISCOUNT_RATE = 0.15; // 15% off one-time work -- matches heroes-pricing.html
+  const BUNDLE_DISCOUNT_RATE = 0.10; // 10% off a category when every optional item in it is selected
+  const BUNDLE_MIN_ITEMS = 2; // a "bundle" of one item isn't a bundle
 
   const state = {
     package: null,
@@ -57,38 +66,95 @@ document.addEventListener('DOMContentLoaded', () => {
     ],
   };
 
-  // Mock preview content per feature title -- icon + a short representative
-  // blurb shown in the growing site mock-up. Anything not listed here still
-  // gets a sensible generic block, keyed off its category.
+  function escHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+    ));
+  }
+
+  function bizName() {
+    const v = businessNameEl && businessNameEl.value.trim();
+    return v ? escHtml(v) : 'your business';
+  }
+
+  // Mock preview content per feature title -- these are the "content" kind
+  // features (the ones the reference spec treats as actual visible pages),
+  // so they're the only ones that get a full mini section card in the
+  // growing site mock-up. Each renders a small graphic (built from CSS, no
+  // external assets) plus a blurb that plugs in whatever business name has
+  // been typed so far. Anything not listed here still gets a sensible
+  // generic block, keyed off its category's fallback icon.
   const PREVIEW_CONTENT = {
-    'Additional standard pages': { icon: '📄', blurb: 'A new page, ready for your content.' },
-    'Blog / News section': { icon: '📰', blurb: '"5 Tips for Winterizing Your Boat" and more.' },
-    'Portfolio / Gallery page': { icon: '🖼️', blurb: 'Recent projects, with photos and write-ups.' },
-    'FAQ page': { icon: '❓', blurb: 'Answers to the questions you get asked most.' },
-    'Testimonials / Reviews': { icon: '💬', blurb: '"Best service in the area!" -- a happy customer.' },
-    'Team / Staff page': { icon: '🧑‍🔧', blurb: 'Meet the people behind the business.' },
-    'Pricing page': { icon: '💲', blurb: 'Clear, upfront rates for what you offer.' },
-    'Image gallery': { icon: '🌆', blurb: 'A responsive photo grid.' },
-    'Custom graphics & icons': { icon: '🎨', blurb: 'Icons and graphics matched to your brand.' },
-    'Light / dark appearance mode': { icon: '🌗', blurb: 'Visitors can switch between light and dark.' },
-    'Motion & transitions': { icon: '✨', blurb: 'Subtle animation as visitors scroll.' },
-    'Breadcrumb navigation': { icon: '🧭', blurb: 'Home > Services > This Page.' },
-    'In-page navigation (anchors)': { icon: '📌', blurb: 'Jump links for long pages.' },
-    'Sitemap page': { icon: '🗺️', blurb: 'A plain list of every page on the site.' },
-    'Site-wide search': { icon: '🔎', blurb: 'Visitors can search your whole site.' },
-    'Search filters & scopes': { icon: '🧮', blurb: 'Narrow search results by section.' },
-    'Search suggestions / autocomplete': { icon: '⌨️', blurb: 'Suggestions appear as visitors type.' },
-    'Additional custom forms': { icon: '📝', blurb: 'A purpose-built intake or request form.' },
-    'File upload with validation': { icon: '📎', blurb: 'Visitors can attach files to a form.' },
-    'Multi-step forms': { icon: '🪜', blurb: 'A longer form broken into easy steps.' },
-    'Map / location embed': { icon: '📍', blurb: 'An embedded map to your location.' },
-    'Newsletter signup': { icon: '✉️', blurb: 'Visitors can subscribe for updates.' },
-    'Live chat integration': { icon: '💬', blurb: 'A chat bubble for real-time questions.' },
-    'Online Booking Request Form': { icon: '📅', blurb: 'Pick a service and a preferred time.' },
-    'Star Ratings on Testimonials': { icon: '⭐', blurb: 'Testimonials now show a star rating.' },
-    'Enhanced SEO & Structured Data Package': { icon: '📈', blurb: 'Richer search-result previews.' },
-    'Consent management': { icon: '🍪', blurb: 'A cookie/consent preference center.' },
-    'Notification preference center': { icon: '🔔', blurb: 'Visitors control what they get notified about.' },
+    'Additional standard pages': {
+      icon: '📄',
+      visual: () => '<div class="wd-mock-page"><span></span><span></span><span class="wd-mock-line-short"></span></div>',
+      blurb: (biz) => `A new page for ${biz}, ready for your content.`,
+    },
+    'Blog / News section': {
+      icon: '📰',
+      visual: (biz) => `<div class="wd-mock-blogcard"><span class="wd-mock-swatch wd-mock-swatch--a"></span><div class="wd-mock-blogcard-text"><b>5 things ${biz} customers ask most</b><small>Posted this week</small></div></div>`,
+      blurb: (biz) => `Fresh posts and news from ${biz}.`,
+    },
+    'Portfolio / Gallery page': {
+      icon: '🖼️',
+      visual: () => '<div class="wd-mock-grid-4"><span class="wd-mock-swatch wd-mock-swatch--a"></span><span class="wd-mock-swatch wd-mock-swatch--b"></span><span class="wd-mock-swatch wd-mock-swatch--c"></span><span class="wd-mock-swatch wd-mock-swatch--d"></span></div>',
+      blurb: (biz) => `Recent ${biz} projects, with photos and write-ups.`,
+    },
+    'FAQ page': {
+      icon: '❓',
+      visual: (biz) => `<div class="wd-mock-faq"><div class="wd-mock-faq-row"><span class="wd-mock-faq-plus">+</span>What areas does ${biz} serve?</div><div class="wd-mock-faq-row"><span class="wd-mock-faq-plus">+</span>How much does it cost?</div></div>`,
+      blurb: (biz) => `Answers to what ${biz} customers ask most.`,
+    },
+    'Testimonials / Reviews': {
+      icon: '💬',
+      visual: () => '<div class="wd-mock-quote">&ldquo;Best service in the area!&rdquo;</div><div class="wd-mock-stars">★★★★★</div>',
+      blurb: (biz) => `Real feedback from ${biz} customers, front and center.`,
+    },
+    'Team / Staff page': {
+      icon: '🧑‍🔧',
+      visual: () => '<div class="wd-mock-row wd-mock-avatars"><span class="wd-mock-avatar">👤</span><span class="wd-mock-avatar">👤</span><span class="wd-mock-avatar">👤</span></div>',
+      blurb: (biz) => `Meet the people behind ${biz}.`,
+    },
+    'Pricing page': {
+      icon: '💲',
+      visual: () => '<div class="wd-mock-row wd-mock-pricing"><span class="wd-mock-bar">$</span><span class="wd-mock-bar wd-mock-bar--tall">$$</span><span class="wd-mock-bar">$$$</span></div>',
+      blurb: (biz) => `Clear, upfront rates for what ${biz} offers.`,
+    },
+    'Image gallery': {
+      icon: '🌆',
+      visual: () => '<div class="wd-mock-grid-4"><span class="wd-mock-swatch wd-mock-swatch--b"></span><span class="wd-mock-swatch wd-mock-swatch--d"></span><span class="wd-mock-swatch wd-mock-swatch--a"></span><span class="wd-mock-swatch wd-mock-swatch--c"></span></div>',
+      blurb: (biz) => `A responsive photo grid for ${biz}.`,
+    },
+    'Custom graphics & icons': {
+      icon: '🎨',
+      visual: () => '<div class="wd-mock-row wd-mock-icons"><span class="wd-mock-icon-shape wd-mock-icon-shape--circle"></span><span class="wd-mock-icon-shape wd-mock-icon-shape--square"></span><span class="wd-mock-icon-shape wd-mock-icon-shape--diamond"></span><span class="wd-mock-icon-shape wd-mock-icon-shape--dot"></span></div>',
+      blurb: (biz) => `Icons and graphics matched to ${biz}'s brand.`,
+    },
+    'Sitemap page': {
+      icon: '🗺️',
+      visual: () => '<div class="wd-mock-sitemap"><span>• Home</span><span>• About</span><span class="wd-mock-indent">• Services</span></div>',
+      blurb: (biz) => `A plain list of every page on ${biz}'s site.`,
+    },
+    'Additional custom forms': {
+      icon: '📝',
+      visual: () => '<div class="wd-mock-form"><span class="wd-mock-input"></span><span class="wd-mock-btn">Submit</span></div>',
+      blurb: (biz) => `A purpose-built request form for ${biz}.`,
+    },
+    'Map / location embed': {
+      icon: '📍',
+      visual: () => '<div class="wd-mock-map"><span class="wd-mock-pin">📍</span></div>',
+      blurb: (biz) => `An embedded map to ${biz}'s location.`,
+    },
+    'Online Booking Request Form': {
+      icon: '📅',
+      visual: () => '<div class="wd-mock-calendar"><span></span><span></span><span class="wd-mock-calendar-selected"></span><span></span><span></span><span></span><span></span></div>',
+      blurb: (biz) => `Pick a service and a preferred time with ${biz}.`,
+    },
+    'Data-subject request intake': {
+      icon: '📋',
+      visual: () => '<div class="wd-mock-form"><span class="wd-mock-input"></span><span class="wd-mock-btn">Submit</span></div>',
+      blurb: (biz) => `A simple, compliant way for ${biz}'s visitors to request their data.`,
+    },
   };
   const CATEGORY_FALLBACK_ICON = { 'Core Pages': '📄', 'Design & Branding': '🎨', 'Navigation': '🧭',
     'Search': '🔎', 'Forms & Validation': '📝', 'Contact & Communication': '✉️', 'Notifications': '🔔',
@@ -144,28 +210,157 @@ document.addEventListener('DOMContentLoaded', () => {
       INCLUDED_SUMMARY[state.package].map(t => `<li>${t}</li>`).join('') + '</ul>';
   }
 
+  // ---- Category accordion + bundle box -------------------------------
+
+  function categoryOptionalItems(category) {
+    if (!state.catalog) return [];
+    const cat = state.catalog.categories.find(c => c.category === category);
+    return cat ? cat.items.filter(i => i.priority === 'C') : [];
+  }
+
+  function categoryInputs(category) {
+    return Array.from(document.querySelectorAll('input[data-priority="C"]')).filter(el => el.dataset.category === category);
+  }
+
+  function categorySelectedSubtotal(category) {
+    return categoryInputs(category).filter(i => i.checked).reduce((s, el) => s + (Number(el.dataset.price) || 0), 0);
+  }
+
+  function isCategoryBundled(category) {
+    const inputs = categoryInputs(category);
+    return inputs.length >= BUNDLE_MIN_ITEMS && inputs.every(i => i.checked);
+  }
+
+  function bundledCategories() {
+    if (!state.catalog) return [];
+    return state.catalog.categories.map(c => c.category).filter(isCategoryBundled);
+  }
+
+  function computeBundleSavings() {
+    return bundledCategories().reduce((sum, cat) => sum + categorySelectedSubtotal(cat) * BUNDLE_DISCOUNT_RATE, 0);
+  }
+
+  function categorySummaryText(category, items) {
+    const inputs = categoryInputs(category);
+    const checkedCount = inputs.filter(i => i.checked).length;
+    if (checkedCount) return `${checkedCount} of ${items.length} selected -- ${fmtMoney(categorySelectedSubtotal(category))}`;
+    const names = items.slice(0, 3).map(i => i.title.split('(')[0].trim());
+    const extra = items.length > 3 ? ` +${items.length - 3} more` : '';
+    return `${names.join(', ')}${extra}`;
+  }
+
+  function updateCategoryBundleUI(category) {
+    if (!category) return;
+    const items = categoryOptionalItems(category);
+    if (items.length < BUNDLE_MIN_ITEMS) return;
+    const block = Array.from(optionalContainer.querySelectorAll('.wd-category')).find(b => b.dataset.category === category);
+    if (!block) return;
+
+    const summaryEl = block.querySelector('[data-summary]');
+    if (summaryEl) summaryEl.textContent = categorySummaryText(category, items);
+
+    const allChecked = isCategoryBundled(category);
+    const bundleCheckbox = block.querySelector('.wd-bundle-checkbox');
+    const bundleBox = block.querySelector('.wd-bundle-box');
+    const savingsBadge = block.querySelector('.wd-bundle-savings-badge');
+    if (bundleCheckbox) {
+      bundleCheckbox.checked = allChecked;
+      const checkedCount = categoryInputs(category).filter(i => i.checked).length;
+      bundleCheckbox.indeterminate = checkedCount > 0 && !allChecked;
+    }
+    if (bundleBox) bundleBox.classList.toggle('is-active', allChecked);
+    if (savingsBadge) {
+      const wasHidden = savingsBadge.hidden;
+      if (allChecked) savingsBadge.textContent = `🤝 We've got your back -- saving ${fmtMoney(categorySelectedSubtotal(category) * BUNDLE_DISCOUNT_RATE)} (10%)!`;
+      savingsBadge.hidden = !allChecked;
+      if (allChecked && wasHidden && !prefersReducedMotion) {
+        savingsBadge.classList.remove('wd-pop-in');
+        void savingsBadge.offsetWidth;
+        savingsBadge.classList.add('wd-pop-in');
+      }
+    }
+  }
+
+  function toggleCategoryBundle(category, checked) {
+    browserEmptyEl.hidden = true;
+    categoryInputs(category).forEach(input => {
+      if (input.checked === checked) return;
+      input.checked = checked;
+      const item = findItem(input.dataset.title);
+      const slug = slugForPreview(input.dataset.title);
+      if (item && item.kind === 'content') {
+        if (checked) addPreviewSection(item); else removePreviewSection(slug);
+      }
+    });
+    renderBadges();
+    updateCategoryBundleUI(category);
+    updatePriceAndBreakdown();
+  }
+
   function renderCategoryGroup(container, categories, priority) {
     container.innerHTML = '';
     categories.forEach(cat => {
       const items = cat.items.filter(i => i.priority === priority);
       if (!items.length) return;
+
       const block = document.createElement('div');
       block.className = 'wd-category';
-      const heading = document.createElement('h3');
-      heading.className = 'wd-category-title';
-      heading.textContent = cat.category;
-      block.appendChild(heading);
+      block.dataset.category = cat.category;
+      const panelId = `wd-cat-panel-${priority}-${slugForPreview(cat.category)}`;
+
+      const header = document.createElement('button');
+      header.type = 'button';
+      header.className = 'wd-category-header';
+      header.setAttribute('aria-expanded', 'false');
+      header.setAttribute('aria-controls', panelId);
+      header.innerHTML = `
+        <span class="wd-category-header-main">
+          <span class="wd-category-title">${escHtml(cat.category)}</span>
+          <span class="wd-category-summary" data-summary>${escHtml(priority === 'C' ? categorySummaryText(cat.category, items) : `${items.length} item${items.length === 1 ? '' : 's'} -- custom quote`)}</span>
+        </span>
+        <svg class="wd-category-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>`;
+      block.appendChild(header);
+
+      if (priority === 'C' && items.length >= BUNDLE_MIN_ITEMS) {
+        const bundleTotal = items.reduce((s, i) => s + (i.price || 0), 0);
+        const bundleBox = document.createElement('label');
+        bundleBox.className = 'wd-bundle-box';
+        bundleBox.innerHTML = `
+          <input type="checkbox" class="wd-bundle-checkbox" data-category="${escHtml(cat.category)}">
+          <span class="wd-bundle-box-main">
+            <strong>Get all ${items.length} ${escHtml(cat.category)} features</strong>
+            <span class="wd-bundle-box-price"><span class="wd-bundle-now">${fmtMoney(bundleTotal * (1 - BUNDLE_DISCOUNT_RATE))}</span> <s class="wd-bundle-was">${fmtMoney(bundleTotal)}</s> <em>save 10%</em></span>
+          </span>
+          <span class="wd-bundle-savings-badge" hidden></span>`;
+        bundleBox.querySelector('input').addEventListener('change', (e) => toggleCategoryBundle(cat.category, e.target.checked));
+        block.appendChild(bundleBox);
+      }
+
+      header.addEventListener('click', () => {
+        const expanded = header.getAttribute('aria-expanded') === 'true';
+        header.setAttribute('aria-expanded', String(!expanded));
+        panel.hidden = expanded;
+        block.classList.toggle('is-open', !expanded);
+      });
+
+      const panel = document.createElement('div');
+      panel.className = 'wd-category-panel';
+      panel.id = panelId;
+      panel.hidden = true;
       const grid = document.createElement('div');
       grid.className = 'checkbox-grid';
       items.forEach(i => {
+        const itemFull = { ...i, category: cat.category };
         const label = document.createElement('label');
         label.className = 'checkbox-pill wd-feature-pill';
         const priceTag = i.price != null ? `<span class="wd-price-tag">+$${i.price}</span>` : '<span class="wd-price-tag wd-price-tag--quote">quote</span>';
-        label.innerHTML = `<input type="checkbox" data-priority="${priority}" data-title="${i.title.replace(/"/g, '&quot;')}" data-price="${i.price != null ? i.price : ''}" data-category="${cat.category.replace(/"/g, '&quot;')}" value="${i.pdf_label.replace(/"/g, '&quot;')}"> <span class="wd-feature-pill-label">${i.title}</span>${priceTag}`;
-        label.querySelector('input').addEventListener('change', (e) => onFeatureToggle(e.target, i));
+        label.innerHTML = `<input type="checkbox" data-priority="${priority}" data-title="${escHtml(i.title)}" data-price="${i.price != null ? i.price : ''}" data-category="${escHtml(cat.category)}" value="${escHtml(i.pdf_label)}"> <span class="wd-feature-pill-label">${escHtml(i.title)}</span>${priceTag}`;
+        label.querySelector('input').addEventListener('change', (e) => onFeatureToggle(e.target, itemFull));
         grid.appendChild(label);
       });
-      block.appendChild(grid);
+      panel.appendChild(grid);
+      block.appendChild(panel);
+
       container.appendChild(block);
     });
   }
@@ -180,7 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function computeSubtotal() {
     const optionalSum = selectedInputs('C').reduce((sum, el) => sum + (Number(el.dataset.price) || 0), 0);
-    return state.basePrice + optionalSum;
+    return state.basePrice + optionalSum - computeBundleSavings();
   }
 
   // Final total after the Heroes Discount (15% off one-time work -- see
@@ -194,16 +389,26 @@ document.addEventListener('DOMContentLoaded', () => {
   function updatePriceAndBreakdown() {
     const optionalSel = selectedInputs('C');
     const premiumSel = selectedInputs('S');
+    const bundled = bundledCategories();
     const subtotal = computeSubtotal();
     const total = computeTotal();
     const heroes = heroesEligible();
     animatePrice(total);
-    priceNoteEl.textContent = (heroes ? 'Starting price, Heroes Discount applied' : 'Starting price') +
-      (premiumSel.length ? ` -- excludes ${premiumSel.length} custom-quote item${premiumSel.length === 1 ? '' : 's'}` : '');
+
+    const notes = [];
+    if (bundled.length) notes.push(`${bundled.length} bundle discount${bundled.length === 1 ? '' : 's'} applied`);
+    if (heroes) notes.push('Heroes Discount applied');
+    let note = notes.length ? `Starting price -- ${notes.join(', ')}` : 'Starting price';
+    if (premiumSel.length) note += ` -- excludes ${premiumSel.length} custom-quote item${premiumSel.length === 1 ? '' : 's'}`;
+    priceNoteEl.textContent = note;
 
     let html = `<div class="wd-cost-row wd-cost-row--base"><span>${state.package === 'business' ? 'Business' : 'Starter'} base</span><strong>${fmtMoney(state.basePrice)}</strong></div>`;
     optionalSel.forEach(el => {
-      html += `<div class="wd-cost-row"><span>${el.dataset.title}</span><strong>+$${el.dataset.price}</strong></div>`;
+      html += `<div class="wd-cost-row"><span>${escHtml(el.dataset.title)}</span><strong>+$${el.dataset.price}</strong></div>`;
+    });
+    bundled.forEach(cat => {
+      const savings = categorySelectedSubtotal(cat) * BUNDLE_DISCOUNT_RATE;
+      html += `<div class="wd-cost-row wd-cost-row--discount"><span>${escHtml(cat)} bundle (10%)</span><strong>-${fmtMoney(savings)}</strong></div>`;
     });
     if (heroes) {
       html += `<div class="wd-cost-row wd-cost-row--discount"><span>American Heroes Discount (15%)</span><strong>-${fmtMoney(subtotal - total)}</strong></div>`;
@@ -211,7 +416,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (premiumSel.length) {
       html += `<div class="wd-cost-row wd-cost-row--divider"><span>Custom-quote add-ons</span></div>`;
       premiumSel.forEach(el => {
-        html += `<div class="wd-cost-row wd-cost-row--quote"><span>${el.dataset.title}</span><strong>quote</strong></div>`;
+        html += `<div class="wd-cost-row wd-cost-row--quote"><span>${escHtml(el.dataset.title)}</span><strong>quote</strong></div>`;
       });
     }
     costBreakdownEl.innerHTML = html;
@@ -245,29 +450,63 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       renderBadges();
     }
+    updateCategoryBundleUI(item.category);
     updatePriceAndBreakdown();
+  }
+
+  function cardBodyHtml(item) {
+    const entry = PREVIEW_CONTENT[item.title];
+    const biz = bizName();
+    if (entry) {
+      const visual = entry.visual ? entry.visual(biz) : '';
+      const blurb = entry.blurb(biz);
+      return `<span class="wd-preview-card-icon">${entry.icon}</span>
+        <div class="wd-preview-card-body"><strong>${escHtml(item.title)}</strong>${visual}<p>${blurb}</p></div>`;
+    }
+    const icon = CATEGORY_FALLBACK_ICON[item.category] || '🧩';
+    return `<span class="wd-preview-card-icon">${icon}</span>
+      <div class="wd-preview-card-body"><strong>${escHtml(item.title)}</strong><p>Now part of ${biz}'s site.</p></div>`;
+  }
+
+  function navLabel(title) {
+    return title.split('/')[0].trim().split(' ').slice(0, 2).join(' ');
   }
 
   function addPreviewSection(item) {
     const slug = slugForPreview(item.title);
-    if (document.getElementById(`wd-preview-${slug}`)) return;
-
-    const preview = PREVIEW_CONTENT[item.title] || { icon: CATEGORY_FALLBACK_ICON[item.category] || '🧩', blurb: 'Now part of your site.' };
+    const existingCard = document.getElementById(`wd-preview-${slug}`);
+    if (existingCard) {
+      // A rapid uncheck-then-recheck (the bundle box does this in bulk) can
+      // land here while the card is still mid-"leaving" -- cancel the
+      // pending removal and restore it instead of leaving state desynced
+      // from the checkbox. Its nav pill was already removed synchronously
+      // (see removePreviewSection), so re-create that if it's missing.
+      clearTimeout(existingCard._removeTimeout);
+      existingCard.classList.remove('wd-leaving');
+      if (!document.getElementById(`wd-nav-${slug}`)) {
+        previewNavEl.hidden = false;
+        const navPill = document.createElement('span');
+        navPill.className = 'wd-preview-nav-pill';
+        navPill.id = `wd-nav-${slug}`;
+        navPill.textContent = navLabel(item.title);
+        previewNavEl.appendChild(navPill);
+      }
+      return;
+    }
 
     // nav pill
     previewNavEl.hidden = false;
     const navPill = document.createElement('span');
     navPill.className = 'wd-preview-nav-pill';
     navPill.id = `wd-nav-${slug}`;
-    navPill.textContent = item.title.split('/')[0].trim().split(' ').slice(0, 2).join(' ');
+    navPill.textContent = navLabel(item.title);
     previewNavEl.appendChild(navPill);
 
     // section card
     const card = document.createElement('div');
     card.className = 'wd-preview-card wd-entering';
     card.id = `wd-preview-${slug}`;
-    card.innerHTML = `<span class="wd-preview-card-icon">${preview.icon}</span>
-      <div><strong>${item.title}</strong><p>${preview.blurb}</p></div>`;
+    card.innerHTML = cardBodyHtml(item);
     previewSectionsEl.appendChild(card);
     requestAnimationFrame(() => card.classList.remove('wd-entering'));
   }
@@ -275,14 +514,32 @@ document.addEventListener('DOMContentLoaded', () => {
   function removePreviewSection(slug) {
     const card = document.getElementById(`wd-preview-${slug}`);
     const nav = document.getElementById(`wd-nav-${slug}`);
+    if (nav) nav.remove();
     if (card) {
       card.classList.add('wd-leaving');
-      setTimeout(() => card.remove(), 220);
+      card._removeTimeout = setTimeout(() => {
+        if (card.classList.contains('wd-leaving')) card.remove();
+      }, 220);
     }
-    if (nav) nav.remove();
     if (!previewSectionsEl.children.length) {
       setTimeout(() => { if (!previewSectionsEl.children.length) previewNavEl.hidden = true; }, 230);
     }
+  }
+
+  // Re-renders the text/graphics of every preview card already on screen --
+  // called when the business name changes, so cards typed before the name
+  // was filled in still pick it up.
+  function refreshPreviewContent() {
+    const name = businessNameEl && businessNameEl.value.trim();
+    browserUrlEl.textContent = name ? name.toLowerCase().replace(/[^a-z0-9]+/g, '') + '.com' : 'yourbusiness.com';
+    if (!state.catalog) return;
+    document.querySelectorAll('.wd-preview-card').forEach(card => {
+      const slug = card.id.replace('wd-preview-', '');
+      for (const cat of state.catalog.categories) {
+        const item = cat.items.find(i => slugForPreview(i.title) === slug);
+        if (item) { card.innerHTML = cardBodyHtml({ ...item, category: cat.category }); break; }
+      }
+    });
   }
 
   function renderBadges() {
@@ -331,6 +588,7 @@ document.addEventListener('DOMContentLoaded', () => {
         previewSectionsEl.innerHTML = '';
         previewBadgesEl.innerHTML = '';
         browserEmptyEl.hidden = false;
+        refreshPreviewContent();
         updatePriceAndBreakdown();
         showPanel('2');
       })
@@ -354,9 +612,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (state.package) updatePriceAndBreakdown();
   });
 
-  document.getElementById('wdBusinessName')?.addEventListener('input', (e) => {
-    const val = e.target.value.trim();
-    browserUrlEl.textContent = val ? val.toLowerCase().replace(/[^a-z0-9]+/g, '') + '.com' : 'yourbusiness.com';
+  businessNameEl?.addEventListener('input', refreshPreviewContent);
+  businessNameEl?.addEventListener('keydown', (e) => {
+    // A single-line field -- don't let Enter attempt to submit wdForm from
+    // steps 1/2, where the form's other required fields aren't visible yet.
+    if (e.key === 'Enter') e.preventDefault();
   });
 
   function selectionPayload() {
@@ -364,6 +624,8 @@ document.addEventListener('DOMContentLoaded', () => {
       optionalSelected: selectedInputs('C').map(el => ({ title: el.dataset.title, price: Number(el.dataset.price) || 0 })),
       premiumSelected: selectedInputs('S').map(el => el.dataset.title),
       heroesDiscount: heroesEligible(),
+      bundledCategories: bundledCategories(),
+      bundleSavings: computeBundleSavings(),
     };
   }
 
@@ -371,7 +633,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!window.jspdf) return null;
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-    const { optionalSelected, premiumSelected, heroesDiscount } = selectionPayload();
+    const { optionalSelected, premiumSelected, heroesDiscount, bundledCategories: bundled, bundleSavings } = selectionPayload();
     const business = document.getElementById('wdBusinessName').value || 'Your business';
     const subtotal = computeSubtotal();
     const total = computeTotal();
@@ -386,9 +648,12 @@ document.addEventListener('DOMContentLoaded', () => {
     doc.setTextColor(20);
     doc.setFontSize(13);
     doc.text(`${state.package === 'business' ? 'Business' : 'Starter'} package -- estimated starting total: $${Math.round(total).toLocaleString()}`, 14, y); y += 7;
+    doc.setFontSize(10);
+    if (bundled.length) {
+      doc.text(`(Includes ${bundled.length} category bundle discount${bundled.length === 1 ? '' : 's'} -- ${bundled.join(', ')} -- saving $${Math.round(bundleSavings).toLocaleString()})`, 14, y); y += 7;
+    }
     if (heroesDiscount) {
-      doc.setFontSize(10);
-      doc.text(`(Subtotal $${subtotal.toLocaleString()}, less 15% American Heroes Discount, pending verification)`, 14, y); y += 7;
+      doc.text(`(Subtotal $${Math.round(subtotal).toLocaleString()}, less 15% American Heroes Discount, pending verification)`, 14, y); y += 7;
     }
     y += 3;
 
@@ -458,7 +723,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const doc = buildPdf();
       const pdfBase64 = doc ? doc.output('datauristring').split(',')[1] : null;
-      const { optionalSelected, premiumSelected, heroesDiscount } = selectionPayload();
+      const { optionalSelected, premiumSelected, heroesDiscount, bundledCategories: bundled, bundleSavings } = selectionPayload();
 
       const payload = {
         package: state.package,
@@ -471,6 +736,8 @@ document.addEventListener('DOMContentLoaded', () => {
         subtotal: Math.round(computeSubtotal()),
         estimateTotal: Math.round(computeTotal()),
         heroesDiscount,
+        bundledCategories: bundled,
+        bundleSavings: Math.round(bundleSavings),
         optionalSelected, premiumSelected,
         pdfBase64, pdfFilename: 'website-designer-summary.pdf',
       };

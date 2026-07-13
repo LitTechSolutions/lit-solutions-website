@@ -5,7 +5,8 @@
 // rate-limited against spam/abuse.
 //
 // POST { package, businessName, customerName, email, phone, domain, notes,
-//        subtotal, estimateTotal, heroesDiscount, optionalSelected: [{title, price}],
+//        subtotal, estimateTotal, heroesDiscount, bundledCategories: [category],
+//        bundleSavings, optionalSelected: [{title, price}],
 //        premiumSelected: [title], pdfBase64, pdfFilename }
 
 const { json, rateLimited } = require("./_lib/auth_utils");
@@ -34,7 +35,8 @@ exports.handler = async (event) => {
 
   const {
     package: pkg, businessName, customerName, email, phone, domain, notes,
-    subtotal, estimateTotal, heroesDiscount, optionalSelected, premiumSelected, pdfBase64, pdfFilename,
+    subtotal, estimateTotal, heroesDiscount, bundledCategories, bundleSavings,
+    optionalSelected, premiumSelected, pdfBase64, pdfFilename,
   } = body;
 
   if (pkg !== "starter" && pkg !== "business") return json(400, { error: "Invalid package." });
@@ -50,6 +52,8 @@ exports.handler = async (event) => {
     email: email.toLowerCase().trim(), phone: phone.trim(), domain: (domain || "").trim(),
     notes: (notes || "").trim(), subtotal: Number(subtotal) || 0, estimateTotal: Number(estimateTotal) || 0,
     heroesDiscount: !!heroesDiscount,
+    bundledCategories: Array.isArray(bundledCategories) ? bundledCategories : [],
+    bundleSavings: Number(bundleSavings) || 0,
     optionalSelected: Array.isArray(optionalSelected) ? optionalSelected : [],
     premiumSelected: Array.isArray(premiumSelected) ? premiumSelected : [],
     createdAt: Date.now(), ip,
@@ -76,6 +80,10 @@ exports.handler = async (event) => {
         ? ` <span style="color:#0A7A6D;">(subtotal $${record.subtotal.toLocaleString()}, less 15% American Heroes Discount -- pending verification)</span>`
         : ""
     }</p>
+    ${record.bundledCategories.length
+      ? `<p><strong>Category bundles applied (10% each):</strong> ${esc(record.bundledCategories.join(", "))} -- saving $${record.bundleSavings.toLocaleString()}</p>`
+      : ""
+    }
     <p><strong>Optional features selected:</strong></p>
     <ul>${optionalRows}</ul>
     <p><strong>Premium add-ons requested (custom quote):</strong></p>

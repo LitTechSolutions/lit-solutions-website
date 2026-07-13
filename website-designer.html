@@ -196,29 +196,26 @@
             <form id="wdForm">
               <p class="honeypot-field" style="position:absolute;left:-9999px;"><label>Don't fill this out: <input name="wd-bot-field" id="wdHoneypot"></label></p>
 
+              <p class="wd-note">Business name is set above, next to your live preview -- update it there any time.</p>
               <div class="form-row form-row--split">
-                <div>
-                  <label for="wdBusinessName">Business name *</label>
-                  <input type="text" id="wdBusinessName" name="business_name" required>
-                </div>
                 <div>
                   <label for="wdName">Your name *</label>
                   <input type="text" id="wdName" name="customer_name" required>
                 </div>
-              </div>
-              <div class="form-row form-row--split">
                 <div>
                   <label for="wdEmail">Email *</label>
                   <input type="email" id="wdEmail" name="email" required>
                 </div>
+              </div>
+              <div class="form-row form-row--split">
                 <div>
                   <label for="wdPhone">Phone *</label>
                   <input type="tel" id="wdPhone" name="phone" required>
                 </div>
-              </div>
-              <div class="form-row">
-                <label for="wdDomain">Current website or domain (if you have one)</label>
-                <input type="text" id="wdDomain" name="current_domain">
+                <div>
+                  <label for="wdDomain">Current website or domain (if you have one)</label>
+                  <input type="text" id="wdDomain" name="current_domain">
+                </div>
               </div>
               <div class="form-row">
                 <label for="wdNotes">Notes, questions, or anything specific you want</label>
@@ -252,6 +249,12 @@
         </div>
 
         <aside class="wd-preview-panel" aria-label="Live preview of your website">
+          <div class="wd-bizname-field">
+            <label for="wdBusinessName">Your business name</label>
+            <input type="text" id="wdBusinessName" name="business_name" form="wdForm" placeholder="e.g. Riverside Plumbing" autocomplete="organization" required>
+            <p class="wd-note wd-note-inline">Used to personalize your preview below, and required to submit.</p>
+          </div>
+
           <div class="wd-price-ticker">
             <span class="wd-price-ticker-label">Your estimate</span>
             <span class="wd-price-ticker-amount" id="wdPriceAmount">$0</span>
