@@ -10,7 +10,7 @@
           "priority": "C",
           "kind": "content",
           "pdf_label": "Pricing page",
-          "price": 60
+          "price": 59
         }
       ]
     },
@@ -23,7 +23,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Light / dark appearance mode",
-          "price": 50
+          "price": 59
         },
         {
           "req_id": "REQ-28",
@@ -31,7 +31,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Motion & transitions",
-          "price": 40
+          "price": 49
         }
       ]
     },
@@ -44,7 +44,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Account navigation",
-          "price": 40
+          "price": 49
         },
         {
           "req_id": "REQ-36",
@@ -52,7 +52,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Role-based navigation",
-          "price": 60
+          "price": 69
         }
       ]
     },
@@ -65,7 +65,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Search filters & scopes",
-          "price": 60
+          "price": 69
         },
         {
           "req_id": "REQ-39",
@@ -73,7 +73,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Search suggestions / autocomplete",
-          "price": 60
+          "price": 69
         },
         {
           "req_id": "REQ-40",
@@ -81,7 +81,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Saved searches",
-          "price": 50
+          "price": 59
         }
       ]
     },
@@ -94,7 +94,7 @@
           "priority": "C",
           "kind": "content",
           "pdf_label": "Additional custom forms",
-          "price": 75
+          "price": 89
         },
         {
           "req_id": "REQ-45",
@@ -102,7 +102,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Multi-step forms",
-          "price": 90
+          "price": 99
         },
         {
           "req_id": "REQ-46",
@@ -110,7 +110,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Draft saving & recovery",
-          "price": 50
+          "price": 59
         },
         {
           "req_id": "REQ-47",
@@ -118,7 +118,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "File upload with validation",
-          "price": 60
+          "price": 69
         }
       ]
     },
@@ -131,7 +131,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Live chat integration",
-          "price": 70
+          "price": 79
         }
       ]
     },
@@ -144,7 +144,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "In-app notification center",
-          "price": 90
+          "price": 99
         },
         {
           "req_id": "REQ-57",
@@ -152,7 +152,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Notification preference center",
-          "price": 50
+          "price": 59
         },
         {
           "req_id": "REQ-58",
@@ -173,7 +173,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Privacy preference center",
-          "price": 70
+          "price": 79
         },
         {
           "req_id": "REQ-64",
@@ -181,7 +181,7 @@
           "priority": "C",
           "kind": "content",
           "pdf_label": "Data-subject request intake",
-          "price": 90
+          "price": 99
         },
         {
           "req_id": "REQ-65",
@@ -202,7 +202,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Enhanced per-page SEO",
-          "price": 60
+          "price": 69
         },
         {
           "req_id": "REQ-107",
@@ -210,7 +210,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Enhanced SEO & Structured Data Package",
-          "price": 90
+          "price": 99
         },
         {
           "req_id": "REQ-108",
@@ -239,7 +239,7 @@
           "priority": "C",
           "kind": "process",
           "pdf_label": "Automated backups",
-          "price": 40
+          "price": 39
         },
         {
           "req_id": "REQ-118",
@@ -255,7 +255,7 @@
           "priority": "C",
           "kind": "process",
           "pdf_label": "Uptime & Performance Monitoring",
-          "price": 35
+          "price": 39
         }
       ]
     },
@@ -268,7 +268,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "User sign-in / authentication",
-          "price": 150
+          "price": 159
         },
         {
           "req_id": "REQ-84",
@@ -276,7 +276,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Password reset & recovery",
-          "price": 60
+          "price": 69
         },
         {
           "req_id": "REQ-85",
@@ -284,7 +284,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Session management",
-          "price": 60
+          "price": 69
         },
         {
           "req_id": "REQ-86",
@@ -292,7 +292,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Social / OAuth sign-in",
-          "price": 90
+          "price": 99
         },
         {
           "req_id": "REQ-87",
@@ -313,7 +313,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Account registration",
-          "price": 90
+          "price": 99
         },
         {
           "req_id": "REQ-89",
@@ -321,7 +321,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "User profile & self-service",
-          "price": 90
+          "price": 99
         },
         {
           "req_id": "REQ-90",
@@ -329,7 +329,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "User dashboard",
-          "price": 120
+          "price": 129
         },
         {
           "req_id": "REQ-91",
@@ -350,7 +350,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "User preferences",
-          "price": 60
+          "price": 59
         },
         {
           "req_id": "REQ-93",
@@ -358,7 +358,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Favorites / bookmarks",
-          "price": 70
+          "price": 79
         },
         {
           "req_id": "REQ-94",
@@ -366,7 +366,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Recently viewed",
-          "price": 50
+          "price": 49
         },
         {
           "req_id": "REQ-95",
@@ -387,7 +387,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Admin image manager",
-          "price": 100
+          "price": 109
         },
         {
           "req_id": "REQ-98",
@@ -408,7 +408,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Basic content editing",
-          "price": 120
+          "price": 129
         },
         {
           "req_id": "REQ-100",
@@ -424,7 +424,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Editorial Workflow & Content Scheduling",
-          "price": 150
+          "price": 159
         }
       ]
     },
@@ -516,7 +516,7 @@
           "priority": "C",
           "kind": "content",
           "pdf_label": "Online Booking Request Form",
-          "price": 90
+          "price": 99
         },
         {
           "req_id": "REQ-114",
@@ -537,7 +537,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Star Ratings on Testimonials",
-          "price": 30
+          "price": 39
         },
         {
           "req_id": "REQ-116",

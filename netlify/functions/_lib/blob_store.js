@@ -24,7 +24,8 @@
 //                   (one-way in-app alerts, separate from the messages thread)
 //   ratelimit     : key = action + ":" + ip        -> { count, windowStart }
 //   leads         : key = submission id (WD-...)   -> { package, businessName, customerName, email, phone,
-//                   (Website Designer submissions)      domain, notes, estimateTotal, optionalSelected,
+//                   (Website Designer submissions)      domain, notes, subtotal, estimateTotal,
+//                                                        heroesDiscount, optionalSelected,
 //                                                        premiumSelected, createdAt, ip }
 
 const { getStore } = require("@netlify/blobs");

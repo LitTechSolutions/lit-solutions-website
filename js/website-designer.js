@@ -34,6 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const previewBadgesEl = document.getElementById('wdPreviewBadges');
   const costBreakdownEl = document.getElementById('wdCostBreakdown');
   const downloadBtn = document.getElementById('wdDownloadPdf');
+  const heroesCheckbox = document.getElementById('wdHeroesDiscount');
+  const HEROES_DISCOUNT_RATE = 0.15; // 15% off one-time work -- matches heroes-pricing.html
 
   const state = {
     package: null,
@@ -172,24 +174,40 @@ document.addEventListener('DOMContentLoaded', () => {
     return Array.from(document.querySelectorAll(`input[data-priority="${priority}"]:checked`));
   }
 
-  function computeTotal() {
+  function heroesEligible() {
+    return !!(heroesCheckbox && heroesCheckbox.checked);
+  }
+
+  function computeSubtotal() {
     const optionalSum = selectedInputs('C').reduce((sum, el) => sum + (Number(el.dataset.price) || 0), 0);
     return state.basePrice + optionalSum;
+  }
+
+  // Final total after the Heroes Discount (15% off one-time work -- see
+  // heroes-pricing.html). Premium/custom-quote items are never in the
+  // subtotal, so the discount never touches them, matching the sitewide policy.
+  function computeTotal() {
+    const subtotal = computeSubtotal();
+    return heroesEligible() ? subtotal * (1 - HEROES_DISCOUNT_RATE) : subtotal;
   }
 
   function updatePriceAndBreakdown() {
     const optionalSel = selectedInputs('C');
     const premiumSel = selectedInputs('S');
+    const subtotal = computeSubtotal();
     const total = computeTotal();
+    const heroes = heroesEligible();
     animatePrice(total);
-    priceNoteEl.textContent = premiumSel.length
-      ? `Starting price -- excludes ${premiumSel.length} custom-quote item${premiumSel.length === 1 ? '' : 's'}`
-      : 'Starting price';
+    priceNoteEl.textContent = (heroes ? 'Starting price, Heroes Discount applied' : 'Starting price') +
+      (premiumSel.length ? ` -- excludes ${premiumSel.length} custom-quote item${premiumSel.length === 1 ? '' : 's'}` : '');
 
     let html = `<div class="wd-cost-row wd-cost-row--base"><span>${state.package === 'business' ? 'Business' : 'Starter'} base</span><strong>${fmtMoney(state.basePrice)}</strong></div>`;
     optionalSel.forEach(el => {
       html += `<div class="wd-cost-row"><span>${el.dataset.title}</span><strong>+$${el.dataset.price}</strong></div>`;
     });
+    if (heroes) {
+      html += `<div class="wd-cost-row wd-cost-row--discount"><span>American Heroes Discount (15%)</span><strong>-${fmtMoney(subtotal - total)}</strong></div>`;
+    }
     if (premiumSel.length) {
       html += `<div class="wd-cost-row wd-cost-row--divider"><span>Custom-quote add-ons</span></div>`;
       premiumSel.forEach(el => {
@@ -332,6 +350,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('[data-next]').forEach(btn => {
     btn.addEventListener('click', () => showPanel(btn.dataset.next));
   });
+  heroesCheckbox?.addEventListener('change', () => {
+    if (state.package) updatePriceAndBreakdown();
+  });
 
   document.getElementById('wdBusinessName')?.addEventListener('input', (e) => {
     const val = e.target.value.trim();
@@ -342,6 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return {
       optionalSelected: selectedInputs('C').map(el => ({ title: el.dataset.title, price: Number(el.dataset.price) || 0 })),
       premiumSelected: selectedInputs('S').map(el => el.dataset.title),
+      heroesDiscount: heroesEligible(),
     };
   }
 
@@ -349,8 +371,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!window.jspdf) return null;
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-    const { optionalSelected, premiumSelected } = selectionPayload();
+    const { optionalSelected, premiumSelected, heroesDiscount } = selectionPayload();
     const business = document.getElementById('wdBusinessName').value || 'Your business';
+    const subtotal = computeSubtotal();
     const total = computeTotal();
     let y = 20;
 
@@ -362,7 +385,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     doc.setTextColor(20);
     doc.setFontSize(13);
-    doc.text(`${state.package === 'business' ? 'Business' : 'Starter'} package -- estimated starting total: $${total.toLocaleString()}`, 14, y); y += 10;
+    doc.text(`${state.package === 'business' ? 'Business' : 'Starter'} package -- estimated starting total: $${Math.round(total).toLocaleString()}`, 14, y); y += 7;
+    if (heroesDiscount) {
+      doc.setFontSize(10);
+      doc.text(`(Subtotal $${subtotal.toLocaleString()}, less 15% American Heroes Discount, pending verification)`, 14, y); y += 7;
+    }
+    y += 3;
 
     doc.setFontSize(11);
     doc.text(`Business: ${business}`, 14, y); y += 7;
@@ -430,7 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const doc = buildPdf();
       const pdfBase64 = doc ? doc.output('datauristring').split(',')[1] : null;
-      const { optionalSelected, premiumSelected } = selectionPayload();
+      const { optionalSelected, premiumSelected, heroesDiscount } = selectionPayload();
 
       const payload = {
         package: state.package,
@@ -440,7 +468,9 @@ document.addEventListener('DOMContentLoaded', () => {
         phone: document.getElementById('wdPhone').value,
         domain: document.getElementById('wdDomain').value,
         notes: document.getElementById('wdNotes').value,
-        estimateTotal: computeTotal(),
+        subtotal: Math.round(computeSubtotal()),
+        estimateTotal: Math.round(computeTotal()),
+        heroesDiscount,
         optionalSelected, premiumSelected,
         pdfBase64, pdfFilename: 'website-designer-summary.pdf',
       };

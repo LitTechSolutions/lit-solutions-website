@@ -41,17 +41,36 @@ feature-area heading.
 ## Real-time pricing -- now with real per-feature numbers
 
 The first pass deliberately avoided inventing per-feature prices (spec
-decision D-01 was, and still is, open). Since real-time price movement
-was the specific ask this round, every Optional (C) feature now carries a
-starting-estimate price (see `PRICES` in the catalog-build script,
-loosely anchored to the a-la-carte rates already on `pricing.html`), and
-the running total is base price + sum of selected optional prices,
-updating immediately as boxes are checked. **Premium (S) features never
-get a price** -- they're always listed separately as "custom quote" and
-never added to the total, per the reference spec's own non-negotiable
-rule (a customer should never be able to conclude a premium capability
-has a firm price). These are Dylan's starting estimates and easy to
-revise -- one number per feature in the two catalog JSON files.
+decision D-01 was, and still is, open). You then gave explicit discretion
+to set real numbers off industry standards and the site's existing
+discounts, so every Optional (C) feature now carries a starting-estimate
+price and the running total updates immediately as boxes are checked.
+
+**Where the numbers came from:** researched 2026 freelance/agency web-dev
+pricing (e.g. e-commerce cart additions run $3,000-$15,000+ and $60-150/hr
+is a typical freelance range) and then anchored to *this site's own*
+published rates instead of the generic market average -- `pricing.html`
+already prices Little Technical Solutions LLC's own time at $59/hr
+(technology consulting) and a full site redesign at a flat $599, and the
+whole site is positioned as underpricing the market by design. Each
+feature price is roughly 0.5-3 hours at that $59-79/hr rate to enable,
+configure, and content-populate the feature within the existing generator
+template (not built from scratch each time -- see `Software/*/build_site.py`),
+rounded to the site's existing "X9" pricing convention ($29/$39/.../$159,
+matching $599/$699/$1,299). The full reasoning and number-by-number list
+lives as a comment in the catalog-build script. **Premium (S) features
+still never get a price** -- always "custom quote," excluded from every
+total, per the reference spec's own non-negotiable rule.
+
+**American Heroes Discount, applied live.** A checkbox next to the price
+ticker ("I qualify for the American Heroes Discount -- 15% off one-time
+work") applies the same 15% one-time-work discount already offered
+sitewide (`heroes-pricing.html`) directly to the running total in real
+time -- self-reported here, same as everywhere else on the site;
+verification still happens the normal way before work begins. The
+discount is clearly broken out as its own line in the cost breakdown, the
+PDF, and the email Dylan receives, and it never touches Premium/custom-quote
+items (matching the sitewide "one-time work" scope of the discount).
 
 ## Automatic PDF-to-email on submit
 

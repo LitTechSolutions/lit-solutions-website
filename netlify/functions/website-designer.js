@@ -5,8 +5,8 @@
 // rate-limited against spam/abuse.
 //
 // POST { package, businessName, customerName, email, phone, domain, notes,
-//        estimateTotal, optionalSelected: [{title, price}], premiumSelected: [title],
-//        pdfBase64, pdfFilename }
+//        subtotal, estimateTotal, heroesDiscount, optionalSelected: [{title, price}],
+//        premiumSelected: [title], pdfBase64, pdfFilename }
 
 const { json, rateLimited } = require("./_lib/auth_utils");
 const { setJSON } = require("./_lib/blob_store");
@@ -34,7 +34,7 @@ exports.handler = async (event) => {
 
   const {
     package: pkg, businessName, customerName, email, phone, domain, notes,
-    estimateTotal, optionalSelected, premiumSelected, pdfBase64, pdfFilename,
+    subtotal, estimateTotal, heroesDiscount, optionalSelected, premiumSelected, pdfBase64, pdfFilename,
   } = body;
 
   if (pkg !== "starter" && pkg !== "business") return json(400, { error: "Invalid package." });
@@ -48,7 +48,8 @@ exports.handler = async (event) => {
   const record = {
     id, package: pkg, businessName: businessName.trim(), customerName: customerName.trim(),
     email: email.toLowerCase().trim(), phone: phone.trim(), domain: (domain || "").trim(),
-    notes: (notes || "").trim(), estimateTotal: Number(estimateTotal) || 0,
+    notes: (notes || "").trim(), subtotal: Number(subtotal) || 0, estimateTotal: Number(estimateTotal) || 0,
+    heroesDiscount: !!heroesDiscount,
     optionalSelected: Array.isArray(optionalSelected) ? optionalSelected : [],
     premiumSelected: Array.isArray(premiumSelected) ? premiumSelected : [],
     createdAt: Date.now(), ip,
@@ -70,7 +71,11 @@ exports.handler = async (event) => {
        <strong>Email:</strong> ${esc(record.email)}<br>
        <strong>Phone:</strong> ${esc(record.phone)}<br>
        <strong>Current domain:</strong> ${esc(record.domain) || "(none)"}</p>
-    <p><strong>Estimated starting total:</strong> $${record.estimateTotal.toLocaleString()}</p>
+    <p><strong>Estimated starting total:</strong> $${record.estimateTotal.toLocaleString()}${
+      record.heroesDiscount
+        ? ` <span style="color:#0A7A6D;">(subtotal $${record.subtotal.toLocaleString()}, less 15% American Heroes Discount -- pending verification)</span>`
+        : ""
+    }</p>
     <p><strong>Optional features selected:</strong></p>
     <ul>${optionalRows}</ul>
     <p><strong>Premium add-ons requested (custom quote):</strong></p>

@@ -1589,6 +1589,14 @@ textarea{ resize: vertical; }
 @keyframes wd-pulse{ 0%{ color: var(--accent-orange); transform: scale(1.06); } 100%{ color: inherit; transform: scale(1); } }
 .wd-price-ticker-note{ display:block; font-size:.75rem; color: rgba(238,241,245,0.65); margin-top:.35rem; }
 
+.wd-heroes-toggle{
+  display:flex; align-items:flex-start; gap:.5rem; font-size:.78rem; color: var(--ink-soft);
+  background: var(--select-bg); border:1px solid var(--select-border); border-radius: var(--radius);
+  padding:.7rem .9rem; cursor:pointer;
+}
+.wd-heroes-toggle input{ accent-color: var(--select-border); width:15px; height:15px; flex-shrink:0; margin-top:.15rem; }
+.wd-heroes-toggle a{ color: var(--accent-teal-text); text-decoration:underline; }
+
 .wd-browser{ background: var(--paper-alt); border:1px solid var(--line); border-radius: var(--radius); overflow:hidden; box-shadow: 0 10px 26px rgba(20,33,61,0.08); }
 .wd-browser-chrome{ display:flex; align-items:center; gap:.4rem; padding:.6rem .8rem; background: var(--paper); border-bottom:1px solid var(--line); }
 .wd-browser-dot{ width:8px; height:8px; border-radius:50%; background: var(--line-strong); display:inline-block; }
@@ -1635,6 +1643,7 @@ textarea{ resize: vertical; }
 .wd-cost-row--base{ font-weight:700; }
 .wd-cost-row--divider{ border-bottom:none; padding-bottom:0; font-family: var(--font-display); font-size:.7rem; text-transform:uppercase; letter-spacing:.04em; color: var(--ink-faint); }
 .wd-cost-row--quote strong{ color: var(--accent-orange-text); }
+.wd-cost-row--discount span, .wd-cost-row--discount strong{ color: var(--accent-teal-text); font-weight:700; }
 
 .wd-done-card{ text-align:center; padding:2.5rem; max-width:520px; margin:2rem auto 0; }
 .wd-done-card h2{ margin-bottom:.75rem; }

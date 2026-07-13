@@ -10,7 +10,7 @@
           "priority": "C",
           "kind": "content",
           "pdf_label": "Additional standard pages",
-          "price": 60
+          "price": 59
         },
         {
           "req_id": "REQ-17",
@@ -18,7 +18,7 @@
           "priority": "C",
           "kind": "content",
           "pdf_label": "Blog / News section",
-          "price": 150
+          "price": 159
         },
         {
           "req_id": "REQ-18",
@@ -26,7 +26,7 @@
           "priority": "C",
           "kind": "content",
           "pdf_label": "Portfolio / Gallery page",
-          "price": 100
+          "price": 99
         },
         {
           "req_id": "REQ-19",
@@ -34,7 +34,7 @@
           "priority": "C",
           "kind": "content",
           "pdf_label": "FAQ page",
-          "price": 60
+          "price": 59
         },
         {
           "req_id": "REQ-20",
@@ -42,7 +42,7 @@
           "priority": "C",
           "kind": "content",
           "pdf_label": "Testimonials / Reviews",
-          "price": 60
+          "price": 59
         },
         {
           "req_id": "REQ-21",
@@ -50,7 +50,7 @@
           "priority": "C",
           "kind": "content",
           "pdf_label": "Team / Staff page",
-          "price": 60
+          "price": 59
         },
         {
           "req_id": "REQ-22",
@@ -58,7 +58,7 @@
           "priority": "C",
           "kind": "content",
           "pdf_label": "Pricing page",
-          "price": 60
+          "price": 59
         }
       ]
     },
@@ -71,7 +71,7 @@
           "priority": "C",
           "kind": "content",
           "pdf_label": "Custom graphics & icons",
-          "price": 80
+          "price": 89
         },
         {
           "req_id": "REQ-27",
@@ -79,7 +79,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Light / dark appearance mode",
-          "price": 50
+          "price": 59
         },
         {
           "req_id": "REQ-28",
@@ -87,7 +87,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Motion & transitions",
-          "price": 40
+          "price": 49
         }
       ]
     },
@@ -100,7 +100,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Breadcrumb navigation",
-          "price": 30
+          "price": 39
         },
         {
           "req_id": "REQ-33",
@@ -108,7 +108,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "In-page navigation (anchors)",
-          "price": 30
+          "price": 39
         },
         {
           "req_id": "REQ-34",
@@ -116,7 +116,7 @@
           "priority": "C",
           "kind": "content",
           "pdf_label": "Sitemap page",
-          "price": 25
+          "price": 29
         }
       ]
     },
@@ -129,7 +129,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Site-wide search",
-          "price": 120
+          "price": 129
         }
       ]
     },
@@ -142,7 +142,7 @@
           "priority": "C",
           "kind": "content",
           "pdf_label": "Additional custom forms",
-          "price": 75
+          "price": 89
         },
         {
           "req_id": "REQ-40",
@@ -150,7 +150,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "File upload with validation",
-          "price": 60
+          "price": 69
         }
       ]
     },
@@ -163,7 +163,7 @@
           "priority": "C",
           "kind": "content",
           "pdf_label": "Map / location embed",
-          "price": 40
+          "price": 39
         },
         {
           "req_id": "REQ-47",
@@ -171,7 +171,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Newsletter signup",
-          "price": 50
+          "price": 49
         }
       ]
     },
@@ -197,7 +197,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Consent management",
-          "price": 60
+          "price": 59
         },
         {
           "req_id": "REQ-53",
@@ -218,7 +218,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Structured data (schema)",
-          "price": 50
+          "price": 49
         },
         {
           "req_id": "REQ-58",
@@ -226,7 +226,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Analytics integration",
-          "price": 40
+          "price": 39
         },
         {
           "req_id": "REQ-59",
@@ -234,7 +234,7 @@
           "priority": "C",
           "kind": "process",
           "pdf_label": "Search Console setup",
-          "price": 30
+          "price": 29
         },
         {
           "req_id": "REQ-81",
@@ -271,7 +271,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Rate limiting",
-          "price": 40
+          "price": 39
         },
         {
           "req_id": "REQ-69",
@@ -279,7 +279,7 @@
           "priority": "C",
           "kind": "process",
           "pdf_label": "Automated backups",
-          "price": 40
+          "price": 39
         },
         {
           "req_id": "REQ-90",
@@ -295,7 +295,7 @@
           "priority": "C",
           "kind": "process",
           "pdf_label": "Uptime & Performance Monitoring",
-          "price": 35
+          "price": 39
         }
       ]
     },
@@ -334,7 +334,7 @@
           "priority": "C",
           "kind": "content",
           "pdf_label": "Image gallery",
-          "price": 80
+          "price": 89
         },
         {
           "req_id": "REQ-73",
@@ -447,7 +447,7 @@
           "priority": "C",
           "kind": "content",
           "pdf_label": "Online Booking Request Form",
-          "price": 90
+          "price": 99
         },
         {
           "req_id": "REQ-87",
@@ -468,7 +468,7 @@
           "priority": "C",
           "kind": "behavior",
           "pdf_label": "Star Ratings on Testimonials",
-          "price": 30
+          "price": 39
         }
       ]
     },
