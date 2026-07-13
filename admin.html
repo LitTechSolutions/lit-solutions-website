@@ -157,7 +157,6 @@
       '<button class="btn btn-primary" id="si-submit">Sign in</button>' +
       '<p class="status" id="si-status"></p>' +
       '<p style="margin-top:1rem;"><a class="linklike" href="#reset-request">Forgot password?</a></p>' +
-      '<p style="margin-top:.5rem;"><a class="linklike" href="#register">First time here? Create the staff account</a></p>' +
       '</div>');
     v.querySelector("#si-submit").addEventListener("click", async function () {
       var status = v.querySelector("#si-status");
@@ -172,25 +171,6 @@
         status.textContent = (r.body && r.body.error) || "Sign-in failed.";
         status.className = "status error";
       }
-    });
-    return v;
-  };
-
-  views.register = function () {
-    document.title = "Create Staff Account — Little Technical Solutions LLC";
-    var v = el('<div class="admin-card"><h1>Create the staff account</h1>' +
-      '<p style="font-size:.88rem; color:var(--ink-soft); margin-bottom:1rem;">This creates a normal account -- it won’t have staff access until you promote it to admin from the Netlify Blobs dashboard (see README_ADMIN_SETUP.md). Customers should register at <a href="myaccount.html#register" style="color:var(--accent-teal-text); text-decoration:underline;">My Account</a> instead, not here.</p>' +
-      '<div class="form-row"><label for="rg-name">Name</label><input id="rg-name" type="text"></div>' +
-      '<div class="form-row"><label for="rg-email">Email</label><input id="rg-email" type="email"></div>' +
-      '<div class="form-row"><label for="rg-password">Password <span class="admin-field-hint">(at least 10 characters)</span></label><input id="rg-password" type="password"></div>' +
-      '<button class="btn btn-primary" id="rg-submit">Create account</button>' +
-      '<p class="status" id="rg-status"></p></div>');
-    v.querySelector("#rg-submit").addEventListener("click", async function () {
-      var status = v.querySelector("#rg-status");
-      var r = await api("auth-register", { method: "POST", body: JSON.stringify({ name: v.querySelector("#rg-name").value, email: v.querySelector("#rg-email").value, password: v.querySelector("#rg-password").value }) });
-      status.textContent = (r.body && (r.body.message || r.body.error)) || "Something went wrong.";
-      status.className = "status " + (r.ok ? "ok" : "error");
-      if (r.ok) window.location.hash = "#signin";
     });
     return v;
   };

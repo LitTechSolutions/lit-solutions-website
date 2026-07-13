@@ -32,7 +32,35 @@
 </head>
 <body>
 
-<a class="skip-link" href="#main">Skip to content</a>
+<a class="skip-link" href="#main" data-i18n="a11y.skip_to_content">Skip to content</a>
+<div class="lang-bar">
+  <div class="wrap lang-bar-inner">
+    <div class="nav-dropdown">
+      <button type="button" class="nav-dropdown-toggle lang-dropdown-toggle" aria-expanded="false" aria-controls="langMenu" aria-label="Choose language" data-i18n-attr-aria-label="header.choose_language">
+        <span id="langCurrentLabel">ENG</span>
+        <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="nav-dropdown-menu lang-dropdown-menu" id="langMenu" role="listbox">
+        <button type="button" class="lang-option is-active" data-lang="en">English <span class="lang-code">ENG</span></button>
+        <button type="button" class="lang-option" data-lang="es">Español <span class="lang-code">ESP</span></button>
+        <button type="button" class="lang-option" data-lang="fr">Français <span class="lang-code">FRA</span></button>
+        <button type="button" class="lang-option" data-lang="zh">中文 <span class="lang-code">ZH</span></button>
+        <button type="button" class="lang-option" data-lang="ja">日本語 <span class="lang-code">JPN</span></button>
+        <button type="button" class="lang-option" data-lang="vi">Tiếng Việt <span class="lang-code">VIE</span></button>
+        <button type="button" class="lang-option" data-lang="tl">Filipino <span class="lang-code">FIL</span></button>
+        <button type="button" class="lang-option" data-lang="ar">العربية <span class="lang-code">ARA</span></button>
+        <button type="button" class="lang-option" data-lang="ko">한국어 <span class="lang-code">KOR</span></button>
+        <button type="button" class="lang-option" data-lang="de">Deutsch <span class="lang-code">GER</span></button>
+        <button type="button" class="lang-option" data-lang="ht">Kreyòl Ayisyen <span class="lang-code">HAT</span></button>
+        <button type="button" class="lang-option" data-lang="pt">Português <span class="lang-code">POR</span></button>
+        <button type="button" class="lang-option" data-lang="ru">Русский <span class="lang-code">RUS</span></button>
+        <button type="button" class="lang-option" data-lang="it">Italiano <span class="lang-code">ITA</span></button>
+        <button type="button" class="lang-option" data-lang="pl">Polski <span class="lang-code">POL</span></button>
+        <button type="button" class="lang-option" data-lang="hi">हिन्दी <span class="lang-code">HIN</span></button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <header class="site-header" id="siteHeader">
   <div class="wrap header-inner">
@@ -49,61 +77,61 @@
     <nav class="main-nav" id="mainNav" aria-label="Primary">
       <div class="nav-dropdown">
         <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-controls="servicesDropdown">
-          Services
+          <span data-i18n="nav.services">Services</span>
           <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
         </button>
         <div class="nav-dropdown-menu" id="servicesDropdown">
-          <a href="services.html">All Services</a>
-          <a href="service-website.html">Website Design &amp; Development</a>
-          <a href="service-computer.html">Computer Repair</a>
-          <a href="service-networking.html">Networking</a>
-          <a href="service-cybersecurity.html">Cybersecurity</a>
-          <a href="service-business-it.html">Small Business IT</a>
+          <a href="services.html" data-i18n="nav.services_all">All Services</a>
+          <a href="service-website.html" data-i18n="nav.service_website">Website Design &amp; Development</a>
+          <a href="service-computer.html" data-i18n="nav.service_computer">Computer Repair</a>
+          <a href="service-networking.html" data-i18n="nav.service_networking">Networking</a>
+          <a href="service-cybersecurity.html" data-i18n="nav.service_cybersecurity">Cybersecurity</a>
+          <a href="service-business-it.html" data-i18n="nav.service_business_it">Small Business IT</a>
         </div>
       </div>
-      <a href="about.html">About</a>
-      <a href="pricing.html">Pricing</a>
-      <a href="website-designer.html">Website Designer</a>
-      <a href="heroes-pricing.html">Heroes Discount</a>
+      <a href="about.html" data-i18n="nav.about">About</a>
+      <a href="pricing.html" data-i18n="nav.pricing">Pricing</a>
+      <a href="website-designer.html" data-i18n="nav.website_designer">Website Designer</a>
+      <a href="heroes-pricing.html" data-i18n="nav.heroes_discount">Heroes Discount</a>
       <div class="nav-dropdown">
         <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-controls="resourcesDropdown">
-          Resources
+          <span data-i18n="nav.resources">Resources</span>
           <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
         </button>
         <div class="nav-dropdown-menu" id="resourcesDropdown">
-          <a href="service-area.html">Service Area</a>
-          <a href="testimonials.html">Testimonials</a>
-          <a href="team.html">Our Team</a>
-          <a href="portfolio.html">Portfolio</a>
-          <a href="gallery.html">Gallery</a>
-          <a href="faq.html">FAQ</a>
-          <a href="blog.html">Blog</a>
-          <a href="booking.html">Booking</a>
+          <a href="service-area.html" data-i18n="nav.service_area">Service Area</a>
+          <a href="testimonials.html" data-i18n="nav.testimonials">Testimonials</a>
+          <a href="team.html" data-i18n="nav.team">Our Team</a>
+          <a href="portfolio.html" data-i18n="nav.portfolio">Portfolio</a>
+          <a href="gallery.html" data-i18n="nav.gallery">Gallery</a>
+          <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+          <a href="blog.html" data-i18n="nav.blog">Blog</a>
+          <a href="booking.html" data-i18n="nav.booking">Booking</a>
         </div>
       </div>
-      <a href="payment.html">Payments</a>
-      <a href="contact.html">Contact</a>
+      <a href="payment.html" data-i18n="nav.payments">Payments</a>
+      <a href="contact.html" data-i18n="nav.contact">Contact</a>
     </nav>
 
     <div class="header-actions">
-      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode" data-i18n-attr-aria-label="header.toggle_dark_mode" data-i18n-attr-title="header.toggle_dark_mode">
         <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
         <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
-      <a href="search.html" class="search-toggle" aria-label="Search this site" title="Search this site">
+      <a href="search.html" class="search-toggle" aria-label="Search this site" title="Search this site" data-i18n-attr-aria-label="header.search_site" data-i18n-attr-title="header.search_site">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-3.8-3.8"/></svg>
       </a>
-      <a href="myaccount.html" class="search-toggle" aria-label="My Account" title="My Account">
+      <a href="myaccount.html" class="search-toggle" aria-label="My Account" title="My Account" data-i18n-attr-aria-label="header.my_account" data-i18n-attr-title="header.my_account">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </a>
       <a href="tel:+16364260289" class="phone-link">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         636-426-0289
       </a>
-      <a href="intake.html" class="btn btn-primary btn-small">Get a quote</a>
+      <a href="intake.html" class="btn btn-primary btn-small" data-i18n="header.get_quote">Get a quote</a>
     </div>
 
-    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu">
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu" data-i18n-attr-aria-label="header.toggle_menu">
       <span></span><span></span><span></span>
     </button>
   </div>
@@ -113,9 +141,9 @@
 
   <section class="intake-hero">
     <div class="wrap">
-      <p class="eyebrow">Pricing</p>
-      <h1>Straightforward pricing. No surprises.</h1>
-      <p class="section-lede">Flat rates for common jobs, so you know the cost before we start. Every price below is a starting point — your exact quote depends on the specifics of the job, and we'll always confirm it with you first.</p>
+      <p class="eyebrow" data-i18n="pricing.hero_eyebrow">Pricing</p>
+      <h1 data-i18n="pricing.hero_h1">Straightforward pricing. No surprises.</h1>
+      <p class="section-lede" data-i18n="pricing.hero_lede">Flat rates for common jobs, so you know the cost before we start. Every price below is a starting point — your exact quote depends on the specifics of the job, and we'll always confirm it with you first.</p>
     </div>
   </section>
 
@@ -126,87 +154,87 @@
         <span class="launch-banner-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z"/></svg>
         </span>
-        <p><strong>Launch special:</strong> the prices below are introductory rates for our first 25 customers as we get Little Technical Solutions LLC off the ground. Once we hit that milestone, pricing moves to our standard published rates.</p>
+        <p data-i18n-html="pricing.launch_banner"><strong>Launch special:</strong> the prices below are introductory rates for our first 25 customers as we get Little Technical Solutions LLC off the ground. Once we hit that milestone, pricing moves to our standard published rates.</p>
       </div>
 
       <div class="package-compare">
         <header class="section-head" style="margin-bottom:2rem;">
-          <p class="eyebrow">Website packages</p>
-          <h2>Which website package is right for you?</h2>
-          <p class="section-lede">Both packages include a custom design, mobile-responsive build, and basic SEO. The difference is scope — how many pages, and how much the site does on its own.</p>
+          <p class="eyebrow" data-i18n="pricing.packages_eyebrow">Website packages</p>
+          <h2 data-i18n="pricing.packages_h2">Which website package is right for you?</h2>
+          <p class="section-lede" data-i18n="pricing.packages_lede">Both packages include a custom design, mobile-responsive build, and basic SEO. The difference is scope — how many pages, and how much the site does on its own.</p>
         </header>
 
         <div class="package-grid">
           <div class="package-card reveal">
-            <h2>Starter</h2>
-            <p class="package-card-tagline">A clean, professional site that gets you found and gets you contacted.</p>
+            <h2 data-i18n="pricing.starter_name">Starter</h2>
+            <p class="package-card-tagline" data-i18n="pricing.starter_tagline">A clean, professional site that gets you found and gets you contacted.</p>
             <div class="package-price">
               <span class="package-price-now">$699</span>
             </div>
-            <p class="package-price-note">Typically $1,500&ndash;$3,000 elsewhere — see <a href="#compare-savings-table" style="color:var(--accent-teal-text);">how we compare</a>.</p>
+            <p class="package-price-note" data-i18n-html="pricing.starter_price_note">Typically $1,500&ndash;$3,000 elsewhere — see <a href="#compare-savings-table" style="color:var(--accent-teal-text);">how we compare</a>.</p>
             <ul class="package-features">
-              <li>Up to 5 pages (Home, About, Services, Contact + 1 more)</li>
-              <li>Custom design matched to your brand</li>
-              <li>Mobile-responsive on every device</li>
-              <li>Contact form with spam protection</li>
-              <li>Basic SEO (titles, descriptions, sitemap)</li>
-              <li>Custom favicon &amp; branded 404 page</li>
-              <li>Accessibility &amp; performance basics</li>
-              <li>1 revision round before launch</li>
-              <li>30 days of post-launch support</li>
+              <li data-i18n="pricing.starter_feature1">Up to 5 pages (Home, About, Services, Contact + 1 more)</li>
+              <li data-i18n="pricing.starter_feature2">Custom design matched to your brand</li>
+              <li data-i18n="pricing.starter_feature3">Mobile-responsive on every device</li>
+              <li data-i18n="pricing.starter_feature4">Contact form with spam protection</li>
+              <li data-i18n="pricing.starter_feature5">Basic SEO (titles, descriptions, sitemap)</li>
+              <li data-i18n="pricing.starter_feature6">Custom favicon &amp; branded 404 page</li>
+              <li data-i18n="pricing.starter_feature7">Accessibility &amp; performance basics</li>
+              <li data-i18n="pricing.starter_feature8">1 revision round before launch</li>
+              <li data-i18n="pricing.starter_feature9">30 days of post-launch support</li>
             </ul>
-            <a href="website-designer.html" class="btn btn-ghost">Design my Starter site</a>
-            <a href="payment.html" class="btn btn-ghost" style="margin-top:.6rem;">Pay for Starter</a>
+            <a href="website-designer.html" class="btn btn-ghost" data-i18n="pricing.starter_cta_design">Design my Starter site</a>
+            <a href="payment.html" class="btn btn-ghost" style="margin-top:.6rem;" data-i18n="pricing.starter_cta_pay">Pay for Starter</a>
           </div>
 
           <div class="package-card package-card--business reveal">
-            <span class="package-badge">Most capability</span>
-            <h2>Business</h2>
-            <p class="package-card-tagline">A full site with the tools to actually run leads, bookings, and content through it.</p>
+            <span class="package-badge" data-i18n="pricing.business_badge">Most capability</span>
+            <h2 data-i18n="pricing.business_name">Business</h2>
+            <p class="package-card-tagline" data-i18n="pricing.business_tagline">A full site with the tools to actually run leads, bookings, and content through it.</p>
             <div class="package-price">
               <span class="package-price-now">$1,299</span>
             </div>
-            <p class="package-price-note">Typically $3,000&ndash;$8,000 elsewhere — see <a href="#compare-savings-table" style="color:var(--accent-teal-text);">how we compare</a>.</p>
+            <p class="package-price-note" data-i18n-html="pricing.business_price_note">Typically $3,000&ndash;$8,000 elsewhere — see <a href="#compare-savings-table" style="color:var(--accent-teal-text);">how we compare</a>.</p>
             <ul class="package-features">
-              <li>Up to 10 pages, including individual service pages</li>
-              <li class="is-extra">Advanced contact / quote-request form</li>
-              <li class="is-extra">Booking / consultation scheduling</li>
-              <li class="is-extra">Testimonials, FAQ &amp; blog pages</li>
-              <li class="is-extra">Newsletter signup integration</li>
-              <li class="is-extra">Enhanced SEO &amp; analytics/conversion tracking</li>
-              <li>Everything in Starter, plus dropdown navigation &amp; enhanced branding</li>
-              <li>2 revision rounds before launch</li>
-              <li>60 days of post-launch support</li>
+              <li data-i18n="pricing.business_feature1">Up to 10 pages, including individual service pages</li>
+              <li class="is-extra" data-i18n="pricing.business_feature2">Advanced contact / quote-request form</li>
+              <li class="is-extra" data-i18n="pricing.business_feature3">Booking / consultation scheduling</li>
+              <li class="is-extra" data-i18n="pricing.business_feature4">Testimonials, FAQ &amp; blog pages</li>
+              <li class="is-extra" data-i18n="pricing.business_feature5">Newsletter signup integration</li>
+              <li class="is-extra" data-i18n="pricing.business_feature6">Enhanced SEO &amp; analytics/conversion tracking</li>
+              <li data-i18n="pricing.business_feature7">Everything in Starter, plus dropdown navigation &amp; enhanced branding</li>
+              <li data-i18n="pricing.business_feature8">2 revision rounds before launch</li>
+              <li data-i18n="pricing.business_feature9">60 days of post-launch support</li>
             </ul>
-            <a href="website-designer.html" class="btn btn-ghost" style="border-color:rgba(238,241,245,0.35); color:#fff;">Design my Business site</a>
-            <a href="payment.html" class="btn btn-primary" style="margin-top:.6rem;">Pay for Business</a>
+            <a href="website-designer.html" class="btn btn-ghost" style="border-color:rgba(238,241,245,0.35); color:#fff;" data-i18n="pricing.business_cta_design">Design my Business site</a>
+            <a href="payment.html" class="btn btn-primary" style="margin-top:.6rem;" data-i18n="pricing.business_cta_pay">Pay for Business</a>
           </div>
         </div>
 
-        <p class="price-note" style="margin-bottom:2.5rem;">
+        <p class="price-note" style="margin-bottom:2.5rem;" data-i18n-html="pricing.packages_note">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
-          Want to pick your exact features and see a starting price first? Try our <a href="website-designer.html">Website Designer</a>. Not sure which package fits at all? Fill out our <a href="intake.html">project form</a> and we'll recommend the right one — we'd rather undersell than oversell.
+          Want to pick your exact features and see a starting price first? Try our <a href="website-designer.html" data-i18n="nav.website_designer">Website Designer</a>. Not sure which package fits at all? Fill out our <a href="intake.html">project form</a> and we'll recommend the right one — we'd rather undersell than oversell.
         </p>
       </div>
 
       <div class="compare-savings" id="compare-savings-table">
-        <h2>How we compare</h2>
-        <p>Independent 2026 market research on computer repair, IT support, and web design pricing shows what similar services typically cost nationally. Here's how our starting prices stack up.</p>
+        <h2 data-i18n="pricing.compare_h2">How we compare</h2>
+        <p data-i18n="pricing.compare_lede">Independent 2026 market research on computer repair, IT support, and web design pricing shows what similar services typically cost nationally. Here's how our starting prices stack up.</p>
         <table class="savings-table">
           <thead>
-            <tr><th>Service</th><th>Typical Market Rate</th><th>Our Starting Price</th><th>You Save</th></tr>
+            <tr><th data-i18n="pricing.compare_th_service">Service</th><th data-i18n="pricing.compare_th_market">Typical Market Rate</th><th data-i18n="pricing.compare_th_ourprice">Our Starting Price</th><th data-i18n="pricing.compare_th_savings">You Save</th></tr>
           </thead>
           <tbody>
-            <tr><td class="savings-service">Computer repair / troubleshooting</td><td>$60&ndash;250/hr</td><td class="savings-you">$59/hr</td><td><span class="savings-pct">Up to ~75%</span></td></tr>
-            <tr><td class="savings-service">Virus &amp; malware removal</td><td>~$100 flat</td><td class="savings-you">$79</td><td><span class="savings-pct">~20%</span></td></tr>
-            <tr><td class="savings-service">Home Wi-Fi setup</td><td>$100&ndash;150</td><td class="savings-you">$79</td><td><span class="savings-pct">Up to ~47%</span></td></tr>
-            <tr><td class="savings-service">Ongoing small business IT support</td><td>$95&ndash;295/mo</td><td class="savings-you">$79/mo</td><td><span class="savings-pct">Up to ~73%</span></td></tr>
-            <tr><td class="savings-service">Starter website (5 pages)</td><td>$1,500&ndash;3,000</td><td class="savings-you">$699</td><td><span class="savings-pct">Up to ~77%</span></td></tr>
-            <tr><td class="savings-service">Business website (custom)</td><td>$3,000&ndash;8,000</td><td class="savings-you">$1,299</td><td><span class="savings-pct">Up to ~84%</span></td></tr>
-            <tr><td class="savings-service">Security consultation</td><td>$100&ndash;200/hr</td><td class="savings-you">$69 flat</td><td><span class="savings-pct">Up to ~65%</span></td></tr>
+            <tr><td class="savings-service" data-i18n="pricing.compare_row1">Computer repair / troubleshooting</td><td>$60&ndash;250/hr</td><td class="savings-you">$59/hr</td><td><span class="savings-pct">Up to ~75%</span></td></tr>
+            <tr><td class="savings-service" data-i18n="pricing.compare_row2">Virus &amp; malware removal</td><td>~$100 flat</td><td class="savings-you">$79</td><td><span class="savings-pct">~20%</span></td></tr>
+            <tr><td class="savings-service" data-i18n="pricing.compare_row3">Home Wi-Fi setup</td><td>$100&ndash;150</td><td class="savings-you">$79</td><td><span class="savings-pct">Up to ~47%</span></td></tr>
+            <tr><td class="savings-service" data-i18n="pricing.compare_row4">Ongoing small business IT support</td><td>$95&ndash;295/mo</td><td class="savings-you">$79/mo</td><td><span class="savings-pct">Up to ~73%</span></td></tr>
+            <tr><td class="savings-service" data-i18n="pricing.compare_row5">Starter website (5 pages)</td><td>$1,500&ndash;3,000</td><td class="savings-you">$699</td><td><span class="savings-pct">Up to ~77%</span></td></tr>
+            <tr><td class="savings-service" data-i18n="pricing.compare_row6">Business website (custom)</td><td>$3,000&ndash;8,000</td><td class="savings-you">$1,299</td><td><span class="savings-pct">Up to ~84%</span></td></tr>
+            <tr><td class="savings-service" data-i18n="pricing.compare_row7">Security consultation</td><td>$100&ndash;200/hr</td><td class="savings-you">$69 flat</td><td><span class="savings-pct">Up to ~65%</span></td></tr>
           </tbody>
         </table>
-        <p class="savings-disclaimer">
+        <p class="savings-disclaimer" data-i18n="pricing.compare_disclaimer">
           "Typical market rate" figures are drawn from published 2026 industry pricing research on computer repair, small business IT support, and freelance web design (national U.S. averages). They're provided for general comparison only &mdash; actual competitor pricing varies by provider, location, and scope of work, and we can't guarantee any specific competitor's rate. Savings percentages are illustrative estimates based on the low and high ends of those published ranges, not guaranteed or audited figures. Your final price depends on the specifics of your job and will always be confirmed with you before work begins.
         </p>
       </div>
@@ -215,22 +243,22 @@
         <button class="price-block-head" type="button" aria-expanded="false">
           <span class="price-block-head-left">
             <span class="ticket-code">WEB&#8209;01</span>
-          <h2>Website Services</h2>
+          <h2 data-i18n="pricing.web_block_title">Website Services</h2>
           </span>
           <span class="price-block-toggle">
-            <span class="price-block-count">7 services</span>
+            <span class="price-block-count" data-i18n="pricing.web_block_count">7 services</span>
             <svg class="price-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
           </span>
         </button>
         <div class="price-list-wrap">
           <ul class="price-list">
-          <li><span class="price-item-name">Starter website <small>(up to 5 pages)</small></span><span class="price-item-value">Starting at $699 <a href="payment.html" class="pay-inline-link">Pay now →</a></span></li>
-          <li><span class="price-item-name">Business website <small>(custom features, booking, etc.)</small></span><span class="price-item-value">Starting at $1,299 <a href="payment.html" class="pay-inline-link">Pay now →</a></span></li>
-          <li><span class="price-item-name">Website redesign</span><span class="price-item-value">Starting at $599</span></li>
-          <li><span class="price-item-name">Domain registration &amp; DNS setup</span><span class="price-item-value">Starting at $39</span></li>
-          <li><span class="price-item-name">Business email setup <small>(Google Workspace, Microsoft 365)</small></span><span class="price-item-value">Starting at $59</span></li>
-          <li><span class="price-item-name">Basic SEO optimization</span><span class="price-item-value">Starting at $99</span></li>
-          <li><span class="price-item-name">Ongoing maintenance &amp; hosting assistance</span><span class="price-item-value">Starting at $39/mo</span></li>
+          <li><span class="price-item-name" data-i18n-html="pricing.web_item1_name">Starter website <small>(up to 5 pages)</small></span><span class="price-item-value" data-i18n-html="pricing.web_item1_value">Starting at $699 <a href="payment.html" class="pay-inline-link">Pay now →</a></span></li>
+          <li><span class="price-item-name" data-i18n-html="pricing.web_item2_name">Business website <small>(custom features, booking, etc.)</small></span><span class="price-item-value" data-i18n-html="pricing.web_item2_value">Starting at $1,299 <a href="payment.html" class="pay-inline-link">Pay now →</a></span></li>
+          <li><span class="price-item-name" data-i18n="pricing.web_item3_name">Website redesign</span><span class="price-item-value" data-i18n="pricing.web_item3_value">Starting at $599</span></li>
+          <li><span class="price-item-name" data-i18n="pricing.web_item4_name">Domain registration &amp; DNS setup</span><span class="price-item-value" data-i18n="pricing.web_item4_value">Starting at $39</span></li>
+          <li><span class="price-item-name" data-i18n-html="pricing.web_item5_name">Business email setup <small>(Google Workspace, Microsoft 365)</small></span><span class="price-item-value" data-i18n="pricing.web_item5_value">Starting at $59</span></li>
+          <li><span class="price-item-name" data-i18n="pricing.web_item6_name">Basic SEO optimization</span><span class="price-item-value" data-i18n="pricing.web_item6_value">Starting at $99</span></li>
+          <li><span class="price-item-name" data-i18n="pricing.web_item7_name">Ongoing maintenance &amp; hosting assistance</span><span class="price-item-value" data-i18n="pricing.web_item7_value">Starting at $39/mo</span></li>
         </ul>
         </div>
       </div>
@@ -239,21 +267,21 @@
         <button class="price-block-head" type="button" aria-expanded="false">
           <span class="price-block-head-left">
             <span class="ticket-code">PC&#8209;02</span>
-          <h2>Computer Services</h2>
+          <h2 data-i18n="pricing.pc_block_title">Computer Services</h2>
           </span>
           <span class="price-block-toggle">
-            <span class="price-block-count">6 services</span>
+            <span class="price-block-count" data-i18n="pricing.pc_block_count">6 services</span>
             <svg class="price-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
           </span>
         </button>
         <div class="price-list-wrap">
           <ul class="price-list">
-          <li><span class="price-item-name">Diagnostic</span><span class="price-item-value price-item-free">Free</span></li>
-          <li><span class="price-item-name">Computer repair &amp; troubleshooting</span><span class="price-item-value">Starting at $59/hr <small>(1-hr min)</small></span></li>
-          <li><span class="price-item-name">Virus &amp; malware removal</span><span class="price-item-value">Starting at $79</span></li>
-          <li><span class="price-item-name">Operating system install / upgrade</span><span class="price-item-value">Starting at $69</span></li>
-          <li><span class="price-item-name">Custom PC build</span><span class="price-item-value">Starting at $120 <small>+ parts</small></span></li>
-          <li><span class="price-item-name">Data backup &amp; recovery assistance</span><span class="price-item-value">Starting at $69</span></li>
+          <li><span class="price-item-name" data-i18n="pricing.pc_item1_name">Diagnostic</span><span class="price-item-value price-item-free" data-i18n="pricing.pc_item1_value">Free</span></li>
+          <li><span class="price-item-name" data-i18n="pricing.pc_item2_name">Computer repair &amp; troubleshooting</span><span class="price-item-value" data-i18n-html="pricing.pc_item2_value">Starting at $59/hr <small>(1-hr min)</small></span></li>
+          <li><span class="price-item-name" data-i18n="pricing.pc_item3_name">Virus &amp; malware removal</span><span class="price-item-value" data-i18n="pricing.pc_item3_value">Starting at $79</span></li>
+          <li><span class="price-item-name" data-i18n="pricing.pc_item4_name">Operating system install / upgrade</span><span class="price-item-value" data-i18n="pricing.pc_item4_value">Starting at $69</span></li>
+          <li><span class="price-item-name" data-i18n="pricing.pc_item5_name">Custom PC build</span><span class="price-item-value" data-i18n-html="pricing.pc_item5_value">Starting at $120 <small>+ parts</small></span></li>
+          <li><span class="price-item-name" data-i18n="pricing.pc_item6_name">Data backup &amp; recovery assistance</span><span class="price-item-value" data-i18n="pricing.pc_item6_value">Starting at $69</span></li>
         </ul>
         </div>
       </div>
@@ -262,21 +290,21 @@
         <button class="price-block-head" type="button" aria-expanded="false">
           <span class="price-block-head-left">
             <span class="ticket-code">NET&#8209;03</span>
-          <h2>Networking</h2>
+          <h2 data-i18n="pricing.net_block_title">Networking</h2>
           </span>
           <span class="price-block-toggle">
-            <span class="price-block-count">6 services</span>
+            <span class="price-block-count" data-i18n="pricing.net_block_count">6 services</span>
             <svg class="price-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
           </span>
         </button>
         <div class="price-list-wrap">
           <ul class="price-list">
-          <li><span class="price-item-name">Home Wi-Fi setup &amp; optimization</span><span class="price-item-value">Starting at $79</span></li>
-          <li><span class="price-item-name">Router &amp; modem configuration</span><span class="price-item-value">Starting at $49</span></li>
-          <li><span class="price-item-name">Mesh Wi-Fi installation</span><span class="price-item-value">Starting at $119</span></li>
-          <li><span class="price-item-name">Printer &amp; device networking</span><span class="price-item-value">Starting at $49</span></li>
-          <li><span class="price-item-name">Small office network setup</span><span class="price-item-value">Starting at $149</span></li>
-          <li><span class="price-item-name">Network troubleshooting</span><span class="price-item-value">Starting at $59</span></li>
+          <li><span class="price-item-name" data-i18n="pricing.net_item1_name">Home Wi-Fi setup &amp; optimization</span><span class="price-item-value" data-i18n="pricing.net_item1_value">Starting at $79</span></li>
+          <li><span class="price-item-name" data-i18n="pricing.net_item2_name">Router &amp; modem configuration</span><span class="price-item-value" data-i18n="pricing.net_item2_value">Starting at $49</span></li>
+          <li><span class="price-item-name" data-i18n="pricing.net_item3_name">Mesh Wi-Fi installation</span><span class="price-item-value" data-i18n="pricing.net_item3_value">Starting at $119</span></li>
+          <li><span class="price-item-name" data-i18n="pricing.net_item4_name">Printer &amp; device networking</span><span class="price-item-value" data-i18n="pricing.net_item4_value">Starting at $49</span></li>
+          <li><span class="price-item-name" data-i18n="pricing.net_item5_name">Small office network setup</span><span class="price-item-value" data-i18n="pricing.net_item5_value">Starting at $149</span></li>
+          <li><span class="price-item-name" data-i18n="pricing.net_item6_name">Network troubleshooting</span><span class="price-item-value" data-i18n="pricing.net_item6_value">Starting at $59</span></li>
         </ul>
         </div>
       </div>
@@ -285,20 +313,20 @@
         <button class="price-block-head" type="button" aria-expanded="false">
           <span class="price-block-head-left">
             <span class="ticket-code">SEC&#8209;04</span>
-          <h2>Cybersecurity</h2>
+          <h2 data-i18n="pricing.sec_block_title">Cybersecurity</h2>
           </span>
           <span class="price-block-toggle">
-            <span class="price-block-count">5 services</span>
+            <span class="price-block-count" data-i18n="pricing.sec_block_count">5 services</span>
             <svg class="price-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
           </span>
         </button>
         <div class="price-list-wrap">
           <ul class="price-list">
-          <li><span class="price-item-name">Security consultation</span><span class="price-item-value">Starting at $69</span></li>
-          <li><span class="price-item-name">Password manager setup</span><span class="price-item-value">Starting at $45</span></li>
-          <li><span class="price-item-name">Multi-factor authentication (MFA) setup</span><span class="price-item-value">Starting at $45</span></li>
-          <li><span class="price-item-name">Security best practices training</span><span class="price-item-value">Starting at $59</span></li>
-          <li><span class="price-item-name">Home &amp; small business security review</span><span class="price-item-value">Starting at $99</span></li>
+          <li><span class="price-item-name" data-i18n="pricing.sec_item1_name">Security consultation</span><span class="price-item-value" data-i18n="pricing.sec_item1_value">Starting at $69</span></li>
+          <li><span class="price-item-name" data-i18n="pricing.sec_item2_name">Password manager setup</span><span class="price-item-value" data-i18n="pricing.sec_item2_value">Starting at $45</span></li>
+          <li><span class="price-item-name" data-i18n="pricing.sec_item3_name">Multi-factor authentication (MFA) setup</span><span class="price-item-value" data-i18n="pricing.sec_item3_value">Starting at $45</span></li>
+          <li><span class="price-item-name" data-i18n="pricing.sec_item4_name">Security best practices training</span><span class="price-item-value" data-i18n="pricing.sec_item4_value">Starting at $59</span></li>
+          <li><span class="price-item-name" data-i18n="pricing.sec_item5_name">Home &amp; small business security review</span><span class="price-item-value" data-i18n="pricing.sec_item5_value">Starting at $99</span></li>
         </ul>
         </div>
       </div>
@@ -307,41 +335,41 @@
         <button class="price-block-head" type="button" aria-expanded="false">
           <span class="price-block-head-left">
             <span class="ticket-code">BIZ&#8209;05</span>
-          <h2>Small Business IT</h2>
+          <h2 data-i18n="pricing.biz_block_title">Small Business IT</h2>
           </span>
           <span class="price-block-toggle">
-            <span class="price-block-count">6 services</span>
+            <span class="price-block-count" data-i18n="pricing.biz_block_count">6 services</span>
             <svg class="price-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
           </span>
         </button>
         <div class="price-list-wrap">
           <ul class="price-list price-list--columns">
-          <li><span class="price-item-name">Technology consulting</span><span class="price-item-value">Starting at $59/hr</span></li>
-          <li><span class="price-item-name">Computer &amp; workstation setup</span><span class="price-item-value">Starting at $49/device</span></li>
-          <li><span class="price-item-name">Office printer &amp; scanner setup</span><span class="price-item-value">Starting at $59</span></li>
-          <li><span class="price-item-name">Email migration &amp; setup</span><span class="price-item-value">Starting at $79</span></li>
-          <li><span class="price-item-name">Domain management</span><span class="price-item-value">Starting at $39</span></li>
-          <li><span class="price-item-name">Ongoing IT support</span><span class="price-item-value">Starting at $79/mo</span></li>
+          <li><span class="price-item-name" data-i18n="pricing.biz_item1_name">Technology consulting</span><span class="price-item-value" data-i18n="pricing.biz_item1_value">Starting at $59/hr</span></li>
+          <li><span class="price-item-name" data-i18n="pricing.biz_item2_name">Computer &amp; workstation setup</span><span class="price-item-value" data-i18n="pricing.biz_item2_value">Starting at $49/device</span></li>
+          <li><span class="price-item-name" data-i18n="pricing.biz_item3_name">Office printer &amp; scanner setup</span><span class="price-item-value" data-i18n="pricing.biz_item3_value">Starting at $59</span></li>
+          <li><span class="price-item-name" data-i18n="pricing.biz_item4_name">Email migration &amp; setup</span><span class="price-item-value" data-i18n="pricing.biz_item4_value">Starting at $79</span></li>
+          <li><span class="price-item-name" data-i18n="pricing.biz_item5_name">Domain management</span><span class="price-item-value" data-i18n="pricing.biz_item5_value">Starting at $39</span></li>
+          <li><span class="price-item-name" data-i18n="pricing.biz_item6_name">Ongoing IT support</span><span class="price-item-value" data-i18n="pricing.biz_item6_value">Starting at $79/mo</span></li>
         </ul>
         </div>
       </div>
 
       <div class="price-note">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
-        <p>Prices shown are starting points for typical jobs. Parts, hardware, extensive repairs, travel outside our service area, and larger projects are quoted individually and confirmed with you before any work begins. Pricing is subject to change without notice; the rates above reflect what's currently in effect. No hidden fees, no surprise line items.</p>
+        <p data-i18n="pricing.price_note">Prices shown are starting points for typical jobs. Parts, hardware, extensive repairs, travel outside our service area, and larger projects are quoted individually and confirmed with you before any work begins. Pricing is subject to change without notice; the rates above reflect what's currently in effect. No hidden fees, no surprise line items.</p>
       </div>
 
       <div class="vet-banner">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z"/></svg>
-        <h2>Serve your community? You get a discount, too.</h2>
-        <p>We offer 15% off nearly every service on this page for active duty military, veterans, teachers, first responders, doctors, TSA agents, police, firefighters, and Virginia FFL holders &mdash; a small thank-you for what you do.</p>
-        <a href="heroes-pricing.html" class="btn btn-primary" style="margin-top:1.2rem">See Heroes Discount</a>
+        <h2 data-i18n="pricing.vet_h2">Serve your community? You get a discount, too.</h2>
+        <p data-i18n="pricing.vet_p">We offer 15% off nearly every service on this page for active duty military, veterans, teachers, first responders, doctors, TSA agents, police, firefighters, and Virginia FFL holders &mdash; a small thank-you for what you do.</p>
+        <a href="heroes-pricing.html" class="btn btn-primary" style="margin-top:1.2rem" data-i18n="pricing.vet_cta">See Heroes Discount</a>
       </div>
 
       <div class="pricing-cta">
-        <h2>Not sure what you need?</h2>
-        <p>Fill out our project form and we'll follow up with a straightforward quote based on your specific situation.</p>
-        <a href="intake.html" class="btn btn-primary">Get a Custom Quote</a>
+        <h2 data-i18n="pricing.cta_h2">Not sure what you need?</h2>
+        <p data-i18n="pricing.cta_p">Fill out our project form and we'll follow up with a straightforward quote based on your specific situation.</p>
+        <a href="intake.html" class="btn btn-primary" data-i18n="pricing.cta_button">Get a Custom Quote</a>
       </div>
 
     </div>
@@ -354,57 +382,58 @@
     <div class="footer-brand">
       <img src="assets/logo-icon.png" alt="Little Technical Solutions LLC" width="36" height="36" class="footer-logo">
       <span class="logo-line1">Little Technical Solutions LLC</span>
-      <p>Websites, computers, networks, and security — handled by one call.</p>
+      <p data-i18n="footer.tagline">Websites, computers, networks, and security — handled by one call.</p>
     </div>
     <nav class="footer-nav" aria-label="Footer">
-      <a href="services.html">Services</a>
-      <a href="about.html">About</a>
-      <a href="team.html">Our Team</a>
-      <a href="portfolio.html">Portfolio</a>
-      <a href="gallery.html">Gallery</a>
-      <a href="pricing.html">Pricing</a>
-      <a href="website-designer.html">Website Designer</a>
-      <a href="heroes-pricing.html">Heroes Discount</a>
-      <a href="service-area.html">Service Area</a>
-      <a href="testimonials.html">Testimonials</a>
-      <a href="faq.html">FAQ</a>
-      <a href="blog.html">Blog</a>
-      <a href="booking.html">Booking</a>
-      <a href="payment.html">Payments</a>
-      <a href="contact.html">Contact</a>
-      <a href="intake.html">New Client Form</a>
-      <a href="search.html">Search</a>
-      <a href="sitemap.html">Sitemap</a>
-      <a href="privacy.html">Privacy Policy</a>
-      <a href="terms.html">Terms &amp; Conditions</a>
-      <a href="patch-notes.html">Patch Notes</a>
-      <a href="#" id="manageConsentLink">Cookie Notice</a>
+      <a href="services.html" data-i18n="nav.services">Services</a>
+      <a href="about.html" data-i18n="nav.about">About</a>
+      <a href="team.html" data-i18n="nav.team">Our Team</a>
+      <a href="portfolio.html" data-i18n="nav.portfolio">Portfolio</a>
+      <a href="gallery.html" data-i18n="nav.gallery">Gallery</a>
+      <a href="pricing.html" data-i18n="nav.pricing">Pricing</a>
+      <a href="website-designer.html" data-i18n="nav.website_designer">Website Designer</a>
+      <a href="heroes-pricing.html" data-i18n="nav.heroes_discount">Heroes Discount</a>
+      <a href="service-area.html" data-i18n="nav.service_area">Service Area</a>
+      <a href="testimonials.html" data-i18n="nav.testimonials">Testimonials</a>
+      <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+      <a href="blog.html" data-i18n="nav.blog">Blog</a>
+      <a href="booking.html" data-i18n="nav.booking">Booking</a>
+      <a href="payment.html" data-i18n="nav.payments">Payments</a>
+      <a href="contact.html" data-i18n="nav.contact">Contact</a>
+      <a href="intake.html" data-i18n="footer.new_client_form">New Client Form</a>
+      <a href="search.html" data-i18n="footer.search">Search</a>
+      <a href="sitemap.html" data-i18n="footer.sitemap">Sitemap</a>
+      <a href="privacy.html" data-i18n="footer.privacy_policy">Privacy Policy</a>
+      <a href="terms.html" data-i18n="footer.terms">Terms &amp; Conditions</a>
+      <a href="patch-notes.html" data-i18n="footer.patch_notes">Patch Notes</a>
+      <a href="#" id="manageConsentLink" data-i18n="footer.cookie_notice">Cookie Notice</a>
     </nav>
     <nav class="footer-social" aria-label="Social">
       <a href="https://www.facebook.com/profile.php?id=61591618750945" rel="noopener" target="_blank" aria-label="Little Technical Solutions LLC on Facebook">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>
-        <span>Facebook</span>
+        <span data-i18n="footer.facebook">Facebook</span>
       </a>
       <a href="https://www.google.com/search?q=Little+Technical+Solutions+LLC&stick=H4sIAAAAAAAA_-NgU1IxqDA0N0s1sUgyT0yxTE1NTLMyqEg2sTRLNTZOTTS1NDIzSUxaxCrnk1lSkpOqEJKanJGXmZyYoxCcn1NakpmfV6zg4-MMAGRkPw5JAAAA&hl=en&mat=CWEgdKX6xe4RElcBa0lj_4PsrYDUx2O2vFBpnokVltXIVrcy43xjezZrcYTprxRsgJGT1ATelPpH5ss3Sn-4VrXJHi_xxw10Eq_jzvWCxQfPf2G4feie7XZe-MJ3uWuSvN4&authuser=0" rel="noopener" target="_blank" aria-label="Little Technical Solutions LLC on Google">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 12.23c0-.75-.07-1.47-.19-2.18H12v4.13h5.4a4.6 4.6 0 0 1-2 3.02v2.5h3.24c1.9-1.75 3-4.32 3-7.47z"/><path d="M12 22c2.7 0 4.97-.9 6.63-2.44l-3.24-2.5c-.9.6-2.05.96-3.39.96-2.6 0-4.8-1.76-5.6-4.12H3.05v2.58A10 10 0 0 0 12 22z"/><path d="M6.4 13.9a6 6 0 0 1 0-3.8V7.52H3.05a10 10 0 0 0 0 8.96l3.35-2.58z"/><path d="M12 6.08c1.47 0 2.79.5 3.83 1.5l2.87-2.87A10 10 0 0 0 3.05 7.52L6.4 10.1c.8-2.36 3-4.02 5.6-4.02z"/></svg>
-        <span>Find us on Google</span>
+        <span data-i18n="footer.find_google">Find us on Google</span>
       </a>
     </nav>
   </div>
-  <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. All rights reserved.</p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version 2.0.0</a></p>
-  <p class="footer-version"><a href="admin.html">Staff Sign In</a></p>
+  <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span data-i18n="footer.rights">All rights reserved.</span></p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version 2.1.0</a></p>
+  <p class="footer-version"><a href="admin.html" data-i18n="footer.staff_signin">Staff Sign In</a></p>
 </footer>
 
 <div id="cookie-banner" class="cookie-banner" hidden role="region" aria-label="Cookie notice">
   <div class="wrap cookie-banner-inner">
-    <p>We use Netlify Analytics (cookie-free, privacy-respecting) to see site traffic, plus a small amount of local storage for things like your dark/light mode choice. Nothing here is used for advertising or sold to anyone. See our <a href="privacy.html">Privacy Policy</a>.</p>
+    <p data-i18n-html="cookie.text">We use Netlify Analytics (cookie-free, privacy-respecting) to see site traffic, plus a small amount of local storage for things like your dark/light mode choice. Nothing here is used for advertising or sold to anyone. See our <a href="privacy.html" data-i18n="footer.privacy_policy">Privacy Policy</a>.</p>
     <div class="cookie-banner-actions">
-      <button type="button" class="btn btn-primary btn-small" data-consent="dismiss">Got it</button>
+      <button type="button" class="btn btn-primary btn-small" data-consent="dismiss" data-i18n="cookie.accept">Got it</button>
     </div>
   </div>
 </div>
 
+<script src="js/i18n.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

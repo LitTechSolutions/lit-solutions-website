@@ -32,7 +32,35 @@
 </head>
 <body>
 
-<a class="skip-link" href="#main">Skip to content</a>
+<a class="skip-link" href="#main" data-i18n="a11y.skip_to_content">Skip to content</a>
+<div class="lang-bar">
+  <div class="wrap lang-bar-inner">
+    <div class="nav-dropdown">
+      <button type="button" class="nav-dropdown-toggle lang-dropdown-toggle" aria-expanded="false" aria-controls="langMenu" aria-label="Choose language" data-i18n-attr-aria-label="header.choose_language">
+        <span id="langCurrentLabel">ENG</span>
+        <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="nav-dropdown-menu lang-dropdown-menu" id="langMenu" role="listbox">
+        <button type="button" class="lang-option is-active" data-lang="en">English <span class="lang-code">ENG</span></button>
+        <button type="button" class="lang-option" data-lang="es">Español <span class="lang-code">ESP</span></button>
+        <button type="button" class="lang-option" data-lang="fr">Français <span class="lang-code">FRA</span></button>
+        <button type="button" class="lang-option" data-lang="zh">中文 <span class="lang-code">ZH</span></button>
+        <button type="button" class="lang-option" data-lang="ja">日本語 <span class="lang-code">JPN</span></button>
+        <button type="button" class="lang-option" data-lang="vi">Tiếng Việt <span class="lang-code">VIE</span></button>
+        <button type="button" class="lang-option" data-lang="tl">Filipino <span class="lang-code">FIL</span></button>
+        <button type="button" class="lang-option" data-lang="ar">العربية <span class="lang-code">ARA</span></button>
+        <button type="button" class="lang-option" data-lang="ko">한국어 <span class="lang-code">KOR</span></button>
+        <button type="button" class="lang-option" data-lang="de">Deutsch <span class="lang-code">GER</span></button>
+        <button type="button" class="lang-option" data-lang="ht">Kreyòl Ayisyen <span class="lang-code">HAT</span></button>
+        <button type="button" class="lang-option" data-lang="pt">Português <span class="lang-code">POR</span></button>
+        <button type="button" class="lang-option" data-lang="ru">Русский <span class="lang-code">RUS</span></button>
+        <button type="button" class="lang-option" data-lang="it">Italiano <span class="lang-code">ITA</span></button>
+        <button type="button" class="lang-option" data-lang="pl">Polski <span class="lang-code">POL</span></button>
+        <button type="button" class="lang-option" data-lang="hi">हिन्दी <span class="lang-code">HIN</span></button>
+      </div>
+    </div>
+  </div>
+</div>
 <header class="site-header" id="siteHeader">
   <div class="wrap header-inner">
     <a href="index.html" class="logo" aria-label="Little Technical Solutions LLC — home">
@@ -48,61 +76,61 @@
     <nav class="main-nav" id="mainNav" aria-label="Primary">
       <div class="nav-dropdown">
         <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-controls="servicesDropdown">
-          Services
+          <span data-i18n="nav.services">Services</span>
           <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
         </button>
         <div class="nav-dropdown-menu" id="servicesDropdown">
-          <a href="services.html">All Services</a>
-          <a href="service-website.html">Website Design &amp; Development</a>
-          <a href="service-computer.html">Computer Repair</a>
-          <a href="service-networking.html">Networking</a>
-          <a href="service-cybersecurity.html">Cybersecurity</a>
-          <a href="service-business-it.html">Small Business IT</a>
+          <a href="services.html" data-i18n="nav.services_all">All Services</a>
+          <a href="service-website.html" data-i18n="nav.service_website">Website Design &amp; Development</a>
+          <a href="service-computer.html" data-i18n="nav.service_computer">Computer Repair</a>
+          <a href="service-networking.html" data-i18n="nav.service_networking">Networking</a>
+          <a href="service-cybersecurity.html" data-i18n="nav.service_cybersecurity">Cybersecurity</a>
+          <a href="service-business-it.html" data-i18n="nav.service_business_it">Small Business IT</a>
         </div>
       </div>
-      <a href="about.html">About</a>
-      <a href="pricing.html">Pricing</a>
-      <a href="website-designer.html">Website Designer</a>
-      <a href="heroes-pricing.html">Heroes Discount</a>
+      <a href="about.html" data-i18n="nav.about">About</a>
+      <a href="pricing.html" data-i18n="nav.pricing">Pricing</a>
+      <a href="website-designer.html" data-i18n="nav.website_designer">Website Designer</a>
+      <a href="heroes-pricing.html" data-i18n="nav.heroes_discount">Heroes Discount</a>
       <div class="nav-dropdown">
         <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-controls="resourcesDropdown">
-          Resources
+          <span data-i18n="nav.resources">Resources</span>
           <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
         </button>
         <div class="nav-dropdown-menu" id="resourcesDropdown">
-          <a href="service-area.html">Service Area</a>
-          <a href="testimonials.html">Testimonials</a>
-          <a href="team.html">Our Team</a>
-          <a href="portfolio.html">Portfolio</a>
-          <a href="gallery.html">Gallery</a>
-          <a href="faq.html">FAQ</a>
-          <a href="blog.html">Blog</a>
-          <a href="booking.html">Booking</a>
+          <a href="service-area.html" data-i18n="nav.service_area">Service Area</a>
+          <a href="testimonials.html" data-i18n="nav.testimonials">Testimonials</a>
+          <a href="team.html" data-i18n="nav.team">Our Team</a>
+          <a href="portfolio.html" data-i18n="nav.portfolio">Portfolio</a>
+          <a href="gallery.html" data-i18n="nav.gallery">Gallery</a>
+          <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+          <a href="blog.html" data-i18n="nav.blog">Blog</a>
+          <a href="booking.html" data-i18n="nav.booking">Booking</a>
         </div>
       </div>
-      <a href="payment.html">Payments</a>
-      <a href="contact.html">Contact</a>
+      <a href="payment.html" data-i18n="nav.payments">Payments</a>
+      <a href="contact.html" data-i18n="nav.contact">Contact</a>
     </nav>
 
     <div class="header-actions">
-      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode" data-i18n-attr-aria-label="header.toggle_dark_mode" data-i18n-attr-title="header.toggle_dark_mode">
         <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
         <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
-      <a href="search.html" class="search-toggle" aria-label="Search this site" title="Search this site">
+      <a href="search.html" class="search-toggle" aria-label="Search this site" title="Search this site" data-i18n-attr-aria-label="header.search_site" data-i18n-attr-title="header.search_site">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-3.8-3.8"/></svg>
       </a>
-      <a href="myaccount.html" class="search-toggle" aria-label="My Account" title="My Account">
+      <a href="myaccount.html" class="search-toggle" aria-label="My Account" title="My Account" data-i18n-attr-aria-label="header.my_account" data-i18n-attr-title="header.my_account">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </a>
       <a href="tel:+16364260289" class="phone-link">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         636-426-0289
       </a>
-      <a href="intake.html" class="btn btn-primary btn-small">Get a quote</a>
+      <a href="intake.html" class="btn btn-primary btn-small" data-i18n="header.get_quote">Get a quote</a>
     </div>
 
-    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu">
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu" data-i18n-attr-aria-label="header.toggle_menu">
       <span></span><span></span><span></span>
     </button>
   </div>
@@ -110,9 +138,9 @@
 <main id="main">
   <section class="page-hero">
     <div class="wrap">
-      <p class="eyebrow">Services</p>
-      <h1>Five categories. One technician.</h1>
-      <p class="section-lede">Most IT shops make you find a different vendor for every problem. We keep it to one ticket, one visit, one point of contact.</p>
+      <p class="eyebrow" data-i18n="services.hero_eyebrow">Services</p>
+      <h1 data-i18n="services.hero_h1">Five categories. One technician.</h1>
+      <p class="section-lede" data-i18n="services.hero_lede">Most IT shops make you find a different vendor for every problem. We keep it to one ticket, one visit, one point of contact.</p>
     </div>
   </section>
 
@@ -120,7 +148,7 @@
     <div class="wrap">
       <div class="nationwide-note reveal">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3z"/></svg>
-        <p><strong>Computer repair, networking, and on-site security work are local</strong> — Montross, Colonial Beach, King George, and Dahlgren, Virginia. <strong>Website design is not.</strong> We build custom websites for small businesses anywhere in the country, entirely remote, start to finish. See our <a href="service-area.html" style="color:inherit; text-decoration:underline; font-weight:600;">full service area</a> for details.</p>
+        <p data-i18n-html="services.nationwide_note"><strong>Computer repair, networking, and on-site security work are local</strong> — Montross, Colonial Beach, King George, and Dahlgren, Virginia. <strong>Website design is not.</strong> We build custom websites for small businesses anywhere in the country, entirely remote, start to finish. See our <a href="service-area.html" style="color:inherit; text-decoration:underline; font-weight:600;">full service area</a> for details.</p>
       </div>
 
       <div class="ticket-grid">
@@ -131,19 +159,19 @@
             <svg class="ticket-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3z"/></svg>
           </div>
           <span class="ticket-expand-hint">+</span>
-          <h3>Website Services</h3>
+          <h3 data-i18n="services.web_title">Website Services</h3>
           <ul>
-            <li>Custom website design</li>
-            <li>Website redesigns</li>
-            <li>Mobile-responsive builds</li>
-            <li>Hosting assistance</li>
-            <li>Ongoing maintenance &amp; updates</li>
-            <li>Domain registration &amp; DNS setup</li>
-            <li>Business email setup (Google Workspace, Microsoft 365)</li>
-            <li>Basic SEO optimization</li>
+            <li data-i18n="services.web_item1">Custom website design</li>
+            <li data-i18n="services.web_item2">Website redesigns</li>
+            <li data-i18n="services.web_item3">Mobile-responsive builds</li>
+            <li data-i18n="services.web_item4">Hosting assistance</li>
+            <li data-i18n="services.web_item5">Ongoing maintenance &amp; updates</li>
+            <li data-i18n="services.web_item6">Domain registration &amp; DNS setup</li>
+            <li data-i18n="services.web_item7">Business email setup (Google Workspace, Microsoft 365)</li>
+            <li data-i18n="services.web_item8">Basic SEO optimization</li>
           </ul>
-          <p class="ticket-detail">A slow or dated site is a 24/7 first impression problem. We design, build, and host sites that load fast and actually bring in calls &mdash; see the <a href="#showcase">before/after</a> below.</p>
-          <p style="margin-top:1rem;"><a href="service-website.html" class="card__link" style="font-weight:700; font-size:.85rem; color:var(--accent-teal-text);">Full details &amp; pricing &rarr;</a></p>
+          <p class="ticket-detail" data-i18n-html="services.web_detail">A slow or dated site is a 24/7 first impression problem. We design, build, and host sites that load fast and actually bring in calls &mdash; see the <a href="#showcase">before/after</a> below.</p>
+          <p style="margin-top:1rem;"><a href="service-website.html" class="card__link" style="font-weight:700; font-size:.85rem; color:var(--accent-teal-text);" data-i18n="services.details_pricing_link">Full details &amp; pricing &rarr;</a></p>
         </article>
 
         <article class="ticket reveal">
@@ -152,18 +180,18 @@
             <svg class="ticket-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/></svg>
           </div>
           <span class="ticket-expand-hint">+</span>
-          <h3>Computer Services</h3>
+          <h3 data-i18n="services.pc_title">Computer Services</h3>
           <ul>
-            <li>Computer repair</li>
-            <li>PC troubleshooting</li>
-            <li>Hardware upgrades</li>
-            <li>Custom PC building</li>
-            <li>Virus &amp; malware removal</li>
-            <li>OS installation &amp; upgrades</li>
-            <li>Data backup &amp; recovery assistance</li>
+            <li data-i18n="services.pc_item1">Computer repair</li>
+            <li data-i18n="services.pc_item2">PC troubleshooting</li>
+            <li data-i18n="services.pc_item3">Hardware upgrades</li>
+            <li data-i18n="services.pc_item4">Custom PC building</li>
+            <li data-i18n="services.pc_item5">Virus &amp; malware removal</li>
+            <li data-i18n="services.pc_item6">OS installation &amp; upgrades</li>
+            <li data-i18n="services.pc_item7">Data backup &amp; recovery assistance</li>
           </ul>
-          <p class="ticket-detail">From a machine that won't boot to a full custom build, we diagnose it right the first time instead of guessing and re-billing.</p>
-          <p style="margin-top:1rem;"><a href="service-computer.html" class="card__link" style="font-weight:700; font-size:.85rem; color:var(--accent-teal-text);">Full details &amp; pricing &rarr;</a></p>
+          <p class="ticket-detail" data-i18n="services.pc_detail">From a machine that won't boot to a full custom build, we diagnose it right the first time instead of guessing and re-billing.</p>
+          <p style="margin-top:1rem;"><a href="service-computer.html" class="card__link" style="font-weight:700; font-size:.85rem; color:var(--accent-teal-text);" data-i18n="services.details_pricing_link">Full details &amp; pricing &rarr;</a></p>
         </article>
 
         <article class="ticket reveal">
@@ -172,17 +200,17 @@
             <svg class="ticket-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 20v-3M5 9a9.6 9.6 0 0 1 14 0M8.5 12.5a5 5 0 0 1 7 0M12 17.01l.01-.011"/></svg>
           </div>
           <span class="ticket-expand-hint">+</span>
-          <h3>Networking</h3>
+          <h3 data-i18n="services.net_title">Networking</h3>
           <ul>
-            <li>Home Wi-Fi setup &amp; optimization</li>
-            <li>Router &amp; modem configuration</li>
-            <li>Mesh Wi-Fi installation</li>
-            <li>Printer &amp; device networking</li>
-            <li>Small office network setup</li>
-            <li>Network troubleshooting</li>
+            <li data-i18n="services.net_item1">Home Wi-Fi setup &amp; optimization</li>
+            <li data-i18n="services.net_item2">Router &amp; modem configuration</li>
+            <li data-i18n="services.net_item3">Mesh Wi-Fi installation</li>
+            <li data-i18n="services.net_item4">Printer &amp; device networking</li>
+            <li data-i18n="services.net_item5">Small office network setup</li>
+            <li data-i18n="services.net_item6">Network troubleshooting</li>
           </ul>
-          <p class="ticket-detail">Dead zones, dropped connections, and devices that won't talk to each other usually come down to one or two fixable settings.</p>
-          <p style="margin-top:1rem;"><a href="service-networking.html" class="card__link" style="font-weight:700; font-size:.85rem; color:var(--accent-teal-text);">Full details &amp; pricing &rarr;</a></p>
+          <p class="ticket-detail" data-i18n="services.net_detail">Dead zones, dropped connections, and devices that won't talk to each other usually come down to one or two fixable settings.</p>
+          <p style="margin-top:1rem;"><a href="service-networking.html" class="card__link" style="font-weight:700; font-size:.85rem; color:var(--accent-teal-text);" data-i18n="services.details_pricing_link">Full details &amp; pricing &rarr;</a></p>
         </article>
 
         <article class="ticket reveal">
@@ -191,16 +219,16 @@
             <svg class="ticket-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6z"/></svg>
           </div>
           <span class="ticket-expand-hint">+</span>
-          <h3>Cybersecurity</h3>
+          <h3 data-i18n="services.sec_title">Cybersecurity</h3>
           <ul>
-            <li>Security consultations</li>
-            <li>Password manager setup</li>
-            <li>Multi-factor authentication (MFA) setup</li>
-            <li>Security best practices training</li>
-            <li>Home &amp; small business security reviews</li>
+            <li data-i18n="services.sec_item1">Security consultations</li>
+            <li data-i18n="services.sec_item2">Password manager setup</li>
+            <li data-i18n="services.sec_item3">Multi-factor authentication (MFA) setup</li>
+            <li data-i18n="services.sec_item4">Security best practices training</li>
+            <li data-i18n="services.sec_item5">Home &amp; small business security reviews</li>
           </ul>
-          <p class="ticket-detail">Most breaches start with a weak password or no MFA. We lock down the basics that stop the majority of real-world attacks.</p>
-          <p style="margin-top:1rem;"><a href="service-cybersecurity.html" class="card__link" style="font-weight:700; font-size:.85rem; color:var(--accent-teal-text);">Full details &amp; pricing &rarr;</a></p>
+          <p class="ticket-detail" data-i18n="services.sec_detail">Most breaches start with a weak password or no MFA. We lock down the basics that stop the majority of real-world attacks.</p>
+          <p style="margin-top:1rem;"><a href="service-cybersecurity.html" class="card__link" style="font-weight:700; font-size:.85rem; color:var(--accent-teal-text);" data-i18n="services.details_pricing_link">Full details &amp; pricing &rarr;</a></p>
         </article>
 
         <article class="ticket ticket--wide reveal">
@@ -209,23 +237,23 @@
             <svg class="ticket-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg>
           </div>
           <span class="ticket-expand-hint">+</span>
-          <h3>Small Business IT</h3>
+          <h3 data-i18n="services.biz_title">Small Business IT</h3>
           <ul class="ul-columns">
-            <li>Technology consulting</li>
-            <li>Computer &amp; workstation setup</li>
-            <li>Office printer &amp; scanner setup</li>
-            <li>Email migration &amp; setup</li>
-            <li>Domain management</li>
-            <li>Ongoing IT support</li>
+            <li data-i18n="services.biz_item1">Technology consulting</li>
+            <li data-i18n="services.biz_item2">Computer &amp; workstation setup</li>
+            <li data-i18n="services.biz_item3">Office printer &amp; scanner setup</li>
+            <li data-i18n="services.biz_item4">Email migration &amp; setup</li>
+            <li data-i18n="services.biz_item5">Domain management</li>
+            <li data-i18n="services.biz_item6">Ongoing IT support</li>
           </ul>
-          <p class="ticket-detail">One ongoing IT relationship instead of juggling five vendors when something breaks.</p>
-          <p style="margin-top:1rem;"><a href="service-business-it.html" class="card__link" style="font-weight:700; font-size:.85rem; color:var(--accent-teal-text);">Full details &amp; pricing &rarr;</a></p>
+          <p class="ticket-detail" data-i18n="services.biz_detail">One ongoing IT relationship instead of juggling five vendors when something breaks.</p>
+          <p style="margin-top:1rem;"><a href="service-business-it.html" class="card__link" style="font-weight:700; font-size:.85rem; color:var(--accent-teal-text);" data-i18n="services.details_pricing_link">Full details &amp; pricing &rarr;</a></p>
         </article>
 
       </div>
 
       <p style="text-align:center; margin-top:2.5rem;">
-        <a href="pricing.html" class="btn btn-ghost">See full pricing</a>
+        <a href="pricing.html" class="btn btn-ghost" data-i18n="services.pricing_link">See full pricing</a>
       </p>
     </div>
   </section>
@@ -234,9 +262,9 @@
   <section class="showcase" id="showcase">
     <div class="wrap">
       <header class="section-head">
-        <p class="eyebrow">Website services in action</p>
-        <h2>Drag to see the difference.</h2>
-        <p class="section-lede">This is the actual gap between a site that's quietly losing you customers and one that's built to convert. Drag the handle.</p>
+        <p class="eyebrow" data-i18n="services.showcase_eyebrow">Website services in action</p>
+        <h2 data-i18n="services.showcase_h2">Drag to see the difference.</h2>
+        <p class="section-lede" data-i18n="services.showcase_lede">This is the actual gap between a site that's quietly losing you customers and one that's built to convert. Drag the handle.</p>
       </header>
 
       <div class="compare reveal" id="compareSlider">
@@ -245,9 +273,9 @@
             <div class="mock-chrome"><span></span><span></span><span></span></div>
             <div class="mock-page mock-page--after">
               <div class="mock-nav">
-                <span class="mock-logo">ACME CO.</span>
+                <span class="mock-logo" data-i18n="services.showcase_after_logo">ACME CO.</span>
                 <span class="mock-link"></span><span class="mock-link"></span><span class="mock-link"></span>
-                <span class="mock-cta">Get quote</span>
+                <span class="mock-cta" data-i18n="services.showcase_after_cta">Get quote</span>
               </div>
               <div class="mock-hero">
                 <div class="mock-hero-text">
@@ -262,7 +290,7 @@
               </div>
             </div>
           </div>
-          <span class="compare-tag compare-tag--after">After</span>
+          <span class="compare-tag compare-tag--after" data-i18n="services.showcase_tag_after">After</span>
         </div>
 
         <div class="compare-frame compare-before" id="compareBefore">
@@ -270,26 +298,26 @@
             <div class="mock-chrome"><span></span><span></span><span></span></div>
             <div class="mock-page mock-page--before">
               <div class="mock-nav mock-nav--before">
-                <span class="mock-logo mock-logo--before">Business Co</span>
+                <span class="mock-logo mock-logo--before" data-i18n="services.showcase_before_logo">Business Co</span>
                 <span class="mock-link mock-link--before"></span><span class="mock-link mock-link--before"></span>
                 <span class="mock-link mock-link--before"></span><span class="mock-link mock-link--before"></span>
                 <span class="mock-link mock-link--before"></span>
               </div>
-              <div class="mock-banner-before">CLICK HERE!! &#9733; BEST PRICES &#9733; CALL NOW &#9733;</div>
+              <div class="mock-banner-before" data-i18n="services.showcase_before_banner">CLICK HERE!! &#9733; BEST PRICES &#9733; CALL NOW &#9733;</div>
               <div class="mock-body-before">
                 <span class="mock-line-before mock-line-before--lg"></span>
                 <span class="mock-line-before"></span>
                 <span class="mock-line-before"></span>
                 <span class="mock-line-before" style="width:60%"></span>
-                <span class="mock-btn-before">CLICK HERE</span>
+                <span class="mock-btn-before" data-i18n="services.showcase_before_cta">CLICK HERE</span>
               </div>
               <div class="mock-footer-before"></div>
             </div>
           </div>
-          <span class="compare-tag compare-tag--before">Before</span>
+          <span class="compare-tag compare-tag--before" data-i18n="services.showcase_tag_before">Before</span>
         </div>
 
-        <div class="compare-handle" id="compareHandle" tabindex="0" role="slider" aria-label="Drag to compare before and after website" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+        <div class="compare-handle" id="compareHandle" tabindex="0" role="slider" aria-label="Drag to compare before and after website" data-i18n-attr-aria-label="services.showcase_handle_aria" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
           <span class="compare-handle-grip">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 5l-6 7 6 7M16 5l6 7-6 7"/></svg>
           </span>
@@ -301,9 +329,9 @@
   <section>
     <div class="wrap">
       <div class="pricing-cta reveal">
-        <h2>Not sure which service you need?</h2>
-        <p>Fill out our project form and we'll follow up with a straightforward answer.</p>
-        <a href="intake.html" class="btn btn-primary" style="margin-top:.5rem;">Get a Custom Quote</a>
+        <h2 data-i18n="services.cta_h2">Not sure which service you need?</h2>
+        <p data-i18n="services.cta_p">Fill out our project form and we'll follow up with a straightforward answer.</p>
+        <a href="intake.html" class="btn btn-primary" style="margin-top:.5rem;" data-i18n="services.cta_button">Get a Custom Quote</a>
       </div>
     </div>
   </section>
@@ -315,57 +343,58 @@
     <div class="footer-brand">
       <img src="assets/logo-icon.png" alt="Little Technical Solutions LLC" width="36" height="36" class="footer-logo">
       <span class="logo-line1">Little Technical Solutions LLC</span>
-      <p>Websites, computers, networks, and security — handled by one call.</p>
+      <p data-i18n="footer.tagline">Websites, computers, networks, and security — handled by one call.</p>
     </div>
     <nav class="footer-nav" aria-label="Footer">
-      <a href="services.html">Services</a>
-      <a href="about.html">About</a>
-      <a href="team.html">Our Team</a>
-      <a href="portfolio.html">Portfolio</a>
-      <a href="gallery.html">Gallery</a>
-      <a href="pricing.html">Pricing</a>
-      <a href="website-designer.html">Website Designer</a>
-      <a href="heroes-pricing.html">Heroes Discount</a>
-      <a href="service-area.html">Service Area</a>
-      <a href="testimonials.html">Testimonials</a>
-      <a href="faq.html">FAQ</a>
-      <a href="blog.html">Blog</a>
-      <a href="booking.html">Booking</a>
-      <a href="payment.html">Payments</a>
-      <a href="contact.html">Contact</a>
-      <a href="intake.html">New Client Form</a>
-      <a href="search.html">Search</a>
-      <a href="sitemap.html">Sitemap</a>
-      <a href="privacy.html">Privacy Policy</a>
-      <a href="terms.html">Terms &amp; Conditions</a>
-      <a href="patch-notes.html">Patch Notes</a>
-      <a href="#" id="manageConsentLink">Cookie Notice</a>
+      <a href="services.html" data-i18n="nav.services">Services</a>
+      <a href="about.html" data-i18n="nav.about">About</a>
+      <a href="team.html" data-i18n="nav.team">Our Team</a>
+      <a href="portfolio.html" data-i18n="nav.portfolio">Portfolio</a>
+      <a href="gallery.html" data-i18n="nav.gallery">Gallery</a>
+      <a href="pricing.html" data-i18n="nav.pricing">Pricing</a>
+      <a href="website-designer.html" data-i18n="nav.website_designer">Website Designer</a>
+      <a href="heroes-pricing.html" data-i18n="nav.heroes_discount">Heroes Discount</a>
+      <a href="service-area.html" data-i18n="nav.service_area">Service Area</a>
+      <a href="testimonials.html" data-i18n="nav.testimonials">Testimonials</a>
+      <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+      <a href="blog.html" data-i18n="nav.blog">Blog</a>
+      <a href="booking.html" data-i18n="nav.booking">Booking</a>
+      <a href="payment.html" data-i18n="nav.payments">Payments</a>
+      <a href="contact.html" data-i18n="nav.contact">Contact</a>
+      <a href="intake.html" data-i18n="footer.new_client_form">New Client Form</a>
+      <a href="search.html" data-i18n="footer.search">Search</a>
+      <a href="sitemap.html" data-i18n="footer.sitemap">Sitemap</a>
+      <a href="privacy.html" data-i18n="footer.privacy_policy">Privacy Policy</a>
+      <a href="terms.html" data-i18n="footer.terms">Terms &amp; Conditions</a>
+      <a href="patch-notes.html" data-i18n="footer.patch_notes">Patch Notes</a>
+      <a href="#" id="manageConsentLink" data-i18n="footer.cookie_notice">Cookie Notice</a>
     </nav>
     <nav class="footer-social" aria-label="Social">
       <a href="https://www.facebook.com/profile.php?id=61591618750945" rel="noopener" target="_blank" aria-label="Little Technical Solutions LLC on Facebook">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>
-        <span>Facebook</span>
+        <span data-i18n="footer.facebook">Facebook</span>
       </a>
       <a href="https://www.google.com/search?q=Little+Technical+Solutions+LLC&stick=H4sIAAAAAAAA_-NgU1IxqDA0N0s1sUgyT0yxTE1NTLMyqEg2sTRLNTZOTTS1NDIzSUxaxCrnk1lSkpOqEJKanJGXmZyYoxCcn1NakpmfV6zg4-MMAGRkPw5JAAAA&hl=en&mat=CWEgdKX6xe4RElcBa0lj_4PsrYDUx2O2vFBpnokVltXIVrcy43xjezZrcYTprxRsgJGT1ATelPpH5ss3Sn-4VrXJHi_xxw10Eq_jzvWCxQfPf2G4feie7XZe-MJ3uWuSvN4&authuser=0" rel="noopener" target="_blank" aria-label="Little Technical Solutions LLC on Google">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 12.23c0-.75-.07-1.47-.19-2.18H12v4.13h5.4a4.6 4.6 0 0 1-2 3.02v2.5h3.24c1.9-1.75 3-4.32 3-7.47z"/><path d="M12 22c2.7 0 4.97-.9 6.63-2.44l-3.24-2.5c-.9.6-2.05.96-3.39.96-2.6 0-4.8-1.76-5.6-4.12H3.05v2.58A10 10 0 0 0 12 22z"/><path d="M6.4 13.9a6 6 0 0 1 0-3.8V7.52H3.05a10 10 0 0 0 0 8.96l3.35-2.58z"/><path d="M12 6.08c1.47 0 2.79.5 3.83 1.5l2.87-2.87A10 10 0 0 0 3.05 7.52L6.4 10.1c.8-2.36 3-4.02 5.6-4.02z"/></svg>
-        <span>Find us on Google</span>
+        <span data-i18n="footer.find_google">Find us on Google</span>
       </a>
     </nav>
   </div>
-  <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. All rights reserved.</p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version 2.0.0</a></p>
-  <p class="footer-version"><a href="admin.html">Staff Sign In</a></p>
+  <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span data-i18n="footer.rights">All rights reserved.</span></p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version 2.1.0</a></p>
+  <p class="footer-version"><a href="admin.html" data-i18n="footer.staff_signin">Staff Sign In</a></p>
 </footer>
 
 <div id="cookie-banner" class="cookie-banner" hidden role="region" aria-label="Cookie notice">
   <div class="wrap cookie-banner-inner">
-    <p>We use Netlify Analytics (cookie-free, privacy-respecting) to see site traffic, plus a small amount of local storage for things like your dark/light mode choice. Nothing here is used for advertising or sold to anyone. See our <a href="privacy.html">Privacy Policy</a>.</p>
+    <p data-i18n-html="cookie.text">We use Netlify Analytics (cookie-free, privacy-respecting) to see site traffic, plus a small amount of local storage for things like your dark/light mode choice. Nothing here is used for advertising or sold to anyone. See our <a href="privacy.html" data-i18n="footer.privacy_policy">Privacy Policy</a>.</p>
     <div class="cookie-banner-actions">
-      <button type="button" class="btn btn-primary btn-small" data-consent="dismiss">Got it</button>
+      <button type="button" class="btn btn-primary btn-small" data-consent="dismiss" data-i18n="cookie.accept">Got it</button>
     </div>
   </div>
 </div>
 
+<script src="js/i18n.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

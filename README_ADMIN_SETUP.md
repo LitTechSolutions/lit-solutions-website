@@ -94,20 +94,22 @@ Deploy as normal (`netlify deploy` or your usual Git-connected flow).
 `netlify/functions`, so Netlify picks up the functions automatically — nothing
 else to configure there.
 
-## 6. Create your staff account (one time only)
+## 6. Create your own account (one time only)
 
-1. Go to `https://yourdomain/admin.html#register`.
+There's deliberately no separate "create a staff account" form anymore --
+Dylan is the only person who will ever have admin access, so the one
+account he needs is created the same way any customer account is, then
+promoted to admin in step 7.
+
+1. Go to `https://yourdomain/myaccount.html#register`.
 2. Fill in your name, email, and a password (10+ characters).
 3. **Verify it.** If you completed step 4 above, check your email for the
    verification link. If not, find the token yourself: Netlify dashboard >
    your site > **Blobs** > `tokens` store > find the most recent key (its
    value has `"type":"verify-email"` and your user id), then open
-   `admin.html#verify?token=<that token>`.
-4. Registration stays open after this — it's the same open sign-up
-   `myaccount.html` uses for customers (see below). A random new account
-   created by someone else is harmless on its own: it's role `customer` by
-   default and has zero staff access unless you promote it yourself in the
-   next step.
+   `myaccount.html#verify?token=<that token>`.
+4. This account is role `customer` by default and has zero staff access
+   until you promote it yourself in the next step.
 
 ## 7. Promote yourself to admin
 

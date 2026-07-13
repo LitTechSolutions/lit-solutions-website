@@ -32,7 +32,35 @@
 </head>
 <body>
 
-<a class="skip-link" href="#main">Skip to content</a>
+<a class="skip-link" href="#main" data-i18n="a11y.skip_to_content">Skip to content</a>
+<div class="lang-bar">
+  <div class="wrap lang-bar-inner">
+    <div class="nav-dropdown">
+      <button type="button" class="nav-dropdown-toggle lang-dropdown-toggle" aria-expanded="false" aria-controls="langMenu" aria-label="Choose language" data-i18n-attr-aria-label="header.choose_language">
+        <span id="langCurrentLabel">ENG</span>
+        <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="nav-dropdown-menu lang-dropdown-menu" id="langMenu" role="listbox">
+        <button type="button" class="lang-option is-active" data-lang="en">English <span class="lang-code">ENG</span></button>
+        <button type="button" class="lang-option" data-lang="es">Español <span class="lang-code">ESP</span></button>
+        <button type="button" class="lang-option" data-lang="fr">Français <span class="lang-code">FRA</span></button>
+        <button type="button" class="lang-option" data-lang="zh">中文 <span class="lang-code">ZH</span></button>
+        <button type="button" class="lang-option" data-lang="ja">日本語 <span class="lang-code">JPN</span></button>
+        <button type="button" class="lang-option" data-lang="vi">Tiếng Việt <span class="lang-code">VIE</span></button>
+        <button type="button" class="lang-option" data-lang="tl">Filipino <span class="lang-code">FIL</span></button>
+        <button type="button" class="lang-option" data-lang="ar">العربية <span class="lang-code">ARA</span></button>
+        <button type="button" class="lang-option" data-lang="ko">한국어 <span class="lang-code">KOR</span></button>
+        <button type="button" class="lang-option" data-lang="de">Deutsch <span class="lang-code">GER</span></button>
+        <button type="button" class="lang-option" data-lang="ht">Kreyòl Ayisyen <span class="lang-code">HAT</span></button>
+        <button type="button" class="lang-option" data-lang="pt">Português <span class="lang-code">POR</span></button>
+        <button type="button" class="lang-option" data-lang="ru">Русский <span class="lang-code">RUS</span></button>
+        <button type="button" class="lang-option" data-lang="it">Italiano <span class="lang-code">ITA</span></button>
+        <button type="button" class="lang-option" data-lang="pl">Polski <span class="lang-code">POL</span></button>
+        <button type="button" class="lang-option" data-lang="hi">हिन्दी <span class="lang-code">HIN</span></button>
+      </div>
+    </div>
+  </div>
+</div>
 <header class="site-header" id="siteHeader">
   <div class="wrap header-inner">
     <a href="index.html" class="logo" aria-label="Little Technical Solutions LLC — home">
@@ -48,61 +76,61 @@
     <nav class="main-nav" id="mainNav" aria-label="Primary">
       <div class="nav-dropdown">
         <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-controls="servicesDropdown">
-          Services
+          <span data-i18n="nav.services">Services</span>
           <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
         </button>
         <div class="nav-dropdown-menu" id="servicesDropdown">
-          <a href="services.html">All Services</a>
-          <a href="service-website.html">Website Design &amp; Development</a>
-          <a href="service-computer.html">Computer Repair</a>
-          <a href="service-networking.html">Networking</a>
-          <a href="service-cybersecurity.html">Cybersecurity</a>
-          <a href="service-business-it.html">Small Business IT</a>
+          <a href="services.html" data-i18n="nav.services_all">All Services</a>
+          <a href="service-website.html" data-i18n="nav.service_website">Website Design &amp; Development</a>
+          <a href="service-computer.html" data-i18n="nav.service_computer">Computer Repair</a>
+          <a href="service-networking.html" data-i18n="nav.service_networking">Networking</a>
+          <a href="service-cybersecurity.html" data-i18n="nav.service_cybersecurity">Cybersecurity</a>
+          <a href="service-business-it.html" data-i18n="nav.service_business_it">Small Business IT</a>
         </div>
       </div>
-      <a href="about.html">About</a>
-      <a href="pricing.html">Pricing</a>
-      <a href="website-designer.html">Website Designer</a>
-      <a href="heroes-pricing.html">Heroes Discount</a>
+      <a href="about.html" data-i18n="nav.about">About</a>
+      <a href="pricing.html" data-i18n="nav.pricing">Pricing</a>
+      <a href="website-designer.html" data-i18n="nav.website_designer">Website Designer</a>
+      <a href="heroes-pricing.html" data-i18n="nav.heroes_discount">Heroes Discount</a>
       <div class="nav-dropdown">
         <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-controls="resourcesDropdown">
-          Resources
+          <span data-i18n="nav.resources">Resources</span>
           <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
         </button>
         <div class="nav-dropdown-menu" id="resourcesDropdown">
-          <a href="service-area.html">Service Area</a>
-          <a href="testimonials.html">Testimonials</a>
-          <a href="team.html">Our Team</a>
-          <a href="portfolio.html">Portfolio</a>
-          <a href="gallery.html">Gallery</a>
-          <a href="faq.html">FAQ</a>
-          <a href="blog.html">Blog</a>
-          <a href="booking.html">Booking</a>
+          <a href="service-area.html" data-i18n="nav.service_area">Service Area</a>
+          <a href="testimonials.html" data-i18n="nav.testimonials">Testimonials</a>
+          <a href="team.html" data-i18n="nav.team">Our Team</a>
+          <a href="portfolio.html" data-i18n="nav.portfolio">Portfolio</a>
+          <a href="gallery.html" data-i18n="nav.gallery">Gallery</a>
+          <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+          <a href="blog.html" data-i18n="nav.blog">Blog</a>
+          <a href="booking.html" data-i18n="nav.booking">Booking</a>
         </div>
       </div>
-      <a href="payment.html">Payments</a>
-      <a href="contact.html">Contact</a>
+      <a href="payment.html" data-i18n="nav.payments">Payments</a>
+      <a href="contact.html" data-i18n="nav.contact">Contact</a>
     </nav>
 
     <div class="header-actions">
-      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode" data-i18n-attr-aria-label="header.toggle_dark_mode" data-i18n-attr-title="header.toggle_dark_mode">
         <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
         <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
-      <a href="search.html" class="search-toggle" aria-label="Search this site" title="Search this site">
+      <a href="search.html" class="search-toggle" aria-label="Search this site" title="Search this site" data-i18n-attr-aria-label="header.search_site" data-i18n-attr-title="header.search_site">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-3.8-3.8"/></svg>
       </a>
-      <a href="myaccount.html" class="search-toggle" aria-label="My Account" title="My Account">
+      <a href="myaccount.html" class="search-toggle" aria-label="My Account" title="My Account" data-i18n-attr-aria-label="header.my_account" data-i18n-attr-title="header.my_account">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </a>
       <a href="tel:+16364260289" class="phone-link">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         636-426-0289
       </a>
-      <a href="intake.html" class="btn btn-primary btn-small">Get a quote</a>
+      <a href="intake.html" class="btn btn-primary btn-small" data-i18n="header.get_quote">Get a quote</a>
     </div>
 
-    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu">
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu" data-i18n-attr-aria-label="header.toggle_menu">
       <span></span><span></span><span></span>
     </button>
   </div>
@@ -110,26 +138,26 @@
 <main id="main">
   <section class="page-hero">
     <div class="wrap">
-      <p class="eyebrow">About Us</p>
-      <h1>One technician. No jargon. No games.</h1>
-      <p class="section-lede">Little Technical Solutions LLC is a veteran-owned technology company serving homes and small businesses — websites, computers, networks, and security, handled by one point of contact.</p>
+      <p class="eyebrow" data-i18n="about.hero_eyebrow">About Us</p>
+      <h1 data-i18n="about.hero_h1">One technician. No jargon. No games.</h1>
+      <p class="section-lede" data-i18n="about.hero_lede">Little Technical Solutions LLC is a veteran-owned technology company serving homes and small businesses — websites, computers, networks, and security, handled by one point of contact.</p>
     </div>
   </section>
 
   <section class="mission">
     <div class="wrap">
       <div class="mission-inner">
-        <p class="eyebrow">Our mission</p>
-        <h2>Affordable, professional, and transparent — for the long haul.</h2>
-        <p class="section-lede">Our mission is to provide honest technology services while building long-term relationships with our clients — the trusted local partner businesses can rely on for websites, IT support, networking, cybersecurity guidance, and whatever comes next.</p>
+        <p class="eyebrow" data-i18n="about.mission_eyebrow">Our mission</p>
+        <h2 data-i18n="about.mission_h2">Affordable, professional, and transparent — for the long haul.</h2>
+        <p class="section-lede" data-i18n="about.mission_lede">Our mission is to provide honest technology services while building long-term relationships with our clients — the trusted local partner businesses can rely on for websites, IT support, networking, cybersecurity guidance, and whatever comes next.</p>
         <ul class="value-pills reveal">
-          <li>Integrity</li>
-          <li>Honesty</li>
-          <li>Professionalism</li>
-          <li>Transparency</li>
-          <li>Continuous learning</li>
-          <li>Craftsmanship</li>
-          <li>Community involvement</li>
+          <li data-i18n="about.value_integrity">Integrity</li>
+          <li data-i18n="about.value_honesty">Honesty</li>
+          <li data-i18n="about.value_professionalism">Professionalism</li>
+          <li data-i18n="about.value_transparency">Transparency</li>
+          <li data-i18n="about.value_learning">Continuous learning</li>
+          <li data-i18n="about.value_craftsmanship">Craftsmanship</li>
+          <li data-i18n="about.value_community">Community involvement</li>
         </ul>
       </div>
     </div>
@@ -138,38 +166,38 @@
   <section class="why" id="why-us">
     <div class="wrap why-inner">
       <div class="why-copy">
-        <p class="eyebrow">Why Little Technical Solutions LLC</p>
-        <h2>Small enough to know your setup. Sharp enough to fix all of it.</h2>
-        <p class="section-lede">You don't need three different vendors for your website, your Wi-Fi, and your antivirus. You need one technician who understands how they all connect — because they do.</p>
+        <p class="eyebrow" data-i18n="about.why_eyebrow">Why Little Technical Solutions LLC</p>
+        <h2 data-i18n="about.why_h2">Small enough to know your setup. Sharp enough to fix all of it.</h2>
+        <p class="section-lede" data-i18n="about.why_lede">You don't need three different vendors for your website, your Wi-Fi, and your antivirus. You need one technician who understands how they all connect — because they do.</p>
       </div>
       <div class="why-grid">
         <div class="why-card reveal">
-          <h3>One point of contact</h3>
-          <p>The person who sets up your network is the same person who can fix your website. Nothing gets lost between vendors.</p>
+          <h3 data-i18n="about.why_card1_title">One point of contact</h3>
+          <p data-i18n="about.why_card1_desc">The person who sets up your network is the same person who can fix your website. Nothing gets lost between vendors.</p>
         </div>
         <div class="why-card reveal">
-          <h3>Plain-language explanations</h3>
-          <p>You'll know what was wrong, what we did, and what to watch for — no jargon, no condescension.</p>
+          <h3 data-i18n="about.why_card2_title">Plain-language explanations</h3>
+          <p data-i18n="about.why_card2_desc">You'll know what was wrong, what we did, and what to watch for — no jargon, no condescension.</p>
         </div>
         <div class="why-card reveal">
-          <h3>Flat, upfront pricing</h3>
-          <p>You approve the quote before we start. No hourly clock running while we figure things out.</p>
+          <h3 data-i18n="about.why_card3_title">Flat, upfront pricing</h3>
+          <p data-i18n="about.why_card3_desc">You approve the quote before we start. No hourly clock running while we figure things out.</p>
         </div>
         <div class="why-card reveal">
-          <h3>Security built in, not bolted on</h3>
-          <p>Every job — from a new website to a new router — gets set up with security best practices from the start.</p>
+          <h3 data-i18n="about.why_card4_title">Security built in, not bolted on</h3>
+          <p data-i18n="about.why_card4_desc">Every job — from a new website to a new router — gets set up with security best practices from the start.</p>
         </div>
         <div class="why-card reveal">
-          <h3>Local, personal service</h3>
-          <p>You're calling a neighbor, not a call center — we know the area because we live and work in it.</p>
+          <h3 data-i18n="about.why_card5_title">Local, personal service</h3>
+          <p data-i18n="about.why_card5_desc">You're calling a neighbor, not a call center — we know the area because we live and work in it.</p>
         </div>
         <div class="why-card reveal">
-          <h3>Built around you, not a template</h3>
-          <p>Every project is scoped to what your business actually needs, with room for custom requests beyond the standard packages.</p>
+          <h3 data-i18n="about.why_card6_title">Built around you, not a template</h3>
+          <p data-i18n="about.why_card6_desc">Every project is scoped to what your business actually needs, with room for custom requests beyond the standard packages.</p>
         </div>
         <div class="why-card reveal">
-          <h3>We stick around after launch</h3>
-          <p>Post-launch support comes standard, with ongoing help available through our Website Care Plan.</p>
+          <h3 data-i18n="about.why_card7_title">We stick around after launch</h3>
+          <p data-i18n="about.why_card7_desc">Post-launch support comes standard, with ongoing help available through our Website Care Plan.</p>
         </div>
       </div>
     </div>
@@ -178,29 +206,29 @@
   <section class="veteran" id="veteran">
     <div class="wrap">
       <figure class="founder-photo-feature reveal">
-        <img src="assets/about/dylan-console.jpg" alt="Dylan Little monitoring a command-and-control console aboard USS Antietam" width="960" height="640" loading="lazy">
-        <figcaption>Standing watch aboard USS Antietam (CG-64) — the same focus now goes into every website and network we build.</figcaption>
+        <img src="assets/about/dylan-console.jpg" alt="Dylan Little monitoring a command-and-control console aboard USS Antietam" width="960" height="640" loading="lazy" data-i18n-attr-alt="about.photo_console_alt">
+        <figcaption data-i18n="about.photo_console_caption">Standing watch aboard USS Antietam (CG-64) — the same focus now goes into every website and network we build.</figcaption>
       </figure>
     </div>
 
     <div class="wrap veteran-inner">
       <div class="veteran-copy">
-        <p class="eyebrow">The founder</p>
-        <h2>Veteran-owned. Mission-trained.</h2>
-        <p class="section-lede">Little Technical Solutions LLC is proudly veteran-owned. Founder Dylan Little served six years in the U.S. Navy as a Fire Controlman, including four years aboard the guided-missile cruiser USS Antietam, maintaining high-voltage combat systems and command-and-control electronics — hands-on troubleshooting, repair, and testing where equipment failure wasn't an option. After the Navy, Dylan carried that same discipline into a career as a systems engineer while earning a Bachelor's degree in Cybersecurity Technology. He founded Little Technical Solutions to put that technical background to work for local businesses — building websites and handling IT the way he'd want it done for his own. We extend that same appreciation to others who serve — see our <a href="heroes-pricing.html" style="color:var(--accent-teal-text); text-decoration:underline;">American Heroes Discount</a>.</p>
+        <p class="eyebrow" data-i18n="about.founder_eyebrow">The founder</p>
+        <h2 data-i18n="about.founder_h2">Veteran-owned. Mission-trained.</h2>
+        <p class="section-lede" data-i18n-html="about.founder_lede">Little Technical Solutions LLC is proudly veteran-owned. Founder Dylan Little served six years in the U.S. Navy as a Fire Controlman, including four years aboard the guided-missile cruiser USS Antietam, maintaining high-voltage combat systems and command-and-control electronics — hands-on troubleshooting, repair, and testing where equipment failure wasn't an option. After the Navy, Dylan carried that same discipline into a career as a systems engineer while earning a Bachelor's degree in Cybersecurity Technology. He founded Little Technical Solutions to put that technical background to work for local businesses — building websites and handling IT the way he'd want it done for his own. We extend that same appreciation to others who serve — see our <a href="heroes-pricing.html" style="color:var(--accent-teal-text); text-decoration:underline;">American Heroes Discount</a>.</p>
       </div>
       <div class="cred-list">
         <div class="cred-card reveal">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z"/></svg>
           <div>
-            <h3>U.S. Navy Veteran</h3>
-            <p>Fire Controlman, 6 years — including 4 years of hands-on electrical &amp; electronic systems maintenance aboard USS Antietam</p>
+            <h3 data-i18n="about.cred1_title">U.S. Navy Veteran</h3>
+            <p data-i18n="about.cred1_desc">Fire Controlman, 6 years — including 4 years of hands-on electrical &amp; electronic systems maintenance aboard USS Antietam</p>
           </div>
         </div>
         <div class="cred-card reveal">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l9 4.5-9 4.5-9-4.5L12 3z"/><path d="M6 10.2V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-5.8"/></svg>
           <div>
-            <h3>B.S. Cybersecurity Technology</h3>
+            <h3 data-i18n="about.cred2_title">B.S. Cybersecurity Technology</h3>
             <p>University of Maryland Global Campus</p>
           </div>
         </div>
@@ -210,10 +238,10 @@
     <div class="wrap">
       <div class="founder-photo-pair">
         <figure class="reveal">
-          <img src="assets/about/dylan-underway.jpg" alt="Dylan Little on deck during underway operations aboard USS Antietam" width="960" height="640" loading="lazy">
+          <img src="assets/about/dylan-underway.jpg" alt="Dylan Little on deck during underway operations aboard USS Antietam" width="960" height="640" loading="lazy" data-i18n-attr-alt="about.photo_underway_alt">
         </figure>
         <figure class="reveal">
-          <img src="assets/about/dylan-pinning.jpg" alt="Dylan Little receiving a qualification pin aboard USS Antietam" width="750" height="1000" loading="lazy">
+          <img src="assets/about/dylan-pinning.jpg" alt="Dylan Little receiving a qualification pin aboard USS Antietam" width="750" height="1000" loading="lazy" data-i18n-attr-alt="about.photo_pinning_alt">
         </figure>
       </div>
     </div>
@@ -223,22 +251,22 @@
         <div class="stat-item reveal">
           <span class="stat-num" data-count="6">0</span>
           <span class="stat-suffix"></span>
-          <span class="stat-label">Years of Navy technical service</span>
+          <span class="stat-label" data-i18n="about.stat1_label">Years of Navy technical service</span>
         </div>
         <div class="stat-item reveal">
           <span class="stat-num" data-count="825">0</span>
           <span class="stat-suffix">+</span>
-          <span class="stat-label">Documented hours on Tomahawk system maintenance</span>
+          <span class="stat-label" data-i18n="about.stat2_label">Documented hours on Tomahawk system maintenance</span>
         </div>
         <div class="stat-item reveal">
           <span class="stat-num" data-count="2500">0</span>
           <span class="stat-suffix">+</span>
-          <span class="stat-label">Man-hours of preventive maintenance led</span>
+          <span class="stat-label" data-i18n="about.stat3_label">Man-hours of preventive maintenance led</span>
         </div>
         <div class="stat-item reveal">
           <span class="stat-num" data-count="11">0</span>
           <span class="stat-suffix"></span>
-          <span class="stat-label">Sailors supervised as Leading Petty Officer</span>
+          <span class="stat-label" data-i18n="about.stat4_label">Sailors supervised as Leading Petty Officer</span>
         </div>
       </div>
     </div>
@@ -247,29 +275,29 @@
   <section class="how" id="design-process">
     <div class="wrap">
       <header class="section-head">
-        <p class="eyebrow">How a website gets built</p>
-        <h2>From package to launch.</h2>
+        <p class="eyebrow" data-i18n="about.how_eyebrow">How a website gets built</p>
+        <h2 data-i18n="about.how_h2">From package to launch.</h2>
       </header>
       <ol class="steps">
         <li class="reveal" style="transition-delay:0.0s">
           <span class="step-num">1</span>
-          <h3>Pick a starting package</h3>
-          <p>Starter or Business — flat-rate pricing, no surprises. See <a href="pricing.html">Pricing</a>.</p>
+          <h3 data-i18n="about.step1_title">Pick a starting package</h3>
+          <p data-i18n-html="about.step1_desc">Starter or Business — flat-rate pricing, no surprises. See <a href="pricing.html" data-i18n="nav.pricing">Pricing</a>.</p>
         </li>
         <li class="reveal" style="transition-delay:0.08s">
           <span class="step-num">2</span>
-          <h3>Choose your exact features</h3>
-          <p>Use the <a href="website-designer.html">Website Designer</a> tool to pick what you want and watch your starting price update in real time.</p>
+          <h3 data-i18n="about.step2_title">Choose your exact features</h3>
+          <p data-i18n-html="about.step2_desc">Use the <a href="website-designer.html" data-i18n="nav.website_designer">Website Designer</a> tool to pick what you want and watch your starting price update in real time.</p>
         </li>
         <li class="reveal" style="transition-delay:0.16s">
           <span class="step-num">3</span>
-          <h3>We build, you review</h3>
-          <p>Work with Dylan directly — as hands-on or hands-off as you'd like — through one or two revision rounds before launch.</p>
+          <h3 data-i18n="about.step3_title">We build, you review</h3>
+          <p data-i18n="about.step3_desc">Work with Dylan directly — as hands-on or hands-off as you'd like — through one or two revision rounds before launch.</p>
         </li>
         <li class="reveal" style="transition-delay:0.24s">
           <span class="step-num">4</span>
-          <h3>Launch, with support included</h3>
-          <p>Every website launches with post-launch support built in, plus the option to keep it maintained long-term.</p>
+          <h3 data-i18n="about.step4_title">Launch, with support included</h3>
+          <p data-i18n="about.step4_desc">Every website launches with post-launch support built in, plus the option to keep it maintained long-term.</p>
         </li>
       </ol>
     </div>
@@ -279,14 +307,14 @@
     <div class="wrap">
       <div class="support-inner">
         <div class="reveal">
-          <p class="eyebrow">After launch</p>
-          <h2>Support doesn't stop at delivery.</h2>
-          <p>Starter websites include 30 days of post-launch support; Business websites include 60 days. Want help beyond that? The <a href="payment.html">Website Care Plan</a> covers hosting coordination, small content updates, platform health checks, and general maintenance — so your site stays online and current without you having to manage it.</p>
+          <p class="eyebrow" data-i18n="about.support_eyebrow">After launch</p>
+          <h2 data-i18n="about.support_h2">Support doesn't stop at delivery.</h2>
+          <p data-i18n-html="about.support_desc">Starter websites include 30 days of post-launch support; Business websites include 60 days. Want help beyond that? The <a href="payment.html">Website Care Plan</a> covers hosting coordination, small content updates, platform health checks, and general maintenance — so your site stays online and current without you having to manage it.</p>
         </div>
         <div class="reveal">
-          <p class="eyebrow">What's next</p>
-          <h2>Proprietary tools, built for our clients.</h2>
-          <p>We're actively building software to make owning a website easier — the <a href="website-designer.html">Website Designer</a> tool is the first of it. Website Care Plan subscribers get access to new tools like it as they're released, at no additional cost.</p>
+          <p class="eyebrow" data-i18n="about.future_eyebrow">What's next</p>
+          <h2 data-i18n="about.future_h2">Proprietary tools, built for our clients.</h2>
+          <p data-i18n-html="about.future_desc">We're actively building software to make owning a website easier — the <a href="website-designer.html" data-i18n="nav.website_designer">Website Designer</a> tool is the first of it. Website Care Plan subscribers get access to new tools like it as they're released, at no additional cost.</p>
         </div>
       </div>
     </div>
@@ -296,7 +324,7 @@
     <div class="wrap">
       <div class="nationwide-note reveal" style="max-width:760px; margin:0 auto;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.1-3.1a5 5 0 0 1-6.6 6.6L6.4 20.6a2 2 0 0 1-2.8-2.8L11.4 10a5 5 0 0 1 6.6-6.6z"/></svg>
-        <p>Beyond websites, we also handle <a href="service-computer.html" style="color:inherit; text-decoration:underline; font-weight:600;">computer repair</a>, <a href="service-networking.html" style="color:inherit; text-decoration:underline; font-weight:600;">networking</a>, <a href="service-cybersecurity.html" style="color:inherit; text-decoration:underline; font-weight:600;">cybersecurity guidance</a>, and general <a href="service-business-it.html" style="color:inherit; text-decoration:underline; font-weight:600;">small business IT support</a> — see the full lineup on <a href="services.html" style="color:inherit; text-decoration:underline; font-weight:600;">Services</a>.</p>
+        <p data-i18n-html="about.beyond_websites_note">Beyond websites, we also handle <a href="service-computer.html" style="color:inherit; text-decoration:underline; font-weight:600;">computer repair</a>, <a href="service-networking.html" style="color:inherit; text-decoration:underline; font-weight:600;">networking</a>, <a href="service-cybersecurity.html" style="color:inherit; text-decoration:underline; font-weight:600;">cybersecurity guidance</a>, and general <a href="service-business-it.html" style="color:inherit; text-decoration:underline; font-weight:600;">small business IT support</a> — see the full lineup on <a href="services.html" style="color:inherit; text-decoration:underline; font-weight:600;">Services</a>.</p>
       </div>
     </div>
   </section>
@@ -304,13 +332,13 @@
   <section class="letter">
     <div class="wrap letter-inner">
       <figure class="letter-portrait reveal">
-        <img src="assets/about/dylan-portrait.jpg" alt="Portrait of Dylan Little, founder of Little Technical Solutions LLC" width="960" height="954" loading="lazy">
+        <img src="assets/about/dylan-portrait.jpg" alt="Portrait of Dylan Little, founder of Little Technical Solutions LLC" width="960" height="954" loading="lazy" data-i18n-attr-alt="about.letter_portrait_alt">
       </figure>
       <div class="letter-copy reveal">
-        <p class="eyebrow">A message from Dylan</p>
-        <h2>Thank you for taking the time to learn about us.</h2>
-        <p>Every client places their trust in me, and I take that responsibility seriously. Whether you're launching your first business, modernizing an existing website, or simply need someone local to help with technology, I'd be honored to earn your business and build something we're both proud of.</p>
-        <p class="letter-sign">— Dylan Little, Founder</p>
+        <p class="eyebrow" data-i18n="about.letter_eyebrow">A message from Dylan</p>
+        <h2 data-i18n="about.letter_h2">Thank you for taking the time to learn about us.</h2>
+        <p data-i18n="about.letter_body">Every client places their trust in me, and I take that responsibility seriously. Whether you're launching your first business, modernizing an existing website, or simply need someone local to help with technology, I'd be honored to earn your business and build something we're both proud of.</p>
+        <p class="letter-sign" data-i18n="about.letter_sign">— Dylan Little, Founder</p>
       </div>
     </div>
   </section>
@@ -319,7 +347,7 @@
     <div class="wrap">
       <div class="nationwide-note reveal" style="max-width:760px; margin:0 auto;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 12l2 2 4-4M12 3l8 4v5c0 5-3.5 9-8 10-4.5-1-8-5-8-10V7z"/></svg>
-        <p>We're a brand-new business — see our <a href="testimonials.html" style="color:inherit; text-decoration:underline; font-weight:600;">testimonials page</a> for what that means, and consider being one of our first reviews.</p>
+        <p data-i18n-html="about.new_business_note">We're a brand-new business — see our <a href="testimonials.html" style="color:inherit; text-decoration:underline; font-weight:600;">testimonials page</a> for what that means, and consider being one of our first reviews.</p>
       </div>
     </div>
   </section>
@@ -327,11 +355,11 @@
   <section>
     <div class="wrap">
       <div class="pricing-cta reveal">
-        <h2>Ready to work together?</h2>
-        <p>Reach out directly or fill out our project form — we typically respond the same business day.</p>
+        <h2 data-i18n="about.cta_h2">Ready to work together?</h2>
+        <p data-i18n="about.cta_p">Reach out directly or fill out our project form — we typically respond the same business day.</p>
         <div class="hero-actions" style="justify-content:center; margin-top:1rem;">
-          <a href="contact.html" class="btn btn-primary">Contact Us</a>
-          <a href="intake.html" class="btn btn-ghost" style="border-color:rgba(238,241,245,0.35); color:#fff;">Fill Out Project Form</a>
+          <a href="contact.html" class="btn btn-primary" data-i18n="about.cta_contact">Contact Us</a>
+          <a href="intake.html" class="btn btn-ghost" style="border-color:rgba(238,241,245,0.35); color:#fff;" data-i18n="about.cta_intake">Fill Out Project Form</a>
         </div>
       </div>
     </div>
@@ -344,57 +372,58 @@
     <div class="footer-brand">
       <img src="assets/logo-icon.png" alt="Little Technical Solutions LLC" width="36" height="36" class="footer-logo">
       <span class="logo-line1">Little Technical Solutions LLC</span>
-      <p>Websites, computers, networks, and security — handled by one call.</p>
+      <p data-i18n="footer.tagline">Websites, computers, networks, and security — handled by one call.</p>
     </div>
     <nav class="footer-nav" aria-label="Footer">
-      <a href="services.html">Services</a>
-      <a href="about.html">About</a>
-      <a href="team.html">Our Team</a>
-      <a href="portfolio.html">Portfolio</a>
-      <a href="gallery.html">Gallery</a>
-      <a href="pricing.html">Pricing</a>
-      <a href="website-designer.html">Website Designer</a>
-      <a href="heroes-pricing.html">Heroes Discount</a>
-      <a href="service-area.html">Service Area</a>
-      <a href="testimonials.html">Testimonials</a>
-      <a href="faq.html">FAQ</a>
-      <a href="blog.html">Blog</a>
-      <a href="booking.html">Booking</a>
-      <a href="payment.html">Payments</a>
-      <a href="contact.html">Contact</a>
-      <a href="intake.html">New Client Form</a>
-      <a href="search.html">Search</a>
-      <a href="sitemap.html">Sitemap</a>
-      <a href="privacy.html">Privacy Policy</a>
-      <a href="terms.html">Terms &amp; Conditions</a>
-      <a href="patch-notes.html">Patch Notes</a>
-      <a href="#" id="manageConsentLink">Cookie Notice</a>
+      <a href="services.html" data-i18n="nav.services">Services</a>
+      <a href="about.html" data-i18n="nav.about">About</a>
+      <a href="team.html" data-i18n="nav.team">Our Team</a>
+      <a href="portfolio.html" data-i18n="nav.portfolio">Portfolio</a>
+      <a href="gallery.html" data-i18n="nav.gallery">Gallery</a>
+      <a href="pricing.html" data-i18n="nav.pricing">Pricing</a>
+      <a href="website-designer.html" data-i18n="nav.website_designer">Website Designer</a>
+      <a href="heroes-pricing.html" data-i18n="nav.heroes_discount">Heroes Discount</a>
+      <a href="service-area.html" data-i18n="nav.service_area">Service Area</a>
+      <a href="testimonials.html" data-i18n="nav.testimonials">Testimonials</a>
+      <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+      <a href="blog.html" data-i18n="nav.blog">Blog</a>
+      <a href="booking.html" data-i18n="nav.booking">Booking</a>
+      <a href="payment.html" data-i18n="nav.payments">Payments</a>
+      <a href="contact.html" data-i18n="nav.contact">Contact</a>
+      <a href="intake.html" data-i18n="footer.new_client_form">New Client Form</a>
+      <a href="search.html" data-i18n="footer.search">Search</a>
+      <a href="sitemap.html" data-i18n="footer.sitemap">Sitemap</a>
+      <a href="privacy.html" data-i18n="footer.privacy_policy">Privacy Policy</a>
+      <a href="terms.html" data-i18n="footer.terms">Terms &amp; Conditions</a>
+      <a href="patch-notes.html" data-i18n="footer.patch_notes">Patch Notes</a>
+      <a href="#" id="manageConsentLink" data-i18n="footer.cookie_notice">Cookie Notice</a>
     </nav>
     <nav class="footer-social" aria-label="Social">
       <a href="https://www.facebook.com/profile.php?id=61591618750945" rel="noopener" target="_blank" aria-label="Little Technical Solutions LLC on Facebook">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>
-        <span>Facebook</span>
+        <span data-i18n="footer.facebook">Facebook</span>
       </a>
       <a href="https://www.google.com/search?q=Little+Technical+Solutions+LLC&stick=H4sIAAAAAAAA_-NgU1IxqDA0N0s1sUgyT0yxTE1NTLMyqEg2sTRLNTZOTTS1NDIzSUxaxCrnk1lSkpOqEJKanJGXmZyYoxCcn1NakpmfV6zg4-MMAGRkPw5JAAAA&hl=en&mat=CWEgdKX6xe4RElcBa0lj_4PsrYDUx2O2vFBpnokVltXIVrcy43xjezZrcYTprxRsgJGT1ATelPpH5ss3Sn-4VrXJHi_xxw10Eq_jzvWCxQfPf2G4feie7XZe-MJ3uWuSvN4&authuser=0" rel="noopener" target="_blank" aria-label="Little Technical Solutions LLC on Google">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 12.23c0-.75-.07-1.47-.19-2.18H12v4.13h5.4a4.6 4.6 0 0 1-2 3.02v2.5h3.24c1.9-1.75 3-4.32 3-7.47z"/><path d="M12 22c2.7 0 4.97-.9 6.63-2.44l-3.24-2.5c-.9.6-2.05.96-3.39.96-2.6 0-4.8-1.76-5.6-4.12H3.05v2.58A10 10 0 0 0 12 22z"/><path d="M6.4 13.9a6 6 0 0 1 0-3.8V7.52H3.05a10 10 0 0 0 0 8.96l3.35-2.58z"/><path d="M12 6.08c1.47 0 2.79.5 3.83 1.5l2.87-2.87A10 10 0 0 0 3.05 7.52L6.4 10.1c.8-2.36 3-4.02 5.6-4.02z"/></svg>
-        <span>Find us on Google</span>
+        <span data-i18n="footer.find_google">Find us on Google</span>
       </a>
     </nav>
   </div>
-  <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. All rights reserved.</p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version 2.0.0</a></p>
-  <p class="footer-version"><a href="admin.html">Staff Sign In</a></p>
+  <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span data-i18n="footer.rights">All rights reserved.</span></p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version 2.1.0</a></p>
+  <p class="footer-version"><a href="admin.html" data-i18n="footer.staff_signin">Staff Sign In</a></p>
 </footer>
 
 <div id="cookie-banner" class="cookie-banner" hidden role="region" aria-label="Cookie notice">
   <div class="wrap cookie-banner-inner">
-    <p>We use Netlify Analytics (cookie-free, privacy-respecting) to see site traffic, plus a small amount of local storage for things like your dark/light mode choice. Nothing here is used for advertising or sold to anyone. See our <a href="privacy.html">Privacy Policy</a>.</p>
+    <p data-i18n-html="cookie.text">We use Netlify Analytics (cookie-free, privacy-respecting) to see site traffic, plus a small amount of local storage for things like your dark/light mode choice. Nothing here is used for advertising or sold to anyone. See our <a href="privacy.html" data-i18n="footer.privacy_policy">Privacy Policy</a>.</p>
     <div class="cookie-banner-actions">
-      <button type="button" class="btn btn-primary btn-small" data-consent="dismiss">Got it</button>
+      <button type="button" class="btn btn-primary btn-small" data-consent="dismiss" data-i18n="cookie.accept">Got it</button>
     </div>
   </div>
 </div>
 
+<script src="js/i18n.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

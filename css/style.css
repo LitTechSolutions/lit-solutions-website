@@ -183,6 +183,7 @@ p{ margin:0; }
 .header-actions a.btn.is-current-page:hover{ transform:none; }
 
 .header-actions{ display:flex; align-items:center; gap:1.25rem; }
+.header-actions .btn{ flex-shrink:0; white-space:nowrap; }
 .phone-link{ display:flex; align-items:center; gap:.4rem; font-family:var(--font-display); font-size:.85rem; font-weight:500; white-space:nowrap; }
 
 .theme-toggle{
@@ -1170,6 +1171,24 @@ textarea{ resize: vertical; }
 .nav-dropdown-menu a:hover{ background:var(--paper); color:var(--accent-orange-text); }
 .nav-dropdown-menu a::after{ display:none; }
 .nav-dropdown-menu a.is-active{ color: var(--accent-orange-text); font-weight:600; }
+
+/* =========================================================
+   Language bar (site-wide, above the main header)
+   ========================================================= */
+.lang-bar{ background: var(--navy-deep); border-bottom:1px solid rgba(255,255,255,0.08); }
+.lang-bar-inner{ display:flex; justify-content:flex-end; padding:.35rem 0; }
+.lang-dropdown-toggle{ color: rgba(238,241,245,0.85); font-size:.76rem; font-weight:600; padding:.3rem .5rem; }
+.lang-dropdown-toggle:hover{ color:#fff; }
+.lang-dropdown-toggle::after{ display:none; }
+.lang-dropdown-menu{ left:auto; right:0; transform:none; margin-top:.5rem; max-height:60vh; overflow-y:auto; }
+.lang-option{
+  display:flex; width:100%; justify-content:space-between; align-items:center; gap:1rem;
+  background:none; border:none; text-align:left; font:inherit; font-size:.87rem; color: var(--ink);
+  padding:.6rem .75rem; border-radius:calc(var(--radius) - 1px); cursor:pointer;
+}
+.lang-option:hover{ background:var(--paper); color:var(--accent-orange-text); }
+.lang-option.is-active{ color: var(--accent-orange-text); font-weight:600; }
+.lang-option .lang-code{ color: var(--ink-faint); font-family: var(--font-display); font-size:.7rem; flex-shrink:0; }
 
 @media (max-width:1100px){
   .nav-dropdown{ position:static; }
