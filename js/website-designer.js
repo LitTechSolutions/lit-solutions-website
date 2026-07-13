@@ -330,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <input type="checkbox" class="wd-bundle-checkbox" data-category="${escHtml(cat.category)}">
           <span class="wd-bundle-box-main">
             <strong>Get all ${items.length} ${escHtml(cat.category)} features</strong>
-            <span class="wd-bundle-box-price"><span class="wd-bundle-now">${fmtMoney(bundleTotal * (1 - BUNDLE_DISCOUNT_RATE))}</span> <s class="wd-bundle-was">${fmtMoney(bundleTotal)}</s> <em>save 10%</em> <span class="wd-bundle-limited">limited time</span></span>
+            <span class="wd-bundle-box-price"><span class="wd-bundle-now">${fmtMoney(bundleTotal * (1 - BUNDLE_DISCOUNT_RATE))}</span> <s class="wd-bundle-was">${fmtMoney(bundleTotal)}</s> <em>save 10%</em></span>
           </span>
           <span class="wd-bundle-savings-badge" hidden></span>`;
         bundleBox.querySelector('input').addEventListener('change', (e) => toggleCategoryBundle(cat.category, e.target.checked));

@@ -94,28 +94,29 @@ someone gets there:
 - A category needs at least 2 optional features for "bundle" to mean
   anything, so single-item categories don't show a bundle box.
 
-## Visible savings, and advertising the offer
+## Visible savings, and advertising the offer (corrected)
 
 Two follow-up asks: show the customer exactly what they're saving, not
-just that a discount applied, and put up front, honest marketing about
-the ways to save -- with a clear disclaimer that it's promotional.
+just that a discount applied, and advertise the ways to save.
 
 - A new line sits right under the big price number: "🎉 You're saving
   $235 (1 bundle discount + Heroes Discount)" -- the actual dollar
   difference between what they'd pay with zero discounts and what
   they're paying now, naming which discounts are contributing. It's
   hidden entirely when there's nothing to save yet.
-- A promo banner now sits at the top of the page (in the hero, above the
-  step tabs) advertising both ways to save -- the bundle discount and the
-  American Heroes Discount -- framed as a "Launch Special." Each
-  category's bundle box also carries a small "limited time" tag.
-- Directly underneath, in smaller print: a disclaimer that the
-  promotional bundle pricing is available for a limited time and may be
-  changed, paused, or ended at any time without notice, plus a reminder
-  that the Heroes Discount specifically requires eligibility
-  verification (linking to `heroes-pricing.html`). Deliberately generic
-  ("for a limited time," not a specific end date) rather than a concrete
-  expiration claim that could later be false.
+- **First pass got the promotion backwards and was corrected the same
+  round.** I initially added a one-off banner framing the *bundle
+  discount and Heroes Discount themselves* as a limited-time "Launch
+  Special." You clarified the real structure: it's the tool's *base
+  prices* that are a temporary introductory rate for your first 25
+  customers (matching the existing, already-published "Launch special"
+  banners on `pricing.html` and `heroes-pricing.html`) -- the bundle
+  discount and Heroes Discount are permanent and keep applying even
+  after prices move to standard rates, and everything stacks. Fixed by
+  deleting the one-off banner and instead reusing the site's existing
+  `.launch-banner` component verbatim (same icon, same visual language
+  as the other two pages) with corrected copy, and removing the "limited
+  time" tag I'd wrongly put on the bundle box.
 
 ## Collapsed categories, so this isn't overwhelming on first load
 
