@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
     catalog: null,
   };
 
-  const INCLUDED_SUMMARY = {
+  const INCLUDED_SUMMARY_EN = {
     starter: [
       'Custom design matched to your brand', 'Mobile-responsive on every device',
       'Contact form with spam protection', 'Basic SEO (titles, descriptions, sitemap)',
@@ -69,6 +69,26 @@ document.addEventListener('DOMContentLoaded', () => {
     ],
   };
 
+  // ---- i18n helpers -----------------------------------------------------
+  // This tool builds nearly everything visible from JS (catalog JSON +
+  // template strings), not static HTML, so none of it can carry a
+  // data-i18n attribute the way the rest of the site does. i18n.js exposes
+  // window.LTS_I18N for exactly this: a lookup with an English fallback,
+  // so a missing translation key never breaks anything, it just shows
+  // English for that one string until a translation is added.
+  function tt(path, fallback) {
+    return window.LTS_I18N ? window.LTS_I18N.t(path, fallback) : fallback;
+  }
+  function tCatItem(title) { return tt('catalog_items.' + title, title); }
+  function tCatCategory(cat) { return tt('catalog_categories.' + cat, cat); }
+  function tDyn(key, fallback) { return tt('wd_dyn.' + key, fallback); }
+  function fillTemplate(str, vars) {
+    return str.replace(/\{\{(\w+)\}\}/g, (m, k) => (vars[k] !== undefined ? String(vars[k]) : m));
+  }
+  function includedSummaryItems(pkg) {
+    return INCLUDED_SUMMARY_EN[pkg].map((en, i) => tDyn(`included_${pkg}_${i + 1}`, en));
+  }
+
   function escHtml(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => (
       { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
@@ -77,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function bizName() {
     const v = businessNameEl && businessNameEl.value.trim();
-    return v ? escHtml(v) : 'your business';
+    return v ? escHtml(v) : tDyn('preview_default_business_name', 'your business');
   }
 
   // Mock preview content per feature title -- these are the "content" kind
@@ -87,78 +107,100 @@ document.addEventListener('DOMContentLoaded', () => {
   // external assets) plus a blurb that plugs in whatever business name has
   // been typed so far. Anything not listed here still gets a sensible
   // generic block, keyed off its category's fallback icon.
+  // blurb/visual text goes through tDyn()/fillTemplate() at render time
+  // (see cardBodyHtml) rather than being embedded as English literals here,
+  // so this illustrative mock content follows the selected language too.
   const PREVIEW_CONTENT = {
     'Additional standard pages': {
       icon: '📄',
       visual: () => '<div class="wd-mock-page"><span></span><span></span><span class="wd-mock-line-short"></span></div>',
-      blurb: (biz) => `A new page for ${biz}, ready for your content.`,
+      blurb: 'preview_additional_pages_blurb',
     },
     'Blog / News section': {
       icon: '📰',
-      visual: (biz) => `<div class="wd-mock-blogcard"><span class="wd-mock-swatch wd-mock-swatch--a"></span><div class="wd-mock-blogcard-text"><b>5 things ${biz} customers ask most</b><small>Posted this week</small></div></div>`,
-      blurb: (biz) => `Fresh posts and news from ${biz}.`,
+      visual: (biz) => `<div class="wd-mock-blogcard"><span class="wd-mock-swatch wd-mock-swatch--a"></span><div class="wd-mock-blogcard-text"><b>${fillTemplate(tDyn('preview_blog_headline', '5 things {{biz}} customers ask most'), { biz })}</b><small>${tDyn('preview_blog_posted', 'Posted this week')}</small></div></div>`,
+      blurb: 'preview_blog_blurb',
     },
     'Portfolio / Gallery page': {
       icon: '🖼️',
       visual: () => '<div class="wd-mock-grid-4"><span class="wd-mock-swatch wd-mock-swatch--a"></span><span class="wd-mock-swatch wd-mock-swatch--b"></span><span class="wd-mock-swatch wd-mock-swatch--c"></span><span class="wd-mock-swatch wd-mock-swatch--d"></span></div>',
-      blurb: (biz) => `Recent ${biz} projects, with photos and write-ups.`,
+      blurb: 'preview_portfolio_blurb',
     },
     'FAQ page': {
       icon: '❓',
-      visual: (biz) => `<div class="wd-mock-faq"><div class="wd-mock-faq-row"><span class="wd-mock-faq-plus">+</span>What areas does ${biz} serve?</div><div class="wd-mock-faq-row"><span class="wd-mock-faq-plus">+</span>How much does it cost?</div></div>`,
-      blurb: (biz) => `Answers to what ${biz} customers ask most.`,
+      visual: (biz) => `<div class="wd-mock-faq"><div class="wd-mock-faq-row"><span class="wd-mock-faq-plus">+</span>${fillTemplate(tDyn('preview_faq_q1', 'What areas does {{biz}} serve?'), { biz })}</div><div class="wd-mock-faq-row"><span class="wd-mock-faq-plus">+</span>${tDyn('preview_faq_q2', 'How much does it cost?')}</div></div>`,
+      blurb: 'preview_faq_blurb',
     },
     'Testimonials / Reviews': {
       icon: '💬',
-      visual: () => '<div class="wd-mock-quote">&ldquo;Best service in the area!&rdquo;</div><div class="wd-mock-stars">★★★★★</div>',
-      blurb: (biz) => `Real feedback from ${biz} customers, front and center.`,
+      visual: () => `<div class="wd-mock-quote">&ldquo;${tDyn('preview_testimonial_quote', 'Best service in the area!')}&rdquo;</div><div class="wd-mock-stars">★★★★★</div>`,
+      blurb: 'preview_testimonials_blurb',
     },
     'Team / Staff page': {
       icon: '🧑‍🔧',
       visual: () => '<div class="wd-mock-row wd-mock-avatars"><span class="wd-mock-avatar">👤</span><span class="wd-mock-avatar">👤</span><span class="wd-mock-avatar">👤</span></div>',
-      blurb: (biz) => `Meet the people behind ${biz}.`,
+      blurb: 'preview_team_blurb',
     },
     'Pricing page': {
       icon: '💲',
       visual: () => '<div class="wd-mock-row wd-mock-pricing"><span class="wd-mock-bar">$</span><span class="wd-mock-bar wd-mock-bar--tall">$$</span><span class="wd-mock-bar">$$$</span></div>',
-      blurb: (biz) => `Clear, upfront rates for what ${biz} offers.`,
+      blurb: 'preview_pricing_blurb',
     },
     'Image gallery': {
       icon: '🌆',
       visual: () => '<div class="wd-mock-grid-4"><span class="wd-mock-swatch wd-mock-swatch--b"></span><span class="wd-mock-swatch wd-mock-swatch--d"></span><span class="wd-mock-swatch wd-mock-swatch--a"></span><span class="wd-mock-swatch wd-mock-swatch--c"></span></div>',
-      blurb: (biz) => `A responsive photo grid for ${biz}.`,
+      blurb: 'preview_gallery_blurb',
     },
     'Custom graphics & icons': {
       icon: '🎨',
       visual: () => '<div class="wd-mock-row wd-mock-icons"><span class="wd-mock-icon-shape wd-mock-icon-shape--circle"></span><span class="wd-mock-icon-shape wd-mock-icon-shape--square"></span><span class="wd-mock-icon-shape wd-mock-icon-shape--diamond"></span><span class="wd-mock-icon-shape wd-mock-icon-shape--dot"></span></div>',
-      blurb: (biz) => `Icons and graphics matched to ${biz}'s brand.`,
+      blurb: 'preview_graphics_blurb',
     },
     'Sitemap page': {
       icon: '🗺️',
-      visual: () => '<div class="wd-mock-sitemap"><span>• Home</span><span>• About</span><span class="wd-mock-indent">• Services</span></div>',
-      blurb: (biz) => `A plain list of every page on ${biz}'s site.`,
+      visual: () => `<div class="wd-mock-sitemap"><span>• ${tDyn('preview_sitemap_home', 'Home')}</span><span>• ${tDyn('preview_sitemap_about', 'About')}</span><span class="wd-mock-indent">• ${tDyn('preview_sitemap_services', 'Services')}</span></div>`,
+      blurb: 'preview_sitemap_blurb',
     },
     'Additional custom forms': {
       icon: '📝',
-      visual: () => '<div class="wd-mock-form"><span class="wd-mock-input"></span><span class="wd-mock-btn">Submit</span></div>',
-      blurb: (biz) => `A purpose-built request form for ${biz}.`,
+      visual: () => `<div class="wd-mock-form"><span class="wd-mock-input"></span><span class="wd-mock-btn">${tDyn('preview_form_submit', 'Submit')}</span></div>`,
+      blurb: 'preview_forms_blurb',
     },
     'Map / location embed': {
       icon: '📍',
       visual: () => '<div class="wd-mock-map"><span class="wd-mock-pin">📍</span></div>',
-      blurb: (biz) => `An embedded map to ${biz}'s location.`,
+      blurb: 'preview_map_blurb',
     },
     'Online Booking Request Form': {
       icon: '📅',
       visual: () => '<div class="wd-mock-calendar"><span></span><span></span><span class="wd-mock-calendar-selected"></span><span></span><span></span><span></span><span></span></div>',
-      blurb: (biz) => `Pick a service and a preferred time with ${biz}.`,
+      blurb: 'preview_booking_blurb',
     },
     'Data-subject request intake': {
       icon: '📋',
-      visual: () => '<div class="wd-mock-form"><span class="wd-mock-input"></span><span class="wd-mock-btn">Submit</span></div>',
-      blurb: (biz) => `A simple, compliant way for ${biz}'s visitors to request their data.`,
+      visual: () => `<div class="wd-mock-form"><span class="wd-mock-input"></span><span class="wd-mock-btn">${tDyn('preview_form_submit', 'Submit')}</span></div>`,
+      blurb: 'preview_dsr_blurb',
     },
   };
+  // English fallback text for each PREVIEW_CONTENT blurb key (used when no
+  // translation is active, or the key hasn't been translated yet).
+  const PREVIEW_BLURB_EN = {
+    preview_additional_pages_blurb: 'A new page for {{biz}}, ready for your content.',
+    preview_blog_blurb: 'Fresh posts and news from {{biz}}.',
+    preview_portfolio_blurb: 'Recent {{biz}} projects, with photos and write-ups.',
+    preview_faq_blurb: 'Answers to what {{biz}} customers ask most.',
+    preview_testimonials_blurb: 'Real feedback from {{biz}} customers, front and center.',
+    preview_team_blurb: 'Meet the people behind {{biz}}.',
+    preview_pricing_blurb: 'Clear, upfront rates for what {{biz}} offers.',
+    preview_gallery_blurb: 'A responsive photo grid for {{biz}}.',
+    preview_graphics_blurb: "Icons and graphics matched to {{biz}}'s brand.",
+    preview_sitemap_blurb: "A plain list of every page on {{biz}}'s site.",
+    preview_forms_blurb: 'A purpose-built request form for {{biz}}.',
+    preview_map_blurb: "An embedded map to {{biz}}'s location.",
+    preview_booking_blurb: 'Pick a service and a preferred time with {{biz}}.',
+    preview_dsr_blurb: "A simple, compliant way for {{biz}}'s visitors to request their data.",
+  };
+
   const CATEGORY_FALLBACK_ICON = { 'Core Pages': '📄', 'Design & Branding': '🎨', 'Navigation': '🧭',
     'Search': '🔎', 'Forms & Validation': '📝', 'Contact & Communication': '✉️', 'Notifications': '🔔',
     'Privacy & Legal': '🔒', 'SEO & Analytics': '📈', 'Security & Hosting': '🛡️', 'Media Management': '🖼️',
@@ -244,9 +286,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderIncludedSummary() {
-    includedTitle.textContent = `Included in your ${state.package === 'business' ? 'Business' : 'Starter'} package`;
+    const fallback = `Included in your ${state.package === 'business' ? 'Business' : 'Starter'} package`;
+    includedTitle.textContent = tDyn(state.package === 'business' ? 'included_title_business' : 'included_title_starter', fallback);
     includedSummary.innerHTML = '<ul class="wd-included-list">' +
-      INCLUDED_SUMMARY[state.package].map(t => `<li>${t}</li>`).join('') + '</ul>';
+      includedSummaryItems(state.package).map(t => `<li>${escHtml(t)}</li>`).join('') + '</ul>';
   }
 
   // ---- Category accordion + bundle box -------------------------------
@@ -282,9 +325,13 @@ document.addEventListener('DOMContentLoaded', () => {
   function categorySummaryText(category, items) {
     const inputs = categoryInputs(category);
     const checkedCount = inputs.filter(i => i.checked).length;
-    if (checkedCount) return `${checkedCount} of ${items.length} selected -- ${fmtMoney(categorySelectedSubtotal(category))}`;
-    const names = items.slice(0, 3).map(i => i.title.split('(')[0].trim());
-    const extra = items.length > 3 ? ` +${items.length - 3} more` : '';
+    if (checkedCount) {
+      return fillTemplate(tDyn('category_summary_selected', '{{checked}} of {{total}} selected -- {{amount}}'), {
+        checked: checkedCount, total: items.length, amount: fmtMoney(categorySelectedSubtotal(category)),
+      });
+    }
+    const names = items.slice(0, 3).map(i => tCatItem(i.title).split('(')[0].trim());
+    const extra = items.length > 3 ? ' ' + fillTemplate(tDyn('category_summary_more', '+{{count}} more'), { count: items.length - 3 }) : '';
     return `${names.join(', ')}${extra}`;
   }
 
@@ -310,7 +357,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (bundleBox) bundleBox.classList.toggle('is-active', allChecked);
     if (savingsBadge) {
       const wasHidden = savingsBadge.hidden;
-      if (allChecked) savingsBadge.textContent = `🤝 We've got your back -- saving ${fmtMoney(categorySelectedSubtotal(category) * BUNDLE_DISCOUNT_RATE)} (10%)!`;
+      if (allChecked) {
+        savingsBadge.textContent = fillTemplate(tDyn('bundle_savings_badge', "🤝 We've got your back -- saving {{amount}} (10%)!"), {
+          amount: fmtMoney(categorySelectedSubtotal(category) * BUNDLE_DISCOUNT_RATE),
+        });
+      }
       savingsBadge.hidden = !allChecked;
       if (allChecked && wasHidden && !prefersReducedMotion) {
         savingsBadge.classList.remove('wd-pop-in');
@@ -353,10 +404,14 @@ document.addEventListener('DOMContentLoaded', () => {
       header.className = 'wd-category-header';
       header.setAttribute('aria-expanded', 'false');
       header.setAttribute('aria-controls', panelId);
+      const categoryLabel = tCatCategory(cat.category);
+      const quoteCountText = items.length === 1
+        ? tDyn('category_quote_count_one', '1 item -- custom quote')
+        : fillTemplate(tDyn('category_quote_count_many', '{{count}} items -- custom quote'), { count: items.length });
       header.innerHTML = `
         <span class="wd-category-header-main">
-          <span class="wd-category-title">${escHtml(cat.category)}</span>
-          <span class="wd-category-summary" data-summary>${escHtml(priority === 'C' ? categorySummaryText(cat.category, items) : `${items.length} item${items.length === 1 ? '' : 's'} -- custom quote`)}</span>
+          <span class="wd-category-title">${escHtml(categoryLabel)}</span>
+          <span class="wd-category-summary" data-summary>${escHtml(priority === 'C' ? categorySummaryText(cat.category, items) : quoteCountText)}</span>
         </span>
         <svg class="wd-category-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>`;
       block.appendChild(header);
@@ -365,11 +420,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const bundleTotal = items.reduce((s, i) => s + (i.price || 0), 0);
         const bundleBox = document.createElement('label');
         bundleBox.className = 'wd-bundle-box';
+        const getAllText = fillTemplate(tDyn('bundle_box_get_all', 'Get all {{count}} {{category}} features'), { count: items.length, category: categoryLabel });
+        const save10Text = tDyn('bundle_box_save_10', 'save 10%');
         bundleBox.innerHTML = `
           <input type="checkbox" class="wd-bundle-checkbox" data-category="${escHtml(cat.category)}">
           <span class="wd-bundle-box-main">
-            <strong>Get all ${items.length} ${escHtml(cat.category)} features</strong>
-            <span class="wd-bundle-box-price"><span class="wd-bundle-now">${fmtMoney(bundleTotal * (1 - BUNDLE_DISCOUNT_RATE))}</span> <s class="wd-bundle-was">${fmtMoney(bundleTotal)}</s> <em>save 10%</em></span>
+            <strong>${escHtml(getAllText)}</strong>
+            <span class="wd-bundle-box-price"><span class="wd-bundle-now">${fmtMoney(bundleTotal * (1 - BUNDLE_DISCOUNT_RATE))}</span> <s class="wd-bundle-was">${fmtMoney(bundleTotal)}</s> <em>${escHtml(save10Text)}</em></span>
           </span>
           <span class="wd-bundle-savings-badge" hidden></span>`;
         bundleBox.querySelector('input').addEventListener('change', (e) => toggleCategoryBundle(cat.category, e.target.checked));
@@ -393,8 +450,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const itemFull = { ...i, category: cat.category };
         const label = document.createElement('label');
         label.className = 'checkbox-pill wd-feature-pill';
-        const priceTag = i.price != null ? `<span class="wd-price-tag">+$${i.price}</span>` : '<span class="wd-price-tag wd-price-tag--quote">quote</span>';
-        label.innerHTML = `<input type="checkbox" data-priority="${priority}" data-title="${escHtml(i.title)}" data-price="${i.price != null ? i.price : ''}" data-category="${escHtml(cat.category)}" value="${escHtml(i.pdf_label)}"> <span class="wd-feature-pill-label">${escHtml(i.title)}</span>${priceTag}`;
+        const priceTag = i.price != null ? `<span class="wd-price-tag">+$${i.price}</span>` : `<span class="wd-price-tag wd-price-tag--quote">${escHtml(tDyn('cost_row_quote', 'quote'))}</span>`;
+        label.innerHTML = `<input type="checkbox" data-priority="${priority}" data-title="${escHtml(i.title)}" data-price="${i.price != null ? i.price : ''}" data-category="${escHtml(cat.category)}" value="${escHtml(i.pdf_label)}"> <span class="wd-feature-pill-label">${escHtml(tCatItem(i.title))}</span>${priceTag}`;
         label.querySelector('input').addEventListener('change', (e) => onFeatureToggle(e.target, itemFull));
         grid.appendChild(label);
       });
@@ -445,36 +502,57 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalSavings = rawTotal - total;
     if (totalSavings >= 1) {
       const savingsParts = [];
-      if (bundled.length) savingsParts.push(`${bundled.length} bundle discount${bundled.length === 1 ? '' : 's'}`);
-      if (heroes) savingsParts.push('Heroes Discount');
-      priceSavingsEl.textContent = `🎉 You're saving ${fmtMoney(totalSavings)}${savingsParts.length ? ` (${savingsParts.join(' + ')})` : ''}`;
+      if (bundled.length) {
+        savingsParts.push(bundled.length === 1
+          ? tDyn('savings_part_bundle_one', '1 bundle discount')
+          : fillTemplate(tDyn('savings_part_bundle_many', '{{count}} bundle discounts'), { count: bundled.length }));
+      }
+      if (heroes) savingsParts.push(tDyn('savings_part_heroes', 'Heroes Discount'));
+      priceSavingsEl.textContent = fillTemplate(tDyn('price_savings', "🎉 You're saving {{amount}}{{parts}}"), {
+        amount: fmtMoney(totalSavings), parts: savingsParts.length ? ` (${savingsParts.join(' + ')})` : '',
+      });
       priceSavingsEl.hidden = false;
     } else {
       priceSavingsEl.hidden = true;
     }
 
     const notes = [];
-    if (bundled.length) notes.push(`${bundled.length} bundle discount${bundled.length === 1 ? '' : 's'} applied`);
-    if (heroes) notes.push('Heroes Discount applied');
-    let note = notes.length ? `Starting price -- ${notes.join(', ')}` : 'Starting price';
-    if (premiumSel.length) note += ` -- excludes ${premiumSel.length} custom-quote item${premiumSel.length === 1 ? '' : 's'}`;
+    if (bundled.length) {
+      notes.push(bundled.length === 1
+        ? tDyn('note_bundle_one_applied', '1 bundle discount applied')
+        : fillTemplate(tDyn('note_bundle_many_applied', '{{count}} bundle discounts applied'), { count: bundled.length }));
+    }
+    if (heroes) notes.push(tDyn('note_heroes_applied', 'Heroes Discount applied'));
+    let note = notes.length
+      ? fillTemplate(tDyn('note_starting_price_with', 'Starting price -- {{notes}}'), { notes: notes.join(', ') })
+      : tDyn('note_starting_price', 'Starting price');
+    if (premiumSel.length) {
+      note += premiumSel.length === 1
+        ? tDyn('note_excludes_one', ' -- excludes 1 custom-quote item')
+        : fillTemplate(tDyn('note_excludes_many', ' -- excludes {{count}} custom-quote items'), { count: premiumSel.length });
+    }
     priceNoteEl.textContent = note;
 
-    let html = `<div class="wd-cost-row wd-cost-row--base"><span>${state.package === 'business' ? 'Business' : 'Starter'} base</span><strong>${fmtMoney(state.basePrice)}</strong></div>`;
+    const baseLabel = tDyn(state.package === 'business' ? 'cost_row_base_business' : 'cost_row_base_starter', state.package === 'business' ? 'Business base' : 'Starter base');
+    let html = `<div class="wd-cost-row wd-cost-row--base"><span>${escHtml(baseLabel)}</span><strong>${fmtMoney(state.basePrice)}</strong></div>`;
     optionalSel.forEach(el => {
-      html += `<div class="wd-cost-row"><span>${escHtml(el.dataset.title)}</span><strong>+$${el.dataset.price}</strong></div>`;
+      html += `<div class="wd-cost-row"><span>${escHtml(tCatItem(el.dataset.title))}</span><strong>+$${el.dataset.price}</strong></div>`;
     });
     bundled.forEach(cat => {
       const savings = categorySelectedSubtotal(cat) * BUNDLE_DISCOUNT_RATE;
-      html += `<div class="wd-cost-row wd-cost-row--discount"><span>${escHtml(cat)} bundle (10%)</span><strong>-${fmtMoney(savings)}</strong></div>`;
+      const bundleLabel = fillTemplate(tDyn('cost_row_bundle', '{{category}} bundle (10%)'), { category: tCatCategory(cat) });
+      html += `<div class="wd-cost-row wd-cost-row--discount"><span>${escHtml(bundleLabel)}</span><strong>-${fmtMoney(savings)}</strong></div>`;
     });
     if (heroes) {
-      html += `<div class="wd-cost-row wd-cost-row--discount"><span>American Heroes Discount (15%)</span><strong>-${fmtMoney(subtotal - total)}</strong></div>`;
+      const heroesLabel = tDyn('cost_row_heroes', 'American Heroes Discount (15%)');
+      html += `<div class="wd-cost-row wd-cost-row--discount"><span>${escHtml(heroesLabel)}</span><strong>-${fmtMoney(subtotal - total)}</strong></div>`;
     }
     if (premiumSel.length) {
-      html += `<div class="wd-cost-row wd-cost-row--divider"><span>Custom-quote add-ons</span></div>`;
+      const quoteDividerLabel = tDyn('cost_row_quote_divider', 'Custom-quote add-ons');
+      const quoteLabel = tDyn('cost_row_quote', 'quote');
+      html += `<div class="wd-cost-row wd-cost-row--divider"><span>${escHtml(quoteDividerLabel)}</span></div>`;
       premiumSel.forEach(el => {
-        html += `<div class="wd-cost-row wd-cost-row--quote"><span>${escHtml(el.dataset.title)}</span><strong>quote</strong></div>`;
+        html += `<div class="wd-cost-row wd-cost-row--quote"><span>${escHtml(tCatItem(el.dataset.title))}</span><strong>${escHtml(quoteLabel)}</strong></div>`;
       });
     }
     costBreakdownEl.innerHTML = html;
@@ -517,19 +595,27 @@ document.addEventListener('DOMContentLoaded', () => {
   function cardBodyHtml(item) {
     const entry = PREVIEW_CONTENT[item.title];
     const biz = bizName();
+    const titleLabel = escHtml(tCatItem(item.title));
     if (entry) {
+      // biz is already HTML-escaped by bizName() -- the translated template
+      // text around it is trusted (from i18n JSON, same trust level as the
+      // English literals this replaced), so the filled result is NOT
+      // escaped again here (that would double-escape biz, e.g. turning a
+      // business name with "&" into a literal "&amp;" on the page).
       const visual = entry.visual ? entry.visual(biz) : '';
-      const blurb = entry.blurb(biz);
+      const blurb = fillTemplate(tDyn(entry.blurb, PREVIEW_BLURB_EN[entry.blurb] || ''), { biz });
       return `<span class="wd-preview-card-icon">${entry.icon}</span>
-        <div class="wd-preview-card-body"><strong>${escHtml(item.title)}</strong>${visual}<p>${blurb}</p></div>`;
+        <div class="wd-preview-card-body"><strong>${titleLabel}</strong>${visual}<p>${blurb}</p></div>`;
     }
     const icon = CATEGORY_FALLBACK_ICON[item.category] || '🧩';
+    const genericBlurb = fillTemplate(tDyn('preview_generic_blurb', "Now part of {{biz}}'s site."), { biz });
     return `<span class="wd-preview-card-icon">${icon}</span>
-      <div class="wd-preview-card-body"><strong>${escHtml(item.title)}</strong><p>Now part of ${biz}'s site.</p></div>`;
+      <div class="wd-preview-card-body"><strong>${titleLabel}</strong><p>${genericBlurb}</p></div>`;
   }
 
   function navLabel(title) {
-    return title.split('/')[0].trim().split(' ').slice(0, 2).join(' ');
+    const label = tCatItem(title);
+    return label.split('/')[0].trim().split(' ').slice(0, 2).join(' ');
   }
 
   function addPreviewSection(item) {
@@ -611,13 +697,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const item = findItem(el.dataset.title);
       const chip = document.createElement('span');
       chip.className = 'wd-badge-chip';
-      chip.textContent = `${CATEGORY_FALLBACK_ICON[item.category] || '⚙️'} ${item.title}`;
+      chip.textContent = `${CATEGORY_FALLBACK_ICON[item.category] || '⚙️'} ${tCatItem(item.title)}`;
       previewBadgesEl.appendChild(chip);
     });
     selectedInputs('S').forEach(el => {
       const chip = document.createElement('span');
       chip.className = 'wd-badge-chip wd-badge-chip--locked';
-      chip.textContent = `🔒 ${el.dataset.title} (custom quote)`;
+      chip.textContent = `🔒 ${tCatItem(el.dataset.title)} ${tDyn('badge_custom_quote', '(custom quote)')}`;
       previewBadgesEl.appendChild(chip);
     });
   }
@@ -655,7 +741,8 @@ document.addEventListener('DOMContentLoaded', () => {
       })
       .catch(err => {
         console.error('Could not load feature catalog', err);
-        includedSummary.innerHTML = '<p class="wd-note">Feature list unavailable right now -- you can still submit your project details and we\'ll follow up.</p>';
+        const msg = tDyn('feature_unavailable', "Feature list unavailable right now -- you can still submit your project details and we'll follow up.");
+        includedSummary.innerHTML = `<p class="wd-note">${escHtml(msg)}</p>`;
         showPanel('2');
       });
   }
@@ -731,7 +818,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoFile = document.getElementById('wdLogoFile')?.files?.[0];
     if (logoFile) {
       if (logoFile.size > MAX_IMAGE_BYTES) {
-        errors.push('Logo file is too large -- please use a file under 4MB.');
+        errors.push(tDyn('error_logo_too_large', 'Logo file is too large -- please use a file under 4MB.'));
       } else {
         logo = { filename: logoFile.name, content: await fileToBase64(logoFile) };
       }
@@ -740,11 +827,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const photos = [];
     const photoFiles = Array.from(document.getElementById('wdPhotosFile')?.files || []);
     if (photoFiles.length > MAX_PHOTOS) {
-      errors.push(`Please attach at most ${MAX_PHOTOS} photos.`);
+      errors.push(fillTemplate(tDyn('error_photos_max', 'Please attach at most {{max}} photos.'), { max: MAX_PHOTOS }));
     } else {
       for (const file of photoFiles) {
         if (file.size > MAX_IMAGE_BYTES) {
-          errors.push(`Photo "${file.name}" is too large -- please use files under 4MB each.`);
+          errors.push(fillTemplate(tDyn('error_photo_too_large', 'Photo "{{name}}" is too large -- please use files under 4MB each.'), { name: file.name }));
         } else {
           photos.push({ filename: file.name, content: await fileToBase64(file) });
         }
@@ -885,7 +972,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const submitBtn = document.getElementById('wdSubmitBtn');
       submitBtn.disabled = true;
-      formStatus.textContent = 'Reading your files...';
+      formStatus.textContent = tDyn('status_reading_files', 'Reading your files...');
 
       const { logo, photos, errors } = await collectImageAttachments();
       if (errors.length) {
@@ -894,7 +981,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      formStatus.textContent = 'Building your PDF and sending it over...';
+      formStatus.textContent = tDyn('status_building_pdf', 'Building your PDF and sending it over...');
 
       const doc = buildPdf();
       const pdfBase64 = doc ? doc.output('datauristring').split(',')[1] : null;
@@ -933,9 +1020,31 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch((err) => {
           formStatus.textContent = err.message && err.message !== 'Failed to fetch'
             ? err.message
-            : 'Something went wrong sending your project -- please call 636-426-0289 or email dylan@lit-solutions.tech directly.';
+            : tDyn('error_generic_submit', 'Something went wrong sending your project -- please call 636-426-0289 or email dylan@lit-solutions.tech directly.');
           submitBtn.disabled = false;
         });
     });
   }
+
+  // Everything above is built from JS, not static HTML, so switching
+  // language mid-session (the visitor is on Step 2/3 already) needs an
+  // explicit re-render -- i18n.js's normal data-i18n pass never touches
+  // this tool's dynamically-generated content. Category panels get fully
+  // rebuilt (same as a fresh catalog load), so checked state is captured
+  // first and restored after, rather than lost.
+  document.addEventListener('lts:langchange', () => {
+    if (!state.catalog) return;
+    const checkedTitles = new Set(Array.from(document.querySelectorAll('input[data-priority]:checked')).map(el => el.dataset.title));
+    renderIncludedSummary();
+    renderCategoryGroup(optionalContainer, state.catalog.categories, 'C');
+    renderCategoryGroup(premiumContainer, state.catalog.categories, 'S');
+    Array.from(document.querySelectorAll('input[data-priority]')).forEach(el => {
+      if (checkedTitles.has(el.dataset.title)) el.checked = true;
+    });
+    state.catalog.categories.forEach(cat => updateCategoryBundleUI(cat.category));
+    refreshPreviewContent();
+    renderBadges();
+    updatePriceAndBreakdown();
+    updateBriefVisibility();
+  });
 });

@@ -130,28 +130,65 @@
     if (label) label.textContent = lang.label;
   }
 
+  // Current active dict (null for English -- there's nothing to look up,
+  // the native HTML/JS defaults are already English). Exposed via
+  // window.LTS_I18N so scripts that generate their own DOM content (the
+  // Website Designer catalog/preview text, which isn't static HTML and so
+  // can't carry a data-i18n attribute) can translate what they render and
+  // re-render when the visitor switches language mid-session.
+  var activeDict = null;
+  var activeCode = 'en';
+
+  function notifyLangChange(code, dict) {
+    document.dispatchEvent(new CustomEvent('lts:langchange', { detail: { code: code, dict: dict } }));
+  }
+
   function switchLanguage(code) {
     if (!originals) captureOriginals();
     applyDirAndHtmlLang(code);
     setActiveOption(code);
+    activeCode = code;
     if (code === 'en') {
+      activeDict = null;
       restoreOriginals();
+      notifyLangChange(code, null);
       return;
     }
     loadDict(code)
-      .then(applyDict)
+      .then(function (dict) {
+        activeDict = dict;
+        applyDict(dict);
+        notifyLangChange(code, dict);
+      })
       .catch(function (err) {
         console.error('i18n: could not load language "' + code + '"', err);
       });
   }
 
+  // t(path, fallback) -- looks up `path` in the active language's dict,
+  // falling back to the given English string when there's no active dict
+  // (English selected) or the key is missing (translation not added yet).
+  window.LTS_I18N = {
+    t: function (path, fallback) {
+      if (!activeDict) return fallback;
+      var val = getByPath(activeDict, path);
+      return val !== undefined ? val : fallback;
+    },
+    getCode: function () { return activeCode; },
+  };
+
   document.addEventListener('DOMContentLoaded', function () {
     var saved = getSavedLang();
     applyDirAndHtmlLang(saved);
     setActiveOption(saved);
+    activeCode = saved;
     if (saved !== 'en') {
       captureOriginals();
-      loadDict(saved).then(applyDict).catch(function (err) {
+      loadDict(saved).then(function (dict) {
+        activeDict = dict;
+        applyDict(dict);
+        notifyLangChange(saved, dict);
+      }).catch(function (err) {
         console.error('i18n: could not load saved language "' + saved + '"', err);
       });
     }

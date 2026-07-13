@@ -229,7 +229,7 @@
             <h2 class="wd-section-title" data-i18n="wd.step3_title">Your details</h2>
             <p class="wd-note" data-i18n="wd.step3_note">Last step -- this is what gets turned into a project summary PDF and sent straight to us.</p>
             <form id="wdForm">
-              <p class="honeypot-field" style="position:absolute;left:-9999px;"><label>Don't fill this out: <input name="wd-bot-field" id="wdHoneypot"></label></p>
+              <p class="visually-hidden"><label>Don't fill this out: <input name="wd-bot-field" id="wdHoneypot"></label></p>
 
               <p class="wd-note" data-i18n="wd.step3_bizname_note">Business name is set above, next to your live preview -- update it there any time.</p>
               <div class="form-row form-row--split">
@@ -253,104 +253,104 @@
                 </div>
               </div>
               <div class="form-row">
-                <label for="wdDesiredDomain">If you don't have a domain yet, what name would you like? (optional -- we can register it for you)</label>
-                <input type="text" id="wdDesiredDomain" name="desired_domain" placeholder="e.g. riversideplumbing.com">
+                <label for="wdDesiredDomain" data-i18n="wd.form_desired_domain_label">If you don't have a domain yet, what name would you like? (optional -- we can register it for you)</label>
+                <input type="text" id="wdDesiredDomain" name="desired_domain" placeholder="e.g. riversideplumbing.com" data-i18n-attr-placeholder="wd.form_desired_domain_placeholder">
               </div>
 
-              <h3 class="wd-brief-heading">Tell us about your business</h3>
-              <p class="wd-note">This is what actually lets us start building -- without it we have to follow up before any work can begin.</p>
+              <h3 class="wd-brief-heading" data-i18n="wd.brief_heading">Tell us about your business</h3>
+              <p class="wd-note" data-i18n="wd.brief_intro_note">This is what actually lets us start building -- without it we have to follow up before any work can begin.</p>
 
               <div class="form-row">
-                <label for="wdBizDescription">What does your business do, and who are your customers? *</label>
-                <textarea id="wdBizDescription" name="brief_description" rows="3" required placeholder="e.g. We repair residential HVAC systems for homeowners in the Northern Neck of Virginia."></textarea>
+                <label for="wdBizDescription" data-i18n="wd.brief_description_label">What does your business do, and who are your customers? *</label>
+                <textarea id="wdBizDescription" name="brief_description" rows="3" required placeholder="e.g. We repair residential HVAC systems for homeowners in the Northern Neck of Virginia." data-i18n-attr-placeholder="wd.brief_description_placeholder"></textarea>
               </div>
               <div class="form-row form-row--split">
                 <div>
-                  <label for="wdBizIndustry">Industry / type of business *</label>
-                  <input type="text" id="wdBizIndustry" name="brief_industry" required placeholder="e.g. HVAC repair">
+                  <label for="wdBizIndustry" data-i18n="wd.brief_industry_label">Industry / type of business *</label>
+                  <input type="text" id="wdBizIndustry" name="brief_industry" required placeholder="e.g. HVAC repair" data-i18n-attr-placeholder="wd.brief_industry_placeholder">
                 </div>
                 <div>
-                  <label for="wdServiceArea">City/region(s) you serve *</label>
-                  <input type="text" id="wdServiceArea" name="brief_service_area" required placeholder="e.g. Montross &amp; King George, VA">
+                  <label for="wdServiceArea" data-i18n="wd.brief_service_area_label">City/region(s) you serve *</label>
+                  <input type="text" id="wdServiceArea" name="brief_service_area" required placeholder="e.g. Montross &amp; King George, VA" data-i18n-attr-placeholder="wd.brief_service_area_placeholder">
                 </div>
               </div>
               <div class="form-row">
-                <label for="wdServicesList">List your services or products (one per line) *</label>
-                <textarea id="wdServicesList" name="brief_services_list" rows="3" required placeholder="AC repair&#10;Furnace installation&#10;Duct cleaning"></textarea>
+                <label for="wdServicesList" data-i18n="wd.brief_services_list_label">List your services or products (one per line) *</label>
+                <textarea id="wdServicesList" name="brief_services_list" rows="3" required placeholder="AC repair&#10;Furnace installation&#10;Duct cleaning" data-i18n-attr-placeholder="wd.brief_services_list_placeholder"></textarea>
               </div>
               <div class="form-row form-row--split">
                 <div>
-                  <label for="wdBrandColors">Brand colors, if you have them</label>
-                  <input type="text" id="wdBrandColors" name="brief_brand_colors" placeholder="e.g. navy blue &amp; orange, or hex codes">
+                  <label for="wdBrandColors" data-i18n="wd.brief_brand_colors_label">Brand colors, if you have them</label>
+                  <input type="text" id="wdBrandColors" name="brief_brand_colors" placeholder="e.g. navy blue &amp; orange, or hex codes" data-i18n-attr-placeholder="wd.brief_brand_colors_placeholder">
                 </div>
                 <div>
-                  <label for="wdStyleReferences">Websites whose look you like</label>
-                  <input type="text" id="wdStyleReferences" name="brief_style_references" placeholder="Paste a link or two">
+                  <label for="wdStyleReferences" data-i18n="wd.brief_style_references_label">Websites whose look you like</label>
+                  <input type="text" id="wdStyleReferences" name="brief_style_references" placeholder="Paste a link or two" data-i18n-attr-placeholder="wd.brief_style_references_placeholder">
                 </div>
               </div>
               <div class="form-row form-row--split">
                 <div>
-                  <label for="wdLogoFile">Logo file, if you have one</label>
+                  <label for="wdLogoFile" data-i18n="wd.brief_logo_label">Logo file, if you have one</label>
                   <input type="file" id="wdLogoFile" name="logo_file" accept="image/png,image/jpeg,image/svg+xml,image/webp">
-                  <p class="wd-note wd-note-inline">PNG, JPG, SVG, or WebP -- up to 4MB.</p>
+                  <p class="wd-note wd-note-inline" data-i18n="wd.brief_logo_note">PNG, JPG, SVG, or WebP -- up to 4MB.</p>
                 </div>
                 <div>
-                  <label for="wdPhotosFile">A few real photos (team, location, work)</label>
+                  <label for="wdPhotosFile" data-i18n="wd.brief_photos_label">A few real photos (team, location, work)</label>
                   <input type="file" id="wdPhotosFile" name="photo_files" accept="image/png,image/jpeg,image/webp" multiple>
-                  <p class="wd-note wd-note-inline">Up to 4 photos, 4MB each. No photos yet? Leave blank -- we'll follow up.</p>
+                  <p class="wd-note wd-note-inline" data-i18n="wd.brief_photos_note">Up to 4 photos, 4MB each. No photos yet? Leave blank -- we'll follow up.</p>
                 </div>
               </div>
               <div class="form-row form-row--split">
                 <div>
-                  <label for="wdAddressHours">Physical address &amp; business hours, if customers visit you</label>
+                  <label for="wdAddressHours" data-i18n="wd.brief_address_hours_label">Physical address &amp; business hours, if customers visit you</label>
                   <textarea id="wdAddressHours" name="brief_address_hours" rows="2"></textarea>
                 </div>
                 <div>
-                  <label for="wdSocialLinks">Social media links</label>
-                  <textarea id="wdSocialLinks" name="brief_social_links" rows="2" placeholder="Facebook, Instagram, etc."></textarea>
+                  <label for="wdSocialLinks" data-i18n="wd.brief_social_links_label">Social media links</label>
+                  <textarea id="wdSocialLinks" name="brief_social_links" rows="2" placeholder="Facebook, Instagram, etc." data-i18n-attr-placeholder="wd.brief_social_links_placeholder"></textarea>
                 </div>
               </div>
               <div class="form-row">
-                <label for="wdLaunchDate">Preferred launch date, if any</label>
+                <label for="wdLaunchDate" data-i18n="wd.brief_launch_date_label">Preferred launch date, if any</label>
                 <input type="date" id="wdLaunchDate" name="brief_launch_date">
               </div>
 
               <div id="wdBriefConditional">
                 <div class="form-row wd-brief-group" id="wdBriefGroup_staff" hidden>
-                  <label for="wdBriefStaff">Team/staff details *</label>
-                  <textarea id="wdBriefStaff" name="brief_staff" rows="3" placeholder="One person per line: Name — Title — short bio"></textarea>
+                  <label for="wdBriefStaff" data-i18n="wd.brief_staff_label">Team/staff details *</label>
+                  <textarea id="wdBriefStaff" name="brief_staff" rows="3" placeholder="One person per line: Name — Title — short bio" data-i18n-attr-placeholder="wd.brief_staff_placeholder"></textarea>
                 </div>
                 <div class="form-row wd-brief-group" id="wdBriefGroup_testimonials" hidden>
-                  <label for="wdBriefTestimonials">Testimonials/reviews to feature *</label>
-                  <textarea id="wdBriefTestimonials" name="brief_testimonials" rows="3" placeholder="One per line: Customer name — their quote"></textarea>
+                  <label for="wdBriefTestimonials" data-i18n="wd.brief_testimonials_label">Testimonials/reviews to feature *</label>
+                  <textarea id="wdBriefTestimonials" name="brief_testimonials" rows="3" placeholder="One per line: Customer name — their quote" data-i18n-attr-placeholder="wd.brief_testimonials_placeholder"></textarea>
                 </div>
                 <div class="form-row wd-brief-group" id="wdBriefGroup_faq" hidden>
-                  <label for="wdBriefFaq">FAQ questions &amp; answers *</label>
-                  <textarea id="wdBriefFaq" name="brief_faq" rows="3" placeholder="One per line: Question? | Answer"></textarea>
+                  <label for="wdBriefFaq" data-i18n="wd.brief_faq_label">FAQ questions &amp; answers *</label>
+                  <textarea id="wdBriefFaq" name="brief_faq" rows="3" placeholder="One per line: Question? | Answer" data-i18n-attr-placeholder="wd.brief_faq_placeholder"></textarea>
                 </div>
                 <div class="form-row wd-brief-group" id="wdBriefGroup_blog" hidden>
-                  <label for="wdBriefBlog">Blog topics to start with *</label>
-                  <textarea id="wdBriefBlog" name="brief_blog" rows="2" placeholder="2-3 topics or article titles"></textarea>
+                  <label for="wdBriefBlog" data-i18n="wd.brief_blog_label">Blog topics to start with *</label>
+                  <textarea id="wdBriefBlog" name="brief_blog" rows="2" placeholder="2-3 topics or article titles" data-i18n-attr-placeholder="wd.brief_blog_placeholder"></textarea>
                 </div>
                 <div class="form-row wd-brief-group" id="wdBriefGroup_gallery" hidden>
-                  <label for="wdBriefGallery">What should the gallery/portfolio show?</label>
-                  <textarea id="wdBriefGallery" name="brief_gallery" rows="2" placeholder="Describe the images, or note you'll send photos separately"></textarea>
+                  <label for="wdBriefGallery" data-i18n="wd.brief_gallery_label">What should the gallery/portfolio show?</label>
+                  <textarea id="wdBriefGallery" name="brief_gallery" rows="2" placeholder="Describe the images, or note you'll send photos separately" data-i18n-attr-placeholder="wd.brief_gallery_placeholder"></textarea>
                 </div>
                 <div class="form-row wd-brief-group" id="wdBriefGroup_pricing" hidden>
-                  <label for="wdBriefPricing">Prices to display *</label>
-                  <textarea id="wdBriefPricing" name="brief_pricing" rows="3" placeholder="List services/packages and prices (or ranges)"></textarea>
+                  <label for="wdBriefPricing" data-i18n="wd.brief_pricing_label">Prices to display *</label>
+                  <textarea id="wdBriefPricing" name="brief_pricing" rows="3" placeholder="List services/packages and prices (or ranges)" data-i18n-attr-placeholder="wd.brief_pricing_placeholder"></textarea>
                 </div>
                 <div class="form-row wd-brief-group" id="wdBriefGroup_booking" hidden>
-                  <label for="wdBriefBooking">Booking details *</label>
-                  <textarea id="wdBriefBooking" name="brief_booking" rows="3" placeholder="What can be booked, your typical hours/availability, and how you'd like requests confirmed (call, text, email)"></textarea>
+                  <label for="wdBriefBooking" data-i18n="wd.brief_booking_label">Booking details *</label>
+                  <textarea id="wdBriefBooking" name="brief_booking" rows="3" placeholder="What can be booked, your typical hours/availability, and how you'd like requests confirmed (call, text, email)" data-i18n-attr-placeholder="wd.brief_booking_placeholder"></textarea>
                 </div>
                 <div class="form-row wd-brief-group" id="wdBriefGroup_newsletter" hidden>
-                  <label for="wdBriefNewsletter">Newsletter platform</label>
-                  <input type="text" id="wdBriefNewsletter" name="brief_newsletter" placeholder="Mailchimp, Constant Contact, etc. -- or leave blank and we'll recommend one">
+                  <label for="wdBriefNewsletter" data-i18n="wd.brief_newsletter_label">Newsletter platform</label>
+                  <input type="text" id="wdBriefNewsletter" name="brief_newsletter" placeholder="Mailchimp, Constant Contact, etc. -- or leave blank and we'll recommend one" data-i18n-attr-placeholder="wd.brief_newsletter_placeholder">
                 </div>
                 <div class="form-row wd-brief-group" id="wdBriefGroup_sms" hidden>
-                  <label for="wdBriefSms">SMS notifications details *</label>
-                  <textarea id="wdBriefSms" name="brief_sms" rows="3" placeholder="What should trigger a text (appointment reminders, order updates, etc.)? Preferred SMS provider? Note: recipients must explicitly opt in -- we'll help build that consent flow."></textarea>
+                  <label for="wdBriefSms" data-i18n="wd.brief_sms_label">SMS notifications details *</label>
+                  <textarea id="wdBriefSms" name="brief_sms" rows="3" placeholder="What should trigger a text (appointment reminders, order updates, etc.)? Preferred SMS provider? Note: recipients must explicitly opt in -- we'll help build that consent flow." data-i18n-attr-placeholder="wd.brief_sms_placeholder"></textarea>
                 </div>
               </div>
 
@@ -393,15 +393,15 @@
           </div>
 
           <div class="wd-price-ticker">
-            <span class="wd-price-ticker-label">Your estimate</span>
+            <span class="wd-price-ticker-label" data-i18n="wd.price_ticker_label">Your estimate</span>
             <span class="wd-price-ticker-amount" id="wdPriceAmount">$0</span>
             <span class="wd-price-ticker-savings" id="wdPriceSavings" hidden></span>
-            <span class="wd-price-ticker-note" id="wdPriceNote">Choose a package to begin</span>
+            <span class="wd-price-ticker-note" id="wdPriceNote" data-i18n="wd.price_ticker_note_default">Choose a package to begin</span>
           </div>
 
           <label class="wd-heroes-toggle">
             <input type="checkbox" id="wdHeroesDiscount">
-            <span>I qualify for the <a href="heroes-pricing.html" target="_blank" rel="noopener">American Heroes Discount</a> (15% off one-time work)</span>
+            <span data-i18n-html="wd.heroes_toggle_text">I qualify for the <a href="heroes-pricing.html" target="_blank" rel="noopener">American Heroes Discount</a> (15% off one-time work)</span>
           </label>
 
           <div class="wd-browser" id="wdBrowser">
@@ -412,7 +412,7 @@
             <div class="wd-browser-viewport" id="wdBrowserViewport">
               <div class="wd-browser-empty" id="wdBrowserEmpty">
                 <span class="wd-browser-empty-icon">🌱</span>
-                <p>Your website will grow here as you build it.</p>
+                <p data-i18n="wd.browser_empty_text">Your website will grow here as you build it.</p>
               </div>
               <nav class="wd-preview-nav" id="wdPreviewNav" hidden></nav>
               <div class="wd-preview-sections" id="wdPreviewSections"></div>
@@ -472,7 +472,7 @@
     </nav>
   </div>
   <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span data-i18n="footer.rights">All rights reserved.</span></p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version 2.2.1</a></p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version 2.2.2</a></p>
   <p class="footer-version"><a href="admin.html" data-i18n="footer.staff_signin">Staff Sign In</a></p>
 </footer>
 

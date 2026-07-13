@@ -153,8 +153,19 @@
 
         <article class="patch-entry">
           <div class="patch-entry-head">
-            <span class="patch-version patch-version--current">v2.2.1</span>
+            <span class="patch-version patch-version--current">v2.2.2</span>
             <span class="patch-tag">Current</span>
+          </div>
+          <ul class="patch-changes">
+            <li><strong>The Website Designer tool now actually speaks every language it offers</strong> — package contents, feature checkboxes, category names, pricing/discount messages, the live preview, and every form field on Step 3 previously stayed in English no matter which of the 16 languages you picked. All of it is now translated, including the business-brief questions added in the last release</li>
+            <li>Fixed a second, unrelated bug found while checking languages: a hidden anti-spam field on the Website Designer form used a left-position trick that only works in left-to-right layouts, which could inflate the page's scrollable width under Arabic (right-to-left) — switched it to the same direction-safe technique already used for the "skip to content" link</li>
+            <li>Looked specifically for a reported bug where the language switcher itself disappears in certain languages — tested extensively across languages, screen sizes, and right-to-left layout without reproducing it. If it's still happening, let us know which language and page so it can be pinned down</li>
+          </ul>
+        </article>
+
+        <article class="patch-entry">
+          <div class="patch-entry-head">
+            <span class="patch-version">v2.2.1</span>
           </div>
           <ul class="patch-changes">
             <li><strong>Fixed the header navigation overflowing on desktop</strong> — the "Get a quote" button (and the phone number next to it) could get pushed off-screen to the right on common laptop widths, with the header no longer looking centered against the rest of the page. The header now gives itself more room on wide screens and switches to the compact menu earlier on narrower ones, so nothing overflows</li>
@@ -455,7 +466,7 @@
     </nav>
   </div>
   <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span data-i18n="footer.rights">All rights reserved.</span></p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version 2.2.1</a></p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version 2.2.2</a></p>
   <p class="footer-version"><a href="admin.html" data-i18n="footer.staff_signin">Staff Sign In</a></p>
 </footer>
 
