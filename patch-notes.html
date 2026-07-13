@@ -153,8 +153,19 @@
 
         <article class="patch-entry">
           <div class="patch-entry-head">
-            <span class="patch-version patch-version--current">v2.2.0</span>
+            <span class="patch-version patch-version--current">v2.2.1</span>
             <span class="patch-tag">Current</span>
+          </div>
+          <ul class="patch-changes">
+            <li><strong>Fixed the header navigation overflowing on desktop</strong> — the "Get a quote" button (and the phone number next to it) could get pushed off-screen to the right on common laptop widths, with the header no longer looking centered against the rest of the page. The header now gives itself more room on wide screens and switches to the compact menu earlier on narrower ones, so nothing overflows</li>
+            <li>Checked all 16 languages against this fix specifically, since some translations run noticeably longer than English and were wrapping the navigation into a tall, messy multi-line header — confirmed clean on every language now</li>
+            <li>Fixed a second, unrelated bug found while checking languages: viewing the site in Arabic (right-to-left) left a large blank gap on one side of every page. The "skip to content" accessibility link was hiding itself off-screen using a left-position trick that only works in left-to-right layouts; switched it to a direction-safe technique</li>
+          </ul>
+        </article>
+
+        <article class="patch-entry">
+          <div class="patch-entry-head">
+            <span class="patch-version">v2.2.0</span>
           </div>
           <ul class="patch-changes">
             <li><strong>Website Designer now collects a real content brief, not just scope and price</strong> — Step 3 asks what your business does, your industry and service area, your list of services, brand colors/style references, a logo and a few photos, address/hours, social links, and a preferred launch date, plus a spot to name a domain if you don't have one yet</li>
@@ -444,7 +455,7 @@
     </nav>
   </div>
   <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span data-i18n="footer.rights">All rights reserved.</span></p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version 2.2.0</a></p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version 2.2.1</a></p>
   <p class="footer-version"><a href="admin.html" data-i18n="footer.staff_signin">Staff Sign In</a></p>
 </footer>
 
