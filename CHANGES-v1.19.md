@@ -94,6 +94,29 @@ someone gets there:
 - A category needs at least 2 optional features for "bundle" to mean
   anything, so single-item categories don't show a bundle box.
 
+## Visible savings, and advertising the offer
+
+Two follow-up asks: show the customer exactly what they're saving, not
+just that a discount applied, and put up front, honest marketing about
+the ways to save -- with a clear disclaimer that it's promotional.
+
+- A new line sits right under the big price number: "🎉 You're saving
+  $235 (1 bundle discount + Heroes Discount)" -- the actual dollar
+  difference between what they'd pay with zero discounts and what
+  they're paying now, naming which discounts are contributing. It's
+  hidden entirely when there's nothing to save yet.
+- A promo banner now sits at the top of the page (in the hero, above the
+  step tabs) advertising both ways to save -- the bundle discount and the
+  American Heroes Discount -- framed as a "Launch Special." Each
+  category's bundle box also carries a small "limited time" tag.
+- Directly underneath, in smaller print: a disclaimer that the
+  promotional bundle pricing is available for a limited time and may be
+  changed, paused, or ended at any time without notice, plus a reminder
+  that the Heroes Discount specifically requires eligibility
+  verification (linking to `heroes-pricing.html`). Deliberately generic
+  ("for a limited time," not a specific end date) rather than a concrete
+  expiration claim that could later be false.
+
 ## Collapsed categories, so this isn't overwhelming on first load
 
 Every category (in both Optional and Premium) is now collapsed by

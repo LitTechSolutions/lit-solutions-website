@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const formStatus = document.getElementById('wdFormStatus');
 
   const priceAmountEl = document.getElementById('wdPriceAmount');
+  const priceSavingsEl = document.getElementById('wdPriceSavings');
   const priceNoteEl = document.getElementById('wdPriceNote');
   const businessNameEl = document.getElementById('wdBusinessName');
   const browserUrlEl = document.getElementById('wdBrowserUrl');
@@ -329,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <input type="checkbox" class="wd-bundle-checkbox" data-category="${escHtml(cat.category)}">
           <span class="wd-bundle-box-main">
             <strong>Get all ${items.length} ${escHtml(cat.category)} features</strong>
-            <span class="wd-bundle-box-price"><span class="wd-bundle-now">${fmtMoney(bundleTotal * (1 - BUNDLE_DISCOUNT_RATE))}</span> <s class="wd-bundle-was">${fmtMoney(bundleTotal)}</s> <em>save 10%</em></span>
+            <span class="wd-bundle-box-price"><span class="wd-bundle-now">${fmtMoney(bundleTotal * (1 - BUNDLE_DISCOUNT_RATE))}</span> <s class="wd-bundle-was">${fmtMoney(bundleTotal)}</s> <em>save 10%</em> <span class="wd-bundle-limited">limited time</span></span>
           </span>
           <span class="wd-bundle-savings-badge" hidden></span>`;
         bundleBox.querySelector('input').addEventListener('change', (e) => toggleCategoryBundle(cat.category, e.target.checked));
@@ -373,9 +374,12 @@ document.addEventListener('DOMContentLoaded', () => {
     return !!(heroesCheckbox && heroesCheckbox.checked);
   }
 
+  function computeRawOptionalSum() {
+    return selectedInputs('C').reduce((sum, el) => sum + (Number(el.dataset.price) || 0), 0);
+  }
+
   function computeSubtotal() {
-    const optionalSum = selectedInputs('C').reduce((sum, el) => sum + (Number(el.dataset.price) || 0), 0);
-    return state.basePrice + optionalSum - computeBundleSavings();
+    return state.basePrice + computeRawOptionalSum() - computeBundleSavings();
   }
 
   // Final total after the Heroes Discount (15% off one-time work -- see
@@ -394,6 +398,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const total = computeTotal();
     const heroes = heroesEligible();
     animatePrice(total);
+
+    // What they'd have paid with no discounts at all, vs. what they're
+    // actually paying -- shown as a concrete dollar figure under the price,
+    // not just "a discount was applied."
+    const rawTotal = state.basePrice + computeRawOptionalSum();
+    const totalSavings = rawTotal - total;
+    if (totalSavings >= 1) {
+      const savingsParts = [];
+      if (bundled.length) savingsParts.push(`${bundled.length} bundle discount${bundled.length === 1 ? '' : 's'}`);
+      if (heroes) savingsParts.push('Heroes Discount');
+      priceSavingsEl.textContent = `🎉 You're saving ${fmtMoney(totalSavings)}${savingsParts.length ? ` (${savingsParts.join(' + ')})` : ''}`;
+      priceSavingsEl.hidden = false;
+    } else {
+      priceSavingsEl.hidden = true;
+    }
 
     const notes = [];
     if (bundled.length) notes.push(`${bundled.length} bundle discount${bundled.length === 1 ? '' : 's'} applied`);
