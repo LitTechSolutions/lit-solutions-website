@@ -46,6 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const HEROES_DISCOUNT_RATE = 0.15; // 15% off one-time work -- matches heroes-pricing.html
   const BUNDLE_DISCOUNT_RATE = 0.10; // 10% off a category when every optional item in it is selected
   const BUNDLE_MIN_ITEMS = 2; // a "bundle" of one item isn't a bundle
+  const MAX_IMAGE_BYTES = 4 * 1024 * 1024; // 4MB per logo/photo, raw file size
+  const MAX_PHOTOS = 4;
 
   const state = {
     package: null,
@@ -162,6 +164,42 @@ document.addEventListener('DOMContentLoaded', () => {
     'Privacy & Legal': '🔒', 'SEO & Analytics': '📈', 'Security & Hosting': '🛡️', 'Media Management': '🖼️',
     'Content Management': '🗂️', 'Booking & Scheduling': '📅', 'Reviews & Ratings': '⭐',
     'User Accounts': '👤', 'Account Management': '👤', 'Personalization': '🧩' };
+
+  // ---- Content-brief conditional sections -----------------------------
+  // Business tier includes these content pages standard (no checkbox), so
+  // their brief sections must always show for that package regardless of
+  // selection state. Starter only builds them if the matching optional
+  // feature is checked, so there the brief section follows the checkbox.
+  const CONTENT_BRIEF_ALWAYS_INCLUDED = {
+    business: ['staff', 'testimonials', 'faq', 'blog', 'gallery', 'newsletter'],
+    starter: [],
+  };
+  const CONTENT_BRIEF_TRIGGER_TITLES = {
+    staff: ['Team / Staff page'],
+    testimonials: ['Testimonials / Reviews'],
+    faq: ['FAQ page'],
+    blog: ['Blog / News section'],
+    gallery: ['Portfolio / Gallery page', 'Image gallery'],
+    pricing: ['Pricing page'],
+    booking: ['Online Booking Request Form'],
+    newsletter: ['Newsletter signup'],
+    sms: ['SMS / text notifications'],
+  };
+
+  function isBriefKeyActive(key) {
+    if ((CONTENT_BRIEF_ALWAYS_INCLUDED[state.package] || []).includes(key)) return true;
+    const titles = CONTENT_BRIEF_TRIGGER_TITLES[key] || [];
+    const checked = selectedInputs('C').concat(selectedInputs('S'));
+    return checked.some(el => titles.includes(el.dataset.title));
+  }
+
+  function updateBriefVisibility() {
+    Object.keys(CONTENT_BRIEF_TRIGGER_TITLES).forEach(key => {
+      const group = document.getElementById(`wdBriefGroup_${key}`);
+      if (!group) return;
+      group.hidden = !isBriefKeyActive(key);
+    });
+  }
 
   function fmtMoney(n) {
     return '$' + Math.round(n).toLocaleString();
@@ -296,6 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderBadges();
     updateCategoryBundleUI(category);
     updatePriceAndBreakdown();
+    updateBriefVisibility();
   }
 
   function renderCategoryGroup(container, categories, priority) {
@@ -454,6 +493,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Premium items never get visually "built" -- they show as a locked badge only.
       renderBadges();
       updatePriceAndBreakdown();
+      updateBriefVisibility();
       return;
     }
 
@@ -471,6 +511,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     updateCategoryBundleUI(item.category);
     updatePriceAndBreakdown();
+    updateBriefVisibility();
   }
 
   function cardBodyHtml(item) {
@@ -609,6 +650,7 @@ document.addEventListener('DOMContentLoaded', () => {
         browserEmptyEl.hidden = false;
         refreshPreviewContent();
         updatePriceAndBreakdown();
+        updateBriefVisibility();
         showPanel('2');
       })
       .catch(err => {
@@ -637,6 +679,80 @@ document.addEventListener('DOMContentLoaded', () => {
     // steps 1/2, where the form's other required fields aren't visible yet.
     if (e.key === 'Enter') e.preventDefault();
   });
+
+  function fieldVal(id) {
+    const el = document.getElementById(id);
+    return el ? el.value.trim() : '';
+  }
+
+  // Only sends a conditional field's value when its section is actually
+  // active -- otherwise a value typed in before unchecking the triggering
+  // feature would still go out even though it's no longer relevant.
+  function collectBrief() {
+    return {
+      description: fieldVal('wdBizDescription'),
+      industry: fieldVal('wdBizIndustry'),
+      serviceArea: fieldVal('wdServiceArea'),
+      servicesList: fieldVal('wdServicesList'),
+      brandColors: fieldVal('wdBrandColors'),
+      styleReferences: fieldVal('wdStyleReferences'),
+      addressHours: fieldVal('wdAddressHours'),
+      socialLinks: fieldVal('wdSocialLinks'),
+      launchDate: fieldVal('wdLaunchDate'),
+      desiredDomain: fieldVal('wdDesiredDomain'),
+      staff: isBriefKeyActive('staff') ? fieldVal('wdBriefStaff') : '',
+      testimonials: isBriefKeyActive('testimonials') ? fieldVal('wdBriefTestimonials') : '',
+      faq: isBriefKeyActive('faq') ? fieldVal('wdBriefFaq') : '',
+      blog: isBriefKeyActive('blog') ? fieldVal('wdBriefBlog') : '',
+      gallery: isBriefKeyActive('gallery') ? fieldVal('wdBriefGallery') : '',
+      pricing: isBriefKeyActive('pricing') ? fieldVal('wdBriefPricing') : '',
+      booking: isBriefKeyActive('booking') ? fieldVal('wdBriefBooking') : '',
+      newsletter: isBriefKeyActive('newsletter') ? fieldVal('wdBriefNewsletter') : '',
+      sms: isBriefKeyActive('sms') ? fieldVal('wdBriefSms') : '',
+    };
+  }
+
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result).split(',')[1] || '');
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Reads the logo/photo file inputs into base64 for the email attachment --
+  // same pattern the PDF already uses (client-generates, server just relays
+  // to the email provider). Returns errors instead of throwing so the submit
+  // handler can show them inline rather than via a thrown-exception path.
+  async function collectImageAttachments() {
+    const errors = [];
+    let logo = null;
+    const logoFile = document.getElementById('wdLogoFile')?.files?.[0];
+    if (logoFile) {
+      if (logoFile.size > MAX_IMAGE_BYTES) {
+        errors.push('Logo file is too large -- please use a file under 4MB.');
+      } else {
+        logo = { filename: logoFile.name, content: await fileToBase64(logoFile) };
+      }
+    }
+
+    const photos = [];
+    const photoFiles = Array.from(document.getElementById('wdPhotosFile')?.files || []);
+    if (photoFiles.length > MAX_PHOTOS) {
+      errors.push(`Please attach at most ${MAX_PHOTOS} photos.`);
+    } else {
+      for (const file of photoFiles) {
+        if (file.size > MAX_IMAGE_BYTES) {
+          errors.push(`Photo "${file.name}" is too large -- please use files under 4MB each.`);
+        } else {
+          photos.push({ filename: file.name, content: await fileToBase64(file) });
+        }
+      }
+    }
+
+    return { logo, photos, errors };
+  }
 
   function selectionPayload() {
     return {
@@ -704,6 +820,37 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     y += 6;
 
+    const brief = collectBrief();
+    const briefLines = [];
+    if (brief.description) briefLines.push(['What they do', brief.description]);
+    if (brief.industry) briefLines.push(['Industry', brief.industry]);
+    if (brief.serviceArea) briefLines.push(['Service area', brief.serviceArea]);
+    if (brief.servicesList) briefLines.push(['Services/products', brief.servicesList]);
+    if (brief.desiredDomain) briefLines.push(['Desired domain', brief.desiredDomain]);
+    if (brief.brandColors) briefLines.push(['Brand colors', brief.brandColors]);
+    if (brief.styleReferences) briefLines.push(['Style references', brief.styleReferences]);
+    if (brief.addressHours) briefLines.push(['Address / hours', brief.addressHours]);
+    if (brief.socialLinks) briefLines.push(['Social links', brief.socialLinks]);
+    if (brief.launchDate) briefLines.push(['Preferred launch date', brief.launchDate]);
+    [
+      ['staff', 'Team/staff'], ['testimonials', 'Testimonials'], ['faq', 'FAQ'], ['blog', 'Blog topics'],
+      ['gallery', 'Gallery/portfolio'], ['pricing', 'Pricing'], ['booking', 'Booking details'],
+      ['newsletter', 'Newsletter platform'], ['sms', 'SMS notifications'],
+    ].forEach(([key, label]) => { if (brief[key]) briefLines.push([label, brief[key]]); });
+
+    if (briefLines.length) {
+      if (y > 250) { doc.addPage(); y = 20; }
+      doc.setFontSize(12);
+      doc.text('Business brief:', 14, y); y += 7;
+      doc.setFontSize(10);
+      briefLines.forEach(([label, value]) => {
+        const lines = doc.splitTextToSize(`${label}: ${value}`, 175);
+        doc.text(lines, 18, y); y += 6 * lines.length;
+        if (y > 270) { doc.addPage(); y = 20; }
+      });
+      y += 4;
+    }
+
     const notes = document.getElementById('wdNotes').value;
     if (notes) {
       doc.setFontSize(12);
@@ -731,13 +878,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (form) {
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!state.package) return;
       if (document.getElementById('wdHoneypot').value) return; // bot
 
       const submitBtn = document.getElementById('wdSubmitBtn');
       submitBtn.disabled = true;
+      formStatus.textContent = 'Reading your files...';
+
+      const { logo, photos, errors } = await collectImageAttachments();
+      if (errors.length) {
+        formStatus.textContent = errors.join(' ');
+        submitBtn.disabled = false;
+        return;
+      }
+
       formStatus.textContent = 'Building your PDF and sending it over...';
 
       const doc = buildPdf();
@@ -759,6 +915,8 @@ document.addEventListener('DOMContentLoaded', () => {
         bundleSavings: Math.round(bundleSavings),
         optionalSelected, premiumSelected,
         pdfBase64, pdfFilename: 'website-designer-summary.pdf',
+        brief: collectBrief(),
+        logo, photos,
       };
 
       fetch('/.netlify/functions/website-designer', {

@@ -1625,6 +1625,9 @@ textarea{ resize: vertical; }
 .wd-note{ font-size:.85rem; color: var(--ink-soft); margin-bottom:1rem; }
 .wd-note-inline{ font-size:.78rem; color: var(--ink-faint); font-weight:400; }
 
+.wd-brief-heading{ font-size:1.05rem; margin:1.8rem 0 .3rem; padding-top:1.2rem; border-top:1px dashed var(--line); }
+.wd-brief-group{ padding:.9rem 1rem; margin-bottom:1.1rem; background: var(--paper-alt, var(--paper)); border:1px solid var(--line); border-radius: var(--radius); }
+
 .wd-included-card{ margin-bottom:1rem; }
 .wd-included-list{ list-style:none; margin:0; padding:0; columns:2; column-gap:1.5rem; }
 .wd-included-list li{ position:relative; padding-left:1.4rem; margin-bottom:.5rem; font-size:.86rem; color: var(--ink-soft); break-inside: avoid; }
