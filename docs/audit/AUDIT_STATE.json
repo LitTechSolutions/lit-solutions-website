@@ -46,7 +46,7 @@
     }
   },
   "findingIdRange": {
-    "next": "F042",
+    "next": "F043",
     "note": "IDs are derived from real findings only; there is no predetermined catalog size such as F001-F060."
   },
   "findings": {
@@ -357,11 +357,19 @@
       "summary": "i18n/en.json has 466 of the 1,496 real translation keys (69% missing) -- stale relative to the 15 real language files, which are all identical to each other; no runtime impact since English never fetches en.json",
       "commit": "5eadd86",
       "resolutionNote": "Fixed: i18n/en.json regenerated from 466 to 1,496 keys, exact parity with all 15 real translation files"
+    },
+    "F042": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "domainSession": 9,
+      "commit": "47e7970",
+      "summary": "Mobile hamburger nav-toggle lacked flex-shrink:0 (unlike its header-actions siblings), so it silently squeezed below usable width on narrow phones (24px wide at 375px viewport) while absorbing the header row's space deficit alone",
+      "resolutionNote": "Fixed: added flex-shrink:0 and an explicit bar width so the icon no longer distorts; also added an invisible ::before hit-slop to theme-toggle/search-toggle/nav-toggle so touch targets reach ~44px without growing visible chrome. Verified via mobile (375) and desktop (1280) presets."
     }
   },
   "counts": {
-    "total": 41,
-    "resolved": 30,
+    "total": 42,
+    "resolved": 31,
     "ownerDecisionOpen": 11,
     "engineeringOpen": 0
   },
