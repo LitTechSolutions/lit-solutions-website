@@ -20,7 +20,7 @@ machine-readable state, and `00_AUDIT_CONTROL.md` for process/ground rules.
 | [01_REPOSITORY_BASELINE.md](01_REPOSITORY_BASELINE.md) | Done | Architecture, functions/storage inventory, findings F001–F036 |
 | [02_PUBLIC_SITE_AUDIT.md](02_PUBLIC_SITE_AUDIT.md) | Done | Homepage, header/footer/nav, all public pages, CTAs, content accuracy; finding F037 |
 | [03_IDENTITY_DATA_SECURITY.md](03_IDENTITY_DATA_SECURITY.md) | Done | Auth, authorization, sessions, customer data, privacy; findings F038, F039 |
-| 04_BACKEND_INTEGRATIONS.md | Not started | Every Netlify Function, forms, files, email/PDF, providers |
+| [04_BACKEND_INTEGRATIONS.md](04_BACKEND_INTEGRATIONS.md) | Done | Every Netlify Function, forms, files, email/PDF, providers; finding F040 |
 | 05_PRICING_AND_BUSINESS_RULES.md | Not started | Website Designer, pricing/discount logic, plans, payments |
 | 06_QUALITY_AUDIT.md | Not started | Accessibility, mobile, performance, SEO, translation, quality states |
 | 07_REQUIREMENTS_GAP_MATRIX.md | Not started | Classify candidate functions vs. what exists, value, risk |
@@ -33,14 +33,14 @@ machine-readable state, and `00_AUDIT_CONTROL.md` for process/ground rules.
 - `inventories/` — machine-readable inventories (e.g. `pricing-sources.json`
   when Session 5 produces it).
 
-## Findings summary (as of Session 3)
+## Findings summary (as of Session 4)
 
-- **39 findings** recorded (`F001`–`F039`).
+- **40 findings** recorded (`F001`–`F040`).
 - **9 Resolved** this project session: F001–F005, F012–F015.
 - **11 Owner-Decision** findings awaiting Dylan's input: F008, F009, F010,
   F011, F017, F024, F029, F030, F031, F032, F033.
-- **19 Open** (engineering-only, no owner decision needed): F006, F007,
-  F016, F018–F023, F025–F028, F034–F039.
+- **20 Open** (engineering-only, no owner decision needed): F006, F007,
+  F016, F018–F023, F025–F028, F034–F040.
 
 Session 2 added F037 (homepage's primary "quote" CTA links to the wrong
 form) and expanded F017 with a full CTA evidence table; F008, F009,
@@ -52,3 +52,10 @@ F038 (password-reset never actually emails a link — only email
 verification is wired to `sendEmail()`) and F039 (account-preference
 language list hardcoded to 4 of the 16 real supported languages);
 re-verified F006, F007, and F030 unchanged.
+
+Session 4 confirmed F012/F013 fixes and per-user ownership-check
+strengths hold across `documents.js`, `messages.js`, `favorites.js`, and
+`notifications.js`; added F040 (`messages.js` embeds message content
+unescaped into an outbound HTML email, unlike the `esc()` pattern used
+consistently in `website-designer.js`); expanded F027 with a second
+occurrence of the same SVG-allowlist gap in `documents.js`.
