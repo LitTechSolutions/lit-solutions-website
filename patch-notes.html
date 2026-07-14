@@ -153,8 +153,21 @@
 
         <article class="patch-entry">
           <div class="patch-entry-head">
-            <span class="patch-version patch-version--current">v2.3.0</span>
+            <span class="patch-version patch-version--current">v3.0.0</span>
             <span class="patch-tag">Current</span>
+          </div>
+          <ul class="patch-changes">
+            <li><strong>A full visual redesign — new colors, type, and layout across the entire site.</strong> Same logo, same content, a new look: a cleaner indigo-and-emerald palette, bolder headlines, more breathing room, and softer corners, applied everywhere from the homepage to legal pages to the Website Designer tool, in both light and dark mode</li>
+            <li><strong>Fixed a real bug in the mobile menu</strong> — opening the Services or Resources dropdown on tablet/narrow-desktop widths (roughly 1100–1620px) rendered it detached and floating away from its label instead of docked underneath, a leftover mismatch between two different breakpoints from an earlier fix</li>
+            <li><strong>Fixed the cause of "my portfolio post disappeared"</strong> — the admin panel required two separate steps to actually publish a new post (an "Add item" click, then a separate "Save changes" click); missing the second step meant nothing was ever sent to the server, so the public page correctly kept showing "nothing here yet." Every add/edit/delete/reorder now saves immediately, with a clear "Saved" confirmation or an error if it didn't go through</li>
+            <li>Redesigned the portfolio, testimonials, gallery, and blog cards around a real image focal point — bigger photos, cleaner text hierarchy underneath — and fixed a real bug found along the way where uploaded blog post photos were never actually displayed</li>
+            <li><strong>Rebuilt the Website Designer's mobile layout</strong> so the live preview of your site stays pinned as the focal point while you scroll through packages and features underneath, and fixed a genuine mobile bug (a layout overflow once a package was selected) along with several smaller mobile-only issues</li>
+          </ul>
+        </article>
+
+        <article class="patch-entry">
+          <div class="patch-entry-head">
+            <span class="patch-version">v2.3.0</span>
           </div>
           <ul class="patch-changes">
             <li><strong>The rest of the website now speaks every language it offers, too</strong> — the last two releases fixed translation for the Website Designer tool specifically, but 25 other pages (legal terms, privacy policy, payments, the intake form, every individual service page, booking, the team/testimonials/portfolio/gallery pages, all blog posts, the account page, search, sitemap, and the 404 page) had never been translated at all and stayed in English regardless of language. All of it — roughly 800 pieces of text per language — is now translated across all 15 non-English languages</li>
@@ -476,7 +489,7 @@
     </nav>
   </div>
   <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span data-i18n="footer.rights">All rights reserved.</span></p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version 2.3.0</a></p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version 3.0.0</a></p>
   <p class="footer-version"><a href="admin.html" data-i18n="footer.staff_signin">Staff Sign In</a></p>
 </footer>
 

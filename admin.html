@@ -52,18 +52,13 @@
   .admin-item-actions{ display:flex; gap:.5rem; flex-shrink:0; flex-wrap:wrap; }
   .admin-item-actions button{ font-size:.78rem; padding:.4rem .7rem; margin:0; }
   .admin-empty{ font-size:.88rem; color: var(--ink-faint); padding: 1rem 0; }
-  .admin-unsaved-banner{
-    display:none; position: sticky; top:0; z-index: 5; background:#FFF1EA; color:#5A3410;
-    border:1px solid #F3C6A8; border-radius: var(--radius); padding:.9rem 1.2rem; margin-bottom:1.5rem;
-    align-items:center; justify-content:space-between; gap:1rem; font-size:.88rem;
-  }
-  :root[data-theme="dark"] .admin-unsaved-banner{ background:#2A1A12; color:#FFB68A; border-color:#5A3410; }
-  .admin-unsaved-banner.is-visible{ display:flex; }
   .admin-thumb-preview{ width:120px; border-radius:6px; margin-top:.6rem; display:none; }
   .admin-field-hint{ font-size:.78rem; color: var(--ink-faint); font-weight:400; margin-top:.2rem; }
   .status{ font-size:.85rem; font-weight:600; margin-top:.75rem; min-height:1.2em; }
   .status.ok{ color: var(--accent-teal-text); }
   .status.error{ color: var(--accent-orange-text); }
+  .status.pending{ color: var(--ink-soft); font-weight:500; font-style:italic; }
+  .status a.linklike{ font-weight:600; font-style:normal; margin-left:.4rem; }
   a.linklike{ color: var(--accent-teal-text); cursor:pointer; text-decoration:underline; font-size:.85rem; }
 </style>
 </head>
@@ -280,19 +275,17 @@
       document.title = cfg.title + " — Little Technical Solutions LLC Staff";
 
       var items = [];
-      var dirty = false;
       var editingId = null;
 
       var v = el('<div>' +
         '<div class="admin-tabs" id="tabs"></div>' +
-        '<div class="admin-unsaved-banner" id="unsavedBanner"><span>You have unsaved changes.</span><button class="btn btn-primary btn-small" id="saveAllBtn">Save changes</button></div>' +
         '<div class="admin-card"><h1>' + esc(cfg.title) + '</h1>' +
         '<h2 id="formTitle">Add new</h2>' +
         '<form id="itemForm"></form>' +
         '<p class="status" id="formStatus"></p>' +
         '</div>' +
         '<div class="admin-card"><h2>Current items</h2>' +
-        '<p style="font-size:.85rem; color:var(--ink-soft);">Drag order isn\'t supported yet -- use the up/down buttons to reorder. Nothing here is public until you click Save.</p>' +
+        '<p style="font-size:.85rem; color:var(--ink-soft);">Drag order isn\'t supported yet -- use the up/down buttons to reorder. Every change below (adding, editing, deleting, or reordering) saves and goes live on the site immediately.</p>' +
         '<div class="admin-item-list" id="itemList"></div>' +
         '<p class="status" id="listStatus"></p>' +
         '</div></div>');
@@ -310,13 +303,64 @@
       tabsEl.appendChild(el('<a href="#account">Account Settings</a>'));
       tabsEl.appendChild(el('<a href="#dashboard">Dashboard</a>'));
 
-      function markDirty() {
-        dirty = true;
-        v.querySelector("#unsavedBanner").classList.add("is-visible");
+      // Every add/edit/delete/reorder auto-saves the full list right away --
+      // there is no separate "publish" step. `savePromise` chains successive
+      // saves so they hit the server in the order they happened (each one
+      // reads `items` fresh when it actually fires, so the last save in the
+      // chain always reflects the truest, most current state).
+      var savePromise = Promise.resolve();
+
+      function setStatus(statusEl, kind, text) {
+        statusEl.textContent = text;
+        statusEl.className = "status" + (kind ? " " + kind : "");
       }
-      function markClean() {
-        dirty = false;
-        v.querySelector("#unsavedBanner").classList.remove("is-visible");
+
+      // Shows an error message with an optional inline "Retry" link that
+      // re-attempts the same save.
+      function setError(statusEl, message, retryFn) {
+        statusEl.textContent = "";
+        statusEl.className = "status error";
+        statusEl.appendChild(document.createTextNode(message));
+        if (retryFn) {
+          var retry = document.createElement("a");
+          retry.href = "#";
+          retry.className = "linklike";
+          retry.textContent = "Retry";
+          retry.addEventListener("click", function (e) {
+            e.preventDefault();
+            retryFn();
+          });
+          statusEl.appendChild(document.createTextNode(" "));
+          statusEl.appendChild(retry);
+        }
+      }
+
+      // Persists the current `items` array to the server. `rollback`, if
+      // given, is called (and the list re-rendered) when the save fails --
+      // used for delete/reorder, where there's no unsaved user input at risk
+      // and the honest thing is to put the item/order back since the change
+      // never actually went live. Add/edit pass no rollback: the admin's
+      // freshly-typed content stays visible in the list (so it isn't lost)
+      // along with a Retry option.
+      function persistItems(statusEl, savedMessage, rollback) {
+        savePromise = savePromise.then(function () {
+          setStatus(statusEl, "pending", "Saving…");
+          return api("content", { method: "POST", body: JSON.stringify({ slug: cfg.slug, data: items }) });
+        }).then(function (r) {
+          if (r.ok) {
+            setStatus(statusEl, "ok", savedMessage);
+          } else {
+            var msg = (r.body && r.body.error) || "Could not save -- this change hasn't gone live. Check your connection and try again.";
+            if (rollback) {
+              rollback();
+              renderList();
+              setError(statusEl, msg, null);
+            } else {
+              setError(statusEl, msg, function () { persistItems(statusEl, savedMessage, rollback); });
+            }
+          }
+        });
+        return savePromise;
       }
 
       function buildForm(existing) {
@@ -423,6 +467,7 @@
             if (f.auto && !out[f.key]) out[f.key] = f.auto(out);
           });
 
+          var wasEditing = !!editingId;
           if (editingId) {
             var idx = items.findIndex(function (i) { return i.id === editingId; });
             if (idx !== -1) items[idx] = Object.assign({ id: editingId }, out);
@@ -430,12 +475,13 @@
           } else {
             items.push(Object.assign({ id: uid() }, out));
           }
-          markDirty();
           v.querySelector("#formTitle").textContent = "Add new";
           buildForm({});
           renderList();
-          statusEl.textContent = "Added to the list below. Click “Save changes” to publish.";
-          statusEl.className = "status ok";
+          // No rollback here on purpose: if the save fails, the admin's
+          // freshly-entered item stays visible in the list (nothing typed is
+          // lost) with a Retry option, rather than reverting the form.
+          persistItems(statusEl, (wasEditing ? "Updated" : "Added") + " ✓ -- live on the site now.", null);
         });
       }
 
@@ -465,38 +511,35 @@
             window.scrollTo({ top: 0, behavior: "smooth" });
           });
           row.querySelector('[data-act="delete"]').addEventListener("click", function () {
-            if (!confirm("Delete “" + cfg.itemLabel(item) + "”? This can’t be undone once you save.")) return;
+            if (!confirm("Delete “" + cfg.itemLabel(item) + "”? This removes it from the live site right away.")) return;
+            var prevItems = items.slice();
             items = items.filter(function (i) { return i.id !== item.id; });
-            markDirty();
             renderList();
+            persistItems(v.querySelector("#listStatus"), "Deleted ✓ -- removed from the site.", function () {
+              items = prevItems;
+            });
           });
           row.querySelector('[data-act="up"]').addEventListener("click", function () {
             if (idx === 0) return;
+            var prevItems = items.slice();
             var tmp = items[idx - 1]; items[idx - 1] = items[idx]; items[idx] = tmp;
-            markDirty(); renderList();
+            renderList();
+            persistItems(v.querySelector("#listStatus"), "Order saved ✓ -- live on the site now.", function () {
+              items = prevItems;
+            });
           });
           row.querySelector('[data-act="down"]').addEventListener("click", function () {
             if (idx === items.length - 1) return;
+            var prevItems = items.slice();
             var tmp = items[idx + 1]; items[idx + 1] = items[idx]; items[idx] = tmp;
-            markDirty(); renderList();
+            renderList();
+            persistItems(v.querySelector("#listStatus"), "Order saved ✓ -- live on the site now.", function () {
+              items = prevItems;
+            });
           });
           listEl.appendChild(row);
         });
       }
-
-      async function saveAll() {
-        var r = await api("content", { method: "POST", body: JSON.stringify({ slug: cfg.slug, data: items }) });
-        var statusEl = v.querySelector("#listStatus");
-        if (r.ok) {
-          markClean();
-          statusEl.textContent = "Saved -- live on the site now.";
-          statusEl.className = "status ok";
-        } else {
-          statusEl.textContent = (r.body && r.body.error) || "Could not save.";
-          statusEl.className = "status error";
-        }
-      }
-      v.querySelector("#saveAllBtn").addEventListener("click", saveAll);
 
       buildForm({});
       renderList();
@@ -542,7 +585,17 @@
             '<div class="admin-item-actions"><button type="button" class="btn btn-ghost" data-act="delete">Delete</button></div></div>');
           row.querySelector('[data-act="delete"]').addEventListener("click", async function () {
             if (!confirm("Delete this image? Posts/items already using it will keep their own copy.")) return;
-            await api("admin-images", { method: "POST", body: JSON.stringify({ action: "delete", imageId: img.id }) });
+            var status = v.querySelector("#img-status");
+            status.textContent = "Deleting…";
+            status.className = "status pending";
+            var r = await api("admin-images", { method: "POST", body: JSON.stringify({ action: "delete", imageId: img.id }) });
+            if (r.ok) {
+              status.textContent = "Deleted ✓";
+              status.className = "status ok";
+            } else {
+              status.textContent = (r.body && r.body.error) || "Could not delete -- check your connection and try again.";
+              status.className = "status error";
+            }
             loadList();
           });
           listEl.appendChild(row);
@@ -555,10 +608,12 @@
       var file = v.querySelector("#img-upload").files[0];
       if (!file) { status.textContent = "Choose a file first."; status.className = "status error"; return; }
       if (file.size > 3.5 * 1024 * 1024) { status.textContent = "Please use an image under about 3.5MB."; status.className = "status error"; return; }
+      status.textContent = "Uploading…";
+      status.className = "status pending";
       var reader = new FileReader();
       reader.onload = async function () {
         var r = await api("admin-images", { method: "POST", body: JSON.stringify({ action: "upload", dataUri: reader.result, alt: v.querySelector("#img-alt").value }) });
-        status.textContent = r.ok ? "Uploaded." : ((r.body && r.body.error) || "Upload failed.");
+        status.textContent = r.ok ? "Uploaded ✓" : ((r.body && r.body.error) || "Upload failed -- check your connection and try again.");
         status.className = "status " + (r.ok ? "ok" : "error");
         loadList();
       };

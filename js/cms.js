@@ -97,10 +97,18 @@
 
   var DOC_ICON = '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16v16H4z" opacity="0"/><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M8 13h8M8 16h5"/></svg>';
 
+  // Generic "photo" glyph -- used wherever an image *would* be the focal
+  // point but no image has been uploaded yet, so the placeholder reads as
+  // "no photo" rather than "broken doc icon".
+  var IMG_ICON = '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 15l-5-5-6 6-2-2-4 4"/></svg>';
+
   function renderBlogCard(post) {
     var meta = [esc(post.date || ""), esc(post.category || "")].filter(Boolean).join(" &middot; ");
+    var art = post.imageDataUri
+      ? '<img class="blog-card-art" src="' + post.imageDataUri + '" alt="">'
+      : '<div class="blog-card-art">' + DOC_ICON + '</div>';
     return '<a href="blog-post.html?slug=' + encodeURIComponent(post.slug) + '" class="blog-card reveal is-visible">' +
-      '<div class="blog-card-art">' + DOC_ICON + '</div>' +
+      art +
       '<div class="blog-card-body">' +
       '<div class="blog-card-meta">' + meta + '</div>' +
       '<h2>' + esc(post.title) + '</h2>' +
@@ -148,7 +156,7 @@
     if (metaEl) metaEl.textContent = [post.date, post.category, "Little Technical Solutions LLC"].filter(Boolean).join(" · ");
     if (bodyEl) bodyEl.innerHTML = paragraphs(post.body);
     if (imgWrap && post.imageDataUri) {
-      imgWrap.innerHTML = '<img src="' + post.imageDataUri + '" alt="" style="width:100%; border-radius:8px; margin-bottom:2rem;">';
+      imgWrap.innerHTML = '<img class="blog-post-image" src="' + post.imageDataUri + '" alt="">';
     }
     mountBookmark("#cmsBookmarkMount", { itemId: "blog:" + post.slug, label: post.title, href: "blog-post.html?slug=" + encodeURIComponent(post.slug) });
   }
@@ -166,7 +174,7 @@
     mount.innerHTML = items.map(function (item) {
       var img = item.imageDataUri
         ? '<img class="portfolio-card-img" src="' + item.imageDataUri + '" alt="">'
-        : '<div class="portfolio-card-img portfolio-card-img--empty"></div>';
+        : '<div class="portfolio-card-img portfolio-card-img--empty">' + IMG_ICON + '</div>';
       return '<div class="portfolio-card reveal is-visible">' + img +
         '<div class="portfolio-card-body"><h3>' + esc(item.title) + '</h3><p>' + esc(item.description) + '</p>' +
         '<div class="portfolio-card-bookmark" data-item-id="' + esc(item.id) + '" data-label="' + esc(item.title) + '"></div>' +
