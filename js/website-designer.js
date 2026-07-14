@@ -604,7 +604,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ? tDyn('note_bundle_one_applied', '1 bundle discount applied')
         : fillTemplate(tDyn('note_bundle_many_applied', '{{count}} bundle discounts applied'), { count: bundled.length }));
     }
-    if (heroes) notes.push(tDyn('note_heroes_applied', 'Heroes Discount applied'));
+    if (heroes) notes.push(tDyn('note_heroes_applied', 'Heroes Discount applied (pending confirmation)'));
     let note = notes.length
       ? fillTemplate(tDyn('note_starting_price_with', 'Starting price -- {{notes}}'), { notes: notes.join(', ') })
       : tDyn('note_starting_price', 'Starting price');
@@ -626,7 +626,7 @@ document.addEventListener('DOMContentLoaded', () => {
       html += `<div class="wd-cost-row wd-cost-row--discount"><span>${escHtml(bundleLabel)}</span><strong>-${fmtMoney(savings)}</strong></div>`;
     });
     if (heroes) {
-      const heroesLabel = tDyn('cost_row_heroes', 'American Heroes Discount (15%)');
+      const heroesLabel = tDyn('cost_row_heroes', 'American Heroes Discount (15%, pending confirmation)');
       html += `<div class="wd-cost-row wd-cost-row--discount"><span>${escHtml(heroesLabel)}</span><strong>-${fmtMoney(subtotal - total)}</strong></div>`;
     }
     if (premiumSel.length) {
