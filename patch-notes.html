@@ -153,8 +153,19 @@
 
         <article class="patch-entry">
           <div class="patch-entry-head">
-            <span class="patch-version patch-version--current">v3.1.0</span>
+            <span class="patch-version patch-version--current">v3.2.0</span>
             <span class="patch-tag">Current</span>
+          </div>
+          <ul class="patch-changes">
+            <li><strong>Fixed a real bug: the live preview could cover the business name field.</strong> On mobile, the live preview was pinned ("sticky") in place while the rest of the page scrolled underneath it — meaning it could visually sit on top of the business name field or other page content, most noticeably if you tried to submit before filling everything in</li>
+            <li><strong>Reworked the live preview into the tool's focal point on every screen size, not just mobile.</strong> It's no longer pinned/sticky at all — it now sits in a large, prominent panel at the very top of the page, with your business name, running price estimate, discount toggle, and cost breakdown laid out clearly underneath it. Previously on desktop the preview was a narrow sidebar next to the package/feature options; now it's a full-width centerpiece on both desktop and mobile</li>
+            <li>Because nothing is pinned in place anymore, the preview can no longer end up in the way while scrolling through Step 2's feature categories — a broader version of the same underlying issue</li>
+          </ul>
+        </article>
+
+        <article class="patch-entry">
+          <div class="patch-entry-head">
+            <span class="patch-version">v3.1.0</span>
           </div>
           <ul class="patch-changes">
             <li><strong>Website Designer now gets you a quote in seconds, not a long form.</strong> Previously, seeing your price and actually submitting meant filling out the full project-details form (business description, services, brand colors, photos, and more) first. Now: pick a package and features, see your exact price clearly, and submit with just your name, email, phone, and preferred contact method — that's it, we get notified right away</li>
@@ -500,7 +511,7 @@
     </nav>
   </div>
   <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span data-i18n="footer.rights">All rights reserved.</span></p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version 3.1.0</a></p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version 3.2.0</a></p>
   <p class="footer-version"><a href="admin.html" data-i18n="footer.staff_signin">Staff Sign In</a></p>
 </footer>
 
