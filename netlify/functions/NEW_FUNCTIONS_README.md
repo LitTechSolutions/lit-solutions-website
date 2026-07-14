@@ -40,9 +40,13 @@ scoped:**
    just needs real email copy written before it can ship. Benefits from
    `leads-dashboard` existing to surface follow-up state.
 7. **`booking-scheduler`** — bigger than originally scoped now that real
-   Google Calendar sync is confirmed in scope (OAuth setup, Freebusy
-   API, event creation — see that doc's §4a). Budget more time for this
-   one than the others.
+   Google Calendar sync is confirmed in scope (service-account/
+   domain-wide-delegation setup, Freebusy API, event creation — see that
+   doc's §4a), but fully specified now (Workspace account confirmed,
+   07:00-19:00 every day seeded as the real availability). Budget more
+   time for this one than the others — the one manual prerequisite is
+   Dylan granting domain-wide delegation in his Workspace Admin console
+   before the integration can be tested end-to-end.
 8. **`project-scaffold-generator`** — depends on `full`-stage leads
    existing to act on; natural to build once `leads-dashboard` gives you
    a place to trigger it from.
@@ -70,12 +74,11 @@ scoped:**
 
 ## Still-open items across the batch (not blocking, but worth tracking)
 
-- `booking-scheduler`: exact weekly availability hours (weekends
-  confirmed in scope, specific times still needed) and confirmation of
-  whether Dylan's Google account is personal Gmail or Google Workspace
-  (changes the OAuth setup approach).
+- `booking-scheduler`: fully resolved — 07:00-19:00 every day, Google
+  Workspace confirmed. No remaining open items.
 - `quote-acceptance` Phase 2: whether payment happens through DocuSign
   Payments or a separate processor — determines if a second
-  payment-integration is needed alongside the DocuSign API work.
+  payment-integration is needed alongside the DocuSign API work. Moot
+  until the Phase 2 plan-upgrade decision is made either way.
 - `lead-followup`: the actual subject lines/email copy for both
   follow-up steps (timing is final; content is not written yet).

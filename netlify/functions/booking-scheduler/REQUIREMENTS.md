@@ -78,12 +78,14 @@ dashboard listing. This is a real scope increase over a pure-Netlify-Blobs
 implementation and needs its own sub-requirements:
 
 1. **Auth**: a Google Cloud project with the Calendar API enabled, and
-   OAuth 2.0 credentials. Since this is a single-business-owner
-   integration (not multi-tenant), the simplest correct approach is a
-   **service account with domain-wide delegation** if Dylan's calendar is
-   on Google Workspace, or a one-time OAuth consent flow storing a
-   refresh token if it's a personal Gmail account — confirm which before
-   building, since the setup differs (see §11).
+   OAuth 2.0 credentials. **Confirmed: Dylan's account is Google
+   Workspace**, so the integration should use a **service account with
+   domain-wide delegation** scoped to his calendar specifically — no
+   interactive OAuth consent flow needed, and no refresh-token renewal to
+   manage (domain-wide delegation service accounts don't expire the way
+   a personal-account OAuth refresh token can). This is the simpler of
+   the two auth paths originally considered, now that the account type is
+   confirmed.
 2. **Availability source of truth becomes Dylan's actual calendar**, not
    just the `booking-availability` config record: before returning open
    slots (§4's `GET .../availability`), the function should call the
@@ -102,11 +104,16 @@ implementation and needs its own sub-requirements:
    Calendar event (`events.delete`/`events.patch`) — store the returned
    Google event id on the `bookings` record (§5) specifically so this is
    possible.
-5. Refresh-token storage: store the OAuth refresh token as a Netlify
-   environment variable (matching this codebase's existing pattern of
+5. Credential storage: the service account's JSON key (or its individual
+   fields — client email + private key) should be stored as Netlify
+   environment variables (matching this codebase's existing pattern of
    secrets living in env vars, e.g. `RESEND_API_KEY` /
    `LTS_SESSION_SECRET`), not in Blobs — this is a credential, not
-   application data.
+   application data. Domain-wide delegation must also be granted to the
+   service account in the Google Workspace Admin console (a one-time
+   setup step Dylan needs to do himself, since it requires Workspace
+   admin access) before the integration can call the Calendar API on his
+   behalf.
 
 ## 5. Data Model
 
@@ -123,15 +130,18 @@ New blob store: **`bookings`** — key = booking id (`BK-<id>`).
 
 New small config record (store `content`, slug `booking-availability`) —
 editable via `admin.html`, following the existing pattern used for other
-site content. **Confirmed to include weekend windows**, not just
-weekdays — exact hours still need to be filled in with Dylan's real
-schedule (see §11):
+site content. **Confirmed real schedule: 07:00-19:00, every day of the
+week** (no day excluded):
 ```
 {
   weeklyWindows: [
-    { day: "mon", start: "18:00", end: "20:00" },
-    { day: "sat", start: "10:00", end: "14:00" }
-    // ... full week's real windows, placeholder until confirmed
+    { day: "mon", start: "07:00", end: "19:00" },
+    { day: "tue", start: "07:00", end: "19:00" },
+    { day: "wed", start: "07:00", end: "19:00" },
+    { day: "thu", start: "07:00", end: "19:00" },
+    { day: "fri", start: "07:00", end: "19:00" },
+    { day: "sat", start: "07:00", end: "19:00" },
+    { day: "sun", start: "07:00", end: "19:00" }
   ],
   slotLengthMinutes: 30,
   minNoticeHours: 4
@@ -203,14 +213,19 @@ schedule (see §11):
   best-effort on top of a Blobs-backed booking, not as the source of
   truth itself.
 
-## 11. Decisions (resolved 2026-07-14)
+## 11. Decisions (fully resolved 2026-07-14)
 
-- **Availability windows include weekends**, in addition to weekdays.
-  Dylan's exact hours (which weekdays, which times, Saturday/Sunday
-  windows) still need to be gathered to seed the real
-  `booking-availability` config — the values in §5 remain placeholders
-  until then.
-- **Real Google Calendar sync is a confirmed requirement**, not deferred
-  — see §4a for the full integration spec this adds. Before building,
-  confirm whether Dylan's Google account is a personal Gmail or Google
-  Workspace, since that changes the OAuth setup approach (§4a.1).
+- **Availability confirmed: 07:00-19:00, every day of the week, no
+  exceptions.** §5's config record reflects this as the real seed data,
+  not a placeholder. In practice, actual bookable slots will be narrower
+  than this full window once the Google Calendar Freebusy check (§4a.2)
+  subtracts whatever's already on Dylan's calendar — this wide base
+  window is the outer bound, not a guarantee of full availability.
+- **Real Google Calendar sync is a confirmed requirement** — see §4a for
+  the full integration spec. **Account type confirmed: Google
+  Workspace**, so the auth approach is a service account with
+  domain-wide delegation (§4a.1), not an interactive OAuth consent flow —
+  the one remaining manual step is Dylan granting domain-wide delegation
+  to the service account in his Workspace Admin console (§4a.5), which
+  needs Workspace admin access to do.
+- Nothing else outstanding on this function — ready to build.
