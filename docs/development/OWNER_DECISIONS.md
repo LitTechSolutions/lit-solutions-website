@@ -1,6 +1,6 @@
 # Owner Decisions Required
 
-Consolidated from `v23/docs/audit/AUDIT_STATE.json` (11 owner-decision findings), the Master Function Index's 8-item "Stop-and-Approve Owner Decisions" list, and one new engineering finding from this session. Nothing in this file has been decided — each item blocks the specific function(s) noted until Dylan resolves it.
+Consolidated from `v23/docs/audit/AUDIT_STATE.json` (11 owner-decision findings), the Master Function Index's 8-item "Stop-and-Approve Owner Decisions" list, and engineering findings surfaced across Sessions 0–9. Nothing in this file has been decided — each item blocks the specific function(s) noted until Dylan resolves it. Status as of Session 9 (Release Readiness): **all 10 items remain open**; 27 functions across Sessions 1–7 were built as far as possible without deciding any of them (see `REQUIREMENTS_TRACEABILITY.md` and each session's doc under `sessions/`), and the majority of the codebase's logic layer is now waiting on this list specifically.
 
 ## 1. Primary data store (new — this session)
 
@@ -41,6 +41,7 @@ Consolidated from `v23/docs/audit/AUDIT_STATE.json` (11 owner-decision findings)
 ## 7. New paid providers / infrastructure generally (Master Index item 6)
 
 - Database (see #1), storage, email, monitoring, PDF, analytics, AI, SMS, e-signature — none formally approved yet.
+- **New (Session 7):** does Square stay the payment provider, or is a webhook-capable replacement being considered? `src/webhooks/webhookVerification.js` (F057) is provider-agnostic by design specifically because this wasn't decided — whichever answer, that module is ready, but no real integration can start until the provider is confirmed.
 - **Blocks:** Any function whose design assumes a specific provider (F035/F036/F040 monitoring, F053 reporting, F057 integrations, F060 AI).
 
 ## 8. Remote support tooling / device agents / automated website changes (Master Index item 7)

@@ -1,10 +1,10 @@
 {
   "developmentVersion": "1.0",
-  "currentSession": 8,
-  "completedSessions": [0, 1, 2, 3, 4, 5, 6, 7, 8],
-  "nextSession": 9,
-  "currentWave": "Session 8 -- AI Assistance (F060) -- GATE NOT MET, no code written",
-  "currentFunctionIds": ["F060"],
+  "currentSession": 9,
+  "completedSessions": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "nextSession": null,
+  "currentWave": "Session 9 -- Release Readiness -- REVIEW COMPLETE, master instruction's defined session sequence (0-9) finished. Awaiting Dylan's decisions on OWNER_DECISIONS.md before further code work is productive.",
+  "currentFunctionIds": [],
   "branch": "feature/business-care-hub",
   "baselineCommit": "1570734",
   "workspaceNote": "This workspace (LTS Stand Alone Software) is a full copy of Development/Business Website/Website Code/v23, including .git and origin remote. v23 itself was not modified. Standing instruction: everything stays local to this workspace for the entire build -- no push, no merge into a new vN folder or main -- until Dylan says otherwise. Standing instruction (2026-07-14): work continues session-by-session, unattended, for as long as productive, without stopping to ask -- owner-decision blockers are documented, not asked about. See DECISION_LOG.md.",
@@ -55,10 +55,11 @@
     "Missing individual F001-F060 function workbooks (new) -- also the source of F020/F021's real configuration, F026/F050's real price sheet, F046/F047's actual checklist content, F035/F036/F038/F039/F040's actual check thresholds, and F055's actual email copy"
   ],
   "filesRequiringReview": [
+    "docs/development/OWNER_DECISIONS.md (all 10 items -- ALL STILL OPEN as of Session 9, this is the single highest-priority thing for Dylan to review)",
+    "docs/development/SECURITY_REVIEW.md (new Session 9 -- what was and wasn't reviewable given no live deployment)",
+    "docs/development/sessions/SESSION_09_RELEASE_REVIEW.md (final release recommendation: not ready, here's exactly why and what unblocks it)",
     "docs/development/ARCHITECTURE.md (target architecture proposal, frontend build-step recommendation)",
-    "docs/development/OWNER_DECISIONS.md (all 10 items, especially #9 AI provider/data policy/budget for Session 8's gate)",
-    "docs/development/REQUIREMENTS_TRACEABILITY.md (updated Session 7)",
-    "docs/development/sessions/SESSION_08_AI_ASSISTANCE.md (full 7-gate table for F060)"
+    "docs/development/REQUIREMENTS_TRACEABILITY.md (full function-by-function status)"
   ],
   "knownRisks": [
     "No organization/tenant concept exists in the pre-Care-Hub codebase at all -- F001 is a from-scratch build, not an extension",
@@ -72,7 +73,9 @@
     "F035/F036/F038/F039/F040's actual check-EXECUTION logic (HTTP fetch, DOM parsing, SSRF protection) is not implemented -- deliberately deferred to adapt the existing website-audit spec",
     "F046/F047's checklists and F042's reports must stay strictly assessment/observation-only -- enforced structurally (ChecklistResponse.met is boolean-only; evidenceCategorization.js rejects guarantee language)",
     "F054's MetricEvent structurally cannot carry a payload field -- any future change that adds one should be treated as a deliberate, reviewed decision to start tracking customer content, not a routine schema addition",
-    "None of Sessions 2-7's pure logic modules are wired to real data yet -- all tested against synthetic fixtures only; first real integration test happens once F001 persistence exists and an actual endpoint calls them"
+    "None of Sessions 2-7's pure logic modules are wired to real data yet -- all tested against synthetic fixtures only; first real integration test happens once F001 persistence exists and an actual endpoint calls them",
+    "CSV export (src/export/csvExport.js, F053) has no formula-injection guard for spreadsheet software -- new finding from Session 9's security review, open, to fix when the real export endpoint is built"
   ],
+  "releaseRecommendation": "NOT READY. 27/60 functions have real tested domain/policy logic (236 passing unit tests), zero endpoints, zero UI, zero persistence. This is the correct and expected state given zero of the 10 items in OWNER_DECISIONS.md were resolved during Sessions 1-8 -- the master instruction's defined session sequence (0-9) is now complete. Resuming productively requires Dylan's input on OWNER_DECISIONS.md, starting with #1 (primary data store), which is the single decision that unblocks the most downstream work. See sessions/SESSION_09_RELEASE_REVIEW.md for the full assessment.",
   "lastUpdated": "2026-07-14"
 }

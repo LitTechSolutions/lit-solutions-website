@@ -17,6 +17,6 @@ The existing `vN`-folder convention *is* the production rollback mechanism today
 - Every feature-flagged module needs a kill switch that doesn't require a redeploy.
 - A restore exercise (backup → restore → verify) should be run and evidenced before F059 is considered complete, not just designed.
 
-## This session
+## Status as of Session 9 (Release Readiness)
 
-Nothing to roll back — no application code, configuration, or data was changed; `v23` (the production-tracking folder) was never touched.
+Unchanged from Session 0: this workspace holds 9 sessions of commits (`git log` on `feature/business-care-hub`), all local, nothing pushed. Rolling back any individual session means resetting to the prior session's commit on this branch — each session's commit is self-contained and independently revertible, since none of them touch shared mutable state (no database, no deployed code, no `v23`). The rollback requirements listed above for future sessions (feature-flag kill switches, restore exercises) remain unexercised because nothing has been deployed yet — expected at this stage, not a gap in this session's work.
