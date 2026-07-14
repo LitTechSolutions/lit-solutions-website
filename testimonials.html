@@ -139,8 +139,8 @@
   <section class="page-hero">
     <div class="wrap">
       <p class="eyebrow" data-i18n="testimonials.hero_eyebrow">Testimonials</p>
-      <h1 data-i18n="testimonials.hero_h1">We're new. Here's why that's OK.</h1>
-      <p class="section-lede" data-i18n="testimonials.hero_lede">Every long-standing business started with a first customer. We'd like that to be you.</p>
+      <h1 id="testimonialsHeroH1" data-i18n="testimonials.hero_h1">We're new. Here's why that's OK.</h1>
+      <p class="section-lede" id="testimonialsHeroLede" data-i18n="testimonials.hero_lede">Every long-standing business started with a first customer. We'd like that to be you.</p>
     </div>
   </section>
 
@@ -224,7 +224,7 @@
     </nav>
   </div>
   <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span data-i18n="footer.rights">All rights reserved.</span></p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version 3.2.0</a></p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version 3.2.1</a></p>
   <p class="footer-version"><a href="admin.html" data-i18n="footer.staff_signin">Staff Sign In</a></p>
 </footer>
 
@@ -242,7 +242,7 @@
 <script src="js/cms.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    window.ltsCms.mountTestimonials('#testimonialsEmptyState', '#testimonialsGrid');
+    window.ltsCms.mountTestimonials('#testimonialsEmptyState', '#testimonialsGrid', '#testimonialsHeroH1', '#testimonialsHeroLede');
   });
 </script>
 </body>

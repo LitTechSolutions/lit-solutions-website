@@ -139,8 +139,8 @@
   <section class="page-hero">
     <div class="wrap">
       <p class="eyebrow" data-i18n="portfolio.hero_eyebrow">Our Work</p>
-      <h1 data-i18n="portfolio.hero_h1">Portfolio &mdash; building it out for real.</h1>
-      <p class="section-lede" data-i18n="portfolio.hero_lede">We'd rather show you an honest "not yet" than fabricate client work we haven't done.</p>
+      <h1 id="portfolioHeroH1" data-i18n="portfolio.hero_h1">Portfolio &mdash; building it out for real.</h1>
+      <p class="section-lede" id="portfolioHeroLede" data-i18n="portfolio.hero_lede">We'd rather show you an honest "not yet" than fabricate client work we haven't done.</p>
     </div>
   </section>
 
@@ -220,7 +220,7 @@
     </nav>
   </div>
   <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span data-i18n="footer.rights">All rights reserved.</span></p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version 3.2.0</a></p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version 3.2.1</a></p>
   <p class="footer-version"><a href="admin.html" data-i18n="footer.staff_signin">Staff Sign In</a></p>
 </footer>
 
@@ -238,7 +238,7 @@
 <script src="js/cms.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    window.ltsCms.mountPortfolio('#portfolioEmptyState', '#portfolioGrid');
+    window.ltsCms.mountPortfolio('#portfolioEmptyState', '#portfolioGrid', '#portfolioHeroH1', '#portfolioHeroLede');
   });
 </script>
 </body>

@@ -16,6 +16,32 @@
     });
   }
 
+  // Same pattern website-designer.js uses for its own generated content:
+  // window.LTS_I18N.t() looks up the visitor's current language with an
+  // English fallback, and re-runs on language switch.
+  function tt(path, fallback) {
+    return window.LTS_I18N ? window.LTS_I18N.t(path, fallback) : fallback;
+  }
+
+  // Once a testimonials/portfolio page actually has real items, the static
+  // "we're new, nothing here yet" hero headline (still true for the static
+  // HTML default) reads as contradictory sitting right above real proof
+  // otherwise. Swaps it for "has content" copy instead, and takes over
+  // from the static data-i18n mechanism for these two elements from here
+  // on (removing data-i18n so a later language switch doesn't stomp the
+  // swap back to the "nothing here yet" copy).
+  function swapHeroForHasContent(h1Selector, ledeSelector, prefix, h1Fallback, ledeFallback) {
+    if (!h1Selector && !ledeSelector) return;
+    var h1 = h1Selector && document.querySelector(h1Selector);
+    var lede = ledeSelector && document.querySelector(ledeSelector);
+    function render() {
+      if (h1) { h1.removeAttribute("data-i18n"); h1.textContent = tt(prefix + ".hero_h1_hascontent", h1Fallback); }
+      if (lede) { lede.removeAttribute("data-i18n"); lede.textContent = tt(prefix + ".hero_lede_hascontent", ledeFallback); }
+    }
+    render();
+    document.addEventListener("lts:langchange", render);
+  }
+
   function paragraphs(text) {
     return String(text || "").split(/\n\s*\n/).map(function (p) {
       return "<p>" + esc(p.trim()).replace(/\n/g, "<br>") + "</p>";
@@ -164,11 +190,13 @@
   // Called on portfolio.html: if any items exist, replaces the honest
   // "still building it out" placeholder with a real grid. If none exist
   // yet, the placeholder is left exactly as it was.
-  async function mountPortfolio(placeholderSelector, gridMountSelector) {
+  async function mountPortfolio(placeholderSelector, gridMountSelector, heroH1Selector, heroLedeSelector) {
     var items = await fetchContent("portfolio-items");
     if (!items.length) return;
     var placeholder = document.querySelector(placeholderSelector);
     if (placeholder) placeholder.style.display = "none";
+    swapHeroForHasContent(heroH1Selector, heroLedeSelector, "portfolio",
+      "Recent work", "Real projects we've built for real clients -- see the details below.");
     var mount = document.querySelector(gridMountSelector);
     if (!mount) return;
     mount.innerHTML = items.map(function (item) {
@@ -193,11 +221,13 @@
   }
 
   // Called on testimonials.html: same pattern as portfolio.
-  async function mountTestimonials(placeholderSelector, gridMountSelector) {
+  async function mountTestimonials(placeholderSelector, gridMountSelector, heroH1Selector, heroLedeSelector) {
     var items = await fetchContent("testimonials");
     if (!items.length) return;
     var placeholder = document.querySelector(placeholderSelector);
     if (placeholder) placeholder.style.display = "none";
+    swapHeroForHasContent(heroH1Selector, heroLedeSelector, "testimonials",
+      "What our customers are saying", "Real feedback from real projects -- not stock quotes, not stand-ins.");
     var mount = document.querySelector(gridMountSelector);
     if (!mount) return;
     mount.innerHTML = items.map(function (item) {
