@@ -1,13 +1,13 @@
 {
   "developmentVersion": "1.0",
-  "currentSession": 1,
-  "completedSessions": [0, 1],
-  "nextSession": 1,
-  "currentWave": "Wave 1 -- Identity and platform foundation",
-  "currentFunctionIds": ["F001", "F002", "F003", "F004", "F005", "F006", "F007", "F008", "F056", "F058", "F059"],
+  "currentSession": 2,
+  "completedSessions": [0, 1, 2],
+  "nextSession": 3,
+  "currentWave": "Wave 2 -- Core customer service loop (Customer Workspace slice: F009-F018)",
+  "currentFunctionIds": ["F009", "F010", "F011", "F012", "F013", "F014", "F015", "F016", "F017", "F018"],
   "branch": "feature/business-care-hub",
   "baselineCommit": "1570734",
-  "workspaceNote": "This workspace (LTS Stand Alone Software) is a full copy of Development/Business Website/Website Code/v23, including .git and origin remote. v23 itself was not modified. Standing instruction: everything stays local to this workspace for the entire build -- no push, no merge into a new vN folder or main -- until Dylan says otherwise. See DECISION_LOG.md.",
+  "workspaceNote": "This workspace (LTS Stand Alone Software) is a full copy of Development/Business Website/Website Code/v23, including .git and origin remote. v23 itself was not modified. Standing instruction: everything stays local to this workspace for the entire build -- no push, no merge into a new vN folder or main -- until Dylan says otherwise. Standing instruction (2026-07-14): work continues session-by-session without stopping to ask -- owner-decision blockers are documented, not asked about. See DECISION_LOG.md.",
   "applicationCodeModified": true,
   "productionModified": false,
   "requirementsPackageLoaded": true,
@@ -16,11 +16,11 @@
     "audit finding F006 (Critical, open): Privacy Policy under-discloses actual data collection -- blocks finalizing F007, F058",
     "audit finding F007 (Critical, open): Resend not named as sub-processor in Privacy Policy -- blocks finalizing F007, F058",
     "audit finding F011 (High, open, owner decision): Square terms-gate bypassable via direct link -- relevant to F028",
-    "audit finding F016 (High, open): zero automated tests anywhere in the repository -- Session 1 added the first 44, but this refers to the pre-Care-Hub site code, still true of everything outside src/",
+    "audit finding F016 (High, open, pre-Session-1): zero automated tests anywhere in the pre-Care-Hub repository -- src/ now has 77, but this still describes everything outside src/",
     "audit findings F030-F033 (owner decisions): Heroes Discount verification, full-payment vs deposit policy, plan scope, registration model -- block F026-F028, F049-F052, F002 respectively; see OWNER_DECISIONS.md"
   ],
   "buildStatus": "not-applicable",
-  "testStatus": "passing (44/44, node --test, unit-level only)",
+  "testStatus": "passing (77/77, node --test, unit-level only)",
   "lintStatus": "not-run",
   "typeCheckStatus": "not-run",
   "migrationStatus": "not-started",
@@ -28,7 +28,12 @@
   "implementedFunctions": [
     "F005 (RBAC decision engine -- src/policy/rbac.js -- domain logic complete and tested; not wired to any endpoint)",
     "F008 (audit event shaping + recorder + Blobs sink -- src/audit/ -- shaping/recorder tested; Blobs adapter untested, needs live credentials)",
-    "F056 (settings/feature-flag document logic + Blobs adapter -- src/settings/ -- document logic tested; Blobs adapter untested)"
+    "F056 (settings/feature-flag document logic + Blobs adapter -- src/settings/ -- document logic tested; Blobs adapter untested)",
+    "F015 (file upload validation policy -- src/policy/fileValidation.js -- size/MIME/magic-byte checks tested; storage target blocked)",
+    "F016 (approval workflow state machine -- src/policy/approvalWorkflow.js -- tested; persistence blocked)",
+    "F012 (notification delivery-decision logic -- src/notifications/deliveryPolicy.js -- tested; existing notifications.js record-creation reused as-is, not yet wired together)",
+    "F017 (activity timeline merge/filter -- src/timeline/activityTimeline.js -- tested; no real event sources feed it yet)",
+    "F009 (dashboard view-model assembler -- src/dashboard/dashboardViewModel.js -- tested; explicitly excludes plan usage pending F049)"
   ],
   "verifiedFunctions": [],
   "blockedFunctions": [
@@ -41,16 +46,21 @@
     "F049 (blocked on plan-limits owner decision, OWNER_DECISIONS.md #3)",
     "F050 (blocked on pricing owner decisions, OWNER_DECISIONS.md #2)",
     "F052 (blocked on plan-limits owner decision, OWNER_DECISIONS.md #3)",
-    "F058 (blocked on retention-policy and privacy-finding owner decisions, OWNER_DECISIONS.md #5-6)"
+    "F058 (blocked on retention-policy and privacy-finding owner decisions, OWNER_DECISIONS.md #5-6)",
+    "F010 (types drafted in src/domain/serviceRecord.js; persistence blocked on primary-data-store owner decision)",
+    "F013 (types drafted in src/domain/messageThread.js; org-scoping retrofit onto existing messages.js store deferred with other F001-dependent migrations)",
+    "F014 (types drafted in src/domain/document.js; persistence + object-storage target blocked on primary-data-store/storage decision)"
   ],
   "notStartedThisSessionByDesign": [
     "F003 (existing auth-login.js/session cookie mechanics already cover this per AUTHORIZATION_MODEL.md -- no gap identified, revisit only to add org context once F001 lands)",
     "F004 (existing auth-password-reset.js already covers this -- no gap identified)",
     "F006 (depends on F001/F003 context)",
-    "F059 (backup/recovery mechanics depend materially on the primary-data-store decision -- deferred to avoid designing around the wrong target)"
+    "F059 (backup/recovery mechanics depend materially on the primary-data-store decision -- deferred to avoid designing around the wrong target)",
+    "F011 (Global Search/Filters/Saved Views -- Phase 2, not MVP, deferred by priority)",
+    "F018 (Knowledge Base & Guided Help -- Phase 2, not MVP, deferred by priority)"
   ],
   "ownerDecisionsRequired": [
-    "Primary data store: Netlify Blobs vs managed PostgreSQL (new) -- highest priority, blocks F001/F002 persistence",
+    "Primary data store: Netlify Blobs vs managed PostgreSQL (new) -- highest priority, blocks F001/F002/F010/F014 persistence and F015's storage target",
     "Pricing, discounts, deposits, payment timing (audit F030, F031)",
     "Website Care Plan / Small Business IT plan limits and included work (audit F032)",
     "Customer account registration model: open vs invite-only (audit F033)",
@@ -64,17 +74,19 @@
   "filesRequiringReview": [
     "docs/development/ARCHITECTURE.md (target architecture proposal, frontend build-step recommendation)",
     "docs/development/OWNER_DECISIONS.md (all 10 items)",
-    "docs/development/REQUIREMENTS_TRACEABILITY.md (new this session)"
+    "docs/development/REQUIREMENTS_TRACEABILITY.md (updated Session 2)"
   ],
   "knownRisks": [
     "No organization/tenant concept exists in the pre-Care-Hub codebase at all -- F001 is a from-scratch build, not an extension; src/domain/organization.js types exist but nothing persists them yet",
     "Netlify Blobs has no secondary indexes; list()-scan pattern may not scale to Care Hub query needs regardless of which side of the data-store decision is taken",
     "No payment webhook infrastructure exists at all -- F028 reconciliation starts from zero",
-    "Customer documents/images are stored as base64 data URIs in Blobs, not object storage with signed URLs -- does not meet target private-file requirements at scale",
-    "Two independent, near-duplicated single-file staff/customer console apps (admin.html, myaccount.html) with repeated auth/fetch boilerplate",
+    "Customer documents/images are stored as base64 data URIs in Blobs, not object storage with signed URLs -- does not meet target private-file requirements at scale; src/domain/document.js models storageRef as opaque specifically to avoid repeating this",
+    "Two independent, near-duplicated single-file staff/customer console apps (admin.html, myaccount.html) with repeated auth/fetch boilerplate -- still not extracted (ARCHITECTURE.md's low-risk item, deferred until real Care Hub UI work begins)",
     "F-numbering collision between audit findings (F001-F036) and Business Care Hub functions (F001-F060) -- mitigated via naming convention in DECISION_LOG.md",
     "src/audit/blobsAuditSink.js and src/settings/blobsSettingsStore.js are written but not integration-tested against live Netlify Blobs (no credentials available in this environment) -- verify with a real smoke test once any endpoint calls them",
-    "src/policy/rbac.js's ROLE_CAPABILITIES map is a Session-1 transcription of the Roles & Permissions sheet's prose, not sourced from an individual F005 workbook (none exists yet, OWNER_DECISIONS.md #10) -- re-verify against the real workbook if/when provided"
+    "src/policy/rbac.js's ROLE_CAPABILITIES map is a Session-1 transcription of the Roles & Permissions sheet's prose, not sourced from an individual F005 workbook (none exists yet, OWNER_DECISIONS.md #10) -- re-verify against the real workbook if/when provided",
+    "src/policy/fileValidation.js's size limits and MIME allowlist are engineering defaults, not an owner-approved policy -- exposed via F056 settings for adjustment, not hardcoded as final",
+    "None of Session 2's pure logic modules (approvalWorkflow, deliveryPolicy, activityTimeline, dashboardViewModel) are wired to real data yet -- all tested against synthetic fixtures only; first real integration test happens once F001 persistence exists and an actual endpoint calls them"
   ],
   "lastUpdated": "2026-07-14"
 }
