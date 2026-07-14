@@ -2,7 +2,7 @@
   "project": "lit-solutions.tech",
   "repoVersion": "v23",
   "auditFramework": "docs/audit/",
-  "readyForSession": 7,
+  "readyForSession": 8,
   "sessions": {
     "1": {
       "doc": "01_REPOSITORY_BASELINE.md",
@@ -34,7 +34,11 @@
       "status": "complete",
       "note": "Reviewed css/style.css notice tokens and RTL rules, js/cms.js image alt rendering, website-designer price ticker, intake.js form-error markup, nav dropdown ARIA, and all 16 i18n/*.json files for key parity. Confirmed F004 resolved; re-verified F016/F019/F020/F022/F023/F025/F026/F028 unchanged. Expanded F021 to include blog images. Added F041 (en.json 69% incomplete vs. the 15 real translation files, no runtime impact)."
     },
-    "7": { "doc": "07_REQUIREMENTS_GAP_MATRIX.md", "status": "not_started" },
+    "7": {
+      "doc": "07_REQUIREMENTS_GAP_MATRIX.md",
+      "status": "complete",
+      "note": "Read NEW_FUNCTIONS_README.md and all 9 REQUIREMENTS.md files in full. Built a value/risk/dependency gap matrix for all 9 candidate functions; confirmed the existing recommended build order independently. No new findings -- classification exercise only. Sharpened F033 with context: project-status and referral-program would both add further account-system surface on top of the existing open question."
+    },
     "8": { "doc": "08_FINAL_AUDIT_AND_ROADMAP.md", "status": "not_started" }
   },
   "findingIdRange": { "next": "F042", "note": "IDs are derived from real findings only; there is no predetermined catalog size such as F001-F060." },

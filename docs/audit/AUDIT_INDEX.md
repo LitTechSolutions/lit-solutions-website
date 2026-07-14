@@ -23,7 +23,7 @@ machine-readable state, and `00_AUDIT_CONTROL.md` for process/ground rules.
 | [04_BACKEND_INTEGRATIONS.md](04_BACKEND_INTEGRATIONS.md) | Done | Every Netlify Function, forms, files, email/PDF, providers; finding F040 |
 | [05_PRICING_AND_BUSINESS_RULES.md](05_PRICING_AND_BUSINESS_RULES.md) | Done | Website Designer, pricing/discount logic, plans, payments; no new findings, F010/F011/F031/F032/F035 refined |
 | [06_QUALITY_AUDIT.md](06_QUALITY_AUDIT.md) | Done | Accessibility, mobile, performance, SEO, translation, quality states; finding F041, F021/F026 refined |
-| 07_REQUIREMENTS_GAP_MATRIX.md | Not started | Classify candidate functions vs. what exists, value, risk |
+| [07_REQUIREMENTS_GAP_MATRIX.md](07_REQUIREMENTS_GAP_MATRIX.md) | Done | Classify all 9 candidate functions vs. value/risk/dependencies; F033 sharpened |
 | 08_FINAL_AUDIT_AND_ROADMAP.md | Not started | Consolidated findings, roadmap, Extra Intelligence handoff |
 
 ## Evidence & inventories
@@ -79,3 +79,13 @@ as portfolio) and F026 (the top-level error summary does carry
 F041 (`i18n/en.json` is missing 1,030 of 1,496 real translation keys —
 stale relative to the 15 language files, which are perfectly in sync
 with each other and have no runtime impact from this gap).
+
+Session 7 classified all 9 spec-only candidate functions by business
+value, build risk, and dependencies, confirming the existing recommended
+build order independently: `website-audit` and `booking-scheduler`
+stand out as the two needing the most care (mandatory SSRF protection;
+real Google Calendar OAuth infrastructure), while `quote-acceptance`
+Phase 2 and `lead-followup` are blocked on a cost decision and real copy
+respectively, not engineering readiness. No new findings; F033 sharpened
+with context about `project-status`/`referral-program` adding further
+account-system surface.
