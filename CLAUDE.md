@@ -58,8 +58,11 @@ actually changes.
 - **16 languages** via a client-side swap (`js/i18n.js`, `data-i18n`
   attributes, one URL per page, dictionaries fetched on-demand per
   language — no hreflang, since there are no separate per-language URLs).
-- **Zero automated tests** exist anywhere in the repository as of this
-  writing (no jest/playwright/cypress config, no `test/` directory).
+- **Automated tests**: `test/` (node's built-in `node:test`, run via
+  `npm test`) covers the Website Designer pricing/discount math
+  (`recomputeEstimate`/`priceMismatchFlag`) and a static consistency check
+  that heroes-pricing.html's hand-typed Heroes Discount prices actually
+  match `was * (1 - rate)`. No other suites (no jest/playwright/cypress).
 
 ## Active audit record
 

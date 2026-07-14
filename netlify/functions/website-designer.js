@@ -405,3 +405,9 @@ exports.handler = async (event) => {
 
   return body.stage === "quick" ? handleQuickSubmission(body, ip) : handleFullSubmission(body, ip);
 };
+
+// Exported for node:test coverage of the pricing/discount math (F016) --
+// doesn't change anything Netlify actually invokes, which only ever calls
+// exports.handler.
+exports.recomputeEstimate = recomputeEstimate;
+exports.priceMismatchFlag = priceMismatchFlag;
