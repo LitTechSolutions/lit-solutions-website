@@ -24,13 +24,14 @@
     "blog": "博客",
     "booking": "预约",
     "payments": "付款",
-    "contact": "联系我们"
+    "contact": "联系我们",
+    "home": "首页"
   },
   "header": {
     "toggle_dark_mode": "切换深色模式",
     "search_site": "搜索本站",
-    "my_account": "我的账户",
-    "get_quote": "获取报价",
+    "my_account": "客户登录",
+    "get_quote": "申请服务",
     "toggle_menu": "切换菜单",
     "choose_language": "选择语言"
   },
@@ -41,7 +42,7 @@
     "sitemap": "网站地图",
     "privacy_policy": "隐私政策",
     "terms": "条款与条件",
-    "patch_notes": "更新日志",
+    "patch_notes": "网站更新",
     "cookie_notice": "Cookie 提示",
     "staff_signin": "员工登录",
     "facebook": "Facebook",
@@ -58,8 +59,8 @@
     "rotator_before": "我们打造",
     "rotator_after": "真正好用的东西。",
     "lede": "Little Technical Solutions LLC 是您真正愿意存进快速拨号名单里的技术员 — 网站建设、电脑维修、网络布线与网络安全,一次就做对。",
-    "cta_quote": "获取免费报价",
-    "cta_services": "查看我们的服务范围",
+    "cta_quote": "申请服务",
+    "cta_services": "探索我们的服务",
     "stat1_label": "响应时间",
     "stat1_value": "多数来电当天回复",
     "stat2_label": "服务范围",
@@ -107,12 +108,12 @@
     "cred1_desc": "火控技师,服役6年 — 其中4年在 USS Antietam 上亲自负责电气与电子系统维护",
     "cred2_title": "网络安全技术学士学位",
     "cred3_title": "我们才刚刚起步",
-    "cred3_desc": "新公司、开业优惠价,诚挚邀请您成为我们最早的评价者之一 — 详见<a href=\"testimonials.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">客户评价</a>。",
+    "cred3_desc": "新公司开业优惠价格,依然保持海军式的严谨作风,每项工作都提供统一透明的诚实报价。",
     "contact_eyebrow": "联系我们",
     "contact_h2": "告诉我们需要解决什么问题。",
     "contact_p": "直接联系我们,或者填写我们的项目表单,让我们在致电前先了解全貌。我们通常会在当天工作日内回复。",
     "contact_cta1": "联系我们",
-    "contact_cta2": "填写项目表单"
+    "contact_cta2": "申请服务"
   },
   "about": {
     "hero_eyebrow": "关于我们",
@@ -181,11 +182,11 @@
     "letter_h2": "感谢您花时间了解我们。",
     "letter_body": "每一位客户都把信任交给了我,我十分珍视这份责任。无论您是刚创办第一家企业、想要为现有网站升级换代,还是单纯需要一位本地技术人员来帮忙,我都很荣幸能赢得您的信任,一起打造让我们都引以为豪的成果。",
     "letter_sign": "— Dylan Little,创始人",
-    "new_business_note": "我们是一家全新的公司 — 详见我们的<a href=\"testimonials.html\" style=\"color:inherit; text-decoration:underline; font-weight:600;\">客户评价页面</a>了解这意味着什么,也欢迎您成为我们最早的评价者之一。",
+    "new_business_note": "我们是一家全新的企业——这意味着每一项工作都能获得直接、个性化的关注,不必排在其他客户后面等候。",
     "cta_h2": "准备好合作了吗?",
     "cta_p": "直接联系我们,或填写项目表单 — 我们通常会在当天工作日内回复。",
     "cta_contact": "联系我们",
-    "cta_intake": "填写项目表单"
+    "cta_intake": "申请服务"
   },
   "faq": {
     "eyebrow": "常见问题",
@@ -284,7 +285,7 @@
     "showcase_handle_aria": "拖动以对比网站前后效果",
     "cta_h2": "不确定自己需要哪种服务?",
     "cta_p": "填写我们的项目表单,我们会给您一个直截了当的答复。",
-    "cta_button": "获取定制报价"
+    "cta_button": "申请服务"
   },
   "contact": {
     "hero_eyebrow": "联系我们",
@@ -300,7 +301,7 @@
     "form_submit": "发送留言",
     "cta_h3": "准备好开始一个项目了吗?",
     "cta_lede": "我们的项目表单只需几分钟,能准确告诉我们您的需求 — 服务内容、时间安排、预算等等 — 这样我们就能直接给出实质性的答复,而不用来回反复询问。",
-    "cta_button": "填写项目表单",
+    "cta_button": "申请服务",
     "cta_note": "更喜欢直接打电话或发邮件?使用上方的联系方式即可 — 我们很乐意直接和您沟通。",
     "missing_fields_intro": "请填写以下内容：",
     "status_sending": "发送中…",
@@ -406,7 +407,7 @@
     "brief_sms_placeholder": "什么情况应该触发短信(预约提醒、订单更新等)?您偏好的短信服务商?注意:接收方必须明确同意接收短信 -- 我们会协助搭建这一同意流程。",
     "price_ticker_label": "您的预估价格",
     "price_ticker_note_default": "选择套餐以开始",
-    "heroes_toggle_text": "我符合<a href=\"heroes-pricing.html\" target=\"_blank\" rel=\"noopener\">美国英雄优惠</a>资格(一次性服务享15%折扣)",
+    "heroes_toggle_text": "本人自行确认符合<a href=\"heroes-pricing.html\" target=\"_blank\" rel=\"noopener\">美国英雄折扣</a>资格(一次性服务享15%优惠)&mdash;资格将在确定最终价格前直接与您核实",
     "browser_empty_text": "您的网站将随着您的搭建,在这里逐步呈现。",
     "quote_recap_label": "您的预估价",
     "quote_recap_note": "起步价格 -- 将在开工前由我们与您确认。",
@@ -434,7 +435,7 @@
     "packages_lede": "两种套餐都包含定制设计、移动端自适应建站与基础SEO。区别在于范围 — 页面数量,以及网站本身能实现多少功能。",
     "starter_name": "入门版",
     "starter_tagline": "一个简洁专业的网站,让客户能找到您、联系到您。",
-    "starter_price_note": "同类服务通常报价 $1,500–$3,000 — 详见<a href=\"#compare-savings-table\" style=\"color:var(--accent-teal-text);\">我们的价格对比</a>。",
+    "starter_price_note": "统一起始价格,在开始工作前与您确认。",
     "starter_feature1": "最多5个页面(首页、关于我们、服务、联系方式 + 1个额外页面)",
     "starter_feature2": "适配各类设备的移动端响应式设计",
     "starter_feature3": "带垃圾信息防护的联系表单",
@@ -449,7 +450,7 @@
     "business_badge": "功能最全",
     "business_name": "商业版",
     "business_tagline": "一个功能齐全的网站,配备可实际运行客户线索、预约与内容管理的工具。",
-    "business_price_note": "同类服务通常报价 $3,000–$8,000 — 详见<a href=\"#compare-savings-table\" style=\"color:var(--accent-teal-text);\">我们的价格对比</a>。",
+    "business_price_note": "统一起始价格,在开始工作前与您确认。",
     "business_feature1": "最多10个页面,包含独立服务页面",
     "business_feature2": "高级联系/报价请求表单",
     "business_feature3": "预约/咨询排期",
@@ -462,20 +463,8 @@
     "business_cta_design": "设计我的商业版网站",
     "business_cta_pay": "支付商业版费用",
     "packages_note": "\n          <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 16v-4M12 8h.01\"/></svg>\n          想先选择具体功能并查看起步价格?试试我们的<a href=\"website-designer.html\" data-i18n=\"nav.website_designer\">网站设计工具</a>。完全不确定哪个套餐适合您?填写我们的<a href=\"intake.html\">项目表单</a>,我们会为您推荐合适的套餐 — 我们宁可少推荐,也不会过度推销。\n        ",
-    "compare_h2": "价格对比",
-    "compare_lede": "一项独立的2026年市场调研,针对电脑维修、IT支持与网站设计的定价进行了分析,展示了同类服务在全国范围内的典型收费。以下是我们起步价格的对比情况。",
-    "compare_th_service": "服务项目",
-    "compare_th_market": "市场典型价格",
-    "compare_th_ourprice": "我们的起步价格",
-    "compare_th_savings": "您节省的费用",
-    "compare_row1": "电脑维修/故障排查",
-    "compare_row2": "病毒与恶意软件清除",
-    "compare_row3": "家庭 Wi-Fi 设置",
-    "compare_row4": "持续性小型企业IT支持",
-    "compare_row5": "入门版网站(5个页面)",
-    "compare_row6": "商业版网站(定制)",
-    "compare_row7": "安全咨询",
-    "compare_disclaimer": "\n          \"市场典型价格\"数据来自2026年已公开发布的电脑维修、小型企业IT支持与自由职业网站设计行业定价调研(美国全国平均水平)。这些数据仅供大致参考 — 实际竞争对手的价格会因供应商、地区与工作范围而异,我们无法保证任何特定竞争对手的具体价格。节省百分比是基于这些已发布价格区间的高低值所做的示例性估算,并非保证或经过审计的数字。您的最终价格取决于具体工作内容,并将在开工前始终与您确认。\n        ",
+    "compare_h2": "简单透明的统一报价",
+    "compare_lede": "没有按时计费的意外收费,也没有含糊不清的估价。以上每个价格都是该项工作的真实起始报价——在动工之前您就会知道确切价格,除非工作范围有所变化,否则价格不会调整。",
     "web_block_title": "网站服务",
     "web_block_count": "7项服务",
     "web_item1_name": "入门版网站 <small>(最多5个页面)</small>",
@@ -552,7 +541,7 @@
     "vet_cta": "查看英雄优惠",
     "cta_h2": "不确定自己需要什么?",
     "cta_p": "填写我们的项目表单,我们会根据您的具体情况给出直接明了的报价。",
-    "cta_button": "获取定制报价"
+    "cta_button": "申请服务"
   },
   "wd_dyn": {
     "included_title_starter": "入门版套餐包含内容",
@@ -578,7 +567,7 @@
     "savings_part_heroes": "英雄优惠",
     "note_bundle_one_applied": "已应用1项组合套餐折扣",
     "note_bundle_many_applied": "已应用{{count}}项组合套餐折扣",
-    "note_heroes_applied": "已应用英雄优惠",
+    "note_heroes_applied": "已应用英雄折扣(待确认)",
     "note_starting_price": "起步价格",
     "note_starting_price_with": "起步价格 -- {{notes}}",
     "note_excludes_one": " -- 不含1项定制报价项目",
@@ -586,7 +575,7 @@
     "cost_row_base_starter": "入门版基础价",
     "cost_row_base_business": "商业版基础价",
     "cost_row_bundle": "{{category}} 组合套餐(10%)",
-    "cost_row_heroes": "美国英雄优惠(15%)",
+    "cost_row_heroes": "美国英雄折扣(15%,待确认)",
     "cost_row_quote_divider": "定制报价附加项",
     "cost_row_quote": "报价",
     "badge_custom_quote": "(定制报价)",
@@ -843,7 +832,7 @@
     "final_note": "付款由 Square 安全处理。Little Technical Solutions LLC 不会收集、查看或存储您的银行卡信息。退款与争议按照我们标准的服务条款处理 — 如对账单有任何疑问,请在向您的银行或发卡机构提出争议前直接联系我们,以便我们妥善解决。",
     "cta_h2": "不确定自己需要哪一种?",
     "cta_p": "填写我们的项目表单,告诉我们您的设想 — 我们会帮您理清最适合的方案。",
-    "cta_btn": "获取定制报价"
+    "cta_btn": "申请服务"
   },
   "intake": {
     "hero_eyebrow": "新客户申请",
@@ -1024,7 +1013,7 @@
     "pricing_note": "<strong>一次性服务:</strong>在上方标示的标准起步价基础上享受15%折扣。<br> <strong>定期月付服务</strong>(持续IT支持、网站维护):享5%折扣,因为这些价格已经十分接近我们维持您系统正常运行的实际成本 — 这些方案背后的服务器与基础设施成本不参与折扣。<br> <strong>零件与硬件</strong>(电脑组装元件、Mesh Wi-Fi 设备等)始终按成本价收取,不加价也不打折,无论是否符合优惠资格。<br> <strong>域名注册与企业邮箱设置</strong>的价格仅反映我们的服务费用 — 注册商费用与 Google/Microsoft 订阅费用由相应服务商直接向您收取,不经过我们。<br> 此处显示的价格是典型工作的起步参考价。我们不在本页面收款 — 在核实您的资格后,我们会确认您的确切折扣总价,并引导您前往我们的<a href=\"payment.html\">付款页面</a>完成付款。",
     "cta_h2": "准备好开始了吗?",
     "cta_p": "填写我们的项目表单,并注明您符合哪个类别 — 我们会核实您的资格、确认折扣价格,并跟进后续付款步骤。",
-    "cta_button": "获取定制报价"
+    "cta_button": "申请服务"
   },
   "booking": {
     "hero_eyebrow": "预约",
@@ -1038,7 +1027,7 @@
     "type2_desc": "适用于网站与企业IT项目 — 一次专注的通话,用于确定项目范围、时间安排与后续步骤。",
     "cta_h2": "准备好预约了吗?",
     "cta_contact_desc": "致电 <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal); text-decoration:underline;\">636-426-0289</a>,发邮件至 <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal); text-decoration:underline;\">dylan@lit-solutions.tech</a>,或使用下方的项目表单。",
-    "cta_intake": "填写项目表单"
+    "cta_intake": "申请服务"
   },
   "service_website": {
     "breadcrumb_aria_label": "面包屑导航",
@@ -1046,7 +1035,7 @@
     "breadcrumb_current": "网站服务",
     "hero_h1": "网站服务",
     "hero_lede": "加载迅速、真正能带来来电的定制网站 — 由接听您电话的同一个人负责建设、托管与维护。",
-    "hero_cta_quote": "获取报价",
+    "hero_cta_quote": "获取我的网站报价",
     "hero_cta_pricing": "查看价格",
     "toc_aria_label": "本页内容",
     "toc_whats_included": "包含内容",
@@ -1097,7 +1086,7 @@
     "related_card3_title": "网络安全",
     "related_card4_title": "小型企业IT",
     "cta_h2": "准备好开始网站服务了吗?",
-    "cta_button": "获取定制报价"
+    "cta_button": "获取我的网站报价"
   },
   "service_computer": {
     "breadcrumb_home": "首页",
@@ -1106,7 +1095,7 @@
     "hero_eyebrow": "PC-02",
     "hero_h1": "电脑服务",
     "hero_lede": "从无法开机的电脑到全套定制组装 — 第一次就能准确诊断,不靠猜测反复收费。",
-    "hero_cta_quote": "获取报价",
+    "hero_cta_quote": "申请服务",
     "hero_cta_pricing": "查看价格",
     "toc_aria_label": "本页内容",
     "toc_included": "包含内容",
@@ -1151,7 +1140,7 @@
     "related_h2": "其他服务",
     "related_website_title": "网站服务",
     "cta_h2": "准备好开始电脑服务了吗?",
-    "cta_button": "获取定制报价"
+    "cta_button": "申请服务"
   },
   "service_networking": {
     "breadcrumb_home": "首页",
@@ -1159,7 +1148,7 @@
     "hero_eyebrow": "NET-03",
     "hero_h1": "网络服务",
     "hero_lede": "信号死角、连接掉线、设备之间无法通信,通常只需调整一两个可修复的设置就能解决。",
-    "hero_cta_quote": "获取报价",
+    "hero_cta_quote": "申请服务",
     "hero_cta_pricing": "查看价格",
     "toc_whats_included": "包含内容",
     "toc_full_list": "完整服务列表",
@@ -1203,7 +1192,7 @@
     "related_card3_title": "网络安全",
     "related_card4_title": "小型企业IT",
     "cta_h2": "准备好开始网络服务了吗?",
-    "cta_button": "获取定制报价"
+    "cta_button": "申请服务"
   },
   "service_cybersecurity": {
     "breadcrumb_home": "首页",
@@ -1211,7 +1200,7 @@
     "hero_eyebrow": "SEC-04",
     "hero_h1": "网络安全",
     "hero_lede": "大多数入侵事件都始于弱密码或未启用多重验证。我们会先筑牢这些基础防线,挡住绝大多数真实世界的攻击。",
-    "hero_cta_quote": "获取报价",
+    "hero_cta_quote": "申请服务",
     "hero_cta_pricing": "查看价格",
     "toc_whats_included": "包含内容",
     "toc_full_list": "完整服务列表",
@@ -1254,14 +1243,14 @@
     "related_card3_title": "网络服务",
     "related_card4_title": "小型企业IT",
     "cta_h2": "准备好开始网络安全服务了吗?",
-    "cta_button": "获取定制报价"
+    "cta_button": "申请服务"
   },
   "service_business_it": {
     "breadcrumb_home": "首页",
     "breadcrumb_current": "小型企业IT",
     "hero_h1": "小型企业IT",
     "hero_lede": "只需一个长期IT合作伙伴,出问题时不必在五个供应商之间来回周旋。",
-    "hero_cta_quote": "获取报价",
+    "hero_cta_quote": "申请服务",
     "hero_cta_pricing": "查看价格",
     "toc_whats_included": "包含内容",
     "toc_full_list": "完整服务列表",
@@ -1305,7 +1294,7 @@
     "related_card3_title": "网络服务",
     "related_card4_title": "网络安全",
     "cta_h2": "准备好开始小型企业IT服务了吗?",
-    "cta_button": "获取定制报价"
+    "cta_button": "申请服务"
   },
   "service_area": {
     "hero_eyebrow": "服务区域",
@@ -1333,7 +1322,7 @@
     "growth_note": "随着 Little Technical Solutions LLC 不断成长,这个页面也会随之更新。目前,每一项工作 — 无论是网站、维修、网络还是安全 — 都由 Dylan 亲自处理,不会转交给分包商。",
     "cta_h2": "准备好合作了吗?",
     "cta_contact": "联系我们",
-    "cta_intake": "填写项目表单"
+    "cta_intake": "申请服务"
   },
   "testimonials": {
     "hero_eyebrow": "客户评价",
@@ -1343,7 +1332,7 @@
     "hero_lede_hascontent": "真实项目的真实反馈——没有编造的评价,没有替身。",
     "empty_h2": "我们才刚刚起步。",
     "empty_desc": "Little Technical Solutions LLC 是一家全新的公司 — 这意味着我们还没有一整页的评价可以展示。但我们拥有的是真正经过海军训练的纪律、诚实透明的一口价,以及一位亲自接听电话的创始人。如果您选择与我们合作,我们会由衷感激您成为我们最早的评价者之一。",
-    "empty_cta": "开启一个项目",
+    "empty_cta": "申请服务",
     "verify_eyebrow": "与此同时",
     "verify_h2": "以下是您可以自行核实的信息",
     "cred1_title": "退伍军人创办",
@@ -1361,7 +1350,7 @@
     "hero_lede_hascontent": "为真实客户打造的真实项目——详情见下方。",
     "empty_h2": "我们是一家新公司 — 项目案例库仍在不断充实中。",
     "empty_desc": "我们成立时间尚短,目前还没有过往客户项目案例库可供展示。您现在可以了解的是:这个网站本身,由我们亲自建设与维护;以及我们<a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">服务页面</a>上展示网站设计理念的交互式前后对比演示。随着真实客户项目上线,我们会在征得同意后逐步添加到这里。",
-    "empty_cta": "开启一个项目",
+    "empty_cta": "申请服务",
     "meantime_eyebrow": "与此同时",
     "meantime_h2": "您现在就可以查看的作品",
     "card1_title": "这个网站本身",

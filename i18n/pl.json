@@ -6,8 +6,8 @@
     "choose_language": "Wybierz język",
     "toggle_dark_mode": "Przełącz tryb ciemny",
     "search_site": "Przeszukaj tę stronę",
-    "my_account": "Moje konto",
-    "get_quote": "Uzyskaj wycenę",
+    "my_account": "Logowanie klienta",
+    "get_quote": "Zamów usługę",
     "toggle_menu": "Przełącz menu"
   },
   "nav": {
@@ -32,7 +32,8 @@
     "blog": "Blog",
     "booking": "Rezerwacja",
     "payments": "Płatności",
-    "contact": "Kontakt"
+    "contact": "Kontakt",
+    "home": "Strona główna"
   },
   "home": {
     "eyebrow": "Obsługujemy domy i małe firmy",
@@ -40,8 +41,8 @@
     "rotator_before": "Budujemy",
     "rotator_after": "które naprawdę działają.",
     "lede": "Little Technical Solutions LLC to technik, którego numer naprawdę warto mieć pod ręką — strony internetowe, naprawa komputerów, sieci i cyberbezpieczeństwo, zrobione dobrze za pierwszym razem.",
-    "cta_quote": "Uzyskaj darmową wycenę",
-    "cta_services": "Zobacz, czym się zajmujemy",
+    "cta_quote": "Zamów usługę",
+    "cta_services": "Poznaj nasze usługi",
     "stat1_label": "Czas reakcji",
     "stat1_value": "Tego samego dnia, w większości przypadków",
     "stat2_label": "Zasięg usług",
@@ -89,12 +90,12 @@
     "cred1_desc": "Fire Controlman, 6 lat służby — w tym 4 lata praktycznej konserwacji systemów elektrycznych i elektronicznych na pokładzie USS Antietam",
     "cred2_title": "Licencjat z technologii cyberbezpieczeństwa",
     "cred3_title": "Dopiero zaczynamy",
-    "cred3_desc": "Nowa firma, ceny wprowadzające i otwarte zaproszenie, by zostać jedną z naszych pierwszych opinii — zobacz <a href=\"testimonials.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">opinie</a>.",
+    "cred3_desc": "Ceny startowe dla nowej firmy — z tą samą dyscypliną wyniesioną ze służby w marynarce wojennej oraz uczciwymi, stałymi cenami za każde zlecenie.",
     "contact_eyebrow": "Skontaktuj się z nami",
     "contact_h2": "Powiedz nam, co wymaga naprawy.",
     "contact_p": "Skontaktuj się z nami bezpośrednio lub wypełnij nasz formularz projektowy, abyśmy mogli poznać pełny obraz sytuacji przed rozmową telefoniczną. Zazwyczaj odpowiadamy tego samego dnia roboczego.",
     "contact_cta1": "Skontaktuj się z nami",
-    "contact_cta2": "Wypełnij formularz projektowy"
+    "contact_cta2": "Zamów usługę"
   },
   "footer": {
     "tagline": "Strony internetowe, komputery, sieci i bezpieczeństwo — załatwione jednym telefonem.",
@@ -103,7 +104,7 @@
     "sitemap": "Mapa strony",
     "privacy_policy": "Polityka prywatności",
     "terms": "Regulamin",
-    "patch_notes": "Informacje o aktualizacjach",
+    "patch_notes": "Aktualizacje strony",
     "cookie_notice": "Informacja o plikach cookie",
     "facebook": "Facebook",
     "find_google": "Znajdź nas w Google",
@@ -181,11 +182,11 @@
     "letter_h2": "Dziękujemy za poświęcenie czasu, aby nas poznać.",
     "letter_body": "Każdy klient obdarza mnie swoim zaufaniem, a ja traktuję tę odpowiedzialność poważnie. Niezależnie od tego, czy zakładasz swoją pierwszą firmę, modernizujesz istniejącą stronę internetową, czy po prostu potrzebujesz kogoś lokalnego do pomocy z technologią, byłbym zaszczycony, mogąc zdobyć Twoje zaufanie i stworzyć coś, z czego oboje będziemy dumni.",
     "letter_sign": "— Dylan Little, założyciel",
-    "new_business_note": "Jesteśmy zupełnie nową firmą — zobacz naszą <a href=\"testimonials.html\" style=\"color:inherit; text-decoration:underline; font-weight:600;\">stronę z opiniami</a>, aby dowiedzieć się, co to oznacza, i rozważ zostanie jedną z naszych pierwszych opinii.",
+    "new_business_note": "Jesteśmy zupełnie nową firmą — oznacza to bezpośrednią, osobistą uwagę przy każdym zleceniu, bez kolejki innych klientów przed Tobą.",
     "cta_h2": "Gotowy na współpracę?",
     "cta_p": "Skontaktuj się z nami bezpośrednio lub wypełnij nasz formularz projektowy — zazwyczaj odpowiadamy tego samego dnia roboczego.",
     "cta_contact": "Skontaktuj się z nami",
-    "cta_intake": "Wypełnij formularz projektowy"
+    "cta_intake": "Zamów usługę"
   },
   "services": {
     "hero_eyebrow": "Usługi",
@@ -249,7 +250,7 @@
     "showcase_handle_aria": "Przeciągnij, aby porównać stronę przed i po",
     "cta_h2": "Nie wiesz, której usługi potrzebujesz?",
     "cta_p": "Wypełnij nasz formularz projektowy, a odpowiemy jasno i konkretnie.",
-    "cta_button": "Uzyskaj indywidualną wycenę"
+    "cta_button": "Zamów usługę"
   },
   "faq": {
     "eyebrow": "FAQ",
@@ -300,7 +301,7 @@
     "form_submit": "Wyślij wiadomość",
     "cta_h3": "Gotowy, by rozpocząć projekt?",
     "cta_lede": "Wypełnienie naszego formularza projektowego zajmuje kilka minut i mówi nam dokładnie, czego potrzebujesz — usługi, harmonogram, budżet i inne — dzięki czemu możemy odpowiedzieć konkretnie, zamiast wymieniać się serią pytań.",
-    "cta_button": "Wypełnij formularz projektowy",
+    "cta_button": "Zamów usługę",
     "cta_note": "Wolisz po prostu zadzwonić lub napisać e-mail? Skorzystaj z danych powyżej — chętnie porozmawiamy bezpośrednio.",
     "missing_fields_intro": "Proszę uzupełnić następujące pola:",
     "status_sending": "Wysyłanie…",
@@ -406,7 +407,7 @@
     "brief_sms_placeholder": "Co powinno wywoływać wysłanie SMS-a (przypomnienia o wizytach, aktualizacje zamówień itd.)? Preferowany dostawca SMS? Uwaga: odbiorcy muszą wyrazić wyraźną zgodę -- pomożemy zbudować taki proces zgody.",
     "price_ticker_label": "Twoja wycena",
     "price_ticker_note_default": "Wybierz pakiet, aby zacząć",
-    "heroes_toggle_text": "Kwalifikuję się do <a href=\"heroes-pricing.html\" target=\"_blank\" rel=\"noopener\">Zniżki dla amerykańskich bohaterów</a> (15% zniżki na prace jednorazowe)",
+    "heroes_toggle_text": "Oświadczam, że kwalifikuję się do <a href=\"heroes-pricing.html\" target=\"_blank\" rel=\"noopener\">Rabatu dla Amerykańskich Bohaterów</a> (15% zniżki na jednorazową usługę) &mdash; kwalifikacja jest potwierdzana bezpośrednio z Tobą przed ustaleniem ostatecznej ceny",
     "browser_empty_text": "Twoja strona będzie tu rosnąć w miarę jej budowania.",
     "quote_recap_label": "Twoja wycena",
     "quote_recap_note": "Cena wyjściowa -- zostanie przez nas potwierdzona, zanim rozpoczniemy jakąkolwiek pracę.",
@@ -434,7 +435,7 @@
     "packages_lede": "Oba pakiety obejmują niestandardowy projekt, responsywną budowę i podstawowe SEO. Różnica polega na zakresie — liczbie podstron i tym, ile strona potrafi zrobić sama.",
     "starter_name": "Starter",
     "starter_tagline": "Przejrzysta, profesjonalna strona, dzięki której zostaniesz znaleziony i skontaktują się z Tobą klienci.",
-    "starter_price_note": "Zwykle $1,500–$3,000 gdzie indziej — zobacz <a href=\"#compare-savings-table\" style=\"color:var(--accent-teal-text);\">jak wypadamy w porównaniu</a>.",
+    "starter_price_note": "Stała cena początkowa, potwierdzona z Tobą przed rozpoczęciem jakichkolwiek prac.",
     "starter_feature1": "Do 5 podstron (Strona główna, O nas, Usługi, Kontakt + 1 dodatkowa)",
     "starter_feature2": "Niestandardowy projekt dopasowany do Twojej marki",
     "starter_feature3": "Responsywność na każdym urządzeniu",
@@ -449,7 +450,7 @@
     "business_badge": "Najwięcej możliwości",
     "business_name": "Business",
     "business_tagline": "Kompletna strona z narzędziami, które pozwalają realnie obsługiwać zapytania, rezerwacje i treści.",
-    "business_price_note": "Zwykle $3,000–$8,000 gdzie indziej — zobacz <a href=\"#compare-savings-table\" style=\"color:var(--accent-teal-text);\">jak wypadamy w porównaniu</a>.",
+    "business_price_note": "Stała cena początkowa, potwierdzona z Tobą przed rozpoczęciem jakichkolwiek prac.",
     "business_feature1": "Do 10 podstron, w tym osobne podstrony usług",
     "business_feature2": "Zaawansowany formularz kontaktowy / zapytania o wycenę",
     "business_feature3": "Rezerwacje / planowanie konsultacji",
@@ -462,20 +463,8 @@
     "business_cta_design": "Zaprojektuj moją stronę w pakiecie Business",
     "business_cta_pay": "Zapłać za pakiet Business",
     "packages_note": "\n          <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 16v-4M12 8h.01\"/></svg>\n          Chcesz najpierw wybrać dokładne funkcje i zobaczyć cenę wyjściową? Wypróbuj nasz <a href=\"website-designer.html\" data-i18n=\"nav.website_designer\">Kreator stron internetowych</a>. Nie masz pewności, który pakiet pasuje? Wypełnij nasz <a href=\"intake.html\">formularz projektowy</a>, a polecimy odpowiedni — wolimy nie docenić niż przecenić nasze usługi.\n        ",
-    "compare_h2": "Jak wypadamy w porównaniu",
-    "compare_lede": "Niezależne badania rynkowe z 2026 roku dotyczące cen naprawy komputerów, wsparcia IT i projektowania stron internetowych pokazują, ile zwykle kosztują podobne usługi w skali kraju. Oto jak wypadają nasze ceny wyjściowe.",
-    "compare_th_service": "Usługa",
-    "compare_th_market": "Typowa stawka rynkowa",
-    "compare_th_ourprice": "Nasza cena wyjściowa",
-    "compare_th_savings": "Twoja oszczędność",
-    "compare_row1": "Naprawa komputerów / diagnostyka",
-    "compare_row2": "Usuwanie wirusów i złośliwego oprogramowania",
-    "compare_row3": "Konfiguracja domowego Wi-Fi",
-    "compare_row4": "Bieżące wsparcie IT dla małych firm",
-    "compare_row5": "Strona w pakiecie Starter (5 podstron)",
-    "compare_row6": "Strona w pakiecie Business (niestandardowa)",
-    "compare_row7": "Konsultacja z zakresu bezpieczeństwa",
-    "compare_disclaimer": "\n          Wartości „typowej stawki rynkowej” pochodzą z opublikowanych badań branżowych cen z 2026 roku dotyczących naprawy komputerów, wsparcia IT dla małych firm i freelancerskiego projektowania stron internetowych (średnie krajowe dla USA). Służą wyłącznie do ogólnego porównania — rzeczywiste ceny konkurencji różnią się w zależności od dostawcy, lokalizacji i zakresu prac, i nie możemy zagwarantować stawki żadnego konkretnego konkurenta. Procenty oszczędności są szacunkowymi wartościami poglądowymi opartymi na dolnych i górnych granicach tych opublikowanych zakresów, a nie gwarantowanymi ani zweryfikowanymi danymi. Twoja ostateczna cena zależy od specyfiki Twojego zlecenia i zawsze zostanie z Tobą potwierdzona przed rozpoczęciem pracy.\n        ",
+    "compare_h2": "Jasne, stałe ceny",
+    "compare_lede": "Żadnych niespodzianek ze stawką godzinową ani niejasnych wycen. Każda podana wyżej cena to realny punkt wyjścia dla danego zlecenia — poznasz swoją cenę, zanim rozpoczniemy pracę, i nie zmieni się ona, chyba że zmieni się zakres prac.",
     "web_block_title": "Usługi związane ze stronami internetowymi",
     "web_block_count": "7 usług",
     "web_item1_name": "Strona w pakiecie Starter <small>(do 5 podstron)</small>",
@@ -552,7 +541,7 @@
     "vet_cta": "Zobacz Zniżkę dla bohaterów",
     "cta_h2": "Nie wiesz, czego potrzebujesz?",
     "cta_p": "Wypełnij nasz formularz projektowy, a odpowiemy jasną wyceną dopasowaną do Twojej konkretnej sytuacji.",
-    "cta_button": "Uzyskaj indywidualną wycenę"
+    "cta_button": "Zamów usługę"
   },
   "wd_dyn": {
     "included_title_starter": "Wliczone w Twój pakiet Starter",
@@ -578,7 +567,7 @@
     "savings_part_heroes": "Zniżka dla bohaterów",
     "note_bundle_one_applied": "Zastosowano 1 zniżkę pakietową",
     "note_bundle_many_applied": "Zastosowano {{count}} zniżek pakietowych",
-    "note_heroes_applied": "Zastosowano Zniżkę dla bohaterów",
+    "note_heroes_applied": "Zastosowano rabat dla bohaterów (oczekuje na potwierdzenie)",
     "note_starting_price": "Cena wyjściowa",
     "note_starting_price_with": "Cena wyjściowa -- {{notes}}",
     "note_excludes_one": " -- nie obejmuje 1 pozycji z wyceną indywidualną",
@@ -586,7 +575,7 @@
     "cost_row_base_starter": "Podstawa pakietu Starter",
     "cost_row_base_business": "Podstawa pakietu Business",
     "cost_row_bundle": "Pakiet {{category}} (10%)",
-    "cost_row_heroes": "Zniżka dla amerykańskich bohaterów (15%)",
+    "cost_row_heroes": "Rabat dla Amerykańskich Bohaterów (15%, oczekuje na potwierdzenie)",
     "cost_row_quote_divider": "Dodatki z wyceną indywidualną",
     "cost_row_quote": "wycena",
     "badge_custom_quote": "(wycena indywidualna)",
@@ -843,7 +832,7 @@
     "final_note": "Płatności są bezpiecznie przetwarzane przez Square. Little Technical Solutions LLC nie zbiera, nie widzi ani nie przechowuje danych Twojej karty. Zwroty i spory są rozpatrywane zgodnie z naszym standardowym regulaminem usług — skontaktuj się z nami bezpośrednio w przypadku jakichkolwiek pytań dotyczących rozliczeń, zanim otworzysz spór w swoim banku lub u wydawcy karty, abyśmy mogli to naprawić.",
     "cta_h2": "Nie masz pewności, którego planu potrzebujesz?",
     "cta_p": "Wypełnij nasz formularz projektowy i powiedz nam, co masz na myśli — pomożemy Ci ustalić, co ma sens.",
-    "cta_btn": "Uzyskaj indywidualną wycenę"
+    "cta_btn": "Zamów usługę"
   },
   "intake": {
     "hero_eyebrow": "Zgłoszenie nowego klienta",
@@ -1024,7 +1013,7 @@
     "pricing_note": "<strong>Usługi jednorazowe:</strong> 15% zniżki od naszej standardowej ceny startowej, pokazanej powyżej.<br> <strong>Cykliczne usługi miesięczne</strong> (bieżące wsparcie IT, konserwacja strony internetowej): 5% zniżki, co odzwierciedla fakt, że te ceny są już bliskie naszym rzeczywistym kosztom utrzymania Twoich systemów w ruchu — koszty serwerów i infrastruktury stojące za tymi planami nie są objęte zniżką.<br> <strong>Części i sprzęt</strong> (komponenty do budowy komputera, jednostki mesh Wi-Fi itp.) są zawsze rozliczane po koszcie, bez narzutu i bez zniżki, niezależnie od uprawnienia.<br> <strong>Ceny rejestracji domeny i konfiguracji firmowej poczty e-mail</strong> odzwierciedlają wyłącznie naszą robociznę — opłaty rejestratora oraz koszty subskrypcji Google/Microsoft są rozliczane bezpośrednio przez tych dostawców, a nie za naszym pośrednictwem.<br> Podane tu ceny są punktem wyjścia dla typowych zleceń. Nie przyjmujemy płatności na tej stronie — po zweryfikowaniu Twojego uprawnienia potwierdzimy dokładną obniżoną kwotę i skierujemy Cię do naszej <a href=\"payment.html\">strony płatności</a>, aby ją opłacić.",
     "cta_h2": "Gotowy, aby zacząć?",
     "cta_p": "Wypełnij nasz formularz projektowy i wspomnij, która kategoria Cię dotyczy — zweryfikujemy Twoje uprawnienie, potwierdzimy obniżoną cenę i przekażemy dalsze kroki dotyczące płatności.",
-    "cta_button": "Uzyskaj indywidualną wycenę"
+    "cta_button": "Zamów usługę"
   },
   "booking": {
     "hero_eyebrow": "Rezerwacja",
@@ -1038,7 +1027,7 @@
     "type2_desc": "Dla projektów stron internetowych i IT dla firm — skoncentrowana rozmowa, aby ustalić zakres, harmonogram i kolejne kroki.",
     "cta_h2": "Gotowy, aby się umówić?",
     "cta_contact_desc": "Zadzwoń pod <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal); text-decoration:underline;\">636-426-0289</a>, napisz e-mail na <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal); text-decoration:underline;\">dylan@lit-solutions.tech</a> lub skorzystaj z poniższego formularza projektowego.",
-    "cta_intake": "Wypełnij formularz projektowy"
+    "cta_intake": "Zamów usługę"
   },
   "service_website": {
     "breadcrumb_aria_label": "Ścieżka nawigacji",
@@ -1046,7 +1035,7 @@
     "breadcrumb_current": "Usługi związane ze stronami internetowymi",
     "hero_h1": "Usługi związane ze stronami internetowymi",
     "hero_lede": "Niestandardowe strony internetowe, które ładują się szybko i faktycznie przynoszą telefony — zbudowane, hostowane i utrzymywane przez tę samą osobę, która odbiera telefon.",
-    "hero_cta_quote": "Uzyskaj wycenę",
+    "hero_cta_quote": "Otrzymaj wycenę mojej strony",
     "hero_cta_pricing": "Zobacz cennik",
     "toc_aria_label": "Na tej stronie",
     "toc_whats_included": "Co jest wliczone",
@@ -1097,7 +1086,7 @@
     "related_card3_title": "Cyberbezpieczeństwo",
     "related_card4_title": "IT dla małych firm",
     "cta_h2": "Gotowy, aby zacząć z Usługami związanymi ze stronami internetowymi?",
-    "cta_button": "Uzyskaj indywidualną wycenę"
+    "cta_button": "Otrzymaj wycenę mojej strony"
   },
   "service_computer": {
     "breadcrumb_home": "Strona główna",
@@ -1106,7 +1095,7 @@
     "hero_eyebrow": "PC-02",
     "hero_h1": "Usługi komputerowe",
     "hero_lede": "Od urządzenia, które się nie uruchamia, po pełną budowę komputera na zamówienie — zdiagnozowane poprawnie za pierwszym razem, zamiast zgadywania i ponownego fakturowania.",
-    "hero_cta_quote": "Uzyskaj wycenę",
+    "hero_cta_quote": "Zamów usługę",
     "hero_cta_pricing": "Zobacz cennik",
     "toc_aria_label": "Na tej stronie",
     "toc_included": "Co jest wliczone",
@@ -1151,7 +1140,7 @@
     "related_h2": "Inne usługi",
     "related_website_title": "Usługi związane ze stronami internetowymi",
     "cta_h2": "Gotowy, aby zacząć z Usługami komputerowymi?",
-    "cta_button": "Uzyskaj indywidualną wycenę"
+    "cta_button": "Zamów usługę"
   },
   "service_networking": {
     "breadcrumb_home": "Strona główna",
@@ -1159,7 +1148,7 @@
     "hero_eyebrow": "NET-03",
     "hero_h1": "Sieci komputerowe",
     "hero_lede": "Martwe strefy, zrywające się połączenia i urządzenia, które nie chcą się ze sobą komunikować, zwykle sprowadzają się do jednego lub dwóch ustawień do naprawienia.",
-    "hero_cta_quote": "Uzyskaj wycenę",
+    "hero_cta_quote": "Zamów usługę",
     "hero_cta_pricing": "Zobacz cennik",
     "toc_whats_included": "Co jest wliczone",
     "toc_full_list": "Pełna lista usług",
@@ -1203,7 +1192,7 @@
     "related_card3_title": "Cyberbezpieczeństwo",
     "related_card4_title": "IT dla małych firm",
     "cta_h2": "Gotowy, aby zacząć z Sieciami komputerowymi?",
-    "cta_button": "Uzyskaj indywidualną wycenę"
+    "cta_button": "Zamów usługę"
   },
   "service_cybersecurity": {
     "breadcrumb_home": "Strona główna",
@@ -1211,7 +1200,7 @@
     "hero_eyebrow": "SEC-04",
     "hero_h1": "Cyberbezpieczeństwo",
     "hero_lede": "Większość naruszeń zaczyna się od słabego hasła lub braku MFA. Zabezpieczamy podstawy, które powstrzymują większość rzeczywistych ataków.",
-    "hero_cta_quote": "Uzyskaj wycenę",
+    "hero_cta_quote": "Zamów usługę",
     "hero_cta_pricing": "Zobacz cennik",
     "toc_whats_included": "Co jest wliczone",
     "toc_full_list": "Pełna lista usług",
@@ -1254,14 +1243,14 @@
     "related_card3_title": "Sieci komputerowe",
     "related_card4_title": "IT dla małych firm",
     "cta_h2": "Gotowy, aby zacząć z Cyberbezpieczeństwem?",
-    "cta_button": "Uzyskaj indywidualną wycenę"
+    "cta_button": "Zamów usługę"
   },
   "service_business_it": {
     "breadcrumb_home": "Strona główna",
     "breadcrumb_current": "IT dla małych firm",
     "hero_h1": "IT dla małych firm",
     "hero_lede": "Jedna trwała relacja IT zamiast żonglowania pięcioma dostawcami, gdy coś się zepsuje.",
-    "hero_cta_quote": "Uzyskaj wycenę",
+    "hero_cta_quote": "Zamów usługę",
     "hero_cta_pricing": "Zobacz cennik",
     "toc_whats_included": "Co jest wliczone",
     "toc_full_list": "Pełna lista usług",
@@ -1305,7 +1294,7 @@
     "related_card3_title": "Sieci komputerowe",
     "related_card4_title": "Cyberbezpieczeństwo",
     "cta_h2": "Gotowy, aby zacząć z IT dla małych firm?",
-    "cta_button": "Uzyskaj indywidualną wycenę"
+    "cta_button": "Zamów usługę"
   },
   "service_area": {
     "hero_eyebrow": "Obszar działania",
@@ -1333,7 +1322,7 @@
     "growth_note": "W miarę jak Little Technical Solutions LLC się rozwija, ta strona będzie rozwijać się razem z nią. Na razie każde zlecenie — strona internetowa, naprawa, sieć czy bezpieczeństwo — jest obsługiwane bezpośrednio przez Dylana, a nie przekazywane podwykonawcy.",
     "cta_h2": "Gotowy do współpracy?",
     "cta_contact": "Skontaktuj się z nami",
-    "cta_intake": "Wypełnij formularz projektowy"
+    "cta_intake": "Zamów usługę"
   },
   "testimonials": {
     "hero_eyebrow": "Opinie",
@@ -1343,7 +1332,7 @@
     "hero_lede_hascontent": "Prawdziwe opinie o prawdziwych projektach -- żadnych zmyślonych cytatów, żadnych podstawionych osób.",
     "empty_h2": "Dopiero zaczynamy.",
     "empty_desc": "Little Technical Solutions LLC to zupełnie nowa firma — co oznacza, że nie mamy jeszcze strony pełnej opinii. To, co mamy, to prawdziwa dyscyplina wyniesiona z Marynarki Wojennej, stałe i uczciwe ceny oraz założyciel, który sam odbiera telefon. Jeśli z nami zapracujesz, będziemy naprawdę wdzięczni za możliwość bycia jedną z naszych pierwszych opinii.",
-    "empty_cta": "Rozpocznij projekt",
+    "empty_cta": "Zamów usługę",
     "verify_eyebrow": "W międzyczasie",
     "verify_h2": "Oto, co możesz sam zweryfikować",
     "cred1_title": "Prowadzona przez weterana",
@@ -1361,7 +1350,7 @@
     "hero_lede_hascontent": "Prawdziwe projekty, które zrealizowaliśmy dla prawdziwych klientów -- szczegóły poniżej.",
     "empty_h2": "Jesteśmy nową firmą — biblioteka projektów wciąż rośnie.",
     "empty_desc": "Little Technical Solutions LLC jest na tyle nową firmą, że nie mamy jeszcze biblioteki wcześniejszych projektów klienckich do pokazania. To, na co możesz teraz spojrzeć: sama ta strona internetowa, zbudowana i utrzymywana przez nas, oraz interaktywne demo przed/po na naszej <a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">stronie Usługi</a>, pokazujące nasze podejście do projektowania stron internetowych. W miarę uruchamiania rzeczywistych projektów klienckich będą one dodawane tutaj za zgodą klienta.",
-    "empty_cta": "Rozpocznij projekt",
+    "empty_cta": "Zamów usługę",
     "meantime_eyebrow": "W międzyczasie",
     "meantime_h2": "Prace, które możesz obejrzeć już dziś",
     "card1_title": "Ta strona internetowa",

@@ -6,8 +6,8 @@
     "choose_language": "Chọn ngôn ngữ",
     "toggle_dark_mode": "Chuyển chế độ tối",
     "search_site": "Tìm kiếm trên trang này",
-    "my_account": "Tài khoản của tôi",
-    "get_quote": "Nhận báo giá",
+    "my_account": "Đăng nhập khách hàng",
+    "get_quote": "Yêu cầu dịch vụ",
     "toggle_menu": "Chuyển đổi menu"
   },
   "nav": {
@@ -32,7 +32,8 @@
     "blog": "Blog",
     "booking": "Đặt lịch",
     "payments": "Thanh toán",
-    "contact": "Liên hệ"
+    "contact": "Liên hệ",
+    "home": "Trang chủ"
   },
   "home": {
     "eyebrow": "Phục vụ hộ gia đình & doanh nghiệp nhỏ",
@@ -40,8 +41,8 @@
     "rotator_before": "Chúng tôi xây dựng",
     "rotator_after": "thực sự hoạt động hiệu quả.",
     "lede": "Little Technical Solutions LLC là người kỹ thuật viên bạn thực sự muốn lưu sẵn trong danh bạ — website, sửa chữa máy tính, mạng và an ninh mạng, làm đúng ngay từ lần đầu tiên.",
-    "cta_quote": "Nhận báo giá miễn phí",
-    "cta_services": "Xem những gì chúng tôi đảm nhận",
+    "cta_quote": "Yêu cầu dịch vụ",
+    "cta_services": "Khám phá dịch vụ của chúng tôi",
     "stat1_label": "Thời gian phản hồi",
     "stat1_value": "Trong ngày, với hầu hết các cuộc gọi",
     "stat2_label": "Phạm vi phục vụ",
@@ -89,12 +90,12 @@
     "cred1_desc": "Fire Controlman (kỹ thuật viên điều khiển hỏa lực), 6 năm — bao gồm 4 năm trực tiếp bảo trì hệ thống điện & điện tử trên tàu USS Antietam",
     "cred2_title": "Cử nhân Công nghệ An ninh mạng",
     "cred3_title": "Chúng tôi mới chỉ vừa bắt đầu",
-    "cred3_desc": "Doanh nghiệp mới, giá ưu đãi ra mắt, và lời mời chân thành để bạn trở thành một trong những khách hàng đánh giá đầu tiên của chúng tôi — xem <a href=\"testimonials.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">đánh giá khách hàng</a>.",
+    "cred3_desc": "Giá ưu đãi cho doanh nghiệp mới và ra mắt, vẫn giữ nguyên kỷ luật được đào tạo trong Hải quân và mức giá trọn gói, minh bạch cho mọi công việc.",
     "contact_eyebrow": "Liên hệ với chúng tôi",
     "contact_h2": "Cho chúng tôi biết bạn cần khắc phục điều gì.",
     "contact_p": "Liên hệ trực tiếp, hoặc điền vào biểu mẫu dự án của chúng tôi để chúng tôi nắm rõ toàn bộ thông tin trước khi gọi cho bạn. Chúng tôi thường phản hồi ngay trong ngày làm việc.",
     "contact_cta1": "Liên hệ với chúng tôi",
-    "contact_cta2": "Điền biểu mẫu dự án"
+    "contact_cta2": "Yêu cầu dịch vụ"
   },
   "footer": {
     "tagline": "Website, máy tính, mạng và bảo mật — chỉ cần một cuộc gọi.",
@@ -103,7 +104,7 @@
     "sitemap": "Sơ đồ trang web",
     "privacy_policy": "Chính sách bảo mật",
     "terms": "Điều khoản & Điều kiện",
-    "patch_notes": "Nhật ký cập nhật",
+    "patch_notes": "Cập nhật Website",
     "cookie_notice": "Thông báo Cookie",
     "facebook": "Facebook",
     "find_google": "Tìm chúng tôi trên Google",
@@ -181,11 +182,11 @@
     "letter_h2": "Cảm ơn bạn đã dành thời gian tìm hiểu về chúng tôi.",
     "letter_body": "Mỗi khách hàng đều đặt niềm tin nơi tôi, và tôi luôn xem trọng trách nhiệm đó. Dù bạn đang khởi nghiệp lần đầu, hiện đại hóa một website đã có, hay đơn giản chỉ cần một người ở địa phương hỗ trợ về công nghệ, tôi rất vinh dự được đồng hành cùng bạn và cùng nhau tạo nên điều gì đó mà cả hai đều tự hào.",
     "letter_sign": "— Dylan Little, Người sáng lập",
-    "new_business_note": "Chúng tôi là một doanh nghiệp hoàn toàn mới — xem <a href=\"testimonials.html\" style=\"color:inherit; text-decoration:underline; font-weight:600;\">trang đánh giá khách hàng</a> của chúng tôi để hiểu điều đó có ý nghĩa gì, và cân nhắc trở thành một trong những người đánh giá đầu tiên của chúng tôi.",
+    "new_business_note": "Chúng tôi là một doanh nghiệp hoàn toàn mới — điều đó có nghĩa là bạn sẽ nhận được sự quan tâm trực tiếp, cá nhân cho từng công việc, không phải xếp hàng chờ sau các khách hàng khác.",
     "cta_h2": "Sẵn sàng hợp tác cùng nhau?",
     "cta_p": "Liên hệ trực tiếp hoặc điền vào biểu mẫu dự án của chúng tôi — chúng tôi thường phản hồi ngay trong ngày làm việc.",
     "cta_contact": "Liên hệ với chúng tôi",
-    "cta_intake": "Điền biểu mẫu dự án"
+    "cta_intake": "Yêu cầu dịch vụ"
   },
   "services": {
     "hero_eyebrow": "Dịch vụ",
@@ -249,7 +250,7 @@
     "showcase_handle_aria": "Kéo để so sánh website trước và sau",
     "cta_h2": "Chưa chắc bạn cần dịch vụ nào?",
     "cta_p": "Điền vào biểu mẫu dự án của chúng tôi và chúng tôi sẽ phản hồi với câu trả lời rõ ràng, cụ thể.",
-    "cta_button": "Nhận báo giá riêng"
+    "cta_button": "Yêu cầu dịch vụ"
   },
   "faq": {
     "eyebrow": "FAQ",
@@ -300,7 +301,7 @@
     "form_submit": "Gửi tin nhắn",
     "cta_h3": "Sẵn sàng bắt đầu một dự án?",
     "cta_lede": "Biểu mẫu dự án của chúng tôi chỉ mất vài phút và cho chúng tôi biết chính xác những gì bạn cần — dịch vụ, thời gian, ngân sách, và hơn thế nữa — để chúng tôi có thể phản hồi bằng câu trả lời thực sự thay vì phải hỏi qua lại nhiều lần.",
-    "cta_button": "Điền biểu mẫu dự án",
+    "cta_button": "Yêu cầu dịch vụ",
     "cta_note": "Muốn gọi điện hoặc gửi email trực tiếp hơn? Hãy dùng thông tin liên hệ ở trên — chúng tôi rất sẵn lòng trao đổi trực tiếp với bạn.",
     "missing_fields_intro": "Vui lòng điền vào các mục sau:",
     "status_sending": "Đang gửi…",
@@ -406,7 +407,7 @@
     "brief_sms_placeholder": "Điều gì nên kích hoạt gửi tin nhắn (nhắc lịch hẹn, cập nhật đơn hàng, v.v.)? Nhà cung cấp SMS bạn muốn dùng? Lưu ý: người nhận phải đồng ý rõ ràng trước -- chúng tôi sẽ giúp bạn xây dựng quy trình xác nhận đó.",
     "price_ticker_label": "Ước tính của bạn",
     "price_ticker_note_default": "Chọn một gói để bắt đầu",
-    "heroes_toggle_text": "Tôi đủ điều kiện nhận <a href=\"heroes-pricing.html\" target=\"_blank\" rel=\"noopener\">Ưu đãi Anh hùng nước Mỹ</a> (giảm 15% cho công việc một lần)",
+    "heroes_toggle_text": "Tôi tự xác nhận rằng tôi đủ điều kiện nhận <a href=\"heroes-pricing.html\" target=\"_blank\" rel=\"noopener\">Ưu đãi Anh hùng Hoa Kỳ</a> (giảm 15% cho công việc một lần) &mdash; điều kiện đủ tiêu chuẩn sẽ được xác nhận trực tiếp với bạn trước khi giá cuối cùng được chốt",
     "browser_empty_text": "Website của bạn sẽ dần thành hình ở đây khi bạn xây dựng nó.",
     "quote_recap_label": "Ước tính của bạn",
     "quote_recap_note": "Giá khởi điểm -- được chúng tôi xác nhận trước khi bắt đầu bất kỳ công việc nào.",
@@ -434,7 +435,7 @@
     "packages_lede": "Cả hai gói đều bao gồm thiết kế riêng, xây dựng tương thích di động, và SEO cơ bản. Sự khác biệt nằm ở phạm vi — số lượng trang, và mức độ tự động hóa mà website có thể thực hiện.",
     "starter_name": "Starter",
     "starter_tagline": "Một website gọn gàng, chuyên nghiệp giúp khách hàng tìm thấy và liên hệ với bạn.",
-    "starter_price_note": "Thường có giá $1,500–$3,000 ở nơi khác — xem <a href=\"#compare-savings-table\" style=\"color:var(--accent-teal-text);\">so sánh của chúng tôi</a>.",
+    "starter_price_note": "Giá khởi điểm trọn gói, được xác nhận với bạn trước khi bắt đầu công việc.",
     "starter_feature1": "Tối đa 5 trang (Trang chủ, Giới thiệu, Dịch vụ, Liên hệ + 1 trang khác)",
     "starter_feature2": "Thiết kế riêng phù hợp với thương hiệu của bạn",
     "starter_feature3": "Tương thích di động trên mọi thiết bị",
@@ -449,7 +450,7 @@
     "business_badge": "Nhiều tính năng nhất",
     "business_name": "Business",
     "business_tagline": "Một website đầy đủ với các công cụ để thực sự quản lý khách hàng tiềm năng, đặt lịch, và nội dung.",
-    "business_price_note": "Thường có giá $3,000–$8,000 ở nơi khác — xem <a href=\"#compare-savings-table\" style=\"color:var(--accent-teal-text);\">so sánh của chúng tôi</a>.",
+    "business_price_note": "Giá khởi điểm trọn gói, được xác nhận với bạn trước khi bắt đầu công việc.",
     "business_feature1": "Tối đa 10 trang, bao gồm các trang dịch vụ riêng biệt",
     "business_feature2": "Biểu mẫu liên hệ / yêu cầu báo giá nâng cao",
     "business_feature3": "Đặt lịch / lên lịch tư vấn",
@@ -462,20 +463,8 @@
     "business_cta_design": "Thiết kế website Business của tôi",
     "business_cta_pay": "Thanh toán cho gói Business",
     "packages_note": "\n          <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 16v-4M12 8h.01\"/></svg>\n          Muốn chọn chính xác các tính năng bạn cần và xem giá khởi điểm trước? Hãy thử <a href=\"website-designer.html\" data-i18n=\"nav.website_designer\">Công cụ thiết kế website</a> của chúng tôi. Chưa chắc gói nào phù hợp? Điền vào <a href=\"intake.html\">biểu mẫu dự án</a> của chúng tôi và chúng tôi sẽ đề xuất gói phù hợp — chúng tôi thà tư vấn ít hơn còn hơn tư vấn quá mức cần thiết.\n        ",
-    "compare_h2": "So sánh với thị trường",
-    "compare_lede": "Nghiên cứu thị trường độc lập năm 2026 về giá dịch vụ sửa chữa máy tính, hỗ trợ IT, và thiết kế website cho thấy chi phí thông thường của các dịch vụ tương tự trên toàn quốc. Đây là cách mức giá khởi điểm của chúng tôi so sánh với thị trường.",
-    "compare_th_service": "Dịch vụ",
-    "compare_th_market": "Giá thị trường thông thường",
-    "compare_th_ourprice": "Giá khởi điểm của chúng tôi",
-    "compare_th_savings": "Bạn tiết kiệm",
-    "compare_row1": "Sửa chữa / khắc phục sự cố máy tính",
-    "compare_row2": "Loại bỏ virus & phần mềm độc hại",
-    "compare_row3": "Thiết lập Wi-Fi gia đình",
-    "compare_row4": "Hỗ trợ IT liên tục cho doanh nghiệp nhỏ",
-    "compare_row5": "Website Starter (5 trang)",
-    "compare_row6": "Website Business (tùy chỉnh)",
-    "compare_row7": "Tư vấn bảo mật",
-    "compare_disclaimer": "\n          Số liệu \"giá thị trường thông thường\" được lấy từ các nghiên cứu giá ngành đã công bố năm 2026 về sửa chữa máy tính, hỗ trợ IT cho doanh nghiệp nhỏ, và thiết kế website tự do (mức trung bình toàn quốc tại Hoa Kỳ). Các số liệu này chỉ mang tính so sánh tổng quát — giá thực tế của đối thủ cạnh tranh thay đổi tùy theo nhà cung cấp, địa điểm, và phạm vi công việc, và chúng tôi không thể đảm bảo mức giá cụ thể của bất kỳ đối thủ nào. Tỷ lệ phần trăm tiết kiệm là ước tính minh họa dựa trên mức thấp và cao của các khoảng giá đã công bố đó, không phải số liệu được đảm bảo hay kiểm toán. Giá cuối cùng của bạn phụ thuộc vào chi tiết cụ thể công việc và sẽ luôn được xác nhận với bạn trước khi bắt đầu công việc.\n        ",
+    "compare_h2": "Giá trọn gói, rõ ràng, minh bạch",
+    "compare_lede": "Không có bất ngờ tính theo giờ, không có ước tính mơ hồ. Mỗi mức giá ở trên là điểm khởi đầu thực tế cho công việc đó — bạn sẽ biết giá trước khi công việc bắt đầu, và giá sẽ không thay đổi trừ khi phạm vi công việc thay đổi.",
     "web_block_title": "Dịch vụ website",
     "web_block_count": "7 dịch vụ",
     "web_item1_name": "Website Starter <small>(tối đa 5 trang)</small>",
@@ -552,7 +541,7 @@
     "vet_cta": "Xem Ưu đãi Anh hùng",
     "cta_h2": "Chưa chắc bạn cần gì?",
     "cta_p": "Điền vào biểu mẫu dự án của chúng tôi và chúng tôi sẽ phản hồi với báo giá rõ ràng dựa trên tình huống cụ thể của bạn.",
-    "cta_button": "Nhận báo giá riêng"
+    "cta_button": "Yêu cầu dịch vụ"
   },
   "wd_dyn": {
     "included_title_starter": "Đã bao gồm trong gói Starter của bạn",
@@ -578,7 +567,7 @@
     "savings_part_heroes": "Ưu đãi Anh hùng",
     "note_bundle_one_applied": "Đã áp dụng 1 ưu đãi trọn gói",
     "note_bundle_many_applied": "Đã áp dụng {{count}} ưu đãi trọn gói",
-    "note_heroes_applied": "Đã áp dụng Ưu đãi Anh hùng",
+    "note_heroes_applied": "Đã áp dụng Ưu đãi Anh hùng (đang chờ xác nhận)",
     "note_starting_price": "Giá khởi điểm",
     "note_starting_price_with": "Giá khởi điểm -- {{notes}}",
     "note_excludes_one": " -- không bao gồm 1 mục báo giá riêng",
@@ -586,7 +575,7 @@
     "cost_row_base_starter": "Giá gốc Starter",
     "cost_row_base_business": "Giá gốc Business",
     "cost_row_bundle": "Trọn gói {{category}} (10%)",
-    "cost_row_heroes": "Ưu đãi Anh hùng nước Mỹ (15%)",
+    "cost_row_heroes": "Ưu đãi Anh hùng Hoa Kỳ (15%, đang chờ xác nhận)",
     "cost_row_quote_divider": "Tiện ích báo giá riêng",
     "cost_row_quote": "báo giá",
     "badge_custom_quote": "(báo giá riêng)",
@@ -843,7 +832,7 @@
     "final_note": "Các khoản thanh toán được xử lý an toàn bởi Square. Little Technical Solutions LLC không thu thập, xem, hoặc lưu trữ thông tin thẻ của bạn. Hoàn tiền và tranh chấp được xử lý theo các điều khoản dịch vụ tiêu chuẩn của chúng tôi — hãy liên hệ trực tiếp với chúng tôi nếu có bất kỳ thắc mắc nào về hóa đơn trước khi mở tranh chấp với ngân hàng hoặc đơn vị phát hành thẻ của bạn, để chúng tôi có thể khắc phục thỏa đáng.",
     "cta_h2": "Chưa chắc bạn cần gói nào?",
     "cta_p": "Điền vào biểu mẫu dự án của chúng tôi và cho chúng tôi biết bạn đang hình dung điều gì — chúng tôi sẽ giúp bạn xác định phương án phù hợp.",
-    "cta_btn": "Nhận báo giá riêng"
+    "cta_btn": "Yêu cầu dịch vụ"
   },
   "intake": {
     "hero_eyebrow": "Tiếp nhận khách hàng mới",
@@ -1024,7 +1013,7 @@
     "pricing_note": "<strong>Dịch vụ một lần:</strong> giảm 15% so với giá khởi điểm tiêu chuẩn của chúng tôi, như hiển thị ở trên.<br> <strong>Dịch vụ định kỳ hàng tháng</strong> (hỗ trợ IT liên tục, bảo trì website): giảm 5%, do các mức giá này đã rất sát với chi phí thực tế để duy trì hệ thống của bạn hoạt động — chi phí máy chủ và hạ tầng đằng sau các gói này không được giảm giá.<br> <strong>Linh kiện và phần cứng</strong> (linh kiện lắp ráp máy tính, thiết bị Wi-Fi mesh, v.v.) luôn được tính theo giá gốc, không cộng thêm lợi nhuận và không áp dụng giảm giá, bất kể điều kiện ưu đãi.<br> Giá <strong>đăng ký tên miền và thiết lập email doanh nghiệp</strong> chỉ phản ánh phí công của chúng tôi — phí đăng ký tên miền và chi phí gói đăng ký Google/Microsoft sẽ do các nhà cung cấp đó tính phí trực tiếp cho bạn, không thông qua chúng tôi.<br> Giá hiển thị ở đây là điểm khởi đầu cho các công việc thông thường. Chúng tôi không nhận thanh toán trên trang này — sau khi xác minh điều kiện của bạn, chúng tôi sẽ xác nhận tổng số tiền ưu đãi chính xác và chuyển bạn đến <a href=\"payment.html\">trang thanh toán</a> của chúng tôi để thanh toán.",
     "cta_h2": "Sẵn sàng bắt đầu?",
     "cta_p": "Điền vào biểu mẫu dự án của chúng tôi và cho biết danh mục nào áp dụng cho bạn — chúng tôi sẽ xác minh điều kiện, xác nhận mức giá ưu đãi của bạn, và theo dõi các bước tiếp theo để thanh toán.",
-    "cta_button": "Nhận báo giá riêng"
+    "cta_button": "Yêu cầu dịch vụ"
   },
   "booking": {
     "hero_eyebrow": "Đặt lịch",
@@ -1038,7 +1027,7 @@
     "type2_desc": "Dành cho các dự án website và IT doanh nghiệp — một cuộc gọi tập trung để chốt phạm vi, thời gian, và các bước tiếp theo.",
     "cta_h2": "Sẵn sàng đặt lịch?",
     "cta_contact_desc": "Gọi <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal); text-decoration:underline;\">636-426-0289</a>, gửi email đến <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal); text-decoration:underline;\">dylan@lit-solutions.tech</a>, hoặc sử dụng biểu mẫu dự án bên dưới.",
-    "cta_intake": "Điền Biểu mẫu Dự án"
+    "cta_intake": "Yêu cầu dịch vụ"
   },
   "service_website": {
     "breadcrumb_aria_label": "Điều hướng breadcrumb",
@@ -1046,7 +1035,7 @@
     "breadcrumb_current": "Dịch vụ Website",
     "hero_h1": "Dịch vụ Website",
     "hero_lede": "Các website tùy chỉnh tải nhanh và thực sự mang lại cuộc gọi cho bạn — được xây dựng, lưu trữ, và bảo trì bởi cùng một người trực tiếp trả lời điện thoại.",
-    "hero_cta_quote": "Nhận báo giá",
+    "hero_cta_quote": "Nhận báo giá website của tôi",
     "hero_cta_pricing": "Xem bảng giá",
     "toc_aria_label": "Trong trang này",
     "toc_whats_included": "Những gì được bao gồm",
@@ -1097,7 +1086,7 @@
     "related_card3_title": "An ninh mạng",
     "related_card4_title": "IT cho Doanh nghiệp nhỏ",
     "cta_h2": "Sẵn sàng bắt đầu với Dịch vụ Website?",
-    "cta_button": "Nhận báo giá riêng"
+    "cta_button": "Nhận báo giá website của tôi"
   },
   "service_computer": {
     "breadcrumb_home": "Trang chủ",
@@ -1106,7 +1095,7 @@
     "hero_eyebrow": "PC-02",
     "hero_h1": "Dịch vụ Máy tính",
     "hero_lede": "Từ một chiếc máy không khởi động được đến việc lắp ráp hoàn toàn theo yêu cầu — chẩn đoán đúng ngay từ lần đầu thay vì đoán mò rồi tính thêm phí.",
-    "hero_cta_quote": "Nhận báo giá",
+    "hero_cta_quote": "Yêu cầu dịch vụ",
     "hero_cta_pricing": "Xem bảng giá",
     "toc_aria_label": "Trong trang này",
     "toc_included": "Những gì được bao gồm",
@@ -1151,7 +1140,7 @@
     "related_h2": "Các dịch vụ khác",
     "related_website_title": "Dịch vụ Website",
     "cta_h2": "Sẵn sàng bắt đầu với Dịch vụ Máy tính?",
-    "cta_button": "Nhận báo giá riêng"
+    "cta_button": "Yêu cầu dịch vụ"
   },
   "service_networking": {
     "breadcrumb_home": "Trang chủ",
@@ -1159,7 +1148,7 @@
     "hero_eyebrow": "NET-03",
     "hero_h1": "Mạng máy tính",
     "hero_lede": "Vùng sóng yếu, kết nối bị rớt, và các thiết bị không nhận diện được nhau thường chỉ do một hoặc hai thiết lập có thể khắc phục được.",
-    "hero_cta_quote": "Nhận báo giá",
+    "hero_cta_quote": "Yêu cầu dịch vụ",
     "hero_cta_pricing": "Xem bảng giá",
     "toc_whats_included": "Những gì được bao gồm",
     "toc_full_list": "Danh sách dịch vụ đầy đủ",
@@ -1203,7 +1192,7 @@
     "related_card3_title": "An ninh mạng",
     "related_card4_title": "IT cho Doanh nghiệp nhỏ",
     "cta_h2": "Sẵn sàng bắt đầu với Mạng máy tính?",
-    "cta_button": "Nhận báo giá riêng"
+    "cta_button": "Yêu cầu dịch vụ"
   },
   "service_cybersecurity": {
     "breadcrumb_home": "Trang chủ",
@@ -1211,7 +1200,7 @@
     "hero_eyebrow": "SEC-04",
     "hero_h1": "An ninh mạng",
     "hero_lede": "Hầu hết các vụ vi phạm bảo mật bắt đầu từ mật khẩu yếu hoặc không có MFA. Chúng tôi củng cố các yếu tố cơ bản để ngăn chặn phần lớn các cuộc tấn công trong thực tế.",
-    "hero_cta_quote": "Nhận báo giá",
+    "hero_cta_quote": "Yêu cầu dịch vụ",
     "hero_cta_pricing": "Xem bảng giá",
     "toc_whats_included": "Những gì được bao gồm",
     "toc_full_list": "Danh sách dịch vụ đầy đủ",
@@ -1254,14 +1243,14 @@
     "related_card3_title": "Mạng máy tính",
     "related_card4_title": "IT cho Doanh nghiệp nhỏ",
     "cta_h2": "Sẵn sàng bắt đầu với An ninh mạng?",
-    "cta_button": "Nhận báo giá riêng"
+    "cta_button": "Yêu cầu dịch vụ"
   },
   "service_business_it": {
     "breadcrumb_home": "Trang chủ",
     "breadcrumb_current": "IT cho Doanh nghiệp nhỏ",
     "hero_h1": "IT cho Doanh nghiệp nhỏ",
     "hero_lede": "Một mối quan hệ IT lâu dài duy nhất, thay vì phải xoay xở với năm nhà cung cấp khác nhau mỗi khi có sự cố.",
-    "hero_cta_quote": "Nhận báo giá",
+    "hero_cta_quote": "Yêu cầu dịch vụ",
     "hero_cta_pricing": "Xem bảng giá",
     "toc_whats_included": "Những gì được bao gồm",
     "toc_full_list": "Danh sách dịch vụ đầy đủ",
@@ -1305,7 +1294,7 @@
     "related_card3_title": "Mạng máy tính",
     "related_card4_title": "An ninh mạng",
     "cta_h2": "Sẵn sàng bắt đầu với IT cho Doanh nghiệp nhỏ?",
-    "cta_button": "Nhận báo giá riêng"
+    "cta_button": "Yêu cầu dịch vụ"
   },
   "service_area": {
     "hero_eyebrow": "Khu vực Phục vụ",
@@ -1333,7 +1322,7 @@
     "growth_note": "Khi Little Technical Solutions LLC phát triển, trang này cũng sẽ phát triển theo. Hiện tại, mọi công việc — website, sửa chữa, mạng, hay bảo mật — đều do chính Dylan trực tiếp đảm nhận, không giao lại cho nhà thầu phụ.",
     "cta_h2": "Sẵn sàng hợp tác cùng nhau?",
     "cta_contact": "Liên hệ với chúng tôi",
-    "cta_intake": "Điền Biểu mẫu Dự án"
+    "cta_intake": "Yêu cầu dịch vụ"
   },
   "testimonials": {
     "hero_eyebrow": "Đánh giá khách hàng",
@@ -1343,7 +1332,7 @@
     "hero_lede_hascontent": "Phản hồi thực từ những dự án thực -- không phải trích dẫn dàn dựng, không phải người đóng thế.",
     "empty_h2": "Chúng tôi mới chỉ bắt đầu.",
     "empty_desc": "Little Technical Solutions LLC là một doanh nghiệp hoàn toàn mới — nghĩa là chúng tôi chưa có một trang đầy ắp đánh giá. Nhưng điều chúng tôi thực sự có là kỷ luật được rèn luyện trong Hải quân, mức giá trọn gói minh bạch, và một người sáng lập tự mình trả lời điện thoại. Nếu bạn hợp tác với chúng tôi, chúng tôi thực sự trân trọng nếu bạn trở thành một trong những đánh giá đầu tiên của chúng tôi.",
-    "empty_cta": "Bắt đầu một Dự án",
+    "empty_cta": "Yêu cầu dịch vụ",
     "verify_eyebrow": "Trong lúc này",
     "verify_h2": "Đây là những gì bạn có thể tự mình kiểm chứng",
     "cred1_title": "Do cựu chiến binh sáng lập",
@@ -1361,7 +1350,7 @@
     "hero_lede_hascontent": "Những dự án thực chúng tôi đã thực hiện cho khách hàng thực -- xem chi tiết bên dưới.",
     "empty_h2": "Chúng tôi là một doanh nghiệp mới — thư viện dự án vẫn đang được xây dựng.",
     "empty_desc": "Little Technical Solutions LLC còn khá mới nên chúng tôi chưa có thư viện các dự án khách hàng trước đây để trưng bày. Những gì bạn có thể xem ngay bây giờ: chính website này, được chúng tôi xây dựng và bảo trì, và bản demo tương tác trước/sau trên <a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">trang Dịch vụ</a> của chúng tôi, thể hiện cách tiếp cận thiết kế website của chúng tôi. Khi các dự án khách hàng thực tế ra mắt, chúng sẽ được thêm vào đây nếu được sự cho phép.",
-    "empty_cta": "Bắt đầu một Dự án",
+    "empty_cta": "Yêu cầu dịch vụ",
     "meantime_eyebrow": "Trong lúc này",
     "meantime_h2": "Những gì bạn có thể xem ngay hôm nay",
     "card1_title": "Website này",

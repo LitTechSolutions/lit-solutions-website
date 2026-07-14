@@ -24,13 +24,14 @@
     "blog": "Blogue",
     "booking": "Réservation",
     "payments": "Paiements",
-    "contact": "Contact"
+    "contact": "Contact",
+    "home": "Accueil"
   },
   "header": {
     "toggle_dark_mode": "Activer/désactiver le mode sombre",
     "search_site": "Rechercher sur ce site",
-    "my_account": "Mon compte",
-    "get_quote": "Obtenir une soumission",
+    "my_account": "Connexion client",
+    "get_quote": "Demander un service",
     "toggle_menu": "Afficher/masquer le menu",
     "choose_language": "Choisir la langue"
   },
@@ -41,7 +42,7 @@
     "sitemap": "Plan du site",
     "privacy_policy": "Politique de confidentialité",
     "terms": "Modalités et conditions",
-    "patch_notes": "Notes de mise à jour",
+    "patch_notes": "Mises à jour du site",
     "cookie_notice": "Avis sur les témoins",
     "staff_signin": "Connexion du personnel",
     "facebook": "Facebook",
@@ -58,8 +59,8 @@
     "rotator_before": "Nous créons",
     "rotator_after": "qui fonctionnent vraiment.",
     "lede": "Little Technical Solutions LLC est le technicien que vous gardez vraiment en composition abrégée — sites Web, réparation d'ordinateurs, réseautique et cybersécurité, bien faits du premier coup.",
-    "cta_quote": "Obtenir une soumission gratuite",
-    "cta_services": "Voir ce que nous prenons en charge",
+    "cta_quote": "Demander un service",
+    "cta_services": "Découvrir nos services",
     "stat1_label": "Délai de réponse",
     "stat1_value": "Le jour même, pour la plupart des appels",
     "stat2_label": "Zone de service",
@@ -107,12 +108,12 @@
     "cred1_desc": "Technicien en systèmes d'armes, 6 ans — dont 4 ans d'entretien pratique des systèmes électriques et électroniques à bord de l'USS Antietam",
     "cred2_title": "Baccalauréat en technologie de la cybersécurité",
     "cred3_title": "Nous ne faisons que commencer",
-    "cred3_desc": "Nouvelle entreprise, tarifs de lancement et une invitation ouverte à faire partie de nos premiers avis — voir les <a href=\"testimonials.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">témoignages</a>.",
+    "cred3_desc": "Tarifs de lancement pour les nouvelles entreprises, avec la même rigueur acquise dans la Marine et des prix fixes et honnêtes sur chaque intervention.",
     "contact_eyebrow": "Communiquez avec nous",
     "contact_h2": "Dites-nous ce qui doit être réparé.",
     "contact_p": "Contactez-nous directement ou remplissez notre formulaire de projet afin que nous ayons un portrait complet avant de vous appeler. Nous répondons habituellement le jour ouvrable même.",
     "contact_cta1": "Nous contacter",
-    "contact_cta2": "Remplir le formulaire de projet"
+    "contact_cta2": "Demander un service"
   },
   "about": {
     "hero_eyebrow": "À propos de nous",
@@ -181,11 +182,11 @@
     "letter_h2": "Merci d'avoir pris le temps d'en apprendre plus sur nous.",
     "letter_body": "Chaque client me fait confiance, et je prends cette responsabilité très au sérieux. Que vous lanciez votre première entreprise, que vous modernisiez un site Web existant, ou que vous ayez simplement besoin de quelqu'un du coin pour vous aider avec la technologie, ce serait un honneur pour moi de mériter votre confiance et de créer ensemble quelque chose dont nous serons tous deux fiers.",
     "letter_sign": "— Dylan Little, fondateur",
-    "new_business_note": "Nous sommes une toute nouvelle entreprise — consultez notre <a href=\"testimonials.html\" style=\"color:inherit; text-decoration:underline; font-weight:600;\">page de témoignages</a> pour comprendre ce que cela signifie, et pensez à faire partie de nos premiers avis.",
+    "new_business_note": "Nous sommes une toute nouvelle entreprise — cela signifie une attention directe et personnalisée pour chaque intervention, sans file d'attente d'autres clients avant vous.",
     "cta_h2": "Prêt à travailler ensemble?",
     "cta_p": "Contactez-nous directement ou remplissez notre formulaire de projet — nous répondons habituellement le jour ouvrable même.",
     "cta_contact": "Nous contacter",
-    "cta_intake": "Remplir le formulaire de projet"
+    "cta_intake": "Demander un service"
   },
   "faq": {
     "eyebrow": "FAQ",
@@ -284,7 +285,7 @@
     "showcase_handle_aria": "Glisser pour comparer le site avant et après",
     "cta_h2": "Vous ne savez pas quel service vous convient?",
     "cta_p": "Remplissez notre formulaire de projet et nous vous répondrons clairement.",
-    "cta_button": "Obtenir une soumission personnalisée"
+    "cta_button": "Demander un service"
   },
   "contact": {
     "hero_eyebrow": "Communiquez avec nous",
@@ -300,7 +301,7 @@
     "form_submit": "Envoyer le message",
     "cta_h3": "Prêt à démarrer un projet?",
     "cta_lede": "Notre formulaire de projet prend quelques minutes et nous indique exactement ce dont vous avez besoin — services, échéancier, budget et plus encore — afin que nous puissions vous répondre concrètement, plutôt que d'échanger plusieurs questions.",
-    "cta_button": "Remplir le formulaire de projet",
+    "cta_button": "Demander un service",
     "cta_note": "Vous préférez simplement appeler ou écrire? Utilisez les coordonnées ci-dessus — nous serons heureux d'en discuter directement avec vous.",
     "missing_fields_intro": "Veuillez remplir les champs suivants :",
     "status_sending": "Envoi en cours…",
@@ -406,7 +407,7 @@
     "brief_sms_placeholder": "Qu'est-ce qui devrait déclencher un texto (rappels de rendez-vous, mises à jour de commande, etc.)? Fournisseur de SMS préféré? Remarque : les destinataires doivent donner leur consentement explicite -- nous vous aiderons à mettre en place ce processus de consentement.",
     "price_ticker_label": "Votre estimation",
     "price_ticker_note_default": "Choisissez un forfait pour commencer",
-    "heroes_toggle_text": "Je suis admissible au <a href=\"heroes-pricing.html\" target=\"_blank\" rel=\"noopener\">Rabais Héros américains</a> (15% de rabais sur les travaux ponctuels)",
+    "heroes_toggle_text": "Je certifie sur l'honneur que je suis éligible à la <a href=\"heroes-pricing.html\" target=\"_blank\" rel=\"noopener\">Réduction Héros américains</a> (15 % de réduction sur les interventions ponctuelles) &mdash; l'éligibilité est confirmée directement avec vous avant la fixation du prix final",
     "browser_empty_text": "Votre site Web prendra forme ici au fur et à mesure que vous le concevez.",
     "quote_recap_label": "Votre estimation",
     "quote_recap_note": "Prix de départ -- confirmé par nous avant le début des travaux.",
@@ -434,7 +435,7 @@
     "packages_lede": "Les deux forfaits comprennent une conception personnalisée, une construction adaptée aux mobiles et un SEO de base. La différence réside dans l'ampleur — le nombre de pages et tout ce que le site peut faire par lui-même.",
     "starter_name": "Débutant",
     "starter_tagline": "Un site épuré et professionnel qui vous fait remarquer et vous permet d'être contacté.",
-    "starter_price_note": "Habituellement $1,500–$3,000 ailleurs — voir <a href=\"#compare-savings-table\" style=\"color:var(--accent-teal-text);\">notre comparatif</a>.",
+    "starter_price_note": "Un prix de départ fixe, confirmé avec vous avant le début de toute intervention.",
     "starter_feature1": "Jusqu'à 5 pages (Accueil, À propos, Services, Contact + 1 autre)",
     "starter_feature2": "Conception personnalisée assortie à votre image de marque",
     "starter_feature3": "Adapté aux mobiles, sur tous les appareils",
@@ -449,7 +450,7 @@
     "business_badge": "Le plus complet",
     "business_name": "Affaires",
     "business_tagline": "Un site complet avec les outils pour vraiment gérer les prospects, les réservations et le contenu.",
-    "business_price_note": "Habituellement $3,000–$8,000 ailleurs — voir <a href=\"#compare-savings-table\" style=\"color:var(--accent-teal-text);\">notre comparatif</a>.",
+    "business_price_note": "Un prix de départ fixe, confirmé avec vous avant le début de toute intervention.",
     "business_feature1": "Jusqu'à 10 pages, incluant des pages de services individuelles",
     "business_feature2": "Formulaire avancé de contact et de demande de soumission",
     "business_feature3": "Réservation et planification de consultations",
@@ -462,20 +463,8 @@
     "business_cta_design": "Concevoir mon site Affaires",
     "business_cta_pay": "Payer le forfait Affaires",
     "packages_note": "\n          <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 16v-4M12 8h.01\"/></svg>\n          Vous voulez choisir vos fonctionnalités exactes et voir un prix de départ d'abord? Essayez notre <a href=\"website-designer.html\" data-i18n=\"nav.website_designer\">Concepteur de site Web</a>. Vous ne savez pas du tout quel forfait vous convient? Remplissez notre <a href=\"intake.html\">formulaire de projet</a> et nous vous recommanderons le bon choix — nous préférons sous-vendre que survendre.\n        ",
-    "compare_h2": "Comment nous nous comparons",
-    "compare_lede": "Une étude de marché indépendante menée en 2026 sur les tarifs de réparation d'ordinateurs, de soutien TI et de conception Web montre ce que coûtent habituellement des services similaires à l'échelle nationale. Voici comment nos prix de départ se comparent.",
-    "compare_th_service": "Service",
-    "compare_th_market": "Tarif typique du marché",
-    "compare_th_ourprice": "Notre prix de départ",
-    "compare_th_savings": "Vos économies",
-    "compare_row1": "Réparation d'ordinateurs et dépannage",
-    "compare_row2": "Suppression de virus et de logiciels malveillants",
-    "compare_row3": "Configuration du Wi-Fi résidentiel",
-    "compare_row4": "Soutien TI continu pour petites entreprises",
-    "compare_row5": "Site Web Débutant (5 pages)",
-    "compare_row6": "Site Web Affaires (personnalisé)",
-    "compare_row7": "Consultation en sécurité",
-    "compare_disclaimer": "\n          Les chiffres de « tarif typique du marché » proviennent d'une étude de tarification publiée en 2026 sur la réparation d'ordinateurs, le soutien TI pour petites entreprises et la conception Web à la pige (moyennes nationales américaines). Ils sont fournis à titre de comparaison générale seulement — les prix réels des concurrents varient selon le fournisseur, l'emplacement et l'ampleur des travaux, et nous ne pouvons garantir le tarif d'un concurrent en particulier. Les pourcentages d'économies sont des estimations illustratives basées sur les extrémités basse et haute de ces fourchettes publiées, et non des chiffres garantis ou vérifiés. Votre prix final dépend des particularités de votre travail et sera toujours confirmé avec vous avant le début des travaux.\n        ",
+    "compare_h2": "Des tarifs clairs et forfaitaires",
+    "compare_lede": "Pas de surprises horaires ni d'estimations vagues. Chaque prix ci-dessus est un point de départ réel pour ce travail : vous connaîtrez votre prix avant le début de toute intervention, et il ne changera que si le périmètre change.",
     "web_block_title": "Services de sites Web",
     "web_block_count": "7 services",
     "web_item1_name": "Site Web Débutant <small>(jusqu'à 5 pages)</small>",
@@ -552,7 +541,7 @@
     "vet_cta": "Voir le Rabais Héros",
     "cta_h2": "Vous ne savez pas ce dont vous avez besoin?",
     "cta_p": "Remplissez notre formulaire de projet et nous vous fournirons une soumission claire basée sur votre situation particulière.",
-    "cta_button": "Obtenir une soumission personnalisée"
+    "cta_button": "Demander un service"
   },
   "wd_dyn": {
     "included_title_starter": "Inclus dans votre forfait Débutant",
@@ -578,7 +567,7 @@
     "savings_part_heroes": "Rabais Héros",
     "note_bundle_one_applied": "1 rabais groupé appliqué",
     "note_bundle_many_applied": "{{count}} rabais groupés appliqués",
-    "note_heroes_applied": "Rabais Héros appliqué",
+    "note_heroes_applied": "Réduction Héros appliquée (en attente de confirmation)",
     "note_starting_price": "Prix de départ",
     "note_starting_price_with": "Prix de départ -- {{notes}}",
     "note_excludes_one": " -- exclut 1 élément à soumission personnalisée",
@@ -586,7 +575,7 @@
     "cost_row_base_starter": "Base Débutant",
     "cost_row_base_business": "Base Affaires",
     "cost_row_bundle": "Rabais groupé {{category}} (10%)",
-    "cost_row_heroes": "Rabais Héros américains (15%)",
+    "cost_row_heroes": "Réduction Héros américains (15 %, en attente de confirmation)",
     "cost_row_quote_divider": "Options à soumission personnalisée",
     "cost_row_quote": "soumission",
     "badge_custom_quote": "(soumission personnalisée)",
@@ -843,7 +832,7 @@
     "final_note": "Les paiements sont traités de manière sécurisée par Square. Little Technical Solutions LLC ne recueille, ne voit ni ne conserve les détails de votre carte. Les remboursements et les différends sont traités selon nos modalités de service habituelles — communiquez directement avec nous pour toute question de facturation avant d'ouvrir un différend auprès de votre banque ou de l'émetteur de votre carte, afin que nous puissions corriger la situation.",
     "cta_h2": "Vous ne savez pas lequel choisir?",
     "cta_p": "Remplissez notre formulaire de projet et dites-nous ce que vous avez en tête — nous vous aiderons à déterminer ce qui convient le mieux.",
-    "cta_btn": "Obtenir une soumission personnalisée"
+    "cta_btn": "Demander un service"
   },
   "intake": {
     "hero_eyebrow": "Accueil des nouveaux clients",
@@ -1024,7 +1013,7 @@
     "pricing_note": "<strong>Services ponctuels :</strong> 15 % de rabais sur notre prix de départ standard, indiqué ci-dessus.<br> <strong>Services mensuels récurrents</strong> (soutien TI continu, entretien de site Web) : 5 % de rabais, ce qui reflète le fait que ces prix sont déjà proches de notre coût réel pour maintenir vos systèmes en fonction — les coûts de serveur et d'infrastructure derrière ces forfaits ne sont pas rabaissés.<br> <strong>Les pièces et le matériel</strong> (composants d'assemblage de PC, unités Wi-Fi maillé, etc.) sont toujours facturés au prix coûtant, sans majoration ni rabais, peu importe l'admissibilité.<br> <strong>Les prix d'enregistrement de domaine et de configuration de courriel professionnel</strong> ne reflètent que notre main-d'œuvre — les frais de registraire et les coûts d'abonnement Google/Microsoft vous sont facturés directement par ces fournisseurs, et non par notre entremise.<br> Les prix indiqués ici sont des points de départ pour des travaux typiques. Nous ne prenons pas de paiement sur cette page — une fois votre admissibilité vérifiée, nous confirmerons votre total exact rabaissé et vous dirigerons vers notre <a href=\"payment.html\">page de paiement</a> pour le régler.",
     "cta_h2": "Prêt à commencer?",
     "cta_p": "Remplissez notre formulaire de projet et mentionnez la catégorie qui s'applique à vous — nous vérifierons votre admissibilité, confirmerons votre prix rabaissé et vous indiquerons les prochaines étapes pour le paiement.",
-    "cta_button": "Obtenir une soumission personnalisée"
+    "cta_button": "Demander un service"
   },
   "booking": {
     "hero_eyebrow": "Réservation",
@@ -1038,7 +1027,7 @@
     "type2_desc": "Pour les projets de sites Web et de TI d'entreprise — un appel ciblé pour établir la portée, l'échéancier et les prochaines étapes.",
     "cta_h2": "Prêt à planifier?",
     "cta_contact_desc": "Appelez au <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal); text-decoration:underline;\">636-426-0289</a>, écrivez à <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal); text-decoration:underline;\">dylan@lit-solutions.tech</a>, ou utilisez le formulaire de projet ci-dessous.",
-    "cta_intake": "Remplir le formulaire de projet"
+    "cta_intake": "Demander un service"
   },
   "service_website": {
     "breadcrumb_aria_label": "Fil d'Ariane",
@@ -1046,7 +1035,7 @@
     "breadcrumb_current": "Services de sites Web",
     "hero_h1": "Services de sites Web",
     "hero_lede": "Des sites Web personnalisés qui se chargent rapidement et qui génèrent réellement des appels — conçus, hébergés et entretenus par la même personne qui répond au téléphone.",
-    "hero_cta_quote": "Obtenir une soumission",
+    "hero_cta_quote": "Obtenir mon devis de site web",
     "hero_cta_pricing": "Voir les tarifs",
     "toc_aria_label": "Sur cette page",
     "toc_whats_included": "Ce qui est inclus",
@@ -1097,7 +1086,7 @@
     "related_card3_title": "Cybersécurité",
     "related_card4_title": "TI pour petites entreprises",
     "cta_h2": "Prêt à démarrer avec les Services de sites Web?",
-    "cta_button": "Obtenir une soumission personnalisée"
+    "cta_button": "Obtenir mon devis de site web"
   },
   "service_computer": {
     "breadcrumb_home": "Accueil",
@@ -1106,7 +1095,7 @@
     "hero_eyebrow": "PC-02",
     "hero_h1": "Services informatiques",
     "hero_lede": "D'une machine qui ne démarre plus à un assemblage personnalisé complet — diagnostiqué correctement dès la première fois plutôt que de deviner et de refacturer.",
-    "hero_cta_quote": "Obtenir une soumission",
+    "hero_cta_quote": "Demander un service",
     "hero_cta_pricing": "Voir les tarifs",
     "toc_aria_label": "Sur cette page",
     "toc_included": "Ce qui est inclus",
@@ -1151,7 +1140,7 @@
     "related_h2": "Autres services",
     "related_website_title": "Services de sites Web",
     "cta_h2": "Prêt à démarrer avec les Services informatiques?",
-    "cta_button": "Obtenir une soumission personnalisée"
+    "cta_button": "Demander un service"
   },
   "service_networking": {
     "breadcrumb_home": "Accueil",
@@ -1159,7 +1148,7 @@
     "hero_eyebrow": "NET-03",
     "hero_h1": "Réseautique",
     "hero_lede": "Les zones mortes, les connexions interrompues et les appareils qui ne communiquent pas entre eux se résument habituellement à un ou deux réglages faciles à corriger.",
-    "hero_cta_quote": "Obtenir une soumission",
+    "hero_cta_quote": "Demander un service",
     "hero_cta_pricing": "Voir les tarifs",
     "toc_whats_included": "Ce qui est inclus",
     "toc_full_list": "Liste complète des services",
@@ -1203,7 +1192,7 @@
     "related_card3_title": "Cybersécurité",
     "related_card4_title": "TI pour petites entreprises",
     "cta_h2": "Prêt à démarrer avec la Réseautique?",
-    "cta_button": "Obtenir une soumission personnalisée"
+    "cta_button": "Demander un service"
   },
   "service_cybersecurity": {
     "breadcrumb_home": "Accueil",
@@ -1211,7 +1200,7 @@
     "hero_eyebrow": "SEC-04",
     "hero_h1": "Cybersécurité",
     "hero_lede": "La plupart des violations commencent par un mot de passe faible ou l'absence de MFA. Nous verrouillons les bases qui arrêtent la majorité des attaques réelles.",
-    "hero_cta_quote": "Obtenir une soumission",
+    "hero_cta_quote": "Demander un service",
     "hero_cta_pricing": "Voir les tarifs",
     "toc_whats_included": "Ce qui est inclus",
     "toc_full_list": "Liste complète des services",
@@ -1254,14 +1243,14 @@
     "related_card3_title": "Réseautique",
     "related_card4_title": "TI pour petites entreprises",
     "cta_h2": "Prêt à démarrer avec la Cybersécurité?",
-    "cta_button": "Obtenir une soumission personnalisée"
+    "cta_button": "Demander un service"
   },
   "service_business_it": {
     "breadcrumb_home": "Accueil",
     "breadcrumb_current": "TI pour petites entreprises",
     "hero_h1": "TI pour petites entreprises",
     "hero_lede": "Une seule relation TI continue au lieu de jongler avec cinq fournisseurs lorsque quelque chose brise.",
-    "hero_cta_quote": "Obtenir une soumission",
+    "hero_cta_quote": "Demander un service",
     "hero_cta_pricing": "Voir les tarifs",
     "toc_whats_included": "Ce qui est inclus",
     "toc_full_list": "Liste complète des services",
@@ -1305,7 +1294,7 @@
     "related_card3_title": "Réseautique",
     "related_card4_title": "Cybersécurité",
     "cta_h2": "Prêt à démarrer avec les TI pour petites entreprises?",
-    "cta_button": "Obtenir une soumission personnalisée"
+    "cta_button": "Demander un service"
   },
   "service_area": {
     "hero_eyebrow": "Zone de service",
@@ -1333,7 +1322,7 @@
     "growth_note": "À mesure que Little Technical Solutions LLC grandit, cette page grandira avec elle. Pour l'instant, chaque mandat — site Web, réparation, réseau ou sécurité — est pris en charge directement par Dylan, et non confié à un sous-traitant.",
     "cta_h2": "Prêt à travailler ensemble?",
     "cta_contact": "Contactez-nous",
-    "cta_intake": "Remplir le formulaire de projet"
+    "cta_intake": "Demander un service"
   },
   "testimonials": {
     "hero_eyebrow": "Témoignages",
@@ -1343,7 +1332,7 @@
     "hero_lede_hascontent": "De vrais retours sur de vrais projets -- ni citations inventées, ni figurants.",
     "empty_h2": "Nous ne faisons que commencer.",
     "empty_desc": "Little Technical Solutions LLC est une toute nouvelle entreprise — ce qui signifie que nous n'avons pas encore une page pleine d'avis. Ce que nous avons, c'est une véritable discipline forgée dans la Marine, des tarifs fixes et honnêtes, et un fondateur qui répond lui-même au téléphone. Si vous travaillez avec nous, nous apprécierions sincèrement figurer parmi vos premiers avis.",
-    "empty_cta": "Démarrer un projet",
+    "empty_cta": "Demander un service",
     "verify_eyebrow": "Entre-temps",
     "verify_h2": "Voici ce que vous pouvez vérifier vous-même",
     "cred1_title": "Fondée par un vétéran",
@@ -1361,7 +1350,7 @@
     "hero_lede_hascontent": "De vrais projets réalisés pour de vrais clients -- voir les détails ci-dessous.",
     "empty_h2": "Nous sommes une nouvelle entreprise — la bibliothèque de projets est encore en croissance.",
     "empty_desc": "Little Technical Solutions LLC est assez nouvelle pour que nous n'ayons pas encore de bibliothèque de projets clients passés à montrer. Ce que vous pouvez consulter dès maintenant : ce site Web lui-même, construit et entretenu par nous, ainsi que la démonstration interactive avant/après sur notre <a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">page Services</a> illustrant notre approche de conception de sites Web. À mesure que de vrais projets clients seront lancés, ils seront ajoutés ici avec permission.",
-    "empty_cta": "Démarrer un projet",
+    "empty_cta": "Demander un service",
     "meantime_eyebrow": "Entre-temps",
     "meantime_h2": "Des réalisations à consulter dès aujourd'hui",
     "card1_title": "Ce site Web",

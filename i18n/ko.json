@@ -24,13 +24,14 @@
     "blog": "블로그",
     "booking": "예약",
     "payments": "결제",
-    "contact": "문의하기"
+    "contact": "문의하기",
+    "home": "홈"
   },
   "header": {
     "toggle_dark_mode": "다크 모드 전환",
     "search_site": "사이트 검색",
-    "my_account": "내 계정",
-    "get_quote": "견적 요청",
+    "my_account": "고객 로그인",
+    "get_quote": "서비스 신청",
     "toggle_menu": "메뉴 열기/닫기",
     "choose_language": "언어 선택"
   },
@@ -41,7 +42,7 @@
     "sitemap": "사이트맵",
     "privacy_policy": "개인정보 처리방침",
     "terms": "이용약관",
-    "patch_notes": "패치 노트",
+    "patch_notes": "웹사이트 업데이트",
     "cookie_notice": "쿠키 안내",
     "staff_signin": "직원 로그인",
     "facebook": "Facebook",
@@ -58,8 +59,8 @@
     "rotator_before": "우리는 진짜 작동하는",
     "rotator_after": "를 만듭니다.",
     "lede": "Little Technical Solutions LLC는 단축번호에 저장해 두고 싶은 진짜 기술자입니다 — 웹사이트, 컴퓨터 수리, 네트워킹, 사이버 보안까지 처음부터 제대로 처리합니다.",
-    "cta_quote": "무료 견적 받기",
-    "cta_services": "제공 서비스 보기",
+    "cta_quote": "서비스 신청",
+    "cta_services": "서비스 둘러보기",
     "stat1_label": "응답 시간",
     "stat1_value": "대부분 당일 응답",
     "stat2_label": "서비스 범위",
@@ -107,12 +108,12 @@
     "cred1_desc": "사격통제병, 6년 복무 — 그중 4년은 USS Antietam에서 전기 및 전자 시스템을 직접 정비",
     "cred2_title": "사이버 보안 기술 학사",
     "cred3_title": "이제 막 시작하는 단계입니다",
-    "cred3_desc": "신생 업체이기에 런칭 특가를 제공하며, 첫 리뷰를 남겨주실 고객님을 기다리고 있습니다 — <a href=\"testimonials.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">고객 후기</a>를 참고해 주세요.",
+    "cred3_desc": "신규 창업 및 오픈 기념 가격이지만, 해군에서 훈련받은 그 원칙과 모든 작업에 대한 동일하고 정직한 균일 요금은 변함없습니다.",
     "contact_eyebrow": "문의하기",
     "contact_h2": "무엇을 해결해야 할지 알려주세요.",
     "contact_p": "직접 연락하시거나, 프로젝트 양식을 작성해 주시면 전화 드리기 전에 전체적인 상황을 파악할 수 있습니다. 대부분 당일 영업일 내에 답변드립니다.",
     "contact_cta1": "문의하기",
-    "contact_cta2": "프로젝트 양식 작성하기"
+    "contact_cta2": "서비스 신청"
   },
   "about": {
     "hero_eyebrow": "회사 소개",
@@ -181,11 +182,11 @@
     "letter_h2": "저희에 대해 알아봐 주셔서 감사합니다.",
     "letter_body": "모든 고객님은 저를 믿고 맡겨주시며, 저는 그 책임을 무겁게 받아들입니다. 첫 사업을 시작하시는 분이든, 기존 웹사이트를 현대화하려는 분이든, 아니면 단순히 기술적인 도움을 줄 지역 전문가가 필요하신 분이든, 고객님의 신뢰를 얻고 함께 자랑스러워할 수 있는 결과물을 만들 수 있다면 큰 영광일 것입니다.",
     "letter_sign": "— Dylan Little, 창업자",
-    "new_business_note": "저희는 이제 막 시작한 신생 업체입니다 — 그것이 어떤 의미인지 <a href=\"testimonials.html\" style=\"color:inherit; text-decoration:underline; font-weight:600;\">고객 후기 페이지</a>에서 확인해 보시고, 첫 리뷰를 남겨주시는 것도 고려해 주세요.",
+    "new_business_note": "저희는 신생 기업입니다 — 즉, 다른 고객들 뒤에 줄 설 필요 없이 모든 작업에 직접적이고 개인적인 관심을 받으실 수 있다는 뜻입니다.",
     "cta_h2": "함께 시작해 볼까요?",
     "cta_p": "직접 연락하시거나 프로젝트 양식을 작성해 주세요 — 대부분 당일 영업일 내에 답변드립니다.",
     "cta_contact": "문의하기",
-    "cta_intake": "프로젝트 양식 작성하기"
+    "cta_intake": "서비스 신청"
   },
   "faq": {
     "eyebrow": "자주 묻는 질문",
@@ -284,7 +285,7 @@
     "showcase_handle_aria": "이전과 이후 웹사이트를 비교하려면 드래그하세요",
     "cta_h2": "어떤 서비스가 필요한지 잘 모르시겠나요?",
     "cta_p": "프로젝트 양식을 작성해 주시면 명확한 답변으로 안내해 드립니다.",
-    "cta_button": "맞춤 견적 받기"
+    "cta_button": "서비스 신청"
   },
   "contact": {
     "hero_eyebrow": "문의하기",
@@ -300,7 +301,7 @@
     "form_submit": "메시지 보내기",
     "cta_h3": "프로젝트를 시작할 준비가 되셨나요?",
     "cta_lede": "저희 프로젝트 양식은 작성하는 데 몇 분 밖에 걸리지 않으며, 필요한 서비스, 일정, 예산 등 정확한 정보를 알려주시면 여러 차례 질문을 주고받을 필요 없이 실질적인 답변을 바로 드릴 수 있습니다.",
-    "cta_button": "프로젝트 양식 작성하기",
+    "cta_button": "서비스 신청",
     "cta_note": "그냥 전화나 이메일이 더 편하신가요? 위의 연락처를 이용해 주세요 — 직접 대화로 안내해 드리겠습니다.",
     "missing_fields_intro": "다음 항목을 입력해 주세요:",
     "status_sending": "전송 중…",
@@ -406,7 +407,7 @@
     "brief_sms_placeholder": "어떤 경우에 문자를 보내야 하나요(예약 알림, 주문 업데이트 등)? 선호하는 SMS 제공업체가 있나요? 참고: 수신자는 반드시 명시적으로 동의해야 하며, 저희가 그 동의 절차 구성을 도와드립니다.",
     "price_ticker_label": "예상 견적",
     "price_ticker_note_default": "시작하려면 패키지를 선택해 주세요.",
-    "heroes_toggle_text": "저는 <a href=\"heroes-pricing.html\" target=\"_blank\" rel=\"noopener\">아메리칸 히어로즈 할인</a> 대상입니다 (일회성 작업 15% 할인)",
+    "heroes_toggle_text": "저는 <a href=\"heroes-pricing.html\" target=\"_blank\" rel=\"noopener\">아메리칸 히어로즈 할인</a>(일회성 작업 15% 할인) 대상 자격이 있음을 자체적으로 확인합니다 &mdash; 자격 여부는 최종 가격이 확정되기 전에 고객님과 직접 확인합니다",
     "browser_empty_text": "웹사이트를 제작하시는 대로 이곳에서 점점 완성되어 갑니다.",
     "quote_recap_label": "예상 견적",
     "quote_recap_note": "시작 가격입니다 -- 작업을 시작하기 전에 저희가 확정해 드립니다.",
@@ -434,7 +435,7 @@
     "packages_lede": "두 패키지 모두 맞춤형 디자인, 모바일 반응형 제작, 기본 SEO를 포함합니다. 차이는 범위입니다 — 페이지 수와 사이트가 자체적으로 수행하는 기능의 정도입니다.",
     "starter_name": "Starter",
     "starter_tagline": "깔끔하고 전문적인 사이트로, 고객이 찾아오고 연락하게 만듭니다.",
-    "starter_price_note": "다른 업체에서는 보통 $1,500–$3,000 — <a href=\"#compare-savings-table\" style=\"color:var(--accent-teal-text);\">저희와 비교해 보세요</a>.",
+    "starter_price_note": "정액 시작 가격이며, 작업을 시작하기 전에 고객님과 함께 확인합니다.",
     "starter_feature1": "최대 5페이지(홈, 회사 소개, 서비스, 문의 + 1페이지 추가)",
     "starter_feature2": "브랜드에 맞춘 맞춤형 디자인",
     "starter_feature3": "모든 기기에서 반응형으로 작동",
@@ -449,7 +450,7 @@
     "business_badge": "가장 강력한 기능",
     "business_name": "Business",
     "business_tagline": "리드 관리, 예약, 콘텐츠 운영까지 실제로 처리할 수 있는 완전한 사이트입니다.",
-    "business_price_note": "다른 업체에서는 보통 $3,000–$8,000 — <a href=\"#compare-savings-table\" style=\"color:var(--accent-teal-text);\">저희와 비교해 보세요</a>.",
+    "business_price_note": "정액 시작 가격이며, 작업을 시작하기 전에 고객님과 함께 확인합니다.",
     "business_feature1": "개별 서비스 페이지를 포함해 최대 10페이지",
     "business_feature2": "고급 문의/견적 요청 양식",
     "business_feature3": "예약/상담 일정 관리",
@@ -462,20 +463,8 @@
     "business_cta_design": "내 Business 사이트 디자인하기",
     "business_cta_pay": "Business 결제하기",
     "packages_note": "\n          <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 16v-4M12 8h.01\"/></svg>\n          원하는 기능을 직접 선택하고 예상 가격을 먼저 확인하고 싶으신가요? <a href=\"website-designer.html\" data-i18n=\"nav.website_designer\">웹사이트 디자이너</a>를 이용해 보세요. 어떤 패키지가 맞는지 잘 모르시겠나요? <a href=\"intake.html\">프로젝트 양식</a>을 작성해 주시면 적합한 패키지를 추천해 드립니다 — 과장된 제안보다는 정직한 추천을 드리겠습니다.\n        ",
-    "compare_h2": "타사와의 비교",
-    "compare_lede": "컴퓨터 수리, IT 지원, 웹 디자인 요금에 대한 2026년 독립 시장 조사에 따르면 유사한 서비스의 전국 평균 비용을 알 수 있습니다. 저희 시작 가격이 어떻게 비교되는지 확인해 보세요.",
-    "compare_th_service": "서비스",
-    "compare_th_market": "일반 시장 가격",
-    "compare_th_ourprice": "저희 시작 가격",
-    "compare_th_savings": "절감액",
-    "compare_row1": "컴퓨터 수리/문제 해결",
-    "compare_row2": "바이러스 및 악성코드 제거",
-    "compare_row3": "홈 Wi-Fi 설정",
-    "compare_row4": "지속적인 소상공인 IT 지원",
-    "compare_row5": "Starter 웹사이트(5페이지)",
-    "compare_row6": "Business 웹사이트(맞춤형)",
-    "compare_row7": "보안 상담",
-    "compare_disclaimer": "\n          \"일반 시장 가격\"은 컴퓨터 수리, 소상공인 IT 지원, 프리랜서 웹 디자인에 관해 발표된 2026년 업계 요금 조사(미국 전국 평균)를 바탕으로 합니다. 이는 일반적인 비교를 위해서만 제공되며 — 실제 경쟁업체의 요금은 업체, 지역, 작업 범위에 따라 다르므로 특정 경쟁업체의 요금을 보장할 수는 없습니다. 절감률은 해당 공개 범위의 최저치와 최고치를 기준으로 한 예시 추정치이며, 보장되거나 검증된 수치가 아닙니다. 최종 가격은 작업의 세부 사항에 따라 달라지며 작업 시작 전 항상 고객님과 확인합니다.\n        ",
+    "compare_h2": "간단하고 투명한 정액 요금",
+    "compare_lede": "시간당 요금으로 인한 예상치 못한 비용도, 모호한 견적도 없습니다. 위의 모든 가격은 해당 작업의 실제 시작 가격입니다 — 작업을 시작하기 전에 정확한 가격을 알려드리며, 작업 범위가 변경되지 않는 한 가격도 변하지 않습니다.",
     "web_block_title": "웹사이트 서비스",
     "web_block_count": "7개 서비스",
     "web_item1_name": "Starter 웹사이트 <small>(최대 5페이지)</small>",
@@ -552,7 +541,7 @@
     "vet_cta": "히어로즈 할인 보기",
     "cta_h2": "무엇이 필요한지 잘 모르시겠나요?",
     "cta_p": "프로젝트 양식을 작성해 주시면 고객님의 상황에 맞는 명확한 견적을 안내해 드립니다.",
-    "cta_button": "맞춤 견적 받기"
+    "cta_button": "서비스 신청"
   },
   "wd_dyn": {
     "included_title_starter": "Starter 패키지에 포함된 항목",
@@ -578,7 +567,7 @@
     "savings_part_heroes": "히어로즈 할인",
     "note_bundle_one_applied": "번들 할인 1건 적용됨",
     "note_bundle_many_applied": "번들 할인 {{count}}건 적용됨",
-    "note_heroes_applied": "히어로즈 할인 적용됨",
+    "note_heroes_applied": "히어로즈 할인 적용됨(확인 대기 중)",
     "note_starting_price": "시작 가격",
     "note_starting_price_with": "시작 가격 -- {{notes}}",
     "note_excludes_one": " -- 맞춤 견적 항목 1개 제외",
@@ -586,7 +575,7 @@
     "cost_row_base_starter": "Starter 기본 요금",
     "cost_row_base_business": "Business 기본 요금",
     "cost_row_bundle": "{{category}} 번들(10%)",
-    "cost_row_heroes": "아메리칸 히어로즈 할인(15%)",
+    "cost_row_heroes": "아메리칸 히어로즈 할인(15%, 확인 대기 중)",
     "cost_row_quote_divider": "맞춤 견적 부가 기능",
     "cost_row_quote": "견적",
     "badge_custom_quote": "(맞춤 견적)",
@@ -843,7 +832,7 @@
     "final_note": "결제는 Square를 통해 안전하게 처리됩니다. Little Technical Solutions LLC는 고객님의 카드 정보를 수집, 열람, 저장하지 않습니다. 환불 및 분쟁은 당사의 표준 서비스 약관에 따라 처리됩니다 — 은행이나 카드 발급사에 분쟁을 제기하시기 전에 청구 관련 문의 사항을 당사에 직접 알려주시면 바로잡아 드리겠습니다.",
     "cta_h2": "어떤 것이 필요한지 잘 모르시겠나요?",
     "cta_p": "프로젝트 양식을 작성하시어 원하시는 내용을 알려주세요 — 어떤 것이 적합한지 함께 찾아드리겠습니다.",
-    "cta_btn": "맞춤 견적 받기"
+    "cta_btn": "서비스 신청"
   },
   "intake": {
     "hero_eyebrow": "신규 고객 신청",
@@ -1024,7 +1013,7 @@
     "pricing_note": "<strong>일회성 서비스:</strong> 위에 표시된 표준 시작 가격에서 15% 할인.<br> <strong>정기 월간 서비스</strong>(지속적인 IT 지원, 웹사이트 유지 관리): 이러한 가격은 이미 시스템을 유지하는 실제 비용에 근접해 있음을 감안하여 5% 할인이 적용됩니다 — 이 플랜을 뒷받침하는 서버 및 인프라 비용은 할인 대상이 아닙니다.<br> <strong>부품 및 하드웨어</strong>(PC 조립 부품, 메시 Wi-Fi 장비 등)는 자격 여부와 관계없이 항상 마진이나 할인 없이 원가로 청구됩니다.<br> <strong>도메인 등록 및 비즈니스 이메일 설정</strong> 가격은 당사의 작업비만을 반영합니다 — 등록 대행사 수수료 및 Google/Microsoft 구독 비용은 당사를 거치지 않고 해당 업체에서 직접 청구됩니다.<br> 여기에 표시된 가격은 일반적인 작업 기준의 시작 가격입니다. 이 페이지에서는 결제를 받지 않습니다 — 자격을 확인한 후, 정확한 할인 총액을 확정해 드리고 <a href=\"payment.html\">결제 페이지</a>로 안내해 드리겠습니다.",
     "cta_h2": "시작할 준비가 되셨나요?",
     "cta_p": "프로젝트 양식을 작성하시고 해당되는 항목을 알려주세요 — 자격을 확인하고, 할인된 가격을 확정한 후, 결제를 위한 다음 단계를 안내해 드리겠습니다.",
-    "cta_button": "맞춤 견적 받기"
+    "cta_button": "서비스 신청"
   },
   "booking": {
     "hero_eyebrow": "예약",
@@ -1038,7 +1027,7 @@
     "type2_desc": "웹사이트 및 비즈니스 IT 프로젝트를 위한 통화로, 범위, 일정, 다음 단계를 확정하는 데 집중합니다.",
     "cta_h2": "예약할 준비가 되셨나요?",
     "cta_contact_desc": "<a href=\"tel:+16364260289\" style=\"color:var(--accent-teal); text-decoration:underline;\">636-426-0289</a>로 전화하시거나, <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal); text-decoration:underline;\">dylan@lit-solutions.tech</a>로 이메일을 보내시거나, 아래 프로젝트 양식을 이용해 주세요.",
-    "cta_intake": "프로젝트 양식 작성하기"
+    "cta_intake": "서비스 신청"
   },
   "service_website": {
     "breadcrumb_aria_label": "이동 경로",
@@ -1046,7 +1035,7 @@
     "breadcrumb_current": "웹사이트 서비스",
     "hero_h1": "웹사이트 서비스",
     "hero_lede": "빠르게 로드되고 실제로 전화 문의를 이끌어내는 맞춤형 웹사이트 — 전화를 직접 받는 바로 그 사람이 제작, 호스팅, 유지 관리까지 담당합니다.",
-    "hero_cta_quote": "견적 받기",
+    "hero_cta_quote": "웹사이트 견적 받기",
     "hero_cta_pricing": "요금 보기",
     "toc_aria_label": "이 페이지의 목차",
     "toc_whats_included": "포함 사항",
@@ -1097,7 +1086,7 @@
     "related_card3_title": "사이버 보안",
     "related_card4_title": "소상공인 IT",
     "cta_h2": "웹사이트 서비스를 시작할 준비가 되셨나요?",
-    "cta_button": "맞춤 견적 받기"
+    "cta_button": "웹사이트 견적 받기"
   },
   "service_computer": {
     "breadcrumb_home": "홈",
@@ -1106,7 +1095,7 @@
     "hero_eyebrow": "PC-02",
     "hero_h1": "컴퓨터 서비스",
     "hero_lede": "부팅되지 않는 기기부터 완전한 맞춤형 조립까지 — 추측으로 재청구하는 대신 처음부터 정확하게 진단해 드립니다.",
-    "hero_cta_quote": "견적 받기",
+    "hero_cta_quote": "서비스 신청",
     "hero_cta_pricing": "요금 보기",
     "toc_aria_label": "이 페이지의 목차",
     "toc_included": "포함 사항",
@@ -1151,7 +1140,7 @@
     "related_h2": "다른 서비스",
     "related_website_title": "웹사이트 서비스",
     "cta_h2": "컴퓨터 서비스를 시작할 준비가 되셨나요?",
-    "cta_button": "맞춤 견적 받기"
+    "cta_button": "서비스 신청"
   },
   "service_networking": {
     "breadcrumb_home": "홈",
@@ -1159,7 +1148,7 @@
     "hero_eyebrow": "NET-03",
     "hero_h1": "네트워킹",
     "hero_lede": "신호 사각지대, 끊기는 연결, 서로 인식하지 못하는 기기들 — 대부분 한두 가지 설정만 고치면 해결됩니다.",
-    "hero_cta_quote": "견적 받기",
+    "hero_cta_quote": "서비스 신청",
     "hero_cta_pricing": "요금 보기",
     "toc_whats_included": "포함 사항",
     "toc_full_list": "전체 서비스 목록",
@@ -1203,7 +1192,7 @@
     "related_card3_title": "사이버 보안",
     "related_card4_title": "소상공인 IT",
     "cta_h2": "네트워킹을 시작할 준비가 되셨나요?",
-    "cta_button": "맞춤 견적 받기"
+    "cta_button": "서비스 신청"
   },
   "service_cybersecurity": {
     "breadcrumb_home": "홈",
@@ -1211,7 +1200,7 @@
     "hero_eyebrow": "SEC-04",
     "hero_h1": "사이버 보안",
     "hero_lede": "대부분의 침해 사고는 취약한 비밀번호나 MFA 미설정에서 시작됩니다. 실제 공격의 대부분을 막아주는 기본 사항부터 확실히 다져드립니다.",
-    "hero_cta_quote": "견적 받기",
+    "hero_cta_quote": "서비스 신청",
     "hero_cta_pricing": "요금 보기",
     "toc_whats_included": "포함 사항",
     "toc_full_list": "전체 서비스 목록",
@@ -1254,14 +1243,14 @@
     "related_card3_title": "네트워킹",
     "related_card4_title": "소상공인 IT",
     "cta_h2": "사이버 보안을 시작할 준비가 되셨나요?",
-    "cta_button": "맞춤 견적 받기"
+    "cta_button": "서비스 신청"
   },
   "service_business_it": {
     "breadcrumb_home": "홈",
     "breadcrumb_current": "소상공인 IT",
     "hero_h1": "소상공인 IT",
     "hero_lede": "문제가 생길 때마다 다섯 개 업체를 상대하는 대신, 하나의 지속적인 IT 파트너와 함께하세요.",
-    "hero_cta_quote": "견적 받기",
+    "hero_cta_quote": "서비스 신청",
     "hero_cta_pricing": "요금 보기",
     "toc_whats_included": "포함 사항",
     "toc_full_list": "전체 서비스 목록",
@@ -1305,7 +1294,7 @@
     "related_card3_title": "네트워킹",
     "related_card4_title": "사이버 보안",
     "cta_h2": "소상공인 IT를 시작할 준비가 되셨나요?",
-    "cta_button": "맞춤 견적 받기"
+    "cta_button": "서비스 신청"
   },
   "service_area": {
     "hero_eyebrow": "서비스 지역",
@@ -1333,7 +1322,7 @@
     "growth_note": "Little Technical Solutions LLC가 성장함에 따라 이 페이지도 함께 확장될 예정입니다. 현재는 웹사이트, 수리, 네트워크, 보안 등 모든 작업을 하도급 업체가 아닌 Dylan이 직접 처리하고 있습니다.",
     "cta_h2": "함께 일할 준비가 되셨나요?",
     "cta_contact": "문의하기",
-    "cta_intake": "프로젝트 양식 작성하기"
+    "cta_intake": "서비스 신청"
   },
   "testimonials": {
     "hero_eyebrow": "고객 후기",
@@ -1343,7 +1332,7 @@
     "hero_lede_hascontent": "실제 프로젝트에 대한 진짜 후기입니다 -- 지어낸 인용문도, 대역도 없습니다.",
     "empty_h2": "이제 막 시작하는 단계입니다.",
     "empty_desc": "Little Technical Solutions LLC는 신생 업체이기에 아직 후기로 가득한 페이지가 없습니다. 저희가 가진 것은 진짜 해군에서 단련된 규율, 투명하고 정직한 요금, 그리고 직접 전화를 받는 창업자입니다. 저희와 함께 일해 보신다면, 첫 후기 중 하나를 남겨주시면 정말 감사하겠습니다.",
-    "empty_cta": "프로젝트 시작하기",
+    "empty_cta": "서비스 신청",
     "verify_eyebrow": "그동안",
     "verify_h2": "직접 확인하실 수 있는 사항들",
     "cred1_title": "재향군인이 운영",
@@ -1361,7 +1350,7 @@
     "hero_lede_hascontent": "실제 고객을 위해 진행한 실제 프로젝트입니다 -- 아래에서 자세히 확인하세요.",
     "empty_h2": "저희는 신생 업체이며, 프로젝트 라이브러리는 계속 늘어가고 있습니다.",
     "empty_desc": "Little Technical Solutions LLC는 아직 보여드릴 과거 고객 프로젝트 라이브러리가 없을 만큼 신생 업체입니다. 지금 확인하실 수 있는 것은 저희가 직접 제작하고 유지 관리하는 이 웹사이트 자체, 그리고 저희의 웹사이트 디자인 접근 방식을 보여주는 <a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">서비스 페이지</a>의 대화형 전후 비교 데모입니다. 실제 고객 프로젝트가 런칭되면 허락을 받아 이곳에 추가될 예정입니다.",
-    "empty_cta": "프로젝트 시작하기",
+    "empty_cta": "서비스 신청",
     "meantime_eyebrow": "그동안",
     "meantime_h2": "지금 확인하실 수 있는 작업물",
     "card1_title": "이 웹사이트",

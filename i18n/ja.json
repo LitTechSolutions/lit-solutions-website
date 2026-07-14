@@ -6,8 +6,8 @@
     "choose_language": "言語を選択",
     "toggle_dark_mode": "ダークモードの切り替え",
     "search_site": "サイト内検索",
-    "my_account": "マイアカウント",
-    "get_quote": "見積もりを依頼",
+    "my_account": "クライアントログイン",
+    "get_quote": "サービスを依頼する",
     "toggle_menu": "メニューの切り替え"
   },
   "nav": {
@@ -32,7 +32,8 @@
     "blog": "ブログ",
     "booking": "予約",
     "payments": "お支払い",
-    "contact": "お問い合わせ"
+    "contact": "お問い合わせ",
+    "home": "ホーム"
   },
   "home": {
     "eyebrow": "ご家庭・中小企業のお客様へ",
@@ -40,8 +41,8 @@
     "rotator_before": "本当に機能する",
     "rotator_after": "を作ります。",
     "lede": "Little Technical Solutions LLCは、いざという時に本当に頼れる技術者です — ウェブサイト、パソコン修理、ネットワーク、サイバーセキュリティを、最初からきちんと仕上げます。",
-    "cta_quote": "無料見積もりを依頼",
-    "cta_services": "対応内容を見る",
+    "cta_quote": "サービスを依頼する",
+    "cta_services": "サービスを見る",
     "stat1_label": "対応スピード",
     "stat1_value": "多くの場合、即日対応",
     "stat2_label": "対応エリア",
@@ -89,12 +90,12 @@
     "cred1_desc": "ファイア・コントロールマンとして6年間従事 — うち4年間はUSS Antietam艦上で電気・電子システムの保守整備に実務として携わる",
     "cred2_title": "サイバーセキュリティ工学 学士号",
     "cred3_title": "私たちはまだスタートしたばかりです",
-    "cred3_desc": "新しく始まったばかりの会社として、ローンチ特別価格をご用意し、最初のレビューを書いていただける方を歓迎しています — <a href=\"testimonials.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">お客様の声</a>をご覧ください。",
+    "cred3_desc": "新規開業ならではの特別価格でありながら、海軍仕込みの規律と、どの案件にも変わらぬ明瞭・誠実な均一料金をお約束します。",
     "contact_eyebrow": "お問い合わせ",
     "contact_h2": "直したいことをお聞かせください。",
     "contact_p": "直接ご連絡いただくか、プロジェクトフォームにご記入ください。お電話する前に全体像を把握できます。通常、同じ営業日中にご返信します。",
     "contact_cta1": "お問い合わせ",
-    "contact_cta2": "プロジェクトフォームに記入する"
+    "contact_cta2": "サービスを依頼する"
   },
   "footer": {
     "tagline": "ウェブサイト、パソコン、ネットワーク、セキュリティ — お電話一本ですべて対応します。",
@@ -103,7 +104,7 @@
     "sitemap": "サイトマップ",
     "privacy_policy": "プライバシーポリシー",
     "terms": "利用規約",
-    "patch_notes": "更新履歴",
+    "patch_notes": "サイト更新情報",
     "cookie_notice": "クッキーに関するお知らせ",
     "facebook": "Facebook",
     "find_google": "Googleで検索",
@@ -181,11 +182,11 @@
     "letter_h2": "私たちのことを知る時間を作っていただき、ありがとうございます。",
     "letter_body": "すべてのお客様が私を信頼してくださっていることを、私は真剣に受け止めています。初めての事業を立ち上げる方も、既存のウェブサイトを刷新したい方も、技術面で頼れる地元の誰かを必要としている方も、皆様のお役に立ち、お互いに誇れるものを一緒に作り上げることができれば光栄です。",
     "letter_sign": "— Dylan Little(創業者)",
-    "new_business_note": "私たちはできたばかりの会社です — それがどういうことかは<a href=\"testimonials.html\" style=\"color:inherit; text-decoration:underline; font-weight:600;\">お客様の声ページ</a>をご覧ください。ぜひ最初のレビューを書いてくださる方になっていただければと思います。",
+    "new_business_note": "私たちは創業したばかりの会社です——つまり、他のお客様の順番待ちをすることなく、どの案件にも直接かつ丁寧な対応をお約束できるということです。",
     "cta_h2": "一緒にお仕事を始めませんか?",
     "cta_p": "直接ご連絡いただくか、プロジェクトフォームにご記入ください — 通常、同じ営業日中にご返信します。",
     "cta_contact": "お問い合わせ",
-    "cta_intake": "プロジェクトフォームに記入する"
+    "cta_intake": "サービスを依頼する"
   },
   "faq": {
     "eyebrow": "よくある質問",
@@ -284,7 +285,7 @@
     "showcase_handle_aria": "ドラッグしてウェブサイトのビフォーアフターを比較",
     "cta_h2": "どのサービスが必要かわからない場合は?",
     "cta_p": "プロジェクトフォームにご記入いただければ、分かりやすい回答をお送りします。",
-    "cta_button": "カスタム見積もりを依頼"
+    "cta_button": "サービスを依頼する"
   },
   "contact": {
     "hero_eyebrow": "お問い合わせ",
@@ -300,7 +301,7 @@
     "form_submit": "メッセージを送信",
     "cta_h3": "プロジェクトを始める準備はできましたか?",
     "cta_lede": "プロジェクトフォームは数分で完了します — 必要なサービス、スケジュール、ご予算など、必要な情報を正確にお伝えいただけます — やり取りを何度も重ねることなく、具体的な回答をお送りできます。",
-    "cta_button": "プロジェクトフォームに記入する",
+    "cta_button": "サービスを依頼する",
     "cta_note": "お電話やメールの方がよろしければ、上記の連絡先をご利用ください — 直接お話しさせていただくのも大歓迎です。",
     "missing_fields_intro": "以下の項目をご入力ください：",
     "status_sending": "送信中…",
@@ -406,7 +407,7 @@
     "brief_sms_placeholder": "どのタイミングでテキストメッセージを送信しますか?(例:予約リマインダー、注文状況の更新など) ご希望のSMSプロバイダーはありますか? ご注意:受信者による明示的な同意(オプトイン)が必要です -- その同意フローの構築もサポートします。",
     "price_ticker_label": "概算お見積り",
     "price_ticker_note_default": "開始するにはパッケージをお選びください",
-    "heroes_toggle_text": "<a href=\"heroes-pricing.html\" target=\"_blank\" rel=\"noopener\">アメリカン・ヒーローズ割引</a>の対象です(単発の作業が15%オフ)",
+    "heroes_toggle_text": "<a href=\"heroes-pricing.html\" target=\"_blank\" rel=\"noopener\">アメリカン・ヒーローズ割引</a>(単発作業が15%オフ)の対象資格があることを自己申告します &mdash; 資格の確認は、最終価格が決定する前にお客様と直接行います",
     "browser_empty_text": "ここに、ウェブサイトが少しずつ出来上がっていきます。",
     "quote_recap_label": "お見積もり",
     "quote_recap_note": "開始価格です -- 作業を開始する前に、必ず私たちが確認いたします。",
@@ -434,7 +435,7 @@
     "packages_lede": "どちらのパッケージにも、オーダーメイドデザイン、モバイル対応制作、基本的なSEOが含まれています。違いは規模です — ページ数と、サイト自体がどこまでの機能を持つかという点です。",
     "starter_name": "Starter",
     "starter_tagline": "見つけてもらいやすく、問い合わせにつながる、洗練されたプロフェッショナルなサイト。",
-    "starter_price_note": "他社では通常$1,500–$3,000ほど — <a href=\"#compare-savings-table\" style=\"color:var(--accent-teal-text);\">料金比較</a>をご覧ください。",
+    "starter_price_note": "均一の開始価格を、作業開始前にお客様とご確認いたします。",
     "starter_feature1": "最大5ページ(ホーム、会社概要、サービス、お問い合わせ + もう1ページ)",
     "starter_feature2": "ブランドに合わせたオーダーメイドデザイン",
     "starter_feature3": "あらゆるデバイスに対応するモバイルレスポンシブ設計",
@@ -449,7 +450,7 @@
     "business_badge": "最も高機能",
     "business_name": "Business",
     "business_tagline": "見込み客対応、予約、コンテンツ管理まで実際に運用できる、フル機能のサイト。",
-    "business_price_note": "他社では通常$3,000–$8,000ほど — <a href=\"#compare-savings-table\" style=\"color:var(--accent-teal-text);\">料金比較</a>をご覧ください。",
+    "business_price_note": "均一の開始価格を、作業開始前にお客様とご確認いたします。",
     "business_feature1": "最大10ページ(サービスごとの個別ページを含む)",
     "business_feature2": "高度なお問い合わせ・見積もり依頼フォーム",
     "business_feature3": "予約・相談スケジュール管理",
@@ -462,20 +463,8 @@
     "business_cta_design": "Businessサイトをデザインする",
     "business_cta_pay": "Businessの料金を支払う",
     "packages_note": "\n          <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 16v-4M12 8h.01\"/></svg>\n          ご希望の機能を選んでまず開始価格を確認したいですか?<a href=\"website-designer.html\" data-i18n=\"nav.website_designer\">ウェブサイトデザイナー</a>をお試しください。どのパッケージが合うか分からない場合は、<a href=\"intake.html\">プロジェクトフォーム</a>にご記入いただければ、最適なものをご提案します — 過剰な売り込みより、控えめなご提案を大切にしています。\n        ",
-    "compare_h2": "他社との比較",
-    "compare_lede": "パソコン修理、ITサポート、ウェブデザインの料金に関する独立系の2026年市場調査により、同様のサービスの全国的な相場が分かっています。私たちの開始価格が実際にどう比較されるかをご紹介します。",
-    "compare_th_service": "サービス",
-    "compare_th_market": "一般的な市場相場",
-    "compare_th_ourprice": "当社の開始価格",
-    "compare_th_savings": "お客様の節約額",
-    "compare_row1": "パソコン修理・トラブル対応",
-    "compare_row2": "ウイルス・マルウェアの駆除",
-    "compare_row3": "自宅Wi-Fiの設定",
-    "compare_row4": "中小企業向け継続ITサポート",
-    "compare_row5": "Starterウェブサイト(5ページ)",
-    "compare_row6": "Businessウェブサイト(カスタム)",
-    "compare_row7": "セキュリティ相談",
-    "compare_disclaimer": "\n          「一般的な市場相場」の数値は、パソコン修理、中小企業向けITサポート、フリーランスのウェブデザインに関する2026年発表の業界価格調査(米国全国平均)から引用しています。これらはあくまで一般的な比較のために提供するものであり — 実際の競合他社の価格は、業者、地域、作業範囲によって異なり、特定の競合他社の料金を保証するものではありません。節約率は、公表されている価格帯の上限・下限に基づく参考値であり、保証または監査された数値ではありません。最終的な価格はお客様の作業内容の詳細によって決まり、作業開始前に必ずご確認いただきます。\n        ",
+    "compare_h2": "シンプルで分かりやすい均一料金",
+    "compare_lede": "時間制料金による予想外の出費や、あいまいな見積もりは一切ありません。上記の各価格は、その作業における実際の出発点となる金額です——作業を始める前に料金が分かり、対応範囲が変わらない限り価格が変動することもありません。",
     "web_block_title": "ウェブサイトサービス",
     "web_block_count": "7つのサービス",
     "web_item1_name": "Starterウェブサイト<small>(最大5ページ)</small>",
@@ -552,7 +541,7 @@
     "vet_cta": "ヒーローズ割引を見る",
     "cta_h2": "何が必要か分からない場合は?",
     "cta_p": "プロジェクトフォームにご記入いただければ、お客様の状況に合わせた分かりやすい見積もりをご案内します。",
-    "cta_button": "カスタム見積もりを依頼"
+    "cta_button": "サービスを依頼する"
   },
   "wd_dyn": {
     "included_title_starter": "Starterパッケージに含まれるもの",
@@ -578,7 +567,7 @@
     "savings_part_heroes": "ヒーローズ割引",
     "note_bundle_one_applied": "バンドル割引1件を適用しました",
     "note_bundle_many_applied": "バンドル割引{{count}}件を適用しました",
-    "note_heroes_applied": "ヒーローズ割引を適用しました",
+    "note_heroes_applied": "ヒーローズ割引適用済み(確認待ち)",
     "note_starting_price": "開始価格",
     "note_starting_price_with": "開始価格 -- {{notes}}",
     "note_excludes_one": " -- 個別見積もり対象の項目を1件除く",
@@ -586,7 +575,7 @@
     "cost_row_base_starter": "Starterベース料金",
     "cost_row_base_business": "Businessベース料金",
     "cost_row_bundle": "{{category}}バンドル(10%)",
-    "cost_row_heroes": "アメリカン・ヒーローズ割引(15%)",
+    "cost_row_heroes": "アメリカン・ヒーローズ割引(15%、確認待ち)",
     "cost_row_quote_divider": "個別見積もりのアドオン",
     "cost_row_quote": "見積もり",
     "badge_custom_quote": "(個別見積もり)",
@@ -843,7 +832,7 @@
     "final_note": "お支払いはSquareにより安全に処理されます。Little Technical Solutions LLCがお客様のカード情報を収集、閲覧、保存することはありません。返金および異議申し立ては、当社の標準サービス規約に従って対応いたします — 銀行またはカード発行会社への異議申し立てを行う前に、お支払いに関するご質問がございましたら直接当社までご連絡ください。適切に対応させていただきます。",
     "cta_h2": "どちらが必要かわからない場合は?",
     "cta_p": "プロジェクトフォームにご記入いただき、ご希望のイメージをお聞かせください — 最適なプランを一緒に考えます。",
-    "cta_btn": "カスタム見積もりを依頼"
+    "cta_btn": "サービスを依頼する"
   },
   "intake": {
     "hero_eyebrow": "新規お客様インテーク",
@@ -1024,7 +1013,7 @@
     "pricing_note": "<strong>単発サービス:</strong>上記の通常開始価格から15%割引となります。<br> <strong>継続月額サービス</strong>(継続的なITサポート、ウェブサイトメンテナンス):5%割引です。これは、これらの価格が既にシステムを稼働させ続けるための実費に近い水準となっており — これらのプランを支えるサーバー・インフラ費用が割引対象外であることを反映したものです。<br> <strong>部品・ハードウェア</strong>(PC組み立て部品、メッシュWi-Fi機器など)は、資格の有無にかかわらず、常にマークアップなし・割引なしの実費でご請求します。<br> <strong>ドメイン登録・ビジネスメール設定</strong>の価格は当社の作業費用のみを反映しており、レジストラ手数料やGoogle/Microsoftのサブスクリプション費用は、当社を通さずそれらの提供元から直接お客様にご請求されます。<br> ここに表示されている価格は、一般的な作業における開始価格の目安です。このページではお支払いを承っておりません — 資格を確認後、正確な割引後の合計金額をご案内し、<a href=\"payment.html\">お支払いページ</a>にご案内してお支払いいただきます。",
     "cta_h2": "始める準備はできましたか?",
     "cta_p": "プロジェクトフォームにご記入いただき、該当するカテゴリーをお知らせください — 資格を確認し、割引後の価格をご案内したうえで、お支払いの次のステップについてご連絡いたします。",
-    "cta_button": "カスタム見積もりを依頼"
+    "cta_button": "サービスを依頼する"
   },
   "booking": {
     "hero_eyebrow": "予約",
@@ -1038,7 +1027,7 @@
     "type2_desc": "ウェブサイトや中小企業向けITのプロジェクト向け — 作業範囲、スケジュール、次のステップを固めるための集中的なお打ち合わせです。",
     "cta_h2": "ご予約の準備はできましたか?",
     "cta_contact_desc": "<a href=\"tel:+16364260289\" style=\"color:var(--accent-teal); text-decoration:underline;\">636-426-0289</a>までお電話いただくか、<a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal); text-decoration:underline;\">dylan@lit-solutions.tech</a>までメールをお送りいただくか、下記のプロジェクトフォームをご利用ください。",
-    "cta_intake": "プロジェクトフォームに記入する"
+    "cta_intake": "サービスを依頼する"
   },
   "service_website": {
     "breadcrumb_aria_label": "パンくずリスト",
@@ -1046,7 +1035,7 @@
     "breadcrumb_current": "ウェブサイトサービス",
     "hero_h1": "ウェブサイトサービス",
     "hero_lede": "読み込みが速く、実際に問い合わせにつながるオーダーメイドのウェブサイトを、お電話に出る本人が制作・ホスティング・メンテナンスまで一貫して担当します。",
-    "hero_cta_quote": "見積もりを依頼",
+    "hero_cta_quote": "ウェブサイトの見積もりを取得",
     "hero_cta_pricing": "料金を見る",
     "toc_aria_label": "このページの内容",
     "toc_whats_included": "含まれる内容",
@@ -1097,7 +1086,7 @@
     "related_card3_title": "サイバーセキュリティ",
     "related_card4_title": "中小企業向けIT",
     "cta_h2": "ウェブサイトサービスを始める準備はできましたか?",
-    "cta_button": "カスタム見積もりを依頼"
+    "cta_button": "ウェブサイトの見積もりを取得"
   },
   "service_computer": {
     "breadcrumb_home": "ホーム",
@@ -1106,7 +1095,7 @@
     "hero_eyebrow": "PC-02",
     "hero_h1": "パソコンサービス",
     "hero_lede": "起動しないパソコンから、フルカスタムの組み立てまで — 当て推量で何度も課金するのではなく、最初からきちんと診断します。",
-    "hero_cta_quote": "見積もりを依頼",
+    "hero_cta_quote": "サービスを依頼する",
     "hero_cta_pricing": "料金を見る",
     "toc_aria_label": "このページの内容",
     "toc_included": "含まれる内容",
@@ -1151,7 +1140,7 @@
     "related_h2": "その他のサービス",
     "related_website_title": "ウェブサイトサービス",
     "cta_h2": "パソコンサービスを始める準備はできましたか?",
-    "cta_button": "カスタム見積もりを依頼"
+    "cta_button": "サービスを依頼する"
   },
   "service_networking": {
     "breadcrumb_home": "ホーム",
@@ -1159,7 +1148,7 @@
     "hero_eyebrow": "NET-03",
     "hero_h1": "ネットワーク",
     "hero_lede": "電波の届かないエリア、接続の切断、機器同士が通信できないといった問題の多くは、修正可能な1つか2つの設定が原因です。",
-    "hero_cta_quote": "見積もりを依頼",
+    "hero_cta_quote": "サービスを依頼する",
     "hero_cta_pricing": "料金を見る",
     "toc_whats_included": "含まれる内容",
     "toc_full_list": "サービス一覧",
@@ -1203,7 +1192,7 @@
     "related_card3_title": "サイバーセキュリティ",
     "related_card4_title": "中小企業向けIT",
     "cta_h2": "ネットワークを始める準備はできましたか?",
-    "cta_button": "カスタム見積もりを依頼"
+    "cta_button": "サービスを依頼する"
   },
   "service_cybersecurity": {
     "breadcrumb_home": "ホーム",
@@ -1211,7 +1200,7 @@
     "hero_eyebrow": "SEC-04",
     "hero_h1": "サイバーセキュリティ",
     "hero_lede": "情報漏洩の多くは、弱いパスワードやMFA未設定から始まります。私たちは、実際に発生する攻撃の大部分を防ぐ基本対策をしっかり固めます。",
-    "hero_cta_quote": "見積もりを依頼",
+    "hero_cta_quote": "サービスを依頼する",
     "hero_cta_pricing": "料金を見る",
     "toc_whats_included": "含まれる内容",
     "toc_full_list": "サービス一覧",
@@ -1254,14 +1243,14 @@
     "related_card3_title": "ネットワーク",
     "related_card4_title": "中小企業向けIT",
     "cta_h2": "サイバーセキュリティを始める準備はできましたか?",
-    "cta_button": "カスタム見積もりを依頼"
+    "cta_button": "サービスを依頼する"
   },
   "service_business_it": {
     "breadcrumb_home": "ホーム",
     "breadcrumb_current": "中小企業向けIT",
     "hero_h1": "中小企業向けIT",
     "hero_lede": "何かトラブルが起きるたびに5社もの業者をやりくりするのではなく、継続的な一つのIT関係で対応します。",
-    "hero_cta_quote": "見積もりを依頼",
+    "hero_cta_quote": "サービスを依頼する",
     "hero_cta_pricing": "料金を見る",
     "toc_whats_included": "含まれる内容",
     "toc_full_list": "サービス一覧",
@@ -1305,7 +1294,7 @@
     "related_card3_title": "ネットワーク",
     "related_card4_title": "サイバーセキュリティ",
     "cta_h2": "中小企業向けITを始める準備はできましたか?",
-    "cta_button": "カスタム見積もりを依頼"
+    "cta_button": "サービスを依頼する"
   },
   "service_area": {
     "hero_eyebrow": "対応エリア",
@@ -1333,7 +1322,7 @@
     "growth_note": "Little Technical Solutions LLCの成長に合わせて、このページも充実させていきます。現在は、ウェブサイト、修理、ネットワーク、セキュリティなど、すべての作業を下請け業者に任せることなく、Dylanが直接担当しています。",
     "cta_h2": "一緒にお仕事を始めませんか?",
     "cta_contact": "お問い合わせ",
-    "cta_intake": "プロジェクトフォームに記入する"
+    "cta_intake": "サービスを依頼する"
   },
   "testimonials": {
     "hero_eyebrow": "お客様の声",
@@ -1343,7 +1332,7 @@
     "hero_lede_hascontent": "実際のプロジェクトに寄せられた、本物の声です——作り物の引用も、代役もありません。",
     "empty_h2": "私たちはまだスタートしたばかりです。",
     "empty_desc": "Little Technical Solutions LLCは創業したばかりの会社であり、まだレビューがずらりと並んだページはありません。しかし、海軍で培った本物の規律、明確で正直な料金設定、そしてご自身で電話に応対する創業者がいます。もし私たちと一緒にお仕事をしていただけたなら、最初のレビューを書いていただけると心から嬉しく思います。",
-    "empty_cta": "プロジェクトを開始する",
+    "empty_cta": "サービスを依頼する",
     "verify_eyebrow": "それまでの間",
     "verify_h2": "ご自身で確認いただける情報",
     "cred1_title": "退役軍人が経営",
@@ -1361,7 +1350,7 @@
     "hero_lede_hascontent": "実在するお客様のために手がけた、本物のプロジェクトです——詳細は下記をご覧ください。",
     "empty_h2": "私たちは新しい会社であり、実績ライブラリはまだ成長中です。",
     "empty_desc": "Little Technical Solutions LLCはまだ新しい会社のため、これまでのクライアント案件をまとめたライブラリはまだございません。現時点でご覧いただけるのは、私たち自身が制作・運用しているこのウェブサイト自体と、<a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">サービスページ</a>にあるインタラクティブなビフォー・アフターのデモです。実際のクライアント案件が公開され次第、許可をいただいたうえでこちらに追加していきます。",
-    "empty_cta": "プロジェクトを開始する",
+    "empty_cta": "サービスを依頼する",
     "meantime_eyebrow": "それまでの間",
     "meantime_h2": "今すぐご覧いただける実績",
     "card1_title": "このウェブサイト",

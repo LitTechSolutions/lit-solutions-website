@@ -6,8 +6,8 @@
     "choose_language": "Chwazi lang",
     "toggle_dark_mode": "Chanje mòd fonse",
     "search_site": "Chèche sou sit sa a",
-    "my_account": "Kont Mwen",
-    "get_quote": "Mande yon devi",
+    "my_account": "Login Kliyan",
+    "get_quote": "Mande Sèvis",
     "toggle_menu": "Ouvri/fèmen meni"
   },
   "nav": {
@@ -32,7 +32,8 @@
     "blog": "Blog",
     "booking": "Rezèvasyon",
     "payments": "Peman",
-    "contact": "Kontak"
+    "contact": "Kontak",
+    "home": "Akèy"
   },
   "home": {
     "eyebrow": "Nou sèvi kay ak ti biznis",
@@ -40,8 +41,8 @@
     "rotator_before": "Nou konstwi",
     "rotator_after": "ki reyèlman fonksyone.",
     "lede": "Little Technical Solutions LLC se teknisyen w ap toujou gen nan telefòn ou — sit wèb, reparasyon òdinatè, rezo, ak sekirite sibènetik, fèt byen depi premye fwa a.",
-    "cta_quote": "Mande yon devi gratis",
-    "cta_services": "Gade sa nou fè",
+    "cta_quote": "Mande Sèvis",
+    "cta_services": "Dekouvri Sèvis Nou Yo",
     "stat1_label": "Tan repons",
     "stat1_value": "Menm jou a, pou pifò apèl",
     "stat2_label": "Distans sèvis",
@@ -89,12 +90,12 @@
     "cred1_desc": "Fire Controlman, 6 ane — ki gen ladan 4 ane antretyen pratik sistèm elektrik ak elektwonik abò USS Antietam",
     "cred2_title": "Bakaloreya nan Teknoloji Sekirite Sibènetik",
     "cred3_title": "Nou fèk kòmanse",
-    "cred3_desc": "Nouvo biznis, pri lansman, ak yon envitasyon ouvri pou w vin youn nan premye kritik nou yo — gade <a href=\"testimonials.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">temwayaj</a>.",
+    "cred3_desc": "Pri espesyal pou nouvo biznis ak lansman, ak menm disiplin mwen aprann nan Marin Ameriken an ansanm ak yon pri fiks ak onèt pou chak travay.",
     "contact_eyebrow": "Kontakte nou",
     "contact_h2": "Di nou sa ki bezwen repare.",
     "contact_p": "Kontakte nou dirèkteman, oswa ranpli fòm pwojè nou an pou nou ka gen yon foto konplè anvan nou rele w. Nou jeneralman reponn menm jou travay la.",
     "contact_cta1": "Kontakte Nou",
-    "contact_cta2": "Ranpli Fòm Pwojè a"
+    "contact_cta2": "Mande Sèvis"
   },
   "footer": {
     "tagline": "Sit wèb, òdinatè, rezo, ak sekirite — jere ak yon sèl apèl.",
@@ -103,7 +104,7 @@
     "sitemap": "Plan Sit",
     "privacy_policy": "Politik Konfidansyalite",
     "terms": "Kondisyon ak Modalite",
-    "patch_notes": "Nòt Mizajou",
+    "patch_notes": "Mizajou Sit Entènèt la",
     "cookie_notice": "Avi sou Cookie",
     "facebook": "Facebook",
     "find_google": "Jwenn nou sou Google",
@@ -181,11 +182,11 @@
     "letter_h2": "Mèsi paske ou pran tan pou konnen plis sou nou.",
     "letter_body": "Chak kliyan mete konfyans yo nan mwen, e mwen pran responsabilite sa a oserye. Kit w ap lanse premye biznis ou, w ap modènize yon sit wèb ki deja egziste, oswa ou senpleman bezwen yon moun lokal pou ede w ak teknoloji, m ta onore pou m merite biznis ou epi konstwi yon bagay nou toude ka fyè de li.",
     "letter_sign": "— Dylan Little, Fondatè",
-    "new_business_note": "Nou se yon biznis toutfrèchman kreye — gade <a href=\"testimonials.html\" style=\"color:inherit; text-decoration:underline; font-weight:600;\">paj temwayaj</a> nou an pou konprann sa sa vle di, epi konsidere vin youn nan premye kritik nou yo.",
+    "new_business_note": "Nou se yon biznis tou nèf — sa vle di w ap jwenn atansyon dirèk e pèsonèl pou chak travay, san w pa gen lòt kliyan k ap tann devan w.",
     "cta_h2": "Ou pare pou nou travay ansanm?",
     "cta_p": "Kontakte nou dirèkteman oswa ranpli fòm pwojè nou an — nou jeneralman reponn menm jou travay la.",
     "cta_contact": "Kontakte Nou",
-    "cta_intake": "Ranpli Fòm Pwojè a"
+    "cta_intake": "Mande Sèvis"
   },
   "faq": {
     "eyebrow": "FAQ",
@@ -284,7 +285,7 @@
     "showcase_handle_aria": "Glise pou konpare sit wèb anvan ak apre",
     "cta_h2": "Ou pa sèten ki sèvis ou bezwen?",
     "cta_p": "Ranpli fòm pwojè nou an epi n ap swiv ak yon repons klè.",
-    "cta_button": "Mande yon Devi Pèsonalize"
+    "cta_button": "Mande Sèvis"
   },
   "contact": {
     "hero_eyebrow": "Kontakte nou",
@@ -300,7 +301,7 @@
     "form_submit": "Voye mesaj",
     "cta_h3": "Ou pare pou kòmanse yon pwojè?",
     "cta_lede": "Fòm pwojè nou an pran kèk minit e li di nou egzakteman sa ou bezwen — sèvis, delè, bidjè, e plis ankò — konsa nou ka swiv ak yon repons reyèl olye yon seri kesyon vini-ale.",
-    "cta_button": "Ranpli Fòm Pwojè a",
+    "cta_button": "Mande Sèvis",
     "cta_note": "Ou pito jis rele oswa voye imèl? Itilize detay ki anwo yo — n ap kontan pale avè w dirèkteman.",
     "missing_fields_intro": "Tanpri ranpli enfòmasyon sa yo:",
     "status_sending": "Ap voye…",
@@ -406,7 +407,7 @@
     "brief_sms_placeholder": "Kisa ki ta dwe deklanche yon tèks (rapèl randevou, mizajou kòmand, elatriye)? Ki founisè SMS ou pi pito? Nòt: moun k ap resevwa yo dwe aksepte klèman -- n ap ede konstwi pwosesis konsantman sa a.",
     "price_ticker_label": "Estimasyon ou",
     "price_ticker_note_default": "Chwazi yon pakè pou kòmanse",
-    "heroes_toggle_text": "Mwen kalifye pou <a href=\"heroes-pricing.html\" target=\"_blank\" rel=\"noopener\">Rabè pou Ewo Ameriken</a> an (15% rabè sou sèvis inik)",
+    "heroes_toggle_text": "Mwen deklare mwen kalifye pou <a href=\"heroes-pricing.html\" target=\"_blank\" rel=\"noopener\">Rabè pou Ewo Ameriken yo</a> (15% rabè sou travay yon sèl fwa) &mdash; nou konfime kalifikasyon an dirèkteman avèk ou anvan pri final la fikse",
     "browser_empty_text": "Sit wèb ou a ap grandi isit la pandan w ap konstwi l.",
     "quote_recap_label": "Estimasyon ou",
     "quote_recap_note": "Pri kòmansman -- konfime pa nou anvan nenpòt travay kòmanse.",
@@ -434,7 +435,7 @@
     "packages_lede": "Toude pakè yo enkli yon konsepsyon pèsonalize, konstriksyon ki adapte ak mobil, ak SEO debaz. Diferans lan se anvèjidè — konbyen paj, e konbyen sit la fè poukont li.",
     "starter_name": "Starter",
     "starter_tagline": "Yon sit klè, pwofesyonèl ki fè moun jwenn ou e kontakte w.",
-    "starter_price_note": "Anjeneral $1,500–$3,000 lòt kote — gade <a href=\"#compare-savings-table\" style=\"color:var(--accent-teal-text);\">kijan nou konpare</a>.",
+    "starter_price_note": "Yon pri depa fiks, konfime avèk ou anvan nenpòt travay kòmanse.",
     "starter_feature1": "Jiska 5 paj (Akèy, Apwopo, Sèvis, Kontak + 1 lòt)",
     "starter_feature2": "Konsepsyon pèsonalize ki matche ak mak ou",
     "starter_feature3": "Adapte ak mobil sou tout aparèy",
@@ -449,7 +450,7 @@
     "business_badge": "Plis kapasite",
     "business_name": "Business",
     "business_tagline": "Yon sit konplè ak zouti pou jere kliyan potansyèl, rezèvasyon, ak kontni ladan l.",
-    "business_price_note": "Anjeneral $3,000–$8,000 lòt kote — gade <a href=\"#compare-savings-table\" style=\"color:var(--accent-teal-text);\">kijan nou konpare</a>.",
+    "business_price_note": "Yon pri depa fiks, konfime avèk ou anvan nenpòt travay kòmanse.",
     "business_feature1": "Jiska 10 paj, ki gen ladan paj sèvis endividyèl",
     "business_feature2": "Fòm kontak / demann devi avanse",
     "business_feature3": "Rezèvasyon / pwogramasyon konsiltasyon",
@@ -462,20 +463,8 @@
     "business_cta_design": "Konsevwa sit Business mwen",
     "business_cta_pay": "Peye pou Business",
     "packages_note": "\n          <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 16v-4M12 8h.01\"/></svg>\n          Ou vle chwazi egzakteman karakteristik ou yo epi wè yon pri kòmansman anvan? Eseye <a href=\"website-designer.html\" data-i18n=\"nav.website_designer\">Desiyatè Sit Wèb</a> nou an. Ou pa sèten ditou ki pakè ki bon pou ou? Ranpli <a href=\"intake.html\">fòm pwojè</a> nou an epi n ap rekòmande bon an pou ou — nou pito soudi pase nou twò vann.\n        ",
-    "compare_h2": "Kijan nou konpare",
-    "compare_lede": "Rechèch mache endepandan an 2026 sou pri reparasyon òdinatè, sipò enfòmatik, ak konsepsyon sit wèb montre konbyen sèvis similè yo koute anjeneral nan tout peyi a. Men kijan pri kòmansman nou yo konpare.",
-    "compare_th_service": "Sèvis",
-    "compare_th_market": "Pri Mache Abityèl",
-    "compare_th_ourprice": "Pri Kòmansman Nou",
-    "compare_th_savings": "Ou Ekonomize",
-    "compare_row1": "Reparasyon òdinatè / rezoud pwoblèm",
-    "compare_row2": "Retire viris ak lojisyèl malveyan",
-    "compare_row3": "Enstalasyon Wi-Fi lakay",
-    "compare_row4": "Sipò enfòmatik kontinyèl pou ti biznis",
-    "compare_row5": "Sit wèb Starter (5 paj)",
-    "compare_row6": "Sit wèb Business (pèsonalize)",
-    "compare_row7": "Konsiltasyon sekirite",
-    "compare_disclaimer": "\n          Chif \"pri mache abityèl\" yo sòti nan rechèch endistri pibliye an 2026 sou pri reparasyon òdinatè, sipò enfòmatik pou ti biznis, ak konsepsyon sit wèb endepandan (mwayèn nasyonal Ozetazini). Yo bay sèlman pou konparezon jeneral — pri konpetitè yo varye selon founisè, kote, ak anvèjidè travay la, e nou pa ka garanti okenn pri konpetitè espesifik. Pousantaj ekonomi yo se estimasyon ilistratif ki baze sou pi ba ak pi wo nivo nan ekantiyon pibliye sa yo, yo pa chif garanti ni verifye. Pri final ou depann de detay travay ou epi ap toujou konfime avèk ou anvan travay kòmanse.\n        ",
+    "compare_h2": "Pri klè, ak yon to fiks",
+    "compare_lede": "Pa gen sipriz nan pri pa lè ni estimasyon ki pa klè. Chak pri anwo a se yon vrè pwen depa pou travay sa a — w ap konnen pri w anvan nenpòt travay kòmanse, e li p ap chanje sof si etandi travay la chanje.",
     "web_block_title": "Sèvis Sit Wèb",
     "web_block_count": "7 sèvis",
     "web_item1_name": "Sit wèb Starter <small>(jiska 5 paj)</small>",
@@ -552,7 +541,7 @@
     "vet_cta": "Gade Rabè pou Ewo",
     "cta_h2": "Ou pa sèten sa ou bezwen?",
     "cta_p": "Ranpli fòm pwojè nou an epi n ap swiv ak yon devi klè ki baze sou sitiyasyon spesifik ou.",
-    "cta_button": "Mande yon Devi Pèsonalize"
+    "cta_button": "Mande Sèvis"
   },
   "wd_dyn": {
     "included_title_starter": "Enkli nan pakè Starter ou a",
@@ -578,7 +567,7 @@
     "savings_part_heroes": "Rabè pou Ewo",
     "note_bundle_one_applied": "1 rabè pakèt aplike",
     "note_bundle_many_applied": "{{count}} rabè pakèt aplike",
-    "note_heroes_applied": "Rabè pou Ewo aplike",
+    "note_heroes_applied": "Rabè pou Ewo yo aplike (ap tann konfimasyon)",
     "note_starting_price": "Pri kòmansman",
     "note_starting_price_with": "Pri kòmansman -- {{notes}}",
     "note_excludes_one": " -- pa gen ladan 1 atik ki bezwen devi pèsonalize",
@@ -586,7 +575,7 @@
     "cost_row_base_starter": "Baz Starter",
     "cost_row_base_business": "Baz Business",
     "cost_row_bundle": "Pakèt {{category}} (10%)",
-    "cost_row_heroes": "Rabè pou Ewo Ameriken (15%)",
+    "cost_row_heroes": "Rabè pou Ewo Ameriken yo (15%, ap tann konfimasyon)",
     "cost_row_quote_divider": "Ajou ak devi pèsonalize",
     "cost_row_quote": "devi",
     "badge_custom_quote": "(devi pèsonalize)",
@@ -843,7 +832,7 @@
     "final_note": "Peman trete an sekirite pa Square. Little Technical Solutions LLC pa kolekte, wè, ni konsève detay kat ou. Ranbousman ak dezakò jere selon kondisyon sèvis estanda nou yo — kontakte nou dirèkteman ak nenpòt kesyon sou fakti anvan ou louvri yon dezakò ak bank ou oswa konpayi kat ou, konsa nou ka korije sa.",
     "cta_h2": "Ou pa sèten ki youn ou bezwen?",
     "cta_p": "Ranpli fòm pwojè nou an epi di nou sa w ap panse a — n ap ede w konprann sa ki gen sans.",
-    "cta_btn": "Mande yon Devi Pèsonalize"
+    "cta_btn": "Mande Sèvis"
   },
   "intake": {
     "hero_eyebrow": "Nouvo kliyan",
@@ -1024,7 +1013,7 @@
     "pricing_note": "<strong>Sèvis inik:</strong> 15% rabè sou pri kòmansman estanda nou an, montre pi wo a.<br> <strong>Sèvis mansyèl rekiran</strong> (sipò enfòmatik kontinyèl, antretyen sit wèb): 5% rabè, ki reflete lefèt ke pri sa yo deja fonksyone prè kou reyèl nou pou kenbe sistèm ou ap fonksyone — frè sèvè ak enfrastrikti dèyè plan sa yo pa rabese.<br> <strong>Pyès ak materyèl</strong> (konpozan konstriksyon PC, inite Wi-Fi mesh, elatriye) toujou fakti a pri kout, san majorasyon e san rabè, kèlkeswa kalifikasyon.<br> <strong>Pri enskripsyon domèn ak enstalasyon imèl biznis</strong> reflete sèlman travay nou — frè anrejistreman ak kou abònman Google/Microsoft fakti dirèkteman a ou pa founisè sa yo, pa atravè nou.<br> Pri ki montre isit la se pwen kòmansman pou travay abityèl yo. Nou pa aksepte peman sou paj sa a — yon fwa nou verifye kalifikasyon ou, n ap konfime total rabè egzak ou epi voye ou nan <a href=\"payment.html\">paj peman</a> nou an pou peye l.",
     "cta_h2": "Ou pare pou kòmanse?",
     "cta_p": "Ranpli fòm pwojè nou an epi mansyone ki kategori ki aplike a ou — n ap verifye kalifikasyon ou, konfime pri rabè ou, epi swiv avèk pwochen etap pou peman.",
-    "cta_button": "Mande yon Devi Pèsonalize"
+    "cta_button": "Mande Sèvis"
   },
   "booking": {
     "hero_eyebrow": "Rezèvasyon",
@@ -1038,7 +1027,7 @@
     "type2_desc": "Pou pwojè sit wèb ak enfòmatik biznis — yon apèl fokis pou fikse anvèjidè, delè, ak pwochen etap yo.",
     "cta_h2": "Ou pare pou pwograme?",
     "cta_contact_desc": "Rele <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal); text-decoration:underline;\">636-426-0289</a>, voye imèl bay <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal); text-decoration:underline;\">dylan@lit-solutions.tech</a>, oswa itilize fòm pwojè anba a.",
-    "cta_intake": "Ranpli Fòm Pwojè a"
+    "cta_intake": "Mande Sèvis"
   },
   "service_website": {
     "breadcrumb_aria_label": "Fil navigasyon",
@@ -1046,7 +1035,7 @@
     "breadcrumb_current": "Sèvis Sit Wèb",
     "hero_h1": "Sèvis Sit Wèb",
     "hero_lede": "Sit wèb pèsonalize ki chaje vit e ki reyèlman fè moun rele — konstwi, ebèje, ak antreteni pa menm moun ki reponn telefòn nan.",
-    "hero_cta_quote": "Mande yon Devi",
+    "hero_cta_quote": "Jwenn Devi Sit Wèb Mwen",
     "hero_cta_pricing": "Gade Pri",
     "toc_aria_label": "Sou paj sa a",
     "toc_whats_included": "Sa ki enkli",
@@ -1097,7 +1086,7 @@
     "related_card3_title": "Sekirite Sibènetik",
     "related_card4_title": "Enfòmatik pou Ti Biznis",
     "cta_h2": "Ou pare pou kòmanse ak Sèvis Sit Wèb?",
-    "cta_button": "Mande yon Devi Pèsonalize"
+    "cta_button": "Jwenn Devi Sit Wèb Mwen"
   },
   "service_computer": {
     "breadcrumb_home": "Akèy",
@@ -1106,7 +1095,7 @@
     "hero_eyebrow": "PC-02",
     "hero_h1": "Sèvis Òdinatè",
     "hero_lede": "Depi yon machin ki pa vle limen jiska yon konstriksyon konplè pèsonalize — dyagnostike byen depi premye fwa a olye nou devine e fakti w de fwa.",
-    "hero_cta_quote": "Mande yon Devi",
+    "hero_cta_quote": "Mande Sèvis",
     "hero_cta_pricing": "Gade Pri",
     "toc_aria_label": "Sou paj sa a",
     "toc_included": "Sa ki enkli",
@@ -1151,7 +1140,7 @@
     "related_h2": "Lòt sèvis",
     "related_website_title": "Sèvis Sit Wèb",
     "cta_h2": "Ou pare pou kòmanse ak Sèvis Òdinatè?",
-    "cta_button": "Mande yon Devi Pèsonalize"
+    "cta_button": "Mande Sèvis"
   },
   "service_networking": {
     "breadcrumb_home": "Akèy",
@@ -1159,7 +1148,7 @@
     "hero_eyebrow": "NET-03",
     "hero_h1": "Rezo",
     "hero_lede": "Zòn san siyal, koneksyon ki koupe, ak aparèy ki pa kominike ant yo jeneralman soti nan yon oswa de paramèt ki fasil pou korije.",
-    "hero_cta_quote": "Mande yon Devi",
+    "hero_cta_quote": "Mande Sèvis",
     "hero_cta_pricing": "Gade Pri",
     "toc_whats_included": "Sa ki enkli",
     "toc_full_list": "Lis konplè sèvis",
@@ -1203,7 +1192,7 @@
     "related_card3_title": "Sekirite Sibènetik",
     "related_card4_title": "Enfòmatik pou Ti Biznis",
     "cta_h2": "Ou pare pou kòmanse ak Rezo?",
-    "cta_button": "Mande yon Devi Pèsonalize"
+    "cta_button": "Mande Sèvis"
   },
   "service_cybersecurity": {
     "breadcrumb_home": "Akèy",
@@ -1211,7 +1200,7 @@
     "hero_eyebrow": "SEC-04",
     "hero_h1": "Sekirite Sibènetik",
     "hero_lede": "Pifò vyolasyon kòmanse ak yon modpas fèb oswa san MFA. Nou sekirize eleman debaz yo ki bloke pifò atak nan lavi reyèl.",
-    "hero_cta_quote": "Mande yon Devi",
+    "hero_cta_quote": "Mande Sèvis",
     "hero_cta_pricing": "Gade Pri",
     "toc_whats_included": "Sa ki enkli",
     "toc_full_list": "Lis konplè sèvis",
@@ -1254,14 +1243,14 @@
     "related_card3_title": "Rezo",
     "related_card4_title": "Enfòmatik pou Ti Biznis",
     "cta_h2": "Ou pare pou kòmanse ak Sekirite Sibènetik?",
-    "cta_button": "Mande yon Devi Pèsonalize"
+    "cta_button": "Mande Sèvis"
   },
   "service_business_it": {
     "breadcrumb_home": "Akèy",
     "breadcrumb_current": "Enfòmatik pou Ti Biznis",
     "hero_h1": "Enfòmatik pou Ti Biznis",
     "hero_lede": "Yon sèl relasyon enfòmatik kontinyèl olye pou w jongle ak senk founisè lè yon bagay kase.",
-    "hero_cta_quote": "Mande yon Devi",
+    "hero_cta_quote": "Mande Sèvis",
     "hero_cta_pricing": "Gade Pri",
     "toc_whats_included": "Sa ki enkli",
     "toc_full_list": "Lis konplè sèvis",
@@ -1305,7 +1294,7 @@
     "related_card3_title": "Rezo",
     "related_card4_title": "Sekirite Sibènetik",
     "cta_h2": "Ou pare pou kòmanse ak Enfòmatik pou Ti Biznis?",
-    "cta_button": "Mande yon Devi Pèsonalize"
+    "cta_button": "Mande Sèvis"
   },
   "service_area": {
     "hero_eyebrow": "Zòn Sèvis",
@@ -1333,7 +1322,7 @@
     "growth_note": "Pandan Little Technical Solutions LLC ap grandi, paj sa a ap grandi avè l. Pou kounye a, chak travay — sit wèb, reparasyon, rezo, oswa sekirite — jere dirèkteman pa Dylan, li pa remèt bay yon soutretan.",
     "cta_h2": "Ou pare pou nou travay ansanm?",
     "cta_contact": "Kontakte Nou",
-    "cta_intake": "Ranpli Fòm Pwojè a"
+    "cta_intake": "Mande Sèvis"
   },
   "testimonials": {
     "hero_eyebrow": "Temwayaj",
@@ -1343,7 +1332,7 @@
     "hero_lede_hascontent": "Vrè kòmantè sou vrè pwojè -- pa gen sitasyon envante, pa gen aktè ki ranplase.",
     "empty_h2": "Nou fèk kòmanse.",
     "empty_desc": "Little Technical Solutions LLC se yon biznis tou nèf — sa vle di nou poko gen yon paj plen ak revi. Sa nou genyen se vrè disiplin fòme nan Marin, pri fiks onèt, ak yon fondatè ki reponn telefòn li menm. Si ou travay avèk nou, n ap vrèman apresye pou ou vin youn nan premye revi nou yo.",
-    "empty_cta": "Kòmanse yon Pwojè",
+    "empty_cta": "Mande Sèvis",
     "verify_eyebrow": "Pou kounye a",
     "verify_h2": "Men sa ou ka verifye ou menm",
     "cred1_title": "Posede pa yon veteran",
@@ -1361,7 +1350,7 @@
     "hero_lede_hascontent": "Vrè pwojè nou konstwi pou vrè kliyan -- gade detay yo pi ba.",
     "empty_h2": "Nou se yon biznis nouvo — bibliyotèk pwojè a ap grandi toujou.",
     "empty_desc": "Little Technical Solutions LLC toujou tou nèf ase pou nou pa gen yon bibliyotèk pwojè kliyan pase pou montre poko. Sa ou ka gade kounye a: sit wèb sa a limenm, konstwi e antreteni pa nou, ak demonstrasyon entèraktif anvan/apre a sou <a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">paj Sèvis</a> nou an ki montre apwòch konsepsyon sit wèb nou. Pandan vrè pwojè kliyan ap lanse, y ap ajoute isit la ak pèmisyon.",
-    "empty_cta": "Kòmanse yon Pwojè",
+    "empty_cta": "Mande Sèvis",
     "meantime_eyebrow": "Pou kounye a",
     "meantime_h2": "Travay ou ka gade jodi a",
     "card1_title": "Sit wèb sa a",
