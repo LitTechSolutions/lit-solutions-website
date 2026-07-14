@@ -87,6 +87,29 @@ Dylan resolved `OWNER_DECISIONS.md` #1 (2026-07-14): PostgreSQL on Neon. This is
 | SYS-AUTH-003/SYS-AUTH-005 (org ownership path + membership status checked on every action) — persistence | F005 | `src/db/membershipStore.js` → `resolveAuthorizationContext()` | `membershipStore.test.js` (11 cases, including 3 integration cases feeding real-shaped data into `rbac.authorize()`) | Pass | same | **The first end-to-end wiring in this project: persistence → pure policy engine, verified by test** | `resolveAuthorizationContext()` is now the canonical way any future endpoint should resolve a caller's role/status before calling `rbac.authorize()` — deviating from this (e.g. trusting a client-supplied role) would reopen the exact gap Session 1 caught and fixed |
 | SYS-NFR-020 (audit events) — persistence, replacing Blobs list-scan | F008 | `src/db/pgAuditSink.js` | `pgAuditSink.test.js` (5 cases, including an interface-compatibility test with `createAuditRecorder()`) | Pass | same | **Drop-in replacement for `blobsAuditSink.js`, same `AuditSink` interface, zero changes needed to the Session-1 recorder** | Confirms the interface-first design from Session 1 paid off exactly as intended; still not run against a live database |
 
+## Post-Session-10: persistence expanded to every function only blocked by the data-store decision
+
+The primary-data-store decision unblocked far more than F001/F005/F008 — every function previously marked "types drafted, persistence blocked on primary-data-store owner decision" (and nothing else) is unblocked the same way. Built this round, all following the fetch-validate-transition/insert-persist pattern established in Session 10, wiring persistence to the *existing pure engines* rather than re-implementing any logic:
+
+| Function | Code | Test | Wired to |
+|---|---|---|---|
+| F010 (service records) | `src/db/serviceRecordStore.js` | `serviceRecordStore.test.js` (6 cases) | `src/domain/serviceRecord.js` validator |
+| F016 (approvals) | `src/db/approvalStore.js` | `approvalStore.test.js` (7 cases) | `src/policy/approvalWorkflow.js`'s `transitionApproval()` — fetch-validate-persist, illegal transitions rejected before any write |
+| F017 (activity timeline) | `src/db/activityEventStore.js` | `activityEventStore.test.js` (4 cases) | `src/timeline/activityTimeline.js`'s `buildTimeline()` — integration test proves persisted rows correctly filter by customer visibility when fetched |
+| F019/F023/F029 (tickets) | `src/db/ticketStore.js` | `ticketStore.test.js` (8 cases) | `src/policy/ticketSubmission.js` (creation, including the placeholder-junk rejection) + `src/policy/ticketLifecycle.js` (status transitions) |
+| F020 (triage) | `src/db/ticketWorkflowStore.js` → `recordTriageResult()` | `ticketWorkflowStore.test.js` (2 of 6 cases) | `src/policy/triageEngine.js`'s `classifyTicket()` |
+| F021 (priority) | same file → `recordPriorityAssessment()` | (2 of 6 cases) | `src/policy/priorityScoring.js`'s `scorePriority()` |
+| F022 (assignment) | same file → `recordAssignment()` | (2 of 6 cases) | `src/policy/assignmentQueue.js`'s `selectAssignee()` |
+| F025 (time/notes) | `src/db/workLogStore.js` | `workLogStore.test.js` (6 cases) | `src/tracking/timeTracking.js`'s `totalMinutesForTicket()` |
+| F031 (website profiles) | `src/db/websiteProfileStore.js` | `websiteProfileStore.test.js` (4 cases) | `src/domain/websiteProfile.js` validator |
+| F043 (technology assets) | `src/db/assetStore.js` | `assetStore.test.js` (6 cases) | `src/domain/technologyAsset.js` validator |
+| F041 (backups) | same file | (part of 6 cases) | `src/domain/backupRecord.js` validator |
+| F048/F037 (reminders) | `src/db/reminderStore.js` | `reminderStore.test.js` (5 cases) | `src/reminders/lifecycleReminders.js`'s `evaluateReminder()` — same engine serves both functions, per the Session 6 reuse decision, now proven at the persistence layer too |
+
+A real bug surfaced during this batch: `assetStore.js`'s `markBackupRestoreVerified()` originally wrote `restore_verified = true` as a raw SQL literal instead of a bound parameter — inconsistent with every other write in the codebase and caught immediately by the test asserting on bound values. Fixed before commit, not left as a known issue.
+
+Still not blocked-but-unbuilt: F002 (registration model), F007/F058 (privacy findings + retention), F026/F027/F028/F049/F050/F052 (pricing/plan-limit values, though their engines are already built), F013/F014 (deferred — existing Blobs `messages`/`documents` stores reused as-is, org-scoping retrofit is a distinct future migration per `MIGRATION_PLAN.md`), F035/F036/F038/F039/F040 (check-execution engines, not a data-store question), F056 (deliberately stayed on Blobs), F060 (AI gate).
+
 ## Coverage note
 
-259 automated tests exist as of this update (`evidence/tests/session-10-persistence-layer.txt`), all passing — up from 236 after Session 7, 200 after Session 6, 173 after Session 5, 155 after Session 4, 123 after Session 3, 77 after Session 2, and 44 after Session 1 (audit finding F016 was "zero automated tests anywhere" prior to Session 1). The 23 newest tests are the first in this project to exercise a persistence layer, even if only against a fake injected database client — everything else remains unit-level and storage-agnostic. No integration-against-a-live-database, authorization-with-real-storage-end-to-end, API, component, end-to-end, accessibility, performance, or security tests exist yet.
+311 automated tests exist as of this update (`evidence/tests/session-11-persistence-expansion.txt`), all passing — up from 259 after the first persistence batch, 236 after Session 7, 200 after Session 6, 173 after Session 5, 155 after Session 4, 123 after Session 3, 77 after Session 2, and 44 after Session 1. 52 of the newest tests exercise persistence (against fake injected database clients — still not run against a live Neon database, see `MIGRATION_PLAN.md`).

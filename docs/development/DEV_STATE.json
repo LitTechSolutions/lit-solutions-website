@@ -1,13 +1,13 @@
 {
   "developmentVersion": "1.0",
-  "currentSession": 10,
-  "completedSessions": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-  "nextSession": 11,
-  "currentWave": "Post-Session-9: primary data store decided (Postgres/Neon) and F001/F005/F008 persistence built",
-  "currentFunctionIds": ["F001", "F005", "F008"],
+  "currentSession": 11,
+  "completedSessions": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+  "nextSession": 12,
+  "currentWave": "Post-Session-9 continuation: persistence built for every function that was ONLY blocked by the data-store decision",
+  "currentFunctionIds": ["F010", "F016", "F017", "F019", "F020", "F021", "F022", "F023", "F025", "F029", "F031", "F037", "F041", "F043", "F048"],
   "branch": "feature/business-care-hub",
   "baselineCommit": "1570734",
-  "workspaceNote": "This workspace (LTS Stand Alone Software) is a full copy of Development/Business Website/Website Code/v23, including .git and origin remote. v23 itself was not modified. Standing instruction: everything stays local to this workspace for the entire build -- no push, no merge into a new vN folder or main. Standing instruction (2026-07-14): work continues unattended, without stopping to ask, with bypass permission granted -- owner-decision blockers are documented, not asked about, except where Dylan is directly present and a question is genuinely blocking (as with the data-store decision). See DECISION_LOG.md.",
+  "workspaceNote": "This workspace (LTS Stand Alone Software) is a full copy of Development/Business Website/Website Code/v23, including .git and origin remote. v23 itself was not modified. Standing instruction: everything stays local to this workspace for the entire build -- no push, no merge into a new vN folder or main. Dylan granted bypass permission (2026-07-14) to take care of everything without interruption, with that one hard constraint. See DECISION_LOG.md.",
   "applicationCodeModified": true,
   "productionModified": false,
   "requirementsPackageLoaded": true,
@@ -16,32 +16,50 @@
     "audit finding F006 (Critical, open): Privacy Policy under-discloses actual data collection -- blocks finalizing F007, F058",
     "audit finding F007 (Critical, open): Resend not named as sub-processor in Privacy Policy -- blocks finalizing F007, F058",
     "audit finding F011 (High, open, owner decision): Square terms-gate bypassable via direct link -- relevant to F028, still unresolved",
-    "audit finding F016 (High, open, pre-Session-1): zero automated tests anywhere in the pre-Care-Hub repository -- src/ now has 259, but this still describes everything outside src/",
+    "audit finding F016 (High, open, pre-Session-1): zero automated tests anywhere in the pre-Care-Hub repository -- src/ now has 311, but this still describes everything outside src/",
     "audit finding F018 (High, open): partially addressed in src/policy/ticketSubmission.js (Session 3); the live intake.html form itself is untouched",
     "audit findings F030-F033 (owner decisions): Heroes Discount verification, full-payment vs deposit policy, plan scope, registration model -- block F026-F028, F049-F052, F002 respectively; see OWNER_DECISIONS.md"
   ],
   "buildStatus": "not-applicable",
-  "testStatus": "passing (259/259, node --test, unit-level; 23 new tests exercise a persistence layer for the first time, against a fake injected DB client -- not yet run against a live Neon database)",
+  "testStatus": "passing (311/311, node --test, unit-level; 75 tests now exercise persistence against a fake injected DB client -- none yet run against a live Neon database)",
   "lintStatus": "not-run",
   "typeCheckStatus": "not-run",
   "migrationStatus": "written, not executed -- migrations/001_initial_schema.sql exists, no Neon project provisioned yet",
   "deploymentStatus": "not-deployed",
   "implementedFunctions": [
     "27 functions with real tested domain/policy logic through Session 7 -- see REQUIREMENTS_TRACEABILITY.md for the full list",
-    "F001 persistence (src/db/organizationStore.js -- create/get/update organizations, unit-tested against a fake DB client)",
-    "F005 persistence (src/db/membershipStore.js -- resolveAuthorizationContext() is the first end-to-end wiring: real membership data feeding directly into rbac.js's pure authorize(), verified by 3 integration tests)",
-    "F008 persistence (src/db/pgAuditSink.js -- drop-in AuditSink replacement for blobsAuditSink.js, zero changes needed to Session 1's createAuditRecorder(), confirming the interface-first design decision paid off)"
+    "F001 persistence (src/db/organizationStore.js)",
+    "F005 persistence (src/db/membershipStore.js -- resolveAuthorizationContext() feeds real data into rbac.js's authorize())",
+    "F008 persistence (src/db/pgAuditSink.js -- drop-in AuditSink replacement for blobsAuditSink.js)",
+    "F010 persistence (src/db/serviceRecordStore.js)",
+    "F016 persistence (src/db/approvalStore.js -- wired to approvalWorkflow.js's transitionApproval())",
+    "F017 persistence (src/db/activityEventStore.js -- wired to activityTimeline.js's buildTimeline())",
+    "F019/F023/F029 persistence (src/db/ticketStore.js -- wired to ticketSubmission.js and ticketLifecycle.js)",
+    "F020 persistence (src/db/ticketWorkflowStore.js -> recordTriageResult(), wired to triageEngine.js)",
+    "F021 persistence (same file -> recordPriorityAssessment(), wired to priorityScoring.js)",
+    "F022 persistence (same file -> recordAssignment(), wired to assignmentQueue.js)",
+    "F025 persistence (src/db/workLogStore.js -- wired to timeTracking.js)",
+    "F031 persistence (src/db/websiteProfileStore.js)",
+    "F041/F043 persistence (src/db/assetStore.js)",
+    "F037/F048 persistence (src/db/reminderStore.js -- wired to lifecycleReminders.js, one engine serving both functions)"
   ],
   "verifiedFunctions": [],
   "blockedFunctions": [
-    "F002, F007, F026, F027, F028, F049, F050, F052, F058, F010, F013, F014, F043, F044, F046/F047, F048, F031, F035/F038/F039/F040, F036, F041, F042, F051, F055, F057, F053, F054, F060 -- still blocked on the other 9 open OWNER_DECISIONS.md items or the F060 gate; see prior session entries for detail",
-    "F001/F005/F008 downgraded from 'blocked' to 'built, awaiting live database' -- persistence code exists and is tested, but has not been run against a real Neon database since none is provisioned in this environment yet"
+    "F002 (registration model, OWNER_DECISIONS.md #4)",
+    "F007, F058 (privacy findings + retention, OWNER_DECISIONS.md #5-6)",
+    "F026, F027, F028, F049, F050, F052 (pricing/plan-limit values, OWNER_DECISIONS.md #2-3 -- engines are complete, only real numbers are missing)",
+    "F013, F014 (deferred -- existing Blobs messages/documents stores reused as-is; org-scoping retrofit is a distinct future migration, MIGRATION_PLAN.md)",
+    "F035/F036/F038/F039/F040 (check-EXECUTION engines not built -- not a data-store question, needs the website-audit spec adapted)",
+    "F044/F046/F047 (classifier/checklist engines complete; persistence not yet built this round -- next candidate batch)",
+    "F051, F053, F054, F055, F057 (engines complete; persistence not yet built this round -- next candidate batch, none need real business content to persist)",
+    "F060 (AI gate, unchanged, see SESSION_08_AI_ASSISTANCE.md)"
   ],
   "notStartedThisSessionByDesign": [
-    "F003, F004, F006, F059, F011, F018, F024, F030, F045, F032, F034, F033 -- see prior session entries, unchanged"
+    "F003, F004, F006, F059, F011, F018, F024, F030, F045, F032, F034, F033 -- see prior session entries, unchanged",
+    "F044/F046/F047/F048's SIBLING functions F051/F053/F054/F055/F057 persistence -- not blocked by anything, simply not yet built; natural next batch since they need no business content decided first (unlike pricing-adjacent functions)"
   ],
   "ownerDecisionsRequired": [
-    "Primary data store -- ✅ RESOLVED 2026-07-14: PostgreSQL on Neon. See OWNER_DECISIONS.md #1, ARCHITECTURE.md §3.3, DECISION_LOG.md.",
+    "Primary data store -- ✅ RESOLVED 2026-07-14: PostgreSQL on Neon.",
     "Pricing, discounts, deposits, payment timing (audit F030, F031) -- blocks F026/F027/F028/F050/F052's real values",
     "Website Care Plan / Small Business IT plan limits and included work (audit F032) -- blocks F049/F052's real values and F021's fifth scoring factor",
     "Customer account registration model: open vs invite-only (audit F033)",
@@ -50,28 +68,27 @@
     "New paid providers/infrastructure generally -- includes whether Square stays the payment provider",
     "Remote support tooling / device agents / automated website changes scope boundary",
     "AI provider, data policy, budget",
-    "Missing individual F001-F060 function workbooks (new) -- also the source of F020/F021's real configuration, F026/F050's real price sheet, F046/F047's actual checklist content, F035/F036/F038/F039/F040's actual check thresholds, and F055's actual email copy"
+    "Missing individual F001-F060 function workbooks (new) -- source of F020/F021's real configuration, F026/F050's real price sheet, F046/F047's actual checklist content, F035/F036/F038/F039/F040's actual check thresholds, and F055's actual email copy"
   ],
   "filesRequiringReview": [
     "docs/development/OWNER_DECISIONS.md (item #1 resolved; the other 9 remain open)",
-    "migrations/001_initial_schema.sql (full schema, not yet run against a live database)",
-    "docs/development/DEPLOYMENT_PLAN.md (new DATABASE_URL environment variable requirement)",
-    "docs/development/MIGRATION_PLAN.md (next infrastructure step: provision Neon, run the migration)",
-    "docs/development/REQUIREMENTS_TRACEABILITY.md (F001/F005/F008 persistence entries)"
+    "migrations/001_initial_schema.sql (full schema, not yet run against a live database -- this is now the single highest-priority verification gap)",
+    "docs/development/REQUIREMENTS_TRACEABILITY.md (full persistence-layer breakdown, post-Session-10 section)"
   ],
   "knownRisks": [
-    "No live Neon database exists yet -- src/db/*.js is written and unit-tested against a fake client, but has never executed a real query. This is the single highest-priority verification gap before any of it is trusted.",
-    "Netlify Blobs' users/sessions/tokens stores (F003/F004) remain unmigrated by design -- they stay in Blobs, only new Care Hub relational entities moved to Postgres",
+    "No live Neon database exists yet -- ALL of src/db/*.js (12 files, 75 tests) is unit-tested against a fake client but has never executed one real query. This is now the single highest-priority verification gap before any of it is trusted, and it's grown with every persistence function added.",
+    "Netlify Blobs' users/sessions/tokens stores (F003/F004) remain unmigrated by design",
     "Existing Blobs records (documents, messages, notifications, favorites, leads) still need organization_id backfilled once real organizations exist -- tracked in MIGRATION_PLAN.md, not yet scheduled",
-    "No migration-runner tool is set up yet -- migrations/001_initial_schema.sql would currently be run manually; a second migration file should not be written without first choosing a lightweight runner to track what's been applied",
+    "No migration-runner tool is set up yet -- a second migration file should not be written without first choosing a lightweight runner",
+    "A real bug was caught and fixed this round: assetStore.js's markBackupRestoreVerified() wrote a raw SQL literal (true) instead of a bound parameter, inconsistent with every other write in the codebase -- caught by the test asserting on bound values, fixed before commit",
     "F057's verifier is ready but nothing calls it yet -- no payment webhook infrastructure exists at all",
-    "Customer documents/images are stored as base64 data URIs in Blobs, not object storage with signed URLs -- new care_hub_documents/file_assets Postgres tables use an opaque storageRef instead, but the actual object-storage provider is still undecided",
+    "Customer documents/images are stored as base64 data URIs in Blobs; new care_hub_documents/file_assets Postgres tables use an opaque storageRef instead, but the actual object-storage provider is still undecided",
     "Two independent, near-duplicated single-file staff/customer console apps (admin.html, myaccount.html) -- still not extracted",
     "F-numbering collision between audit findings (F001-F036) and Business Care Hub functions (F001-F060) -- mitigated via naming convention",
-    "src/settings/blobsSettingsStore.js remains Blobs-backed (F056 stayed on Blobs by design, low-volume whole-document store) -- not migrated to Postgres",
-    "27 non-persistence functions' logic remains engine-only, waiting on the other 9 owner decisions -- pricing, plan limits, checklist/rule-table/template content",
+    "src/settings/blobsSettingsStore.js remains Blobs-backed (F056 stayed on Blobs by design)",
+    "F026/F027/F028/F049/F050/F052's logic remains engine-only, waiting on pricing/plan-limit owner decisions",
     "CSV export (src/export/csvExport.js, F053) has no formula-injection guard for spreadsheet software -- open finding from Session 9's security review"
   ],
-  "releaseRecommendation": "NOT READY, but materially closer. Primary data store decided and F001/F005/F008 persistence built (unit-tested, not yet run live). 9 of 10 OWNER_DECISIONS.md items remain open. Next concrete step: provision a Neon project, set DATABASE_URL, run migrations/001_initial_schema.sql, and re-run the persistence-layer tests against the real database before trusting any of it in a deployed environment. After that, the next highest-leverage owner decision is pricing (unblocks F026/F027/F028/F050/F052, all engine-complete and waiting).",
+  "releaseRecommendation": "NOT READY, materially closer than post-Session-10. Primary data store decided; persistence now built for every function that was blocked ONLY by that decision (F001, F005, F008, F010, F016, F017, F019-F023/F029, F025, F031, F037, F041, F043, F048 -- 15 functions). All wired to their existing pure engines (RBAC, approval/ticket lifecycle, triage, priority, assignment, time tracking, reminders), not re-implemented. Zero of this has run against a live database -- that is now the single most important next step: provision Neon, set DATABASE_URL, run migrations/001_initial_schema.sql, re-run the persistence suite live. Natural next code batch (no owner decision needed): F044/F046/F047/F051/F053/F054/F055/F057 persistence, all engine-complete already. Next owner decision to unblock the most additional value: pricing (OWNER_DECISIONS.md #2).",
   "lastUpdated": "2026-07-14"
 }
