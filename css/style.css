@@ -52,12 +52,12 @@
      even against the cooler indigo primary (a common, legible pairing:
      cool brand accent for actions, warm accent for "read this" boxes).
      Used by launch-banner, vet-note, gov-info-note, etc. */
-  --notice-bg: var(--notice-bg);
-  --notice-bg-strong: var(--notice-bg-strong);
-  --notice-border: var(--notice-border);
-  --notice-text: var(--notice-text);
-  --notice-text-strong: var(--notice-text-strong);
-  --notice-icon: var(--notice-icon);
+  --notice-bg: #FCF3E3;
+  --notice-bg-strong: #F7E6C4;
+  --notice-border: #D9A44D;
+  --notice-text: #7A5615;
+  --notice-text-strong: #5C3F0A;
+  --notice-icon: #C97A2E;
 
   /* Type. --font-heading is the new bold, tight-tracking sans used for
      h1/h2/h3 — real headline weight instead of monospace. --font-display

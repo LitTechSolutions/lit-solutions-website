@@ -15,7 +15,7 @@
 // POST { body }                    -> signed-in customer sends a message to staff
 // POST { customerEmail, body }     -> admin/staff only: staff sends a message to that customer
 
-const { readCookie, getSession, json } = require("./_lib/auth_utils");
+const { readCookie, getSession, json, rateLimited } = require("./_lib/auth_utils");
 const { getJSON, setJSON, store } = require("./_lib/blob_store");
 const { sendEmail } = require("./_lib/email");
 
@@ -138,7 +138,13 @@ exports.handler = async (event) => {
     return json(201, { id: messageId, message: "Sent." });
   }
 
-  // Customer sending to staff.
+  // Customer sending to staff -- rate-limited per account (not per IP, since
+  // the abuse case here is one signed-in customer sending unlimited messages,
+  // each of which triggers an outbound email to Dylan).
+  if (await rateLimited("messages-send", session.userId, 20, 3600)) {
+    return json(429, { error: "Too many messages sent. Please try again later." });
+  }
+
   const messageId = require("crypto").randomBytes(10).toString("hex");
   const meRecord = await (async () => {
     const usersStore = store("users");

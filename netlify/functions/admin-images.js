@@ -24,6 +24,7 @@ exports.handler = async (event) => {
   const token = readCookie(event, "lts_session");
   const session = token ? await getSession(token) : null;
   if (!session) return json(401, { error: "Sign in required." });
+  if (session.role !== "admin" && session.role !== "staff") return json(403, { error: "Not authorized." });
 
   if (event.httpMethod === "GET") {
     const id = event.queryStringParameters && event.queryStringParameters.id;
@@ -43,7 +44,6 @@ exports.handler = async (event) => {
   }
 
   if (event.httpMethod !== "POST") return json(405, { error: "Method not allowed" });
-  if (session.role !== "admin" && session.role !== "staff") return json(403, { error: "Not authorized." });
 
   let body;
   try { body = JSON.parse(event.body || "{}"); } catch (e) { return json(400, { error: "Invalid JSON" }); }

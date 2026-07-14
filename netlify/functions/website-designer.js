@@ -38,6 +38,80 @@
 const { json, rateLimited } = require("./_lib/auth_utils");
 const { setJSON, getJSON } = require("./_lib/blob_store");
 const { sendEmail } = require("./_lib/email");
+const STARTER_CATALOG = require("../../starter-catalog.json");
+const BUSINESS_CATALOG = require("../../business-catalog.json");
+
+// Matches js/website-designer.js's own constants exactly (see that file's
+// HEROES_DISCOUNT_RATE/BUNDLE_DISCOUNT_RATE/BUNDLE_MIN_ITEMS) -- kept as a
+// separate copy here rather than a shared import, since the client bundle
+// and this function are built/deployed independently and duplicating three
+// small constants is far less risky than adding a build-time coupling
+// between them for a static site with no build step.
+const HEROES_DISCOUNT_RATE = 0.15;
+const BUNDLE_DISCOUNT_RATE = 0.10;
+const BUNDLE_MIN_ITEMS = 2;
+const PRICE_MISMATCH_TOLERANCE = 2; // dollars -- absorbs float/rounding slack, not real discrepancies
+
+// Independently recomputes the expected subtotal/bundle-savings/total from
+// the catalog + the customer's actual selections, as a cross-check against
+// whatever numbers the client submitted. This never blocks or alters a
+// submission -- a customer's quote should never fail to reach Dylan over
+// this -- it only flags a lead so a manipulated or buggy total doesn't
+// silently look legitimate in his inbox.
+function recomputeEstimate(pkg, optionalSelected, bundledCategories, heroesDiscount) {
+  const catalog = pkg === "business" ? BUSINESS_CATALOG : STARTER_CATALOG;
+  const basePrice = Number(catalog.base_price) || 0;
+  const selectedTitles = new Set(
+    (Array.isArray(optionalSelected) ? optionalSelected : []).map((f) => f && f.title).filter(Boolean)
+  );
+  let rawOptionalSum = 0;
+  const categoryTotals = {};
+  for (const cat of catalog.categories || []) {
+    let subtotal = 0, itemCount = 0, selectedCount = 0;
+    for (const item of cat.items || []) {
+      if (item.priority !== "C") continue;
+      itemCount += 1;
+      if (selectedTitles.has(item.title)) {
+        selectedCount += 1;
+        subtotal += Number(item.price) || 0;
+        rawOptionalSum += Number(item.price) || 0;
+      }
+    }
+    categoryTotals[cat.category] = { subtotal, itemCount, selectedCount };
+  }
+  let bundleSavings = 0;
+  for (const catName of Array.isArray(bundledCategories) ? bundledCategories : []) {
+    const t = categoryTotals[catName];
+    if (t && t.itemCount >= BUNDLE_MIN_ITEMS && t.selectedCount === t.itemCount) {
+      bundleSavings += t.subtotal * BUNDLE_DISCOUNT_RATE;
+    }
+  }
+  const subtotal = basePrice + rawOptionalSum - bundleSavings;
+  const total = heroesDiscount ? subtotal * (1 - HEROES_DISCOUNT_RATE) : subtotal;
+  return {
+    subtotal: Math.round(subtotal),
+    bundleSavings: Math.round(bundleSavings),
+    total: Math.round(total),
+  };
+}
+
+// Compares the client-submitted figures against the independent recompute
+// and returns a flag object to merge into the lead record -- absent
+// entirely when everything matches, so most leads carry no extra noise.
+function priceMismatchFlag(pkg, record) {
+  const expected = recomputeEstimate(pkg, record.optionalSelected, record.bundledCategories, record.heroesDiscount);
+  const mismatched =
+    Math.abs(expected.total - record.estimateTotal) > PRICE_MISMATCH_TOLERANCE ||
+    Math.abs(expected.subtotal - record.subtotal) > PRICE_MISMATCH_TOLERANCE ||
+    Math.abs(expected.bundleSavings - record.bundleSavings) > PRICE_MISMATCH_TOLERANCE;
+  if (!mismatched) return {};
+  return {
+    priceMismatch: true,
+    expectedSubtotal: expected.subtotal,
+    expectedBundleSavings: expected.bundleSavings,
+    expectedEstimateTotal: expected.total,
+  };
+}
 
 const MAX_PDF_BASE64_LENGTH = 3 * 1024 * 1024; // ~2.2MB decoded, generous for a text-only summary PDF
 const MAX_IMAGE_BASE64_LENGTH = 6 * 1024 * 1024; // ~4.4MB decoded, generous for one logo/photo up to ~4MB raw
@@ -50,6 +124,41 @@ const BRIEF_CONTENT_LABELS = {
   gallery: "Gallery/portfolio", pricing: "Pricing", booking: "Booking details",
   newsletter: "Newsletter platform", sms: "SMS notifications",
 };
+
+// The client only ever sends raw base64 content + a filename (no MIME type,
+// no data: URI prefix -- see fileToBase64() in js/website-designer.js), and
+// this endpoint is public/unauthenticated, so the `accept="image/..."`
+// attribute on the file inputs is a UI hint only, not a real guarantee.
+// Sniff the actual file-format signature server-side before ever attaching
+// it to an outbound email, so this can't be used to relay arbitrary file
+// content through the business's email sender.
+const IMAGE_SIGNATURES = [
+  { name: "png", bytes: Buffer.from([0x89, 0x50, 0x4e, 0x47]) },
+  { name: "jpeg", bytes: Buffer.from([0xff, 0xd8, 0xff]) },
+  { name: "webp", bytes: Buffer.from("RIFF", "ascii"), offset: 0, secondary: { bytes: Buffer.from("WEBP", "ascii"), offset: 8 } },
+];
+
+function isRecognizedImage(base64Content, { allowSvg } = {}) {
+  if (!base64Content || typeof base64Content !== "string") return false;
+  let head;
+  try {
+    head = Buffer.from(base64Content.slice(0, 64), "base64");
+  } catch (e) {
+    return false;
+  }
+  if (head.length < 4) return false;
+  for (const sig of IMAGE_SIGNATURES) {
+    if (head.subarray(sig.offset || 0, (sig.offset || 0) + sig.bytes.length).equals(sig.bytes)) {
+      if (!sig.secondary) return true;
+      if (head.subarray(sig.secondary.offset, sig.secondary.offset + sig.secondary.bytes.length).equals(sig.secondary.bytes)) return true;
+    }
+  }
+  if (allowSvg) {
+    const text = head.toString("utf8").trim().toLowerCase();
+    if (text.startsWith("<?xml") || text.startsWith("<svg")) return true;
+  }
+  return false;
+}
 
 function esc(s) {
   return String(s || "").replace(/[&<>"']/g, (c) => (
@@ -101,6 +210,7 @@ async function handleQuickSubmission(body, ip) {
     premiumSelected: Array.isArray(body.premiumSelected) ? body.premiumSelected : [],
     completedFull: false, createdAt: Date.now(), ip,
   };
+  Object.assign(record, priceMismatchFlag(pkg, record));
   await setJSON("leads", id, record);
 
   const optionalRows = record.optionalSelected.length
@@ -112,6 +222,10 @@ async function handleQuickSubmission(body, ip) {
 
   const html = `
     <h2>Quick quote request -- ${esc(id)}</h2>
+    ${record.priceMismatch ? `<p style="background:#FDECEA;border:1px solid #D93F3F;color:#A32E2E;padding:.6rem .9rem;border-radius:6px;">
+      <strong>⚠ Price mismatch:</strong> the submitted total doesn't match what we'd calculate from the selections below
+      (expected ~$${record.expectedEstimateTotal.toLocaleString()}, submitted $${record.estimateTotal.toLocaleString()}).
+      Double-check this one before treating the number as final.</p>` : ""}
     <p>No project details yet -- this customer accepted the on-screen price and sent their contact info. They may add full project details separately; if they do, you'll get a second email referencing this same ID.</p>
     <p><strong>Package:</strong> ${pkg === "business" ? "Business ($1,299 starting)" : "Starter ($699 starting)"}</p>
     <p><strong>Business:</strong> ${esc(record.businessName)}<br>
@@ -183,10 +297,16 @@ async function handleFullSubmission(body, ip) {
   if (cleanLogo && cleanLogo.content.length > MAX_IMAGE_BASE64_LENGTH) {
     return json(400, { error: "Logo file is too large or invalid." });
   }
+  if (cleanLogo && !isRecognizedImage(cleanLogo.content, { allowSvg: true })) {
+    return json(400, { error: "Logo file must be a PNG, JPEG, WEBP, or SVG image." });
+  }
   const cleanPhotos = Array.isArray(photos) ? photos.filter((p) => p && p.content) : [];
   if (cleanPhotos.length > MAX_PHOTOS) return json(400, { error: `Please attach at most ${MAX_PHOTOS} photos.` });
   if (cleanPhotos.some((p) => p.content.length > MAX_IMAGE_BASE64_LENGTH)) {
     return json(400, { error: "One of the attached photos is too large or invalid." });
+  }
+  if (cleanPhotos.some((p) => !isRecognizedImage(p.content))) {
+    return json(400, { error: "One of the attached photos isn't a recognized image file (PNG, JPEG, or WEBP)." });
   }
   const totalAttachmentsLength = (pdfBase64 ? pdfBase64.length : 0) +
     (cleanLogo ? cleanLogo.content.length : 0) +
@@ -212,6 +332,7 @@ async function handleFullSubmission(body, ip) {
     brief: cleanBrief, hasLogo: !!cleanLogo, photoCount: cleanPhotos.length,
     createdAt: Date.now(), ip,
   };
+  Object.assign(record, priceMismatchFlag(pkg, record));
   await setJSON("leads", id, record);
   if (cleanQuickLeadId) {
     const quickRecord = await getJSON("leads", cleanQuickLeadId);
@@ -241,6 +362,10 @@ async function handleFullSubmission(body, ip) {
 
   const html = `
     <h2>Full project details -- ${esc(id)}</h2>
+    ${record.priceMismatch ? `<p style="background:#FDECEA;border:1px solid #D93F3F;color:#A32E2E;padding:.6rem .9rem;border-radius:6px;">
+      <strong>⚠ Price mismatch:</strong> the submitted total doesn't match what we'd calculate from the selections below
+      (expected ~$${record.expectedEstimateTotal.toLocaleString()}, submitted $${record.estimateTotal.toLocaleString()}).
+      Double-check this one before treating the number as final.</p>` : ""}
     ${cleanQuickLeadId ? `<p>Follow-up to the quick quote sent earlier -- see "leads" / ${esc(cleanQuickLeadId)}.</p>` : ""}
     <p><strong>Package:</strong> ${pkg === "business" ? "Business ($1,299 starting)" : "Starter ($699 starting)"}</p>
     <p><strong>Business:</strong> ${esc(record.businessName)}<br>

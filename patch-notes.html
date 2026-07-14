@@ -153,8 +153,22 @@
 
         <article class="patch-entry">
           <div class="patch-entry-head">
-            <span class="patch-version patch-version--current">v3.2.1</span>
+            <span class="patch-version patch-version--current">v3.2.2</span>
             <span class="patch-tag">Current</span>
+          </div>
+          <ul class="patch-changes">
+            <li>Corrected the hull number in founder Dylan's Navy photo caption on the About page -- USS Antietam is CG-54, not CG-64 as it previously read</li>
+            <li>Tightened server-side access controls on an internal admin tool so it's restricted to staff accounts only, as originally intended</li>
+            <li>Added rate limiting to the signed-in customer messaging feature, matching the limits already in place on every other form on the site</li>
+            <li>Added stronger file-type checks on Website Designer photo/logo uploads</li>
+            <li>Added an independent server-side check on Website Designer price totals, as a safeguard against a manipulated or corrupted submission being treated as legitimate</li>
+            <li>Fixed a light-mode display bug affecting a handful of notice/callout boxes (the launch-special banner, a few info notes, and some status badges), where they could render without their intended background color</li>
+          </ul>
+        </article>
+
+        <article class="patch-entry">
+          <div class="patch-entry-head">
+            <span class="patch-version">v3.2.1</span>
           </div>
           <ul class="patch-changes">
             <li><strong>Fixed a real bug: Testimonials and Portfolio still said "nothing here yet" even after real content was added.</strong> Adding a testimonial or project through the admin panel always worked and always displayed correctly -- but the hero headline on both pages ("We're new..." / "Portfolio -- building it out for real...") was static and kept showing regardless, directly above the real content, which read as contradictory. Both headlines now automatically switch to "What our customers are saying" / "Recent work" the moment real content exists, in all 15 supported languages</li>
@@ -520,7 +534,7 @@
     </nav>
   </div>
   <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span data-i18n="footer.rights">All rights reserved.</span></p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version 3.2.1</a></p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version 3.2.2</a></p>
   <p class="footer-version"><a href="admin.html" data-i18n="footer.staff_signin">Staff Sign In</a></p>
 </footer>
 
