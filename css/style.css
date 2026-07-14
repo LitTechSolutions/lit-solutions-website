@@ -1957,3 +1957,32 @@ textarea{ resize: vertical; }
   .wd-category-chevron{ transition:none; }
   .wd-bundle-savings-badge.wd-pop-in{ animation:none; }
 }
+
+/* ---- RTL mirroring (Arabic) --------------------------------------------
+   js/i18n.js sets dir="rtl" correctly, but most of this stylesheet uses
+   physical left/right properties, so text and custom bullet markers didn't
+   mirror. This covers the rules that actually carry directional meaning
+   (bulleted lists with a custom ::before marker, left-aligned text/buttons,
+   inline badge spacing) -- not a full physical-to-logical-property rewrite
+   of the whole file, which would be a much larger, higher-risk change for
+   a single pass (docs/audit F023). */
+[dir="rtl"] .ticket ul li{ padding-left:0; padding-right:1.1rem; }
+[dir="rtl"] .ticket ul li::before{ left:auto; right:0; }
+[dir="rtl"] .patch-changes li{ padding-left:0; padding-right:1.2rem; }
+[dir="rtl"] .patch-changes li::before{ left:auto; right:0; }
+[dir="rtl"] .package-features li{ padding-left:0; padding-right:1.6rem; }
+[dir="rtl"] .package-features li::before{ left:auto; right:0; }
+[dir="rtl"] .wd-included-list li{ padding-left:0; padding-right:1.4rem; }
+[dir="rtl"] .wd-included-list li::before{ left:auto; right:0; }
+[dir="rtl"] .legal-doc ul{ padding-left:0; padding-right:1.3rem; }
+[dir="rtl"] .form-note--missing ul{ padding-left:0; padding-right:1.2rem; }
+[dir="rtl"] .stat-item,
+[dir="rtl"] .about-teaser-stats .stat-item{ text-align:right; }
+[dir="rtl"] .lang-option,
+[dir="rtl"] .intake-block-toggle,
+[dir="rtl"] .hero-group-item,
+[dir="rtl"] .wd-category-header,
+[dir="rtl"] .price-block-head{ text-align:right; }
+[dir="rtl"] .price-was{ margin-right:0; margin-left:.4rem; }
+[dir="rtl"] .mock-logo--before{ margin-right:0; margin-left:6px; }
+[dir="rtl"] .cookie-banner-inner{ text-align:right; }
