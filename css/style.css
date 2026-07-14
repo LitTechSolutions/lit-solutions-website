@@ -1773,6 +1773,18 @@ textarea{ resize: vertical; }
 .wd-price-ticker-savings{ display:block; font-size:.74rem; font-weight:700; color: var(--accent-teal); margin-top:.35rem; }
 .wd-price-ticker-note{ display:block; font-size:.75rem; color: rgba(245,245,244,0.65); margin-top:.35rem; }
 
+/* Step 3's own price recap -- the sidebar ticker already shows this, but
+   it can scroll out of view (or sit below the fold on mobile) by the time
+   someone reaches the quick-quote step, so the number is restated clearly
+   right above the submit button, not just implied by the sidebar. */
+.wd-quote-recap{
+  background: var(--navy-deep); color: var(--on-dark); border-radius: var(--radius);
+  padding:1.4rem 1.5rem; text-align:center; margin-bottom:1.5rem;
+}
+.wd-quote-recap-label{ display:block; font-family: var(--font-display); font-size:.76rem; letter-spacing:.05em; text-transform:uppercase; color: var(--accent-teal); margin-bottom:.4rem; }
+.wd-quote-recap-amount{ display:block; font-family: var(--font-display); font-size:2.6rem; font-weight:700; line-height:1.1; }
+.wd-quote-recap-note{ display:block; font-size:.8rem; color: rgba(245,245,244,0.7); margin-top:.5rem; }
+
 .wd-heroes-toggle{
   display:flex; align-items:flex-start; gap:.5rem; font-size:.78rem; color: var(--ink-soft);
   background: var(--select-bg); border:1px solid var(--select-border); border-radius: var(--radius);

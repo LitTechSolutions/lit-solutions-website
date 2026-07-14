@@ -1,25 +1,42 @@
-// website-designer.js -- receives a completed Website Designer submission
-// (package, selected features, live estimate, customer details, and a
-// client-generated PDF summary), persists it as a lead record, and emails
-// Dylan the PDF attachment. Public/unauthenticated (like the contact form),
-// rate-limited against spam/abuse.
+// website-designer.js -- receives Website Designer submissions in one of
+// two stages, persists each as a lead record, and emails Dylan.
+// Public/unauthenticated (like the contact form), rate-limited against
+// spam/abuse.
 //
-// POST { package, businessName, customerName, email, phone, domain, notes,
-//        subtotal, estimateTotal, heroesDiscount, bundledCategories: [category],
-//        bundleSavings, optionalSelected: [{title, price}],
-//        premiumSelected: [title], pdfBase64, pdfFilename,
-//        brief: { description, industry, serviceArea, servicesList, brandColors,
-//                 styleReferences, addressHours, socialLinks, launchDate, desiredDomain,
-//                 staff, testimonials, faq, blog, gallery, pricing, booking, newsletter, sms },
-//        logo: {filename, content} | null, photos: [{filename, content}] }
+// STAGE "quick" -- sent the moment a customer accepts the on-screen price,
+// before any long-form content brief. Minimal required fields (package,
+// businessName, customerName, email, phone, preferredContact) so a lead
+// reaches Dylan's inbox with as little friction as possible.
+//   POST { stage: "quick", package, businessName, customerName, email, phone,
+//          preferredContact, subtotal, estimateTotal, heroesDiscount,
+//          bundledCategories: [category], bundleSavings,
+//          optionalSelected: [{title, price}], premiumSelected: [title] }
+//
+// STAGE "full" -- sent only if the customer opts in, from the prompt shown
+// right after the quick quote. Carries the full content brief plus the
+// client-generated PDF summary, and references the earlier quick lead (if
+// any) via quickLeadId so the two can be matched up in Dylan's inbox.
+//   POST { stage: "full", quickLeadId, package, businessName, customerName,
+//          email, phone, preferredContact, domain, notes, subtotal,
+//          estimateTotal, heroesDiscount, bundledCategories: [category],
+//          bundleSavings, optionalSelected: [{title, price}],
+//          premiumSelected: [title], pdfBase64, pdfFilename,
+//          brief: { description, industry, serviceArea, servicesList, brandColors,
+//                   styleReferences, addressHours, socialLinks, launchDate, desiredDomain,
+//                   staff, testimonials, faq, blog, gallery, pricing, booking, newsletter, sms },
+//          logo: {filename, content} | null, photos: [{filename, content}] }
 //
 // `brief` is the content actually needed to start building (not just scope/
 // price) -- description/industry/serviceArea/servicesList are required;
 // everything else is optional or only sent when its triggering feature is
 // selected (see CONTENT_BRIEF_TRIGGER_TITLES in js/website-designer.js).
+//
+// Requests with no `stage` (or an unrecognized one) are treated as "full"
+// for backward compatibility with any already-open tab running older
+// client JS.
 
 const { json, rateLimited } = require("./_lib/auth_utils");
-const { setJSON } = require("./_lib/blob_store");
+const { setJSON, getJSON } = require("./_lib/blob_store");
 const { sendEmail } = require("./_lib/email");
 
 const MAX_PDF_BASE64_LENGTH = 3 * 1024 * 1024; // ~2.2MB decoded, generous for a text-only summary PDF
@@ -48,22 +65,95 @@ function briefField(v) {
   return String(v || "").trim();
 }
 
-exports.handler = async (event) => {
-  if (event.httpMethod !== "POST") return json(405, { error: "Method not allowed" });
+const PREFERRED_CONTACT_VALUES = ["phone", "text", "email"];
+const PREFERRED_CONTACT_LABELS = { phone: "Phone call", text: "Text message", email: "Email" };
 
-  const ip = event.headers["x-nf-client-connection-ip"] || event.headers["client-ip"] || "unknown";
-  if (await rateLimited("website-designer", ip, 8, 3600)) {
-    return json(429, { error: "Too many submissions. Please call 636-426-0289 or email dylan@lit-solutions.tech directly." });
+function newLeadId() {
+  return "WD-" + Date.now().toString(36).toUpperCase() + "-" + require("crypto").randomBytes(3).toString("hex").toUpperCase();
+}
+
+// Stage "quick" -- fired the moment a customer accepts the on-screen price.
+// Deliberately minimal: no brief, no PDF, no attachments -- just enough to
+// get a lead into Dylan's inbox with as little friction for the customer
+// as possible. The full project-details form (stage "full") is optional
+// and comes later, if at all.
+async function handleQuickSubmission(body, ip) {
+  const { package: pkg, businessName, customerName, email, phone, preferredContact } = body;
+
+  if (pkg !== "starter" && pkg !== "business") return json(400, { error: "Invalid package." });
+  if (!businessName || !businessName.trim()) return json(400, { error: "Business name is required." });
+  if (!customerName || !customerName.trim()) return json(400, { error: "Your name is required." });
+  if (!email || !EMAIL_RE.test(email)) return json(400, { error: "A valid email is required." });
+  if (!phone || !phone.trim()) return json(400, { error: "Phone is required." });
+  if (!PREFERRED_CONTACT_VALUES.includes(preferredContact)) {
+    return json(400, { error: "Please choose a preferred contact method." });
   }
 
-  let body;
-  try { body = JSON.parse(event.body || "{}"); } catch (e) { return json(400, { error: "Invalid submission." } ); }
+  const id = newLeadId();
+  const record = {
+    id, stage: "quick", package: pkg, businessName: businessName.trim(), customerName: customerName.trim(),
+    email: email.toLowerCase().trim(), phone: phone.trim(), preferredContact,
+    subtotal: Number(body.subtotal) || 0, estimateTotal: Number(body.estimateTotal) || 0,
+    heroesDiscount: !!body.heroesDiscount,
+    bundledCategories: Array.isArray(body.bundledCategories) ? body.bundledCategories : [],
+    bundleSavings: Number(body.bundleSavings) || 0,
+    optionalSelected: Array.isArray(body.optionalSelected) ? body.optionalSelected : [],
+    premiumSelected: Array.isArray(body.premiumSelected) ? body.premiumSelected : [],
+    completedFull: false, createdAt: Date.now(), ip,
+  };
+  await setJSON("leads", id, record);
 
+  const optionalRows = record.optionalSelected.length
+    ? record.optionalSelected.map((f) => `<li>${esc(f.title)} -- $${Number(f.price) || 0}</li>`).join("")
+    : "<li>(none)</li>";
+  const premiumRows = record.premiumSelected.length
+    ? record.premiumSelected.map((t) => `<li>${esc(t)} -- custom quote</li>`).join("")
+    : "<li>(none)</li>";
+
+  const html = `
+    <h2>Quick quote request -- ${esc(id)}</h2>
+    <p>No project details yet -- this customer accepted the on-screen price and sent their contact info. They may add full project details separately; if they do, you'll get a second email referencing this same ID.</p>
+    <p><strong>Package:</strong> ${pkg === "business" ? "Business ($1,299 starting)" : "Starter ($699 starting)"}</p>
+    <p><strong>Business:</strong> ${esc(record.businessName)}<br>
+       <strong>Contact:</strong> ${esc(record.customerName)}<br>
+       <strong>Email:</strong> ${esc(record.email)}<br>
+       <strong>Phone:</strong> ${esc(record.phone)}<br>
+       <strong>Preferred contact method:</strong> ${esc(PREFERRED_CONTACT_LABELS[preferredContact] || preferredContact)}</p>
+
+    <p><strong>Estimated starting total:</strong> $${record.estimateTotal.toLocaleString()}${
+      record.heroesDiscount
+        ? ` <span style="color:#0A7A6D;">(subtotal $${record.subtotal.toLocaleString()}, less 15% American Heroes Discount -- pending verification)</span>`
+        : ""
+    }</p>
+    ${record.bundledCategories.length
+      ? `<p><strong>Category bundles applied (10% each):</strong> ${esc(record.bundledCategories.join(", "))} -- saving $${record.bundleSavings.toLocaleString()}</p>`
+      : ""
+    }
+    <p><strong>Optional features selected:</strong></p>
+    <ul>${optionalRows}</ul>
+    <p><strong>Premium add-ons requested (custom quote):</strong></p>
+    <ul>${premiumRows}</ul>
+    <p style="color:#666;font-size:.85rem;">Submitted ${new Date(record.createdAt).toLocaleString("en-US")} from IP ${esc(ip)}.
+    Full record saved in Netlify Blobs under "leads" / ${esc(id)}.</p>
+  `;
+
+  const result = await sendEmail({
+    to: "dylan@lit-solutions.tech",
+    subject: `Quick quote request -- ${pkg === "business" ? "Business" : "Starter"} -- ${record.businessName}`,
+    html,
+  });
+
+  return json(201, { id, emailSent: result.sent });
+}
+
+// Stage "full" -- the original submission shape, sent only if the customer
+// opts in to the complete content brief after their quick quote.
+async function handleFullSubmission(body, ip) {
   const {
-    package: pkg, businessName, customerName, email, phone, domain, notes,
+    package: pkg, businessName, customerName, email, phone, preferredContact, domain, notes,
     subtotal, estimateTotal, heroesDiscount, bundledCategories, bundleSavings,
     optionalSelected, premiumSelected, pdfBase64, pdfFilename,
-    brief, logo, photos,
+    brief, logo, photos, quickLeadId,
   } = body;
 
   if (pkg !== "starter" && pkg !== "business") return json(400, { error: "Invalid package." });
@@ -105,10 +195,14 @@ exports.handler = async (event) => {
     return json(400, { error: "Attachments are too large altogether -- please remove a photo or two and resubmit." });
   }
 
-  const id = "WD-" + Date.now().toString(36).toUpperCase() + "-" + require("crypto").randomBytes(3).toString("hex").toUpperCase();
+  const id = newLeadId();
+  const cleanQuickLeadId = typeof quickLeadId === "string" && /^WD-/.test(quickLeadId) ? quickLeadId : null;
   const record = {
-    id, package: pkg, businessName: businessName.trim(), customerName: customerName.trim(),
-    email: email.toLowerCase().trim(), phone: phone.trim(), domain: (domain || "").trim(),
+    id, stage: "full", quickLeadId: cleanQuickLeadId,
+    package: pkg, businessName: businessName.trim(), customerName: customerName.trim(),
+    email: email.toLowerCase().trim(), phone: phone.trim(),
+    preferredContact: PREFERRED_CONTACT_VALUES.includes(preferredContact) ? preferredContact : null,
+    domain: (domain || "").trim(),
     notes: (notes || "").trim(), subtotal: Number(subtotal) || 0, estimateTotal: Number(estimateTotal) || 0,
     heroesDiscount: !!heroesDiscount,
     bundledCategories: Array.isArray(bundledCategories) ? bundledCategories : [],
@@ -119,6 +213,10 @@ exports.handler = async (event) => {
     createdAt: Date.now(), ip,
   };
   await setJSON("leads", id, record);
+  if (cleanQuickLeadId) {
+    const quickRecord = await getJSON("leads", cleanQuickLeadId);
+    if (quickRecord) await setJSON("leads", cleanQuickLeadId, { ...quickRecord, completedFull: true, fullLeadId: id });
+  }
 
   const optionalRows = record.optionalSelected.length
     ? record.optionalSelected.map((f) => `<li>${esc(f.title)} -- $${Number(f.price) || 0}</li>`).join("")
@@ -142,12 +240,14 @@ exports.handler = async (event) => {
     .join("");
 
   const html = `
-    <h2>New Website Designer submission -- ${esc(id)}</h2>
+    <h2>Full project details -- ${esc(id)}</h2>
+    ${cleanQuickLeadId ? `<p>Follow-up to the quick quote sent earlier -- see "leads" / ${esc(cleanQuickLeadId)}.</p>` : ""}
     <p><strong>Package:</strong> ${pkg === "business" ? "Business ($1,299 starting)" : "Starter ($699 starting)"}</p>
     <p><strong>Business:</strong> ${esc(record.businessName)}<br>
        <strong>Contact:</strong> ${esc(record.customerName)}<br>
        <strong>Email:</strong> ${esc(record.email)}<br>
        <strong>Phone:</strong> ${esc(record.phone)}<br>
+       <strong>Preferred contact method:</strong> ${esc(PREFERRED_CONTACT_LABELS[record.preferredContact] || "(not given)")}<br>
        <strong>Current domain:</strong> ${esc(record.domain) || "(none)"}</p>
 
     <h3>Business brief</h3>
@@ -183,10 +283,24 @@ exports.handler = async (event) => {
 
   const result = await sendEmail({
     to: "dylan@lit-solutions.tech",
-    subject: `New Website Designer submission -- ${pkg === "business" ? "Business" : "Starter"} -- ${record.businessName}`,
+    subject: `Full project details -- ${pkg === "business" ? "Business" : "Starter"} -- ${record.businessName}`,
     html,
     attachments,
   });
 
   return json(201, { id, emailSent: result.sent });
+}
+
+exports.handler = async (event) => {
+  if (event.httpMethod !== "POST") return json(405, { error: "Method not allowed" });
+
+  const ip = event.headers["x-nf-client-connection-ip"] || event.headers["client-ip"] || "unknown";
+  if (await rateLimited("website-designer", ip, 8, 3600)) {
+    return json(429, { error: "Too many submissions. Please call 636-426-0289 or email dylan@lit-solutions.tech directly." });
+  }
+
+  let body;
+  try { body = JSON.parse(event.body || "{}"); } catch (e) { return json(400, { error: "Invalid submission." }); }
+
+  return body.stage === "quick" ? handleQuickSubmission(body, ip) : handleFullSubmission(body, ip);
 };

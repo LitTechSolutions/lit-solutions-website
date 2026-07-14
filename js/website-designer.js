@@ -28,12 +28,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const includedTitle = document.getElementById('wdIncludedTitle');
   const optionalContainer = document.getElementById('wdOptionalCategories');
   const premiumContainer = document.getElementById('wdPremiumCategories');
-  const form = document.getElementById('wdForm');
+  const quickForm = document.getElementById('wdQuickForm');
+  const quickFormStatus = document.getElementById('wdQuickFormStatus');
+  const briefForm = document.getElementById('wdBriefForm');
   const formStatus = document.getElementById('wdFormStatus');
+  const doneMessageEl = document.getElementById('wdDoneMessage');
 
   const priceAmountEl = document.getElementById('wdPriceAmount');
   const priceSavingsEl = document.getElementById('wdPriceSavings');
   const priceNoteEl = document.getElementById('wdPriceNote');
+  const quoteRecapAmountEl = document.getElementById('wdQuoteRecapAmount');
   const businessNameEl = document.getElementById('wdBusinessName');
   const browserUrlEl = document.getElementById('wdBrowserUrl');
   const browserEmptyEl = document.getElementById('wdBrowserEmpty');
@@ -54,6 +58,14 @@ document.addEventListener('DOMContentLoaded', () => {
     basePrice: 0,
     displayedTotal: 0,
     catalog: null,
+    // Set once the quick-quote form (step 3) is sent successfully, so the
+    // optional full brief (step 4) doesn't have to re-collect or re-validate
+    // contact info that's already been captured and emailed.
+    quickLeadId: null,
+    customerName: '',
+    customerEmail: '',
+    customerPhone: '',
+    preferredContact: '',
   };
 
   const INCLUDED_SUMMARY_EN = {
@@ -258,6 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ever firing (found in testing: rAF never ran in a headless/inactive tab, which
     // would have left the ticker stuck at a stale number).
     priceAmountEl.textContent = fmtMoney(newTotal);
+    if (quoteRecapAmountEl) quoteRecapAmountEl.textContent = fmtMoney(newTotal);
     state.displayedTotal = newTotal;
     if (delta === 0 || prefersReducedMotion) return;
     const duration = 400;
@@ -281,8 +294,9 @@ document.addEventListener('DOMContentLoaded', () => {
     steps.forEach(s => {
       const stepNum = s.dataset.step;
       s.classList.toggle('is-active', stepNum === name);
-      if (name === '2' || name === '3' || name === 'done') s.disabled = false;
+      if (name === '2' || name === '3' || name === 'prompt' || name === '4' || name === 'done') s.disabled = false;
     });
+    if (name === 'prompt' || name === '4' || name === 'done') window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
   }
 
   function renderIncludedSummary() {
@@ -756,14 +770,26 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('[data-next]').forEach(btn => {
     btn.addEventListener('click', () => showPanel(btn.dataset.next));
   });
+  document.querySelectorAll('[data-prompt-choice]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.dataset.promptChoice === 'yes') {
+        showPanel('4');
+      } else {
+        doneMessageEl.textContent = tDyn('done_message_quick_only',
+          "Got it -- we'll reach out using the contact method you picked. If you'd rather add your project details now, you can always start another Website Designer request.");
+        showPanel('done');
+      }
+    });
+  });
   heroesCheckbox?.addEventListener('change', () => {
     if (state.package) updatePriceAndBreakdown();
   });
 
   businessNameEl?.addEventListener('input', refreshPreviewContent);
   businessNameEl?.addEventListener('keydown', (e) => {
-    // A single-line field -- don't let Enter attempt to submit wdForm from
-    // steps 1/2, where the form's other required fields aren't visible yet.
+    // A single-line field -- don't let Enter attempt to submit from
+    // steps 1/2, where the rest of the quick form's required fields
+    // aren't visible yet.
     if (e.key === 'Enter') e.preventDefault();
   });
 
@@ -964,11 +990,74 @@ document.addEventListener('DOMContentLoaded', () => {
     return 'WD-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
   }
 
-  if (form) {
-    form.addEventListener('submit', async (e) => {
+  // Step 3: quick quote capture. Minimal fields only (name/email/phone/
+  // preferred contact method) -- no content brief, no PDF -- so a lead
+  // reaches Dylan's inbox the moment someone decides the price works for
+  // them, instead of requiring the full project-details form first.
+  if (quickForm) {
+    quickForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!state.package) return;
       if (document.getElementById('wdHoneypot').value) return; // bot
+
+      const submitBtn = document.getElementById('wdQuickSubmitBtn');
+      submitBtn.disabled = true;
+      quickFormStatus.textContent = tDyn('status_sending_quote', 'Sending your quote request...');
+
+      const { optionalSelected, premiumSelected, heroesDiscount, bundledCategories: bundled, bundleSavings } = selectionPayload();
+      const customerName = document.getElementById('wdName').value;
+      const email = document.getElementById('wdEmail').value;
+      const phone = document.getElementById('wdPhone').value;
+      const preferredContact = document.getElementById('wdPreferredContact').value;
+
+      const payload = {
+        stage: 'quick',
+        package: state.package,
+        businessName: document.getElementById('wdBusinessName').value,
+        customerName, email, phone, preferredContact,
+        subtotal: Math.round(computeSubtotal()),
+        estimateTotal: Math.round(computeTotal()),
+        heroesDiscount,
+        bundledCategories: bundled,
+        bundleSavings: Math.round(bundleSavings),
+        optionalSelected, premiumSelected,
+      };
+
+      fetch('/.netlify/functions/website-designer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+        .then(async (res) => {
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+          state.quickLeadId = data.id || submissionId();
+          state.customerName = customerName;
+          state.customerEmail = email;
+          state.customerPhone = phone;
+          state.preferredContact = preferredContact;
+          document.getElementById('wdSubmissionId').textContent = state.quickLeadId;
+          showPanel('prompt');
+        })
+        .catch((err) => {
+          quickFormStatus.textContent = err.message && err.message !== 'Failed to fetch'
+            ? err.message
+            : tDyn('error_generic_submit', 'Something went wrong sending your project -- please call 636-426-0289 or email dylan@lit-solutions.tech directly.');
+          submitBtn.disabled = false;
+        });
+    });
+  }
+
+  // Step 4 (optional): the full content brief, only reached if the
+  // customer opts in from the post-quote prompt. Contact info is already
+  // known from step 3 (state.customerName/Email/Phone), so this payload
+  // only needs to add the brief, files, and the PDF summary, tagged with
+  // the quick-lead id so Dylan can match this to the earlier quote email.
+  if (briefForm) {
+    briefForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!state.package) return;
+      if (document.getElementById('wdHoneypotFull').value) return; // bot
 
       const submitBtn = document.getElementById('wdSubmitBtn');
       submitBtn.disabled = true;
@@ -988,11 +1077,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const { optionalSelected, premiumSelected, heroesDiscount, bundledCategories: bundled, bundleSavings } = selectionPayload();
 
       const payload = {
+        stage: 'full',
+        quickLeadId: state.quickLeadId,
         package: state.package,
         businessName: document.getElementById('wdBusinessName').value,
-        customerName: document.getElementById('wdName').value,
-        email: document.getElementById('wdEmail').value,
-        phone: document.getElementById('wdPhone').value,
+        customerName: state.customerName,
+        email: state.customerEmail,
+        phone: state.customerPhone,
+        preferredContact: state.preferredContact,
         domain: document.getElementById('wdDomain').value,
         notes: document.getElementById('wdNotes').value,
         subtotal: Math.round(computeSubtotal()),
@@ -1014,7 +1106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(async (res) => {
           const data = await res.json().catch(() => ({}));
           if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
-          document.getElementById('wdSubmissionId').textContent = data.id || submissionId();
+          document.getElementById('wdSubmissionId').textContent = data.id || state.quickLeadId || submissionId();
           showPanel('done');
         })
         .catch((err) => {

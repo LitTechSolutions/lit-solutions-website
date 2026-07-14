@@ -156,7 +156,7 @@
       <div class="wd-steps" role="tablist" aria-label="Website designer steps" data-i18n-attr-aria-label="wd.steps_aria_label">
         <button type="button" class="wd-step is-active" data-step="1" aria-current="step" data-i18n="wd.step1_label">1. Package</button>
         <button type="button" class="wd-step" data-step="2" disabled data-i18n="wd.step2_label">2. Features</button>
-        <button type="button" class="wd-step" data-step="3" disabled data-i18n="wd.step3_label">3. Your details</button>
+        <button type="button" class="wd-step" data-step="3" disabled data-i18n="wd.step3_label">3. Get your quote</button>
       </div>
 
       <div class="wd-layout">
@@ -224,14 +224,20 @@
             </div>
           </div>
 
-          <!-- Step 3: customer details + submit -->
+          <!-- Step 3: clear price recap + quick contact capture (no long form yet) -->
           <div class="wd-panel" id="wdStep3" data-panel="3">
-            <h2 class="wd-section-title" data-i18n="wd.step3_title">Your details</h2>
-            <p class="wd-note" data-i18n="wd.step3_note">Last step -- this is what gets turned into a project summary PDF and sent straight to us.</p>
-            <form id="wdForm">
+            <h2 class="wd-section-title" data-i18n="wd.step3_title">Get your quote</h2>
+            <p class="wd-note" data-i18n="wd.step3_note">Just your contact info -- no long form required. We'll follow up, and you can add full project details now or later.</p>
+
+            <div class="card wd-quote-recap">
+              <span class="wd-quote-recap-label" data-i18n="wd.quote_recap_label">Your estimate</span>
+              <span class="wd-quote-recap-amount" id="wdQuoteRecapAmount">$0</span>
+              <span class="wd-quote-recap-note" data-i18n="wd.quote_recap_note">Starting price -- confirmed by us before any work begins.</span>
+            </div>
+
+            <form id="wdQuickForm">
               <p class="visually-hidden"><label>Don't fill this out: <input name="wd-bot-field" id="wdHoneypot"></label></p>
 
-              <p class="wd-note" data-i18n="wd.step3_bizname_note">Business name is set above, next to your live preview -- update it there any time.</p>
               <div class="form-row form-row--split">
                 <div>
                   <label for="wdName" data-i18n="wd.form_name_label">Your name *</label>
@@ -248,13 +254,59 @@
                   <input type="tel" id="wdPhone" name="phone" required>
                 </div>
                 <div>
+                  <label for="wdPreferredContact" data-i18n="wd.form_preferred_contact_label">Preferred contact method *</label>
+                  <select id="wdPreferredContact" name="preferred_contact" required>
+                    <option value="" data-i18n="wd.form_preferred_contact_placeholder">Choose one</option>
+                    <option value="phone" data-i18n="wd.form_preferred_contact_phone">Phone call</option>
+                    <option value="text" data-i18n="wd.form_preferred_contact_text">Text message</option>
+                    <option value="email" data-i18n="wd.form_preferred_contact_email">Email</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row form-row--checkbox-trigger">
+                <label class="checkbox-pill">
+                  <input type="checkbox" id="wdConsent" name="privacy_ack" value="Yes" required>
+                  <span data-i18n-html="wd.consent_text">I understand this is a starting estimate, not a final quote, and I agree to be contacted about my project. See our <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</span>
+                </label>
+              </div>
+
+              <div class="wd-panel-actions">
+                <button type="button" class="btn btn-ghost" data-back="2" data-i18n="wd.step3_back">Back</button>
+                <button type="submit" class="btn btn-primary" id="wdQuickSubmitBtn" data-i18n="wd.step3_submit">Get my quote</button>
+              </div>
+              <p class="form-status" role="status" id="wdQuickFormStatus"></p>
+            </form>
+          </div>
+
+          <!-- Prompt shown right after the quick quote is sent -->
+          <div class="wd-panel" id="wdStepPrompt" data-panel="prompt">
+            <div class="card wd-done-card">
+              <h2 data-i18n="wd.prompt_title">Want to finish your project details now?</h2>
+              <p data-i18n="wd.prompt_message">The more we know up front, the faster we can start once you're ready -- but it's completely optional. We'll follow up either way using the contact method you picked.</p>
+              <div class="wd-panel-actions">
+                <button type="button" class="btn btn-ghost" data-prompt-choice="no" data-i18n="wd.prompt_no">Not right now</button>
+                <button type="button" class="btn btn-primary" data-prompt-choice="yes" data-i18n="wd.prompt_yes">Yes, let's continue</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4 (optional): full project brief, only reached via the prompt above -->
+          <div class="wd-panel" id="wdStep4" data-panel="4">
+            <h2 class="wd-section-title" data-i18n="wd.step4_title">Project details</h2>
+            <p class="wd-note" data-i18n="wd.step4_note">This is what actually lets us start building -- it gets turned into a project summary PDF and sent straight to us.</p>
+            <form id="wdBriefForm">
+              <p class="visually-hidden"><label>Don't fill this out: <input name="wd-bot-field" id="wdHoneypotFull"></label></p>
+
+              <div class="form-row form-row--split">
+                <div>
                   <label for="wdDomain" data-i18n="wd.form_domain_label">Current website or domain (if you have one)</label>
                   <input type="text" id="wdDomain" name="current_domain">
                 </div>
-              </div>
-              <div class="form-row">
-                <label for="wdDesiredDomain" data-i18n="wd.form_desired_domain_label">If you don't have a domain yet, what name would you like? (optional -- we can register it for you)</label>
-                <input type="text" id="wdDesiredDomain" name="desired_domain" placeholder="e.g. riversideplumbing.com" data-i18n-attr-placeholder="wd.form_desired_domain_placeholder">
+                <div>
+                  <label for="wdDesiredDomain" data-i18n="wd.form_desired_domain_label">If you don't have a domain yet, what name would you like? (optional -- we can register it for you)</label>
+                  <input type="text" id="wdDesiredDomain" name="desired_domain" placeholder="e.g. riversideplumbing.com" data-i18n-attr-placeholder="wd.form_desired_domain_placeholder">
+                </div>
               </div>
 
               <h3 class="wd-brief-heading" data-i18n="wd.brief_heading">Tell us about your business</h3>
@@ -358,16 +410,10 @@
                 <label for="wdNotes" data-i18n="wd.form_notes_label">Notes, questions, or anything specific you want</label>
                 <textarea id="wdNotes" name="notes" rows="4"></textarea>
               </div>
-              <div class="form-row form-row--checkbox-trigger">
-                <label class="checkbox-pill">
-                  <input type="checkbox" id="wdConsent" name="privacy_ack" value="Yes" required>
-                  <span data-i18n-html="wd.consent_text">I understand this is a starting estimate, not a final quote, and I agree to be contacted about my project. See our <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</span>
-                </label>
-              </div>
 
               <div class="wd-panel-actions">
-                <button type="button" class="btn btn-ghost" data-back="2" data-i18n="wd.step3_back">Back</button>
-                <button type="submit" class="btn btn-primary" id="wdSubmitBtn" data-i18n="wd.step3_submit">Submit my project</button>
+                <button type="button" class="btn btn-ghost" data-prompt-choice="no" data-i18n="wd.step4_back">Not right now</button>
+                <button type="submit" class="btn btn-primary" id="wdSubmitBtn" data-i18n="wd.step4_submit">Submit project details</button>
               </div>
               <p class="form-status" role="status" id="wdFormStatus"></p>
             </form>
@@ -377,7 +423,7 @@
           <div class="wd-panel" id="wdStepDone" data-panel="done">
             <div class="card wd-done-card">
               <h2 data-i18n="wd.done_title">Thanks -- we've got it.</h2>
-              <p data-i18n="wd.done_message">Your project request has been sent. We typically respond within one business day with next steps and a firm quote.</p>
+              <p id="wdDoneMessage" data-i18n="wd.done_message">Your project request has been sent. We typically respond within one business day with next steps and a firm quote.</p>
               <p class="wd-note"><span data-i18n="wd.done_reference_label">Submission reference:</span> <strong id="wdSubmissionId"></strong></p>
               <a href="index.html" class="btn btn-ghost" data-i18n="wd.done_back_home">Back to home</a>
             </div>
@@ -388,7 +434,7 @@
         <aside class="wd-preview-panel" aria-label="Live preview of your website">
           <div class="wd-bizname-field">
             <label for="wdBusinessName" data-i18n="wd.bizname_label">Your business name</label>
-            <input type="text" id="wdBusinessName" name="business_name" form="wdForm" placeholder="e.g. Riverside Plumbing" autocomplete="organization" required data-i18n-attr-placeholder="wd.bizname_placeholder">
+            <input type="text" id="wdBusinessName" name="business_name" form="wdQuickForm" placeholder="e.g. Riverside Plumbing" autocomplete="organization" required data-i18n-attr-placeholder="wd.bizname_placeholder">
             <p class="wd-note wd-note-inline" data-i18n="wd.bizname_note">Used to personalize your preview below, and required to submit.</p>
           </div>
 
@@ -472,7 +518,7 @@
     </nav>
   </div>
   <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span data-i18n="footer.rights">All rights reserved.</span></p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version 3.0.0</a></p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version 3.1.0</a></p>
   <p class="footer-version"><a href="admin.html" data-i18n="footer.staff_signin">Staff Sign In</a></p>
 </footer>
 
