@@ -664,7 +664,7 @@
     if (!requireAuth()) return el("<div></div>");
     setPageTitle("myaccount.tab_profile_login", "Profile & Login");
     var prefs = state.user.preferences || { language: "en", timezone: "", emailNotifications: true };
-    var LANGUAGES = [["en", "English"], ["es", "Español"], ["fr", "Français"], ["de", "Deutsch"]];
+    var LANGUAGES = [["en", "English"], ["es", "Español"], ["fr", "Français"], ["zh", "中文"], ["ja", "日本語"], ["vi", "Tiếng Việt"], ["tl", "Filipino"], ["ar", "العربية"], ["ko", "한국어"], ["de", "Deutsch"], ["ht", "Kreyòl Ayisyen"], ["pt", "Português"], ["ru", "Русский"], ["it", "Italiano"], ["pl", "Polski"], ["hi", "हिन्दी"]];
 
     var v = el('<div>' +
       '<div class="card"><p style="font-size:.9rem; color:var(--ink-soft);">Signed in as <strong>' + esc(state.user.name) + '</strong> (' + esc(state.user.email) + ').</p></div>' +
