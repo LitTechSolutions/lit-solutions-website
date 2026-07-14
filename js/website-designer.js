@@ -1004,7 +1004,15 @@ document.addEventListener('DOMContentLoaded', () => {
     doc.text('Website Designer -- Project Summary', 14, y); y += 8;
     doc.setFontSize(10);
     doc.setTextColor(100);
-    doc.text('Little Technical Solutions LLC  |  dylan@lit-solutions.tech  |  636-426-0289', 14, y); y += 12;
+    doc.text('Little Technical Solutions LLC  |  dylan@lit-solutions.tech  |  636-426-0289', 14, y); y += 6;
+    // Reusing the quick-quote lead id (always set by the time this runs
+    // during the full-brief submission, since that panel is only reached
+    // after a successful quick submit) keeps this PDF matched to the same
+    // reference number Dylan already has in his inbox. A standalone
+    // "download PDF" click before any submission has no lead id yet, so it
+    // gets its own draft reference instead of silently omitting one.
+    const refId = state.quickLeadId || submissionId();
+    doc.text(`Reference: ${refId}  |  Generated: ${new Date().toLocaleString()}`, 14, y); y += 12;
 
     doc.setTextColor(20);
     doc.setFontSize(13);
