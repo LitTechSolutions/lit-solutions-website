@@ -2,7 +2,7 @@
   "project": "lit-solutions.tech",
   "repoVersion": "v23",
   "auditFramework": "docs/audit/",
-  "readyForSession": 8,
+  "readyForSession": null,
   "sessions": {
     "1": {
       "doc": "01_REPOSITORY_BASELINE.md",
@@ -39,7 +39,11 @@
       "status": "complete",
       "note": "Read NEW_FUNCTIONS_README.md and all 9 REQUIREMENTS.md files in full. Built a value/risk/dependency gap matrix for all 9 candidate functions; confirmed the existing recommended build order independently. No new findings -- classification exercise only. Sharpened F033 with context: project-status and referral-program would both add further account-system surface on top of the existing open question."
     },
-    "8": { "doc": "08_FINAL_AUDIT_AND_ROADMAP.md", "status": "not_started" }
+    "8": {
+      "doc": "08_FINAL_AUDIT_AND_ROADMAP.md",
+      "status": "complete",
+      "note": "Consolidated all 41 findings into a tiered fix-now/medium/low roadmap, grouped the 11 owner-decision items into direct questions for Dylan, restated Session 7's build order, and wrote handoff notes for any future implementation session. Audit complete -- no further sessions defined."
+    }
   },
   "findingIdRange": { "next": "F042", "note": "IDs are derived from real findings only; there is no predetermined catalog size such as F001-F060." },
   "findings": {

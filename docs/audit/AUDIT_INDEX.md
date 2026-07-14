@@ -3,7 +3,16 @@
 Human-readable index of the LTS platform audit. See `AUDIT_STATE.json` for
 machine-readable state, and `00_AUDIT_CONTROL.md` for process/ground rules.
 
-## How to resume cold
+## Status: audit complete (Sessions 1–8 all done)
+
+All 8 planned sessions are finished as of this document. `AUDIT_STATE.json`'s
+`readyForSession` is `null` — there is no pending session to resume into.
+See `08_FINAL_AUDIT_AND_ROADMAP.md` for the consolidated roadmap. If a
+genuinely new audit pass is warranted later (e.g. after a major redesign
+or a large new feature set lands), start a new numbered session rather
+than editing `01`–`08` in place.
+
+## How to resume cold (if a new session is ever added)
 
 1. Read `00_AUDIT_CONTROL.md` (rules) and `AUDIT_STATE.json`
    (`readyForSession`).
@@ -24,7 +33,7 @@ machine-readable state, and `00_AUDIT_CONTROL.md` for process/ground rules.
 | [05_PRICING_AND_BUSINESS_RULES.md](05_PRICING_AND_BUSINESS_RULES.md) | Done | Website Designer, pricing/discount logic, plans, payments; no new findings, F010/F011/F031/F032/F035 refined |
 | [06_QUALITY_AUDIT.md](06_QUALITY_AUDIT.md) | Done | Accessibility, mobile, performance, SEO, translation, quality states; finding F041, F021/F026 refined |
 | [07_REQUIREMENTS_GAP_MATRIX.md](07_REQUIREMENTS_GAP_MATRIX.md) | Done | Classify all 9 candidate functions vs. value/risk/dependencies; F033 sharpened |
-| 08_FINAL_AUDIT_AND_ROADMAP.md | Not started | Consolidated findings, roadmap, Extra Intelligence handoff |
+| [08_FINAL_AUDIT_AND_ROADMAP.md](08_FINAL_AUDIT_AND_ROADMAP.md) | Done | Consolidated findings into a tiered roadmap, owner-decision questions, and handoff notes |
 
 ## Evidence & inventories
 
@@ -89,3 +98,9 @@ Phase 2 and `lead-followup` are blocked on a cost decision and real copy
 respectively, not engineering readiness. No new findings; F033 sharpened
 with context about `project-status`/`referral-program` adding further
 account-system surface.
+
+Session 8 consolidated all 41 findings into a tiered roadmap (6 fix-now
+items with no owner decision needed, a medium tier, a low/info tier),
+grouped the 11 owner-decision findings into direct questions for Dylan,
+restated the confirmed new-feature build order, and wrote handoff notes
+for whoever picks up implementation next. The audit is now complete.
