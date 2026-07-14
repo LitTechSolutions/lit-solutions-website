@@ -1,10 +1,10 @@
 {
   "developmentVersion": "1.0",
-  "currentSession": 7,
-  "completedSessions": [0, 1, 2, 3, 4, 5, 6, 7],
-  "nextSession": 8,
-  "currentWave": "Session 7 -- Reporting & Platform Operations (F051, F053-F055, F057)",
-  "currentFunctionIds": ["F051", "F053", "F054", "F055", "F057"],
+  "currentSession": 8,
+  "completedSessions": [0, 1, 2, 3, 4, 5, 6, 7, 8],
+  "nextSession": 9,
+  "currentWave": "Session 8 -- AI Assistance (F060) -- GATE NOT MET, no code written",
+  "currentFunctionIds": ["F060"],
   "branch": "feature/business-care-hub",
   "baselineCommit": "1570734",
   "workspaceNote": "This workspace (LTS Stand Alone Software) is a full copy of Development/Business Website/Website Code/v23, including .git and origin remote. v23 itself was not modified. Standing instruction: everything stays local to this workspace for the entire build -- no push, no merge into a new vN folder or main -- until Dylan says otherwise. Standing instruction (2026-07-14): work continues session-by-session, unattended, for as long as productive, without stopping to ask -- owner-decision blockers are documented, not asked about. See DECISION_LOG.md.",
@@ -36,12 +36,8 @@
   ],
   "verifiedFunctions": [],
   "blockedFunctions": [
-    "F001, F002, F007, F026, F027, F028, F049, F050, F052, F058, F010, F013, F014, F043, F044, F046/F047, F048, F031, F035/F038/F039/F040, F036, F041, F042 -- see prior session entries for detail, unchanged this session",
-    "F051 (assembler done; persistence blocked, no real cross-org data to assemble)",
-    "F055 (engine done; persistence blocked, and real template copy still needs Dylan/staff authorship regardless of storage)",
-    "F057 (verifier done; blocked on which provider actually gets webhook integration first -- OWNER_DECISIONS.md new item on Square/webhook-capable-replacement)",
-    "F053 (CSV formatting done; PDF generation and the report-selection/authorization layer not built; persistence blocked)",
-    "F054 (aggregation done; no real event emission wired in from any other function yet)"
+    "F001, F002, F007, F026, F027, F028, F049, F050, F052, F058, F010, F013, F014, F043, F044, F046/F047, F048, F031, F035/F038/F039/F040, F036, F041, F042, F051, F055, F057, F053, F054 -- see prior session entries for detail, unchanged this session",
+    "F060 (AI-Assisted Ticket Structuring & Drafting) -- BLOCKED by explicit master-instruction precondition, not by owner-decision alone: 'Do not begin Session 8 until core non-AI workflows work, authorization works, data redaction works, audit logging works, human review workflows work, provider data policy is approved, owner budget is approved.' Full gate table in sessions/SESSION_08_AI_ASSISTANCE.md -- none of the 7 gates are fully met. No code written this session; writing an 'engine, not policy' version (as done for F020/F050) was judged inappropriate here because F060's core concern (what data reaches an AI provider, under what terms) is not separable from the still-open provider/policy/budget decision the way a price sheet or rule table is separable from pricing content."
   ],
   "notStartedThisSessionByDesign": [
     "F003, F004, F006, F059, F011, F018, F024, F030, F045, F032, F034, F033 -- see prior session entries, unchanged"
@@ -60,8 +56,9 @@
   ],
   "filesRequiringReview": [
     "docs/development/ARCHITECTURE.md (target architecture proposal, frontend build-step recommendation)",
-    "docs/development/OWNER_DECISIONS.md (all 10 items)",
-    "docs/development/REQUIREMENTS_TRACEABILITY.md (updated Session 7)"
+    "docs/development/OWNER_DECISIONS.md (all 10 items, especially #9 AI provider/data policy/budget for Session 8's gate)",
+    "docs/development/REQUIREMENTS_TRACEABILITY.md (updated Session 7)",
+    "docs/development/sessions/SESSION_08_AI_ASSISTANCE.md (full 7-gate table for F060)"
   ],
   "knownRisks": [
     "No organization/tenant concept exists in the pre-Care-Hub codebase at all -- F001 is a from-scratch build, not an extension",

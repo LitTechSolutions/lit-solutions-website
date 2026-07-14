@@ -28,6 +28,7 @@ Human-readable index of the LTS Business Care Hub development effort. See `DEV_S
 | [sessions/SESSION_05_IT_SERVICES.md](sessions/SESSION_05_IT_SERVICES.md) | Narrative record of Session 5 |
 | [sessions/SESSION_06_WEBSITE_CARE.md](sessions/SESSION_06_WEBSITE_CARE.md) | Narrative record of Session 6 |
 | [sessions/SESSION_07_REPORTING_OPERATIONS.md](sessions/SESSION_07_REPORTING_OPERATIONS.md) | Narrative record of Session 7 |
+| [sessions/SESSION_08_AI_ASSISTANCE.md](sessions/SESSION_08_AI_ASSISTANCE.md) | Session 8's gate-status record (no code written -- F060 gate not met) |
 
 **Not yet created** (start when there's something to populate them with): `RELEASE_NOTES.md` (first release), `SECURITY_REVIEW.md` (before first production-affecting change).
 
