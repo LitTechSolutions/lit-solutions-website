@@ -107,7 +107,7 @@ flowchart LR
 | Netlify (hosting/CDN) | Exists | Reusable | No change needed. |
 | Netlify Functions | Exists, 12 handlers | Reusable with correction | Solid auth/session pattern; needs domain-service extraction per `SYS-ARC-002`, typed validation, correlation IDs. |
 | Netlify Forms | Not yet inventoried in this session | Requires migration (tentative) | `intake.html` posts appear to go through a custom function (`website-designer.js`), not native Netlify Forms — confirm in Session 1/2 before assuming reuse. |
-| Netlify Blobs | Exists, 11 stores | Partially reusable / Owner decision required | Fine for current low-relational-complexity data; Business Care Hub's org/ticket/scope/payment relational needs likely exceed what `list()`-scan supports at acceptable latency and query flexibility. See `MIGRATION_PLAN.md`. |
+| Netlify Blobs | Exists, 11 stores | Reusable, scope narrowed | ✅ Decided (2026-07-14): stays for CMS content, sessions/tokens/users (F003/F004, unmodified), and small file blobs. Care Hub's relational entities (orgs, tickets, scopes, payments, plans) moved to Postgres/Neon instead — see `ARCHITECTURE.md` §3.3, `migrations/001_initial_schema.sql`. |
 | Customer accounts | Exists (flat, no orgs) | Requires migration | Auth/session/password mechanics are solid and reusable as-is; the **data model** (no organization entity) must be extended, not replaced — F001/F002/F003/F004 build on top of `auth_utils.js`, don't replace it. |
 | Staff administration | Exists (`admin.html`) | Partially reusable | Console pattern (hash router, role gate) is reusable as a UX pattern; the code itself is a monolithic single file that should not be extended further without factoring out shared boilerplate. |
 | Documents | Exists (`documents.js`) | Partially reusable | Owner/access model reusable; storage-as-base64-in-Blobs does not meet target file-storage requirements (`SYS-ARC-004`) at Care Hub scale — needs a storage strategy decision. |
@@ -163,15 +163,21 @@ Since no React/Vite exists to preserve, and the existing build-less pattern acti
 - Keep Netlify Functions as the API layer (`SYS-ARC-002` allows this explicitly). Extract domain logic (pricing, entitlement, workflow, priority, approval rules) into pure TypeScript modules under a new `src/domain/` tree, imported by both functions and (via the new build step) the client where pure calculations need to run client-side for UX (e.g. live price preview) — with the server copy remaining the authoritative source, matching the existing Website Designer "cross-check, don't override" convention rather than trying to eliminate all duplication at once.
 - Replace the current hand-rolled 3-line auth boilerplate per function with a shared `requireAuth(role, orgScope)` helper — still simple, still no framework, just deduplicated and consistently enforced (`SYS-AUTH-001`/`SYS-AUTH-002`).
 
-### 3.3 Data-store strategy — **owner decision required**, see `OWNER_DECISIONS.md` and `MIGRATION_PLAN.md`
+### 3.3 Data-store strategy — ✅ **DECIDED** (Dylan, 2026-07-14): managed PostgreSQL on Neon
 
-Two viable paths, not decided here:
-1. **Stay on Netlify Blobs**, add a hand-rolled secondary-index convention (e.g. `org:{orgId}:tickets` list keys) to keep query patterns bounded as data grows. Lowest cost, no new provider, but caps how relational/reportable the data can become.
-2. **Introduce managed PostgreSQL** for the Care Hub's relational entities (organizations, tickets, scopes, approvals, payments, plans), keeping Blobs for what it's already good at (CMS content, session tokens, file blobs). Matches `SYS-ARC-003`'s explicit suggestion, but is a new paid provider — owner-controlled per master instruction §8.
+Path 2 from the original two options was chosen: managed PostgreSQL for the Care Hub's relational entities (organizations, memberships, tickets, scopes, approvals, payments, plans, and everything downstream), keeping Netlify Blobs for what it already does well (CMS content, session tokens via F003's existing `sessions`/`tokens`/`users` stores, and small file blobs). Matches `SYS-ARC-003`'s explicit suggestion.
+
+**Provider: Neon**, chosen specifically for its HTTP-based serverless driver (`@neondatabase/serverless`) rather than a traditional connection-pooled driver — Netlify Functions are stateless per-invocation, and a pooled driver risks exhausting the database's connection limit under concurrent invocations the way an HTTP-per-query driver doesn't. See `DECISION_LOG.md`'s post-Session-9 entry.
+
+**What exists as of this decision:**
+- `migrations/001_initial_schema.sql` — full relational schema, one table per already-built domain type across Sessions 1–7 (organizations, memberships, tickets, approvals, payment requests, audit events, and 20+ more). Not yet run against a live database — no Neon project has been provisioned in this environment yet (see `DEPLOYMENT_PLAN.md`).
+- `src/db/pgClient.js` — shared connection helper, mirrors `_lib/blob_store.js`'s "one place that knows how to connect" pattern.
+- `src/db/organizationStore.js`, `membershipStore.js` — real F001/F005 persistence, tested against a fake tagged-template `sql` function (dependency-injected, same pattern as `deps.now`/`deps.idGenerator` used throughout `src/`). `membershipStore.js`'s `resolveAuthorizationContext()` is the intended real-world entry point: it resolves a user's membership into exactly the shape `rbac.js`'s pure `authorize()` expects, keeping the policy engine itself unchanged.
+- `src/db/pgAuditSink.js` — drop-in replacement for `src/audit/blobsAuditSink.js`, implementing the same `AuditSink` interface `createAuditRecorder()` (Session 1) was built against. This interface-first design is exactly why the swap required zero changes to the recorder itself.
 
 ### 3.4 Private file strategy
 
-Move off base64-in-Blobs for anything beyond small images; use signed, short-lived download URLs generated server-side with object-ownership + role checks on every issuance (`SYS-ARC-004`). Provider choice (stay on Blobs' binary support vs. a dedicated object store) is secondary to the primary data-store decision in §3.3 and can follow the same owner review.
+Move off base64-in-Blobs for anything beyond small images; use signed, short-lived download URLs generated server-side with object-ownership + role checks on every issuance (`SYS-ARC-004`). Object-storage provider (Neon has no native blob storage; likely a dedicated object store or continued Blobs binary support for now) remains open — a smaller follow-on decision, not blocking Wave 1.
 
 ### 3.5 Provider adapter strategy
 
@@ -179,7 +185,7 @@ One typed adapter per provider (Square, email, future Google Calendar, future AI
 
 ### 3.6 Audit-event strategy
 
-F008 (Audit Trail & Security Event Logging) needs a dedicated `audit_events` Blobs store (or Postgres table, per §3.3) written by a single shared helper function called from every privileged/financial/contractual/security/deletion action — not ad hoc per-function logging. This is Wave 1 foundational work; nothing later can be verified as "audited" per Global NFR `SYS-NFR-020` without it existing first.
+F008 now has its Postgres table (`audit_events`, `migrations/001_initial_schema.sql`) with real indexes on organization/actor/action — replacing the Blobs list-scan concern flagged since Session 0. `src/db/pgAuditSink.js` is ready; wiring a shared recorder call into every privileged/financial/contractual/security/deletion action across the codebase is the remaining Wave 1 work per Global NFR `SYS-NFR-020`.
 
 ### 3.7 Feature-flag strategy
 

@@ -2,6 +2,12 @@
 
 Decisions Claude made within its own discretion this session (not owner-controlled), with reasoning, so future sessions don't re-litigate them.
 
+## 2026-07-14 — Owner decision (post-Session-9 check-in)
+
+**Decision:** Dylan resolved `OWNER_DECISIONS.md` #1: primary data store is managed PostgreSQL, hosted on Neon.
+**Why:** Asked directly after Session 9's release review flagged this as the single highest-leverage open decision. Neon specifically chosen for its serverless-native HTTP driver (`@neondatabase/serverless`), which avoids the connection-pool-exhaustion problem a traditional `pg` connection-pooled driver would hit under Netlify Functions' per-invocation execution model.
+**How to apply:** Netlify Blobs stays for CMS content, session tokens (F003's existing `sessions`/`tokens`/`users` stores, untouched), and file blobs — nothing about the existing site's auth mechanics changes. New Care Hub relational entities (organizations, memberships, tickets, scopes, approvals, payments, plans, and everything else with real relationships) move to Postgres. See the SQL migration under `migrations/` and the new `src/db/` adapters for the resulting schema — built this session, not yet run against a real database (no live Neon project exists in this environment; provisioning one is Dylan's next infrastructure step, tracked in `DEPLOYMENT_PLAN.md`).
+
 ## 2026-07-14 — Session 0
 
 **Decision:** Work in a full copy of `v23` placed at `LTS Stand Alone Software` (this workspace), on branch `feature/business-care-hub`, rather than a worktree inside `v23` itself.

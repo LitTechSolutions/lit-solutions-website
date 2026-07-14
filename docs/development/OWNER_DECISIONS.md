@@ -1,14 +1,12 @@
 # Owner Decisions Required
 
-Consolidated from `v23/docs/audit/AUDIT_STATE.json` (11 owner-decision findings), the Master Function Index's 8-item "Stop-and-Approve Owner Decisions" list, and engineering findings surfaced across Sessions 0–9. Nothing in this file has been decided — each item blocks the specific function(s) noted until Dylan resolves it. Status as of Session 9 (Release Readiness): **all 10 items remain open**; 27 functions across Sessions 1–7 were built as far as possible without deciding any of them (see `REQUIREMENTS_TRACEABILITY.md` and each session's doc under `sessions/`), and the majority of the codebase's logic layer is now waiting on this list specifically.
+Consolidated from `v23/docs/audit/AUDIT_STATE.json` (11 owner-decision findings), the Master Function Index's 8-item "Stop-and-Approve Owner Decisions" list, and engineering findings surfaced across Sessions 0–9. Status as of the post-Session-9 check-in: **item #1 is RESOLVED** (Dylan, 2026-07-14); the other 9 remain open. 27 functions across Sessions 1–7 were built as far as possible without any of these decided (see `REQUIREMENTS_TRACEABILITY.md` and each session's doc under `sessions/`) — item #1's resolution is what unblocks F001/F005 persistence and, by extension, real endpoints for most of that work.
 
-## 1. Primary data store (new — this session)
+## 1. Primary data store — ✅ RESOLVED (Dylan, 2026-07-14)
 
-- **Issue:** Netlify Blobs (current store) has no secondary indexes and does relational-shaped queries via full `list()` scan. Business Care Hub's org/ticket/scope/approval/payment/plan relationships are meaningfully more relational than anything the site does today.
-- **Options:** (a) stay on Blobs with hand-rolled composite-key pseudo-indexing, no new provider/cost; (b) introduce managed PostgreSQL for relational entities, keep Blobs for content/sessions/files.
-- **Consequence of not deciding:** F001 (Organization Provisioning) and F005 (RBAC) — the two functions everything else depends on — can't finalize their storage design.
-- **Recommendation:** (b), evaluated properly per `SYS-ARC-003`'s migration protocol before any production data is involved — but this is a new paid provider, so it's owner-controlled regardless of engineering preference.
-- **Blocks:** Wave 1 architecture finalization (F001, F005, and by extension everything downstream).
+- **Decision:** Managed PostgreSQL, hosted on **Neon** (serverless-native, HTTP driver suited to Netlify Functions' invocation model — no persistent connection pool to exhaust). Netlify Blobs remains in place for what it already does well: CMS content, session tokens, and file blobs. See `DECISION_LOG.md` for the full record and `ARCHITECTURE.md`/`DATA_MODEL.md` for the resulting schema.
+- **Unblocks:** F001 (Organization Provisioning) and F005 (RBAC) persistence, and by extension real endpoints for every function whose logic was already built and tested against this decision (F008, F009, F010, F012–F017, F019–F029, F031, F036, F041–F045, F048, F049–F052).
+- **Still open as a follow-on:** provisioning the actual Neon project/database and setting `DATABASE_URL` (or equivalent) as a Netlify environment variable — an infrastructure step, not a decision, tracked in `DEPLOYMENT_PLAN.md`.
 
 ## 2. Pricing, discounts, deposits, payment timing (audit F030, F031; Master Index item 1)
 

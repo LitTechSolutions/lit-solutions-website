@@ -13,7 +13,9 @@ Production deploys today happen by pushing `main` from whichever `vN` folder und
 
 ## Environment variables (document name/purpose/owner/environment/rotation — never values)
 
-Not inventoried in this session beyond what's implied by existing code (`LTS_SESSION_SECRET` for session HMAC signing, Netlify Blobs auto-detected credentials with a `NETLIFY_BLOBS_TOKEN`/`SITE_ID` fallback, an email-provider key for Resend). A full environment-variable inventory is Session 1 work, once F001–F008 determine what new variables (org/RBAC-related, any new provider) are actually needed.
+Not fully inventoried yet beyond what's implied by existing code (`LTS_SESSION_SECRET` for session HMAC signing, Netlify Blobs auto-detected credentials with a `NETLIFY_BLOBS_TOKEN`/`SITE_ID` fallback, an email-provider key for Resend).
+
+**New, added with the Postgres/Neon decision (2026-07-14):** `DATABASE_URL` (or `NEON_DATABASE_URL`) — Neon connection string, read by `src/db/pgClient.js`. **Not yet set anywhere** — no Neon project has been provisioned in this environment. Required before any of `organizationStore.js`, `membershipStore.js`, or `pgAuditSink.js` can run against a real database (they currently only run against fake injected `sql` functions in tests). This is a secret — never commit its value; set it only in Netlify's environment variable UI (or local `.env`, gitignored) once Dylan provisions the Neon project.
 
 ## Netlify Functions / Forms
 

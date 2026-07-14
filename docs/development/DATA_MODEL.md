@@ -41,9 +41,11 @@ Every new Business Care Hub entity should carry:
 
 None of the current 11 stores' record shapes include `organization_id`, `version`, or `correlation_id`. Retrofitting existing records (`documents`, `messages`, `notifications`, `favorites`, `leads`) to the target shape — once F001 defines what an "organization" is — is itself a migration, not a greenfield add; see `MIGRATION_PLAN.md`.
 
-## 3. Primary data store — open question
+## 3. Primary data store — ✅ DECIDED (Dylan, 2026-07-14): PostgreSQL on Neon
 
-Whether the target model above lives in an extended Netlify Blobs schema (hand-rolled composite keys like `org:{orgId}:tickets:{ticketId}` for pseudo-indexing) or a managed relational database is an **owner decision** — see `ARCHITECTURE.md` §3.3 and `OWNER_DECISIONS.md`. This document's target shape applies either way; only the storage mechanics differ.
+`migrations/001_initial_schema.sql` implements the target common data model above as real Postgres tables — every Care Hub entity has `id` (UUID), `organization_id` (foreign key, indexed), `created_at`/`updated_at`, `version` where the domain type calls for it, and JSONB columns for the few fields that are genuinely document-shaped (e.g. `evidence`, `line_items`, `allowed_variables`) rather than forcing everything into rigid columns. `correlation_id` exists on `audit_events`; other tables don't carry one yet since no cross-service tracing exists to populate it — add it when a real multi-step workflow needs it, not preemptively.
+
+Netlify Blobs' `users`/`sessions`/`tokens` stores (F003/F004) are **not** migrated — they keep working exactly as-is; only new Care Hub relational entities moved to Postgres. `documents`/`messages`/`notifications`/`favorites`/`leads` retrofitting (adding `organization_id` to existing Blobs records) is still a distinct, not-yet-scheduled migration — see `MIGRATION_PLAN.md`'s "known future migration" section, now updated with the concrete target schema.
 
 ## 4. Privacy data categories (per Global Requirements — for retention/consent design, not yet implemented)
 
