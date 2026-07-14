@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const costBreakdownEl = document.getElementById('wdCostBreakdown');
   const downloadBtn = document.getElementById('wdDownloadPdf');
   const heroesCheckbox = document.getElementById('wdHeroesDiscount');
+  const startOverBtn = document.getElementById('wdStartOver');
   const HEROES_DISCOUNT_RATE = 0.15; // 15% off one-time work -- matches heroes-pricing.html
   const BUNDLE_DISCOUNT_RATE = 0.10; // 10% off a category when every optional item in it is selected
   const BUNDLE_MIN_ITEMS = 2; // a "bundle" of one item isn't a bundle
@@ -67,6 +68,73 @@ document.addEventListener('DOMContentLoaded', () => {
     customerPhone: '',
     preferredContact: '',
   };
+
+  // ---- Draft persistence (survive an accidental refresh/navigation) --
+  // Session-only (not localStorage): this brief can carry real business
+  // details, so it shouldn't outlive the tab. Logo/photo files are never
+  // persisted -- browsers won't let JS repopulate a file input anyway, and
+  // base64-encoding them into sessionStorage risked hitting its ~5-10MB
+  // quota. Bumping WD_DRAFT_VERSION invalidates any old saved shape rather
+  // than risk restoring into a catalog/form structure that's since changed.
+  const WD_DRAFT_KEY = 'lts-wd-draft';
+  const WD_DRAFT_VERSION = 1;
+  const QUICK_FORM_FIELD_IDS = ['wdBusinessName', 'wdName', 'wdEmail', 'wdPhone', 'wdPreferredContact'];
+  const BRIEF_FORM_FIELD_IDS = [
+    'wdBizDescription', 'wdBizIndustry', 'wdServiceArea', 'wdServicesList', 'wdBrandColors',
+    'wdStyleReferences', 'wdAddressHours', 'wdSocialLinks', 'wdLaunchDate', 'wdDesiredDomain',
+    'wdBriefStaff', 'wdBriefTestimonials', 'wdBriefFaq', 'wdBriefBlog', 'wdBriefGallery',
+    'wdBriefPricing', 'wdBriefBooking', 'wdBriefNewsletter', 'wdBriefSms', 'wdNotes',
+  ];
+  let saveDraftTimer = null;
+
+  function collectFieldValues(ids) {
+    const out = {};
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) out[id] = el.value;
+    });
+    return out;
+  }
+
+  function saveDraftNow() {
+    if (!state.package) { clearDraft(); return; }
+    const draft = {
+      v: WD_DRAFT_VERSION,
+      package: state.package,
+      checkedTitles: Array.from(document.querySelectorAll('input[data-priority]:checked')).map(el => el.dataset.title),
+      heroesDiscount: heroesEligible(),
+      quickLeadId: state.quickLeadId,
+      customerName: state.customerName,
+      customerEmail: state.customerEmail,
+      customerPhone: state.customerPhone,
+      preferredContact: state.preferredContact,
+      fields: { ...collectFieldValues(QUICK_FORM_FIELD_IDS), ...collectFieldValues(BRIEF_FORM_FIELD_IDS) },
+      savedAt: Date.now(),
+    };
+    try { sessionStorage.setItem(WD_DRAFT_KEY, JSON.stringify(draft)); } catch (e) { /* private browsing / quota -- draft just won't survive, not fatal */ }
+  }
+
+  function saveDraft() {
+    clearTimeout(saveDraftTimer);
+    saveDraftTimer = setTimeout(saveDraftNow, 400);
+  }
+
+  function clearDraft() {
+    try { sessionStorage.removeItem(WD_DRAFT_KEY); } catch (e) { /* ignore */ }
+    if (startOverBtn) startOverBtn.hidden = true;
+  }
+
+  function loadDraft() {
+    try {
+      const raw = sessionStorage.getItem(WD_DRAFT_KEY);
+      if (!raw) return null;
+      const draft = JSON.parse(raw);
+      if (!draft || draft.v !== WD_DRAFT_VERSION || !draft.package) return null;
+      return draft;
+    } catch (e) {
+      return null;
+    }
+  }
 
   const INCLUDED_SUMMARY_EN = {
     starter: [
@@ -586,6 +654,7 @@ document.addEventListener('DOMContentLoaded', () => {
       renderBadges();
       updatePriceAndBreakdown();
       updateBriefVisibility();
+      saveDraft();
       return;
     }
 
@@ -604,6 +673,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCategoryBundleUI(item.category);
     updatePriceAndBreakdown();
     updateBriefVisibility();
+    saveDraft();
   }
 
   function cardBodyHtml(item) {
@@ -731,7 +801,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return null;
   }
 
-  function loadCatalog(pkg) {
+  function loadCatalog(pkg, draft) {
     state.package = pkg;
     state.displayedTotal = 0;
     const file = pkg === 'business' ? 'business-catalog.json' : 'starter-catalog.json';
@@ -749,9 +819,11 @@ document.addEventListener('DOMContentLoaded', () => {
         previewBadgesEl.innerHTML = '';
         browserEmptyEl.hidden = false;
         refreshPreviewContent();
+        if (draft) applyDraft(draft);
         updatePriceAndBreakdown();
         updateBriefVisibility();
-        showPanel('2');
+        if (!draft) saveDraft();
+        showPanel(draft && draft.quickLeadId ? '4' : '2');
       })
       .catch(err => {
         console.error('Could not load feature catalog', err);
@@ -761,8 +833,41 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   }
 
+  // Re-applies a restored draft's selections/fields once the catalog has
+  // rendered its checkboxes -- mirrors the exact pattern the lts:langchange
+  // handler below already uses to restore checked state after a re-render.
+  function applyDraft(draft) {
+    Array.from(document.querySelectorAll('input[data-priority]')).forEach(el => {
+      if (draft.checkedTitles.includes(el.dataset.title)) {
+        el.checked = true;
+        if (el.dataset.priority === 'C') {
+          const item = findItem(el.dataset.title);
+          if (item && item.kind === 'content') addPreviewSection(item);
+        }
+      }
+    });
+    renderBadges();
+    state.catalog.categories.forEach(cat => updateCategoryBundleUI(cat.category));
+    if (heroesCheckbox) heroesCheckbox.checked = !!draft.heroesDiscount;
+    state.quickLeadId = draft.quickLeadId || null;
+    state.customerName = draft.customerName || '';
+    state.customerEmail = draft.customerEmail || '';
+    state.customerPhone = draft.customerPhone || '';
+    state.preferredContact = draft.preferredContact || '';
+    Object.keys(draft.fields || {}).forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = draft.fields[id];
+    });
+    updateBriefVisibility();
+    if (startOverBtn) startOverBtn.hidden = false;
+  }
+
   document.querySelectorAll('[data-choose-package]').forEach(btn => {
     btn.addEventListener('click', () => loadCatalog(btn.dataset.choosePackage));
+  });
+  startOverBtn?.addEventListener('click', () => {
+    clearDraft();
+    location.reload();
   });
   document.querySelectorAll('[data-back]').forEach(btn => {
     btn.addEventListener('click', () => showPanel(btn.dataset.back));
@@ -777,13 +882,21 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         doneMessageEl.textContent = tDyn('done_message_quick_only',
           "Got it -- we'll reach out using the contact method you picked. If you'd rather add your project details now, you can always start another Website Designer request.");
+        clearDraft();
         showPanel('done');
       }
     });
   });
   heroesCheckbox?.addEventListener('change', () => {
     if (state.package) updatePriceAndBreakdown();
+    saveDraft();
   });
+
+  // Debounced draft save on every keystroke in the quick-quote and full
+  // brief forms (event delegation via bubbling 'input', so this covers
+  // every current and future named field in either form with one listener).
+  quickForm?.addEventListener('input', saveDraft);
+  briefForm?.addEventListener('input', saveDraft);
 
   businessNameEl?.addEventListener('input', refreshPreviewContent);
   businessNameEl?.addEventListener('keydown', (e) => {
@@ -1037,6 +1150,7 @@ document.addEventListener('DOMContentLoaded', () => {
           state.customerPhone = phone;
           state.preferredContact = preferredContact;
           document.getElementById('wdSubmissionId').textContent = state.quickLeadId;
+          saveDraftNow();
           showPanel('prompt');
         })
         .catch((err) => {
@@ -1107,6 +1221,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const data = await res.json().catch(() => ({}));
           if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
           document.getElementById('wdSubmissionId').textContent = data.id || state.quickLeadId || submissionId();
+          clearDraft();
           showPanel('done');
         })
         .catch((err) => {
@@ -1139,4 +1254,10 @@ document.addEventListener('DOMContentLoaded', () => {
     updatePriceAndBreakdown();
     updateBriefVisibility();
   });
+
+  // Resume an interrupted session (accidental refresh/navigation) --
+  // silent, since sessionStorage only ever holds this same tab's own
+  // in-progress draft, not something from a different visit to second-guess.
+  const savedDraft = loadDraft();
+  if (savedDraft) loadCatalog(savedDraft.package, savedDraft);
 });

@@ -1352,7 +1352,8 @@
     "done_message": "Your project request has been sent. We typically respond within one business day with next steps and a firm quote.",
     "done_reference_label": "Submission reference:",
     "done_back_home": "Back to home",
-    "step3_bizname_note": "Your business name is set above, next to your live preview -- update it there anytime."
+    "step3_bizname_note": "Your business name is set above, next to your live preview -- update it there anytime.",
+    "start_over": "Start over"
   },
   "blog_password_manager": {
     "breadcrumb_home": "Home",
