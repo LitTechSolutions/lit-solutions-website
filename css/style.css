@@ -28,6 +28,15 @@
      Deliberately NOT redefined in dark mode — these sections are always
      dark regardless of site theme, so their text must always stay light. */
   --on-dark: #F5F5F4;
+  /* Same idea for the teal "eyebrow" label color specifically: .hero,
+     .page-hero, .intake-hero, and .contact all use a fixed --navy-deep/
+     --navy-mid background regardless of site theme, but their eyebrows
+     were using the theme-adaptive --accent-teal, which is only legible
+     enough (#34C99A) in dark mode -- in light mode it fell back to the
+     light-background-tuned #0E8C6B, landing at 4.40:1 against the dark
+     hero, just under WCAG AA's 4.5:1 for text this size. Fixed value,
+     not redefined in dark mode, matching --on-dark's pattern exactly. */
+  --accent-teal-on-dark: #34C99A;
 
   /* Readable variants of the accent colors, for use as small/bare TEXT on
      adaptive light backgrounds — the vivid --accent-orange/--accent-teal
@@ -262,6 +271,7 @@ p{ margin:0; }
   background-size: 44px 44px;
   mask-image: radial-gradient(ellipse at 30% 40%, black 10%, transparent 70%);
 }
+.hero .eyebrow{ color: var(--accent-teal-on-dark); }
 .hero-inner{
   position:relative;
   display:grid;
@@ -648,7 +658,7 @@ section{ padding: 5.5rem 0; }
   background: var(--navy-deep); color: var(--on-dark);
   padding: 4rem 0 3rem;
 }
-.intake-hero .eyebrow{ color: var(--accent-teal); }
+.intake-hero .eyebrow{ color: var(--accent-teal-on-dark); }
 .section-head .eyebrow, .why-copy .eyebrow, .veteran-copy .eyebrow{ color: var(--accent-teal-text); }
 .intake-hero h1{
   font-size: clamp(1.9rem, 3.6vw, 2.6rem); color:#fff; font-weight:600; margin-top:.6rem;
@@ -1064,7 +1074,7 @@ a.pay-btn.is-locked, a.pay-btn-sm.is-locked{ opacity:.5; }
    Contact
    ========================================================= */
 .contact{ background: var(--navy-mid); color: var(--on-dark); }
-.contact .eyebrow{ color: var(--accent-teal); }
+.contact .eyebrow{ color: var(--accent-teal-on-dark); }
 .contact h2{ color:#fff; }
 .contact .section-lede{ color: rgba(245,245,244,0.72); }
 .contact-inner{ display:grid; grid-template-columns: .9fr 1.1fr; gap: 3rem; }
@@ -1259,7 +1269,7 @@ textarea{ resize: vertical; }
 
 /* ---- Section intro (reused across all new interior pages) ---- */
 .page-hero{ background: var(--navy-deep); color: var(--on-dark); padding: 4rem 0 3rem; }
-.page-hero .eyebrow{ color: var(--accent-teal); }
+.page-hero .eyebrow{ color: var(--accent-teal-on-dark); }
 .page-hero h1{ font-size: clamp(1.9rem, 3.6vw, 2.6rem); color:#fff; font-weight:600; margin-top:.6rem; }
 .page-hero .section-lede{ color: rgba(245,245,244,0.75); margin-top:1rem; max-width: 62ch; }
 
