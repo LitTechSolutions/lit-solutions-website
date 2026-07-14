@@ -218,12 +218,17 @@ p{ margin:0; }
 .phone-link{ display:flex; align-items:center; gap:.4rem; font-family:var(--font-display); font-size:.85rem; font-weight:500; white-space:nowrap; }
 
 .theme-toggle{
-  display:flex; align-items:center; justify-content:center;
+  display:flex; align-items:center; justify-content:center; position:relative;
   width: 36px; height: 36px; border-radius:50%;
   border: 1px solid var(--line-strong); background: var(--paper-alt);
   color: var(--ink); cursor:pointer; flex-shrink:0;
   transition: background .2s ease, border-color .2s ease, color .2s ease;
 }
+/* Invisible expanded hit area so the tappable region meets the ~44px
+   touch-target minimum without growing the visible chrome (which would
+   overflow the header row at narrow mobile widths -- see .search-toggle
+   and .nav-toggle below for the same technique). */
+.theme-toggle::before{ content:""; position:absolute; inset:-4px; }
 .theme-toggle:hover{ border-color: var(--accent-orange); color: var(--accent-orange); }
 .theme-toggle svg{ width:18px; height:18px; }
 .theme-toggle .theme-icon-sun{ display:none; }
@@ -232,10 +237,12 @@ p{ margin:0; }
 :root[data-theme="dark"] .theme-toggle .theme-icon-moon{ display:none; }
 
 .nav-toggle{
-  display:none; flex-direction:column; justify-content:center; gap:5px;
+  display:none; flex-direction:column; align-items:center; justify-content:center; gap:5px;
   width:36px; height:36px; background:none; border:none; cursor:pointer; padding:0;
+  flex-shrink:0; position:relative;
 }
-.nav-toggle span{ display:block; height:2px; background:var(--ink); border-radius:2px; }
+.nav-toggle::before{ content:""; position:absolute; inset:-4px; }
+.nav-toggle span{ display:block; width:24px; height:2px; background:var(--ink); border-radius:2px; }
 
 /* =========================================================
    Hero
@@ -1499,7 +1506,9 @@ textarea{ resize: vertical; }
   display:flex; align-items:center; justify-content:center; width:34px; height:34px;
   border:1px solid var(--line-strong); border-radius:50%; color: var(--ink-soft); flex-shrink:0;
   transition: border-color .2s ease, color .2s ease;
+  position:relative;
 }
+.search-toggle::before{ content:""; position:absolute; inset:-5px; }
 .search-toggle:hover{ border-color: var(--accent-orange); color: var(--accent-orange); }
 
 .footer-social{ display:flex; gap:1rem; }
