@@ -2,7 +2,7 @@
   "project": "lit-solutions.tech",
   "repoVersion": "v23",
   "auditFramework": "docs/audit/",
-  "readyForSession": 3,
+  "readyForSession": 4,
   "sessions": {
     "1": {
       "doc": "01_REPOSITORY_BASELINE.md",
@@ -14,14 +14,18 @@
       "status": "complete",
       "note": "Reviewed homepage/header/footer/nav, full CTA inventory across all 33 public pages, and content-accuracy spot-checks. Confirmed header/footer byte-identical across sample pages, no broken internal links, sitemap.html accurate, no staffing/credential exaggeration found. Added F037 (new); expanded F017 with full evidence table; re-confirmed F008/F009/F010/F018/F024/F029 still accurate."
     },
-    "3": { "doc": "03_IDENTITY_DATA_SECURITY.md", "status": "not_started" },
+    "3": {
+      "doc": "03_IDENTITY_DATA_SECURITY.md",
+      "status": "complete",
+      "note": "Reviewed auth/session/token code, account.js, privacy.html, heroes-pricing.html. Confirmed F005/F015/F027 fixes and strengths still in place. Added F038 (password-reset never emails a link) and F039 (account-preference language stuck at 4 of 16). Re-verified F006/F007/F030 unchanged."
+    },
     "4": { "doc": "04_BACKEND_INTEGRATIONS.md", "status": "not_started" },
     "5": { "doc": "05_PRICING_AND_BUSINESS_RULES.md", "status": "not_started" },
     "6": { "doc": "06_QUALITY_AUDIT.md", "status": "not_started" },
     "7": { "doc": "07_REQUIREMENTS_GAP_MATRIX.md", "status": "not_started" },
     "8": { "doc": "08_FINAL_AUDIT_AND_ROADMAP.md", "status": "not_started" }
   },
-  "findingIdRange": { "next": "F038", "note": "IDs are derived from real findings only; there is no predetermined catalog size such as F001-F060." },
+  "findingIdRange": { "next": "F040", "note": "IDs are derived from real findings only; there is no predetermined catalog size such as F001-F060." },
   "findings": {
     "F001": { "severity": "Critical", "status": "Resolved", "domainSession": 2, "commit": "9a753a6", "summary": "USS Antietam hull number CG-64 -> CG-54" },
     "F002": { "severity": "Critical", "status": "Resolved", "domainSession": 2, "commit": "94a9420", "summary": "Testimonials/Portfolio hero contradicted real content" },
@@ -59,12 +63,14 @@
     "F034": { "severity": "Low", "status": "Open", "domainSession": 1, "summary": "Version string hardcoded across 33 footers, no shared source" },
     "F035": { "severity": "Medium", "status": "Open", "domainSession": 1, "summary": "Base prices and Heroes-discount amounts duplicated across multiple files" },
     "F036": { "severity": "Info", "status": "Open", "domainSession": 1, "summary": "Founder biography duplicated across 5 locations x 16 languages" },
-    "F037": { "severity": "High", "status": "Open", "domainSession": 2, "summary": "Homepage hero 'Get a free quote' CTA links to contact.html, contradicting that page's own copy which directs quote-seekers to intake.html" }
+    "F037": { "severity": "High", "status": "Open", "domainSession": 2, "summary": "Homepage hero 'Get a free quote' CTA links to contact.html, contradicting that page's own copy which directs quote-seekers to intake.html" },
+    "F038": { "severity": "High", "status": "Open", "domainSession": 3, "summary": "Password-reset request never emails the reset link; only email-verification actually calls sendEmail()" },
+    "F039": { "severity": "Medium", "status": "Open", "domainSession": 3, "summary": "Account-preference language list hardcoded to 4 of 16 real supported languages" }
   },
   "counts": {
-    "total": 37,
+    "total": 39,
     "resolved": 9,
     "ownerDecisionOpen": 11,
-    "engineeringOpen": 17
+    "engineeringOpen": 19
   }
 }
