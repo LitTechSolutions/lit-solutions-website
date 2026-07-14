@@ -1,10 +1,10 @@
 {
   "developmentVersion": "1.0",
-  "currentSession": 6,
-  "completedSessions": [0, 1, 2, 3, 4, 5, 6],
-  "nextSession": 7,
-  "currentWave": "Session 6 -- Website Care Product (F031-F042)",
-  "currentFunctionIds": ["F031", "F032", "F033", "F034", "F035", "F036", "F037", "F038", "F039", "F040", "F041", "F042"],
+  "currentSession": 7,
+  "completedSessions": [0, 1, 2, 3, 4, 5, 6, 7],
+  "nextSession": 8,
+  "currentWave": "Session 7 -- Reporting & Platform Operations (F051, F053-F055, F057)",
+  "currentFunctionIds": ["F051", "F053", "F054", "F055", "F057"],
   "branch": "feature/business-care-hub",
   "baselineCommit": "1570734",
   "workspaceNote": "This workspace (LTS Stand Alone Software) is a full copy of Development/Business Website/Website Code/v23, including .git and origin remote. v23 itself was not modified. Standing instruction: everything stays local to this workspace for the entire build -- no push, no merge into a new vN folder or main -- until Dylan says otherwise. Standing instruction (2026-07-14): work continues session-by-session, unattended, for as long as productive, without stopping to ask -- owner-decision blockers are documented, not asked about. See DECISION_LOG.md.",
@@ -16,37 +16,35 @@
     "audit finding F006 (Critical, open): Privacy Policy under-discloses actual data collection -- blocks finalizing F007, F058",
     "audit finding F007 (Critical, open): Resend not named as sub-processor in Privacy Policy -- blocks finalizing F007, F058",
     "audit finding F011 (High, open, owner decision): Square terms-gate bypassable via direct link -- relevant to F028, still unresolved",
-    "audit finding F016 (High, open, pre-Session-1): zero automated tests anywhere in the pre-Care-Hub repository -- src/ now has 200, but this still describes everything outside src/",
+    "audit finding F016 (High, open, pre-Session-1): zero automated tests anywhere in the pre-Care-Hub repository -- src/ now has 236, but this still describes everything outside src/",
     "audit finding F018 (High, open): partially addressed in src/policy/ticketSubmission.js (Session 3); the live intake.html form itself is untouched",
     "audit findings F030-F033 (owner decisions): Heroes Discount verification, full-payment vs deposit policy, plan scope, registration model -- block F026-F028, F049-F052, F002 respectively; see OWNER_DECISIONS.md"
   ],
   "buildStatus": "not-applicable",
-  "testStatus": "passing (200/200, node --test, unit-level only)",
+  "testStatus": "passing (236/236, node --test, unit-level only)",
   "lintStatus": "not-run",
   "typeCheckStatus": "not-run",
   "migrationStatus": "not-started",
   "deploymentStatus": "not-deployed",
   "implementedFunctions": [
-    "F005, F008, F056, F015, F016, F012, F017, F009, F023/F029, F020, F021, F022, F025, F019, F026, F028, F049, F050, F052, F044, F046/F047, F048 -- see prior session entries in git history for detail",
-    "F040/F042 (evidence categorization engine -- src/reporting/evidenceCategorization.js -- tested; structurally implements the 'verified fact vs automated observation vs technician interpretation vs recommendation vs customer action' requirement and the 'no guarantee language' rule)",
-    "F036 (uptime/incident state machine -- src/policy/incidentStatus.js -- tested; check-execution engine not implemented)",
-    "F037 (domain/SSL/subscription reminders -- fully reuses F048's src/reminders/lifecycleReminders.js, extended SUBJECT_TYPES and renamed assetId->subjectId in src/domain/lifecycleReminder.js)",
-    "F042 (monthly report assembler -- src/reporting/monthlyReportAssembler.js -- tested; composes check results + backups + evidence categorization)"
+    "F005 through F048/F052 plus F036/F037/F040/F042 -- see prior session entries in git history for detail (22 functions with real tested logic through Session 6)",
+    "F051 (admin cross-org work-queue view-model -- src/admin/workQueueViewModel.js -- tested; sibling of F009's dashboardViewModel.js, intentionally cross-organization)",
+    "F055 (template rendering engine -- src/templates/templateRenderer.js -- tested; two independent allowlist checks against data leakage: template body cannot reference undeclared variables, caller cannot supply undeclared variables)",
+    "F057 (webhook HMAC signature + replay-window verification -- src/webhooks/webhookVerification.js -- tested; provider-agnostic, no actual webhook integration exists yet)",
+    "F053 (CSV export formatting -- src/export/csvExport.js -- tested; requires an explicit column allowlist per export)",
+    "F054 (operational metrics aggregation -- src/analytics/operationalMetrics.js -- tested; MetricEvent has no payload field at all, structurally cannot carry customer content)"
   ],
   "verifiedFunctions": [],
   "blockedFunctions": [
-    "F001, F002, F007, F026, F027, F028, F049, F050, F052, F058, F010, F013, F014, F043, F044, F046/F047, F048 -- see prior session entries for detail, unchanged this session",
-    "F031 (types drafted in src/domain/websiteProfile.js; persistence blocked on primary-data-store owner decision)",
-    "F035/F038/F039/F040 (shared result shape done in src/domain/websiteCheck.js; check-execution engines not built -- deliberately deferred to reuse/adapt the existing website-audit spec rather than rebuild from scratch)",
-    "F036 (state machine done; check-execution engine not wired in)",
-    "F041 (types drafted in src/domain/backupRecord.js; persistence blocked)",
-    "F042 (assembler done; no real check/backup data exists yet to assemble)"
+    "F001, F002, F007, F026, F027, F028, F049, F050, F052, F058, F010, F013, F014, F043, F044, F046/F047, F048, F031, F035/F038/F039/F040, F036, F041, F042 -- see prior session entries for detail, unchanged this session",
+    "F051 (assembler done; persistence blocked, no real cross-org data to assemble)",
+    "F055 (engine done; persistence blocked, and real template copy still needs Dylan/staff authorship regardless of storage)",
+    "F057 (verifier done; blocked on which provider actually gets webhook integration first -- OWNER_DECISIONS.md new item on Square/webhook-capable-replacement)",
+    "F053 (CSV formatting done; PDF generation and the report-selection/authorization layer not built; persistence blocked)",
+    "F054 (aggregation done; no real event emission wired in from any other function yet)"
   ],
   "notStartedThisSessionByDesign": [
-    "F003, F004, F006, F059, F011, F018, F024, F030, F045 -- see prior session entries, unchanged",
-    "F032 (Website Content Change Request -- reuses F019's existing 'website_change' ticket category + F031's registry link, no new module needed)",
-    "F034 (Website Maintenance Checklist -- reuses F046/F047's readinessChecklist.js engine directly, no new module needed)",
-    "F033 (Visual Screenshot Annotation -- Phase 2, not MVP, deferred by priority; would reuse F015 for the upload itself)"
+    "F003, F004, F006, F059, F011, F018, F024, F030, F045, F032, F034, F033 -- see prior session entries, unchanged"
   ],
   "ownerDecisionsRequired": [
     "Primary data store: Netlify Blobs vs managed PostgreSQL (new) -- highest priority, blocks persistence for nearly every function built so far",
@@ -54,30 +52,30 @@
     "Website Care Plan / Small Business IT plan limits and included work (audit F032) -- blocks F049/F052's real values and F021's fifth scoring factor",
     "Customer account registration model: open vs invite-only (audit F033)",
     "Data retention, deletion, backup-aging, legal-hold rules",
-    "Legal/privacy/consent wording, including open Critical audit findings F006 and F007 -- now also relevant to F042's monthly report copy (must stay within the same 'do not claim guaranteed X' boundary)",
-    "New paid providers/infrastructure generally -- includes whether Square stays the payment provider, and what (if any) uptime/performance monitoring provider F035/F036/F040 eventually use",
+    "Legal/privacy/consent wording, including open Critical audit findings F006 and F007",
+    "New paid providers/infrastructure generally -- includes whether Square stays the payment provider (F057's first real integration target depends on this answer)",
     "Remote support tooling / device agents / automated website changes scope boundary",
     "AI provider, data policy, budget",
-    "Missing individual F001-F060 function workbooks (new) -- also the source of F020/F021's real configuration, F026/F050's real price sheet, F046/F047's actual checklist content, and F035/F036/F038/F039/F040's actual check thresholds/frequency"
+    "Missing individual F001-F060 function workbooks (new) -- also the source of F020/F021's real configuration, F026/F050's real price sheet, F046/F047's actual checklist content, F035/F036/F038/F039/F040's actual check thresholds, and F055's actual email copy"
   ],
   "filesRequiringReview": [
     "docs/development/ARCHITECTURE.md (target architecture proposal, frontend build-step recommendation)",
     "docs/development/OWNER_DECISIONS.md (all 10 items)",
-    "docs/development/REQUIREMENTS_TRACEABILITY.md (updated Session 6)"
+    "docs/development/REQUIREMENTS_TRACEABILITY.md (updated Session 7)"
   ],
   "knownRisks": [
     "No organization/tenant concept exists in the pre-Care-Hub codebase at all -- F001 is a from-scratch build, not an extension",
     "Netlify Blobs has no secondary indexes; list()-scan pattern may not scale to Care Hub query needs",
-    "No payment webhook infrastructure exists at all",
+    "No payment webhook infrastructure exists at all -- F057's verifier is ready but nothing calls it yet",
     "Customer documents/images are stored as base64 data URIs in Blobs, not object storage with signed URLs",
     "Two independent, near-duplicated single-file staff/customer console apps (admin.html, myaccount.html) -- still not extracted",
     "F-numbering collision between audit findings (F001-F036) and Business Care Hub functions (F001-F060) -- mitigated via naming convention",
     "src/audit/blobsAuditSink.js and src/settings/blobsSettingsStore.js are written but not integration-tested against live Netlify Blobs",
-    "src/policy/rbac.js's ROLE_CAPABILITIES map is a transcription of the Roles & Permissions sheet's prose, not a workbook (none exists yet)",
-    "Most of the codebase's logic layer by Session 6 is engines/interpreters (triage, priority, pricing, entitlement, checklist scoring, evidence categorization) with no real business configuration behind them yet -- this is the expected, correct result of the blocking process across 6 sessions, not stalled progress",
-    "F035/F036/F038/F039/F040's actual check-EXECUTION logic (HTTP fetch, DOM parsing, SSRF protection) is not implemented -- only the result shape and reporting layer exist; building the fetch/scan engine is real, separate work that should adapt the existing website-audit spec's design (which already solved SSRF protection for a similar use case) rather than starting from zero",
-    "F046/F047's checklists and F042's reports must stay strictly assessment/observation-only (never store credentials, never claim guarantees) -- enforced structurally today (ChecklistResponse.met is boolean-only; evidenceCategorization.js rejects guarantee language) but needs to stay that way through every future session that touches this code",
-    "None of Sessions 2-6's pure logic modules are wired to real data yet -- all tested against synthetic fixtures only; first real integration test happens once F001 persistence exists and an actual endpoint calls them"
+    "Most of the codebase's logic layer is engines/interpreters with no real business configuration behind them yet -- by Session 7, 27 functions have real tested code, essentially all of it storage-agnostic and content-agnostic, waiting on the same handful of owner decisions -- this is the expected, correct result of the blocking process across 7 sessions, not stalled progress",
+    "F035/F036/F038/F039/F040's actual check-EXECUTION logic (HTTP fetch, DOM parsing, SSRF protection) is not implemented -- deliberately deferred to adapt the existing website-audit spec",
+    "F046/F047's checklists and F042's reports must stay strictly assessment/observation-only -- enforced structurally (ChecklistResponse.met is boolean-only; evidenceCategorization.js rejects guarantee language)",
+    "F054's MetricEvent structurally cannot carry a payload field -- any future change that adds one should be treated as a deliberate, reviewed decision to start tracking customer content, not a routine schema addition",
+    "None of Sessions 2-7's pure logic modules are wired to real data yet -- all tested against synthetic fixtures only; first real integration test happens once F001 persistence exists and an actual endpoint calls them"
   ],
   "lastUpdated": "2026-07-14"
 }
