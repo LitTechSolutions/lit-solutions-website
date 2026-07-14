@@ -42,6 +42,17 @@
     document.addEventListener("lts:langchange", render);
   }
 
+  // Meta descriptions are plain static HTML with no i18n hook (js/i18n.js
+  // never touches <meta> tags), so once a page actually has real content
+  // the static "nothing here yet" description is just replaced with a
+  // fixed English string, same as everything else meta descriptions do.
+  function updateMetaDescription(text) {
+    var desc = document.querySelector('meta[name="description"]');
+    if (desc) desc.setAttribute("content", text);
+    var ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) ogDesc.setAttribute("content", text);
+  }
+
   function paragraphs(text) {
     return String(text || "").split(/\n\s*\n/).map(function (p) {
       return "<p>" + esc(p.trim()).replace(/\n/g, "<br>") + "</p>";
@@ -197,6 +208,7 @@
     if (placeholder) placeholder.style.display = "none";
     swapHeroForHasContent(heroH1Selector, heroLedeSelector, "portfolio",
       "Recent work", "Real projects we've built for real clients -- see the details below.");
+    updateMetaDescription("See real projects we've built for real clients -- before/after examples, screenshots, and project details.");
     var mount = document.querySelector(gridMountSelector);
     if (!mount) return;
     mount.innerHTML = items.map(function (item) {
@@ -228,6 +240,7 @@
     if (placeholder) placeholder.style.display = "none";
     swapHeroForHasContent(heroH1Selector, heroLedeSelector, "testimonials",
       "What our customers are saying", "Real feedback from real projects -- not stock quotes, not stand-ins.");
+    updateMetaDescription("Real reviews from real clients -- see what people are saying about working with Little Technical Solutions LLC.");
     var mount = document.querySelector(gridMountSelector);
     if (!mount) return;
     mount.innerHTML = items.map(function (item) {
