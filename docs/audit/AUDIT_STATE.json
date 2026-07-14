@@ -2,14 +2,18 @@
   "project": "lit-solutions.tech",
   "repoVersion": "v23",
   "auditFramework": "docs/audit/",
-  "readyForSession": 2,
+  "readyForSession": 3,
   "sessions": {
     "1": {
       "doc": "01_REPOSITORY_BASELINE.md",
       "status": "complete",
       "note": "Bootstrapped from an already-completed 8-parallel-pass audit; no new repository exploration performed."
     },
-    "2": { "doc": "02_PUBLIC_SITE_AUDIT.md", "status": "not_started" },
+    "2": {
+      "doc": "02_PUBLIC_SITE_AUDIT.md",
+      "status": "complete",
+      "note": "Reviewed homepage/header/footer/nav, full CTA inventory across all 33 public pages, and content-accuracy spot-checks. Confirmed header/footer byte-identical across sample pages, no broken internal links, sitemap.html accurate, no staffing/credential exaggeration found. Added F037 (new); expanded F017 with full evidence table; re-confirmed F008/F009/F010/F018/F024/F029 still accurate."
+    },
     "3": { "doc": "03_IDENTITY_DATA_SECURITY.md", "status": "not_started" },
     "4": { "doc": "04_BACKEND_INTEGRATIONS.md", "status": "not_started" },
     "5": { "doc": "05_PRICING_AND_BUSINESS_RULES.md", "status": "not_started" },
@@ -17,7 +21,7 @@
     "7": { "doc": "07_REQUIREMENTS_GAP_MATRIX.md", "status": "not_started" },
     "8": { "doc": "08_FINAL_AUDIT_AND_ROADMAP.md", "status": "not_started" }
   },
-  "findingIdRange": { "next": "F037", "note": "IDs are derived from real findings only; there is no predetermined catalog size such as F001-F060." },
+  "findingIdRange": { "next": "F038", "note": "IDs are derived from real findings only; there is no predetermined catalog size such as F001-F060." },
   "findings": {
     "F001": { "severity": "Critical", "status": "Resolved", "domainSession": 2, "commit": "9a753a6", "summary": "USS Antietam hull number CG-64 -> CG-54" },
     "F002": { "severity": "Critical", "status": "Resolved", "domainSession": 2, "commit": "94a9420", "summary": "Testimonials/Portfolio hero contradicted real content" },
@@ -54,12 +58,13 @@
     "F033": { "severity": "Low", "status": "Open", "ownerDecision": true, "domainSession": 7, "summary": "Account-system feature scope and open-registration policy" },
     "F034": { "severity": "Low", "status": "Open", "domainSession": 1, "summary": "Version string hardcoded across 33 footers, no shared source" },
     "F035": { "severity": "Medium", "status": "Open", "domainSession": 1, "summary": "Base prices and Heroes-discount amounts duplicated across multiple files" },
-    "F036": { "severity": "Info", "status": "Open", "domainSession": 1, "summary": "Founder biography duplicated across 5 locations x 16 languages" }
+    "F036": { "severity": "Info", "status": "Open", "domainSession": 1, "summary": "Founder biography duplicated across 5 locations x 16 languages" },
+    "F037": { "severity": "High", "status": "Open", "domainSession": 2, "summary": "Homepage hero 'Get a free quote' CTA links to contact.html, contradicting that page's own copy which directs quote-seekers to intake.html" }
   },
   "counts": {
-    "total": 36,
+    "total": 37,
     "resolved": 9,
     "ownerDecisionOpen": 11,
-    "engineeringOpen": 16
+    "engineeringOpen": 17
   }
 }
