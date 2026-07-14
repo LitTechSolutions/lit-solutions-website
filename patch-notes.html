@@ -141,10 +141,10 @@
           </div>
           <ul class="patch-changes">
             <li>Corrected the hull number in founder Dylan's Navy photo caption on the About page -- USS Antietam is CG-54, not CG-64 as it previously read</li>
-            <li>Tightened server-side access controls on an internal admin tool so it's restricted to staff accounts only, as originally intended</li>
-            <li>Added rate limiting to the signed-in customer messaging feature, matching the limits already in place on every other form on the site</li>
+            <li>Reinforced access restrictions on an internal staff tool so it's reachable only by signed-in staff, as originally intended</li>
+            <li>Added the same spam/abuse protections already used elsewhere on the site to the signed-in customer messaging feature</li>
             <li>Added stronger file-type checks on Website Designer photo/logo uploads</li>
-            <li>Added an independent server-side check on Website Designer price totals, as a safeguard against a manipulated or corrupted submission being treated as legitimate</li>
+            <li>Added an extra safeguard that double-checks your Website Designer price before it's treated as final, protecting against a corrupted or incomplete submission</li>
             <li>Fixed a light-mode display bug affecting a handful of notice/callout boxes (the launch-special banner, a few info notes, and some status badges), where they could render without their intended background color</li>
           </ul>
         </article>
@@ -307,7 +307,7 @@
             <li><strong>Added email verification.</strong> New accounts (staff or customer) now have to verify their email before they can sign in — the main defense against bot/junk registrations on the open "My Account" sign-up. A "Resend verification email" link appears automatically if someone tries signing in before verifying</li>
             <li><strong>Added two-way messaging.</strong> Customers can message us directly from their account (<code>myaccount.html#messages</code>) and read our replies; staff see a Customer Inbox in the dashboard with unread counts and can reply from the same place they manage a customer's documents. Separate from the existing Contact page form, which is unchanged</li>
             <li>The "Customer Documents" staff tab is now just <strong>Customers</strong> — one lookup drives both documents and messages for whoever you pull up</li>
-            <li>A customer can only ever read or send in their own message thread — enforced server-side, verified directly over real HTTP with two separate customer accounts</li>
+            <li>A customer can only ever read or send messages in their own conversation — confirmed by testing with separate customer accounts</li>
           </ul>
         </article>
 
@@ -318,7 +318,7 @@
           <ul class="patch-changes">
             <li><strong>Added customer accounts.</strong> A new "My Account" link (person icon, next to search) in the header lets customers create their own account and sign in — separate from staff sign-in — to view their invoices, receipts, and other paperwork whenever they want, with download links for any attached file</li>
             <li>Added a <strong>Customer Documents</strong> tab to the staff dashboard: look up a customer by the email they registered with, then upload invoices, receipts, or paperwork (title, type, amount, paid/unpaid status, date, notes, optional PDF/image attachment) for them to see</li>
-            <li>Customers can only ever see their own documents — enforced server-side, not just hidden in the interface — and can manage their own login email/password the same way staff can</li>
+            <li>Customers can only ever see their own documents, not just other customers' paperwork hidden from view — and can manage their own login email/password the same way staff can</li>
             <li>This isn't a billing system — payments are still made through the existing Payments page — it's a record locker so paperwork doesn't have to be tracked over email</li>
           </ul>
         </article>
@@ -332,7 +332,7 @@
             <li><strong>Added a sign-in-protected admin content editor</strong> at a low-key "Staff Sign In" link in the footer — lets the business owner add, edit, delete, and reorder blog posts, portfolio items, and testimonials, with photo uploads, from a real dashboard. Changes go live immediately, no rebuild needed. Every page's existing content and honest placeholders are untouched until something is actually added</li>
             <li>New blog posts get their own page automatically and appear on the Blog list above the 3 original articles; the first portfolio item or testimonial added replaces that page's "still building it out" placeholder</li>
             <li>Added an <strong>Account Settings</strong> tab so the admin login email and password can be updated directly from the dashboard, without needing the Netlify Blobs dashboard for routine changes</li>
-            <li>Backed by Netlify Functions + Netlify Blobs: hashed passwords, secure HttpOnly session cookies, rate-limited sign-in/register/password-reset, and server-side (not just UI-hidden) permission checks on every write</li>
+            <li>Built on secure, industry-standard practices: encrypted passwords, secure session handling, protections against repeated sign-in attempts, and permission checks enforced by the system on every change</li>
           </ul>
         </article>
 
