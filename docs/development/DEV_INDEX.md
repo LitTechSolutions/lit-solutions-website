@@ -25,20 +25,21 @@ Human-readable index of the LTS Business Care Hub development effort. See `DEV_S
 | [sessions/SESSION_02_CUSTOMER_WORKSPACE.md](sessions/SESSION_02_CUSTOMER_WORKSPACE.md) | Narrative record of Session 2 |
 | [sessions/SESSION_03_TICKETING.md](sessions/SESSION_03_TICKETING.md) | Narrative record of Session 3 |
 | [sessions/SESSION_04_COMMERCIAL.md](sessions/SESSION_04_COMMERCIAL.md) | Narrative record of Session 4 |
+| [sessions/SESSION_05_IT_SERVICES.md](sessions/SESSION_05_IT_SERVICES.md) | Narrative record of Session 5 |
 
 **Not yet created** (start when there's something to populate them with): `RELEASE_NOTES.md` (first release), `SECURITY_REVIEW.md` (before first production-affecting change).
 
 ## Source code
 
-`src/domain/` (types + validators — F001/F002/F008/F056/F009-F010/F012-F017/F019-F023/F025-F028/F049/F050/F052), `src/policy/` (F005 RBAC, F015 file validation, F016 approvals, F019 ticket submission, F020 triage, F021 priority, F022 assignment, F023/F029 ticket lifecycle, F026 scope versioning, F028 payment reconciliation, F049 entitlement check, F050 pricing engine, F052 subscription lifecycle), `src/audit/` (F008), `src/settings/` (F056), `src/notifications/` (F012 delivery policy), `src/timeline/` (F017), `src/dashboard/` (F009), `src/tracking/` (F025 time), `test/fixtures/` (synthetic two-org fixtures). Plain JSDoc-typed CommonJS, no build step yet — see `DECISION_LOG.md`'s Session 1 entry for why TypeScript/esbuild was deferred rather than adopted immediately. `npm test` runs everything (`node --test`, zero added runtime dependencies).
+`src/domain/` (types + validators — F001/F002/F008/F056/F009-F010/F012-F017/F019-F023/F025-F028/F043-F044/F046-F048/F049/F050/F052), `src/policy/` (F005 RBAC, F015 file validation, F016 approvals, F019 ticket submission, F020 triage, F021 priority, F022 assignment, F023/F029 ticket lifecycle, F026 scope versioning, F028 payment reconciliation, F044 IT support classification, F046/F047 readiness checklist, F049 entitlement check, F050 pricing engine, F052 subscription lifecycle), `src/audit/` (F008), `src/settings/` (F056), `src/notifications/` (F012 delivery policy), `src/timeline/` (F017), `src/dashboard/` (F009), `src/tracking/` (F025 time), `src/reminders/` (F048), `test/fixtures/` (synthetic two-org fixtures). Plain JSDoc-typed CommonJS, no build step yet — see `DECISION_LOG.md`'s Session 1 entry for why TypeScript/esbuild was deferred rather than adopted immediately. `npm test` runs everything (`node --test`, zero added runtime dependencies).
 
 ## Evidence
 
-`evidence/{builds,tests,accessibility,security,migrations,smoke-tests}/` — supporting raw evidence as sessions produce it. Session 0's baseline-command evidence is under `evidence/builds/`; Session 1–4 test runs are under `evidence/tests/`.
+`evidence/{builds,tests,accessibility,security,migrations,smoke-tests}/` — supporting raw evidence as sessions produce it. Session 0's baseline-command evidence is under `evidence/builds/`; Session 1–5 test runs are under `evidence/tests/`.
 
 ## Current state at a glance
 
-- **Session:** 4 complete (partial — see blockers). Sessions 0–4 done. Working autonomously, unattended, session-by-session, without stopping to ask (standing instruction, 2026-07-14) — owner-decision blockers are documented in `OWNER_DECISIONS.md`, not asked about. Nothing published/pushed.
+- **Session:** 5 complete (partial — see blockers). Sessions 0–5 done. Working autonomously, unattended, session-by-session, without stopping to ask (standing instruction, 2026-07-14) — owner-decision blockers are documented in `OWNER_DECISIONS.md`, not asked about. Nothing published/pushed.
 - **Workspace:** `LTS Stand Alone Software`, branch `feature/business-care-hub`, copied from `v23` @ `1570734`. `v23` untouched. Everything stays local for the entire build (standing instruction, `DECISION_LOG.md`).
-- **Built so far:** F005, F008, F056, F015, F016, F012, F017, F009, F023/F029, F020, F021, F022, F025, F019, F026, F028, F049, F050, F052 — domain/policy layer, 155 passing unit tests, no endpoints wired yet.
-- **Blockers:** see `DEV_STATE.json` → `ownerDecisionsRequired` and `blockedFunctions`. By Session 4's end, the majority of built code is "engine, not policy" — fully tested logic waiting on the same handful of owner decisions (primary data store, pricing, plan limits) to become functionally real.
+- **Built so far:** F005, F008, F056, F015, F016, F012, F017, F009, F023/F029, F020, F021, F022, F025, F019, F026, F028, F049, F050, F052, F044, F046/F047, F048 — domain/policy layer, 173 passing unit tests, no endpoints wired yet.
+- **Blockers:** see `DEV_STATE.json` → `ownerDecisionsRequired` and `blockedFunctions`. By Session 5's end, the majority of built code is "engine, not policy" — fully tested logic waiting on the same handful of owner decisions (primary data store, pricing, plan limits, checklist content) to become functionally real.
