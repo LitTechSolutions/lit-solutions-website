@@ -45,18 +45,16 @@ than editing `01`–`08` in place.
 ## Findings summary (as of the post-audit engineering fix pass, 2026-07-14)
 
 - **41 findings** recorded (`F001`–`F041`).
-- **29 Resolved**: F001–F005, F012–F015 (during the audit itself), plus
+- **30 Resolved**: F001–F005, F012–F015 (during the audit itself), plus
   F006, F007, F016, F018, F019, F020, F021, F022, F023, F025, F026,
   F027, F028, F034, F035 (partial — see its `resolutionNote` in
-  `AUDIT_STATE.json`), F037, F038, F039, F040, F041 (the engineering fix
-  pass below).
+  `AUDIT_STATE.json`), F036 (documentation-only fix), F037, F038, F039,
+  F040, F041 (the engineering fix pass below).
 - **11 Owner-Decision** findings still awaiting Dylan's input: F008,
   F009, F010, F011, F017, F024, F029, F030, F031, F032, F033 —
   deliberately untouched per `00_AUDIT_CONTROL.md`'s ground rule that
   these should not be silently implemented.
-- **1 Open, engineering-only**: F036 (Info — founder biography
-  duplicated across 5 locations × 16 languages; low-value/high-effort,
-  not attempted this pass).
+- **0 Open, engineering-only** findings remain.
 
 Session 2 added F037 (homepage's primary "quote" CTA links to the wrong
 form) and expanded F017 with a full CTA evidence table; F008, F009,
@@ -135,8 +133,23 @@ rule against silently implementing Owner-Decision findings: F008, F009,
 F010, F011, F017, F024, F029, F030, F031, F032, F033. These need
 Dylan's direct input, not engineering judgment.
 
-**Not attempted** (Info severity, out of scope for this pass): F036
-(founder biography duplicated across 5 locations × 16 languages).
+## F036 follow-up (2026-07-14)
 
-Only remaining engineering-only, non-Owner-Decision item after this
-pass: F036.
+Closed the last engineering-only finding. F036 (founder biography
+duplicated across `about.html`, `index.html`, `team.html`,
+`testimonials.html`, and every `i18n/*.json`) prototyped a runtime
+JS single-source-of-truth mechanism (mirroring F034's `site-version.js`
+pattern: a `FOUNDER_FACTS` object filling `data-fact` spans on load),
+but backed it out — spans nested inside plain `data-i18n`
+(textContent-only) elements get flattened by `js/i18n.js`'s
+language-switch round-trip, so the mechanism would only reliably hold
+until a visitor's first language switch. That fragility wasn't
+proportionate to an Info-severity, "no action implied" finding.
+Landed a documentation-only fix instead: a checklist in `CLAUDE.md`
+naming every location that needs the same edit if these facts ever
+change again, so a repeat of the CG-64→CG-54 manual sweep (`9a753a6`)
+starts from a known list.
+
+**Zero engineering-only, non-Owner-Decision findings remain open.**
+All that's left of the original 41 findings are the 11 Owner-Decision
+items awaiting Dylan's input.
