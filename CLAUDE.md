@@ -22,6 +22,16 @@ actually changes.
   websites, computers, networking, cybersecurity, and small-business IT —
   not primarily an "AI website company." Do not exaggerate credentials,
   business age, staffing, or response capacity in any customer-facing copy.
+- **Founder-bio fact duplication (audit F036, Info severity, no build
+  step to de-duplicate through):** the facts above — Navy years, ship
+  name/hull number, degree, university — are hand-typed independently in
+  `about.html` (photo caption, founder lede, credential cards),
+  `index.html` (homepage lede, credential cards), `team.html` (founder
+  bio line), `testimonials.html` (credential cards), and every
+  `i18n/*.json`'s translated equivalents of those same strings. If any of
+  these facts ever change again, this is the checklist of every location
+  that needs the same edit — the CG-64→CG-54 correction (`9a753a6`)
+  already had to be done as a manual sweep across all of them once.
 
 ## Versioning convention
 
