@@ -42,19 +42,18 @@ than editing `01`–`08` in place.
 - `inventories/` — machine-readable inventories (e.g. `pricing-sources.json`
   when Session 5 produces it).
 
-## Findings summary (as of the post-audit engineering fix pass, 2026-07-14)
+## Findings summary (as of the Owner-Decision implementation pass, 2026-07-14)
 
-- **41 findings** recorded (`F001`–`F041`).
-- **30 Resolved**: F001–F005, F012–F015 (during the audit itself), plus
-  F006, F007, F016, F018, F019, F020, F021, F022, F023, F025, F026,
-  F027, F028, F034, F035 (partial — see its `resolutionNote` in
-  `AUDIT_STATE.json`), F036 (documentation-only fix), F037, F038, F039,
-  F040, F041 (the engineering fix pass below).
-- **11 Owner-Decision** findings still awaiting Dylan's input: F008,
-  F009, F010, F011, F017, F024, F029, F030, F031, F032, F033 —
-  deliberately untouched per `00_AUDIT_CONTROL.md`'s ground rule that
-  these should not be silently implemented.
-- **0 Open, engineering-only** findings remain.
+- **41 findings** recorded (`F001`–`F041`), plus 6 findings from earlier
+  in this document's numbering brought the tracked total to 47 (see
+  `AUDIT_STATE.json` `counts.total`).
+- **All 47 findings are now Resolved.** The 30 resolved during the
+  post-audit engineering fix pass (F001–F005, F012–F016, F018–F023,
+  F025–F028, F034–F041, F006/F007, F036) are unchanged; the 11
+  Owner-Decision findings (F008, F009, F010, F011, F017, F024, F029,
+  F030, F031, F032, F033) were then resolved per Dylan's explicit
+  decisions — see "Owner-Decision implementation pass" below.
+- **0 Open findings of any kind remain.**
 
 Session 2 added F037 (homepage's primary "quote" CTA links to the wrong
 form) and expanded F017 with a full CTA evidence table; F008, F009,
@@ -153,3 +152,53 @@ starts from a known list.
 **Zero engineering-only, non-Owner-Decision findings remain open.**
 All that's left of the original 41 findings are the 11 Owner-Decision
 items awaiting Dylan's input.
+
+## Owner-Decision implementation pass (2026-07-14)
+
+Dylan supplied explicit decisions for all 11 Owner-Decision findings in
+one message and asked for autonomous implementation without further
+confirmation. Each was implemented as its own focused commit (see
+per-finding `commit`/`resolutionNote` in `AUDIT_STATE.json`):
+
+- **F008** (Gallery empty, full nav prominence) — `ba24a96`
+- **F009** (Booking non-functional, full nav prominence) — `ba24a96`
+- **F010** (unsourced market-research pricing claim) — `877ffa9`
+- **F011** (Square terms-gate bypassable) — `1d07b4d`
+- **F017** (14+ distinct CTA phrasings) — `a123a9b`
+- **F024** (Patch Notes reads as raw engineering changelog) — `0060a64`
+- **F029** (navigation hierarchy) — `ba24a96`
+- **F030** (Heroes Discount verification method) — `438d2fa`
+- **F031** (full-payment-upfront vs. deposit/milestone policy) —
+  verified already satisfied, no code change needed
+- **F032** (subscription plan scope undefined) — verified already
+  satisfied, no code change needed
+- **F033** (account-system feature scope / open-registration policy) —
+  verified already satisfied, no code change needed
+
+All new/changed English strings from this pass were translated into all
+15 non-English languages in one consolidated pass (`239def8`), which
+also cleaned up 12 orphaned `pricing.compare_*` keys left behind in the
+15 language files by the F010 fix. A pre-existing, unrelated translation
+gap (`wd.start_over` missing in all 15 languages) was discovered during
+parity verification and flagged as its own follow-up rather than folded
+into this pass.
+
+Also added, as a directly related but distinct piece of work: a real
+completed client project, **Armour Wireless** (armourwireless.com), was
+formally documented as an open content requirement blocked on
+owner-supplied source material (`docs/audit/CONTENT_REQUIREMENTS.md`,
+commit `d91bb16`) — no content was invented or published.
+
+**Important: the finding IDs Dylan used in his decision message do not
+match this audit's real IDs for the same topics**, e.g. he referred to
+the CTA-consistency finding as "F029" (the real ID for that topic is
+F017; the real F029 is the navigation-hierarchy finding, which he
+labeled "F031"). Every finding above was implemented by matching the
+**topic description**, not the literal ID string, and is recorded here
+under this audit's actual, pre-existing ID for that topic. See each
+finding's `ownerLabelNote` field in `AUDIT_STATE.json` for the exact
+mapping.
+
+**All 11 Owner-Decision findings are now Resolved. 0 Open findings of
+any kind remain** (`AUDIT_STATE.json` counts: 47 total, 47 resolved, 0
+owner-decision-open, 0 engineering-open).

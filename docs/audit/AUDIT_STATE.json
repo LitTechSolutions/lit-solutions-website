@@ -91,7 +91,7 @@
       "domainSession": 3,
       "summary": "Privacy Policy under-discloses actual data collection",
       "commit": "8caaae6",
-      "resolutionNote": "Fixed: Privacy Policy \u00a71 now discloses accounts, documents, messages, favorites, notifications, Website Designer uploads, and IP addresses; translated into all 16 languages. Dylan should still review final wording before this is considered final."
+      "resolutionNote": "Fixed: Privacy Policy §1 now discloses accounts, documents, messages, favorites, notifications, Website Designer uploads, and IP addresses; translated into all 16 languages. Dylan should still review final wording before this is considered final."
     },
     "F007": {
       "severity": "Critical",
@@ -99,35 +99,47 @@
       "domainSession": 3,
       "summary": "Resend not named as a sub-processor in Privacy Policy",
       "commit": "8caaae6",
-      "resolutionNote": "Fixed: Privacy Policy \u00a73 now names Resend as the transactional email sub-processor"
+      "resolutionNote": "Fixed: Privacy Policy §3 now names Resend as the transactional email sub-processor"
     },
     "F008": {
       "severity": "Critical",
-      "status": "Open",
+      "status": "Resolved",
       "ownerDecision": true,
       "domainSession": 2,
-      "summary": "Gallery empty with full nav prominence"
+      "summary": "Gallery empty with full nav prominence",
+      "commit": "ba24a96",
+      "resolutionNote": "Owner decision: Gallery removed from primary/footer main-nav prominence as part of the nav-hierarchy restructure (Gallery is no longer nav-linked at all; content-population is a separate, unscheduled content task, not a code fix). See finding F029 for the same commit's broader nav rework.",
+      "ownerLabelNote": "Owner's message labeled this 'F008' (matches)."
     },
     "F009": {
       "severity": "Critical",
-      "status": "Open",
+      "status": "Resolved",
       "ownerDecision": true,
       "domainSession": 2,
-      "summary": "Booking non-functional with full nav prominence"
+      "summary": "Booking non-functional with full nav prominence",
+      "commit": "ba24a96",
+      "resolutionNote": "Owner decision: Booking demoted out of primary nav (removed from the old 'Resources' dropdown, no longer in the main-nav main menu) as part of the nav-hierarchy restructure; booking.html itself is unchanged and still honestly discloses that online self-scheduling isn't connected yet. See F029.",
+      "ownerLabelNote": "Owner's message labeled this 'F009' (matches)."
     },
     "F010": {
       "severity": "Critical",
-      "status": "Open",
+      "status": "Resolved",
       "ownerDecision": true,
       "domainSession": 2,
-      "summary": "Unsourced 'independent 2026 market research' pricing claim"
+      "summary": "Unsourced 'independent 2026 market research' pricing claim",
+      "commit": "877ffa9",
+      "resolutionNote": "Owner decision: removed the entire unsourced 'independent 2026 market research' comparison table and 'Typically $X elsewhere' claims from pricing.html; replaced with an honest flat-rate-pricing framing that makes no unverifiable competitor claims.",
+      "ownerLabelNote": "Owner's message labeled this 'F017' (market-research claim) — the real audit ID for that topic is F010, not F017. Implemented by topic, recorded here under the correct real ID."
     },
     "F011": {
       "severity": "High",
-      "status": "Open",
+      "status": "Resolved",
       "ownerDecision": true,
       "domainSession": 5,
-      "summary": "Square terms-gate bypassable via direct link"
+      "summary": "Square terms-gate bypassable via direct link",
+      "commit": "1d07b4d",
+      "resolutionNote": "Owner decision: Square Terms & Conditions checkbox gate label now explicitly links both Terms & Conditions and Privacy Policy; added 6 jsdom-based regression tests (test/payment-terms-gate.test.js) covering unchecked-by-default, click-blocked-while-unchecked, and unlock-on-check behavior against the real production payment.html/js/main.js.",
+      "ownerLabelNote": "Owner's message labeled this 'F024' (Square terms gate) — the real audit ID for that topic is F011, not F024. Implemented by topic, recorded here under the correct real ID."
     },
     "F012": {
       "severity": "High",
@@ -167,10 +179,13 @@
     },
     "F017": {
       "severity": "High",
-      "status": "Open",
+      "status": "Resolved",
       "ownerDecision": true,
       "domainSession": 2,
-      "summary": "14+ distinct CTA phrasings for one conceptual action"
+      "summary": "14+ distinct CTA phrasings for one conceptual action",
+      "commit": "a123a9b",
+      "resolutionNote": "Owner decision: consolidated 14+ distinct CTA phrasings ('Get a quote', 'Get a Custom Quote', 'Fill Out Project Form', 'Start a Project', etc.) into one consistent 'Request Service' label sitewide, with service-website.html deliberately kept distinct ('Get My Website Quote', linking to website-designer.html) since it is a genuinely different quote flow. Also relabeled the account icon from 'My Account' to 'Client Sign In'.",
+      "ownerLabelNote": "Owner's message labeled this 'F029' (CTA consistency) — the real audit ID for that topic is F017, not F029. Implemented by topic, recorded here under the correct real ID."
     },
     "F018": {
       "severity": "High",
@@ -222,10 +237,13 @@
     },
     "F024": {
       "severity": "Medium",
-      "status": "Open",
+      "status": "Resolved",
       "ownerDecision": true,
       "domainSession": 2,
-      "summary": "Patch Notes reads as raw engineering changelog"
+      "summary": "Patch Notes reads as raw engineering changelog",
+      "commit": "0060a64",
+      "resolutionNote": "Owner decision: reworded patch-notes.html entries (v3.2.2, v1.16, v1.15, v1.14) that read like security-audit/engineering-implementation detail (server-side/testing-methodology language, named infra like 'Netlify Functions + Netlify Blobs') into plain customer-benefit language. The complete, unabridged original wording is preserved at docs/audit/ENGINEERING_CHANGELOG.md for internal reference; patch-notes.html remains intentionally English-only by existing design.",
+      "ownerLabelNote": "Owner's message labeled this 'F030' (Patch Notes tone) — the real audit ID for that topic is F024, not F030. Implemented by topic, recorded here under the correct real ID."
     },
     "F025": {
       "severity": "Medium",
@@ -261,38 +279,50 @@
     },
     "F029": {
       "severity": "Medium",
-      "status": "Open",
+      "status": "Resolved",
       "ownerDecision": true,
       "domainSession": 2,
-      "summary": "Navigation hierarchy may need simplification"
+      "summary": "Navigation hierarchy may need simplification",
+      "commit": "ba24a96",
+      "resolutionNote": "Owner decision: restructured main-nav to Home / Services (dropdown incl. Pricing) / Website Designer / About / Contact, moving Heroes Discount, Payments, and the entire former 'Resources' dropdown (Service Area, Testimonials, Team, Portfolio, Gallery, FAQ, Blog, Booking) out of primary nav and into the footer only, where all pages remain reachable. Removed dangling in-page links to now-de-prioritized pages (e.g. testimonials links on index.html/about.html) and reworded the surrounding copy.",
+      "ownerLabelNote": "Owner's message labeled this 'F031' (navigation hierarchy) — the real audit ID for that topic is F029, not F031. Implemented by topic, recorded here under the correct real ID."
     },
     "F030": {
       "severity": "Medium",
-      "status": "Open",
+      "status": "Resolved",
       "ownerDecision": true,
       "domainSession": 3,
-      "summary": "American Heroes Discount document-verification method"
+      "summary": "American Heroes Discount document-verification method",
+      "commit": "438d2fa",
+      "resolutionNote": "Owner decision: Website Designer's Heroes Discount checkbox now reads 'I self-attest that I qualify...' and states eligibility is confirmed directly with the customer before the final price is set. The live cost-breakdown row and 'applied' note both now read '...pending confirmation', matching the PDF summary's existing 'pending verification' language. Rates (15%/5%) and eligible categories unchanged; heroes-pricing.html's existing per-category verification requirements (already real, no document-upload requirement for restricted federal ID categories) were left as-is.",
+      "ownerLabelNote": "Owner's message labeled this 'F032' (Heroes Discount verification) — the real audit ID for that topic is F030, not F032. Implemented by topic, recorded here under the correct real ID."
     },
     "F031": {
       "severity": "Medium",
-      "status": "Open",
+      "status": "Resolved",
       "ownerDecision": true,
       "domainSession": 5,
-      "summary": "Full-payment-upfront vs. deposit/milestone policy"
+      "summary": "Full-payment-upfront vs. deposit/milestone policy",
+      "resolutionNote": "Owner decision (verification only, no code change): payment.html already separates One-Time Payment (full amount, at time of quote/invoice) from Subscriptions (recurring monthly) into two clearly labeled, independently collapsible sections; no new deposit/milestone/full-payment-upfront policy was introduced. Confirmed via manual review that no conflicting or ambiguous policy language exists on the page.",
+      "ownerLabelNote": "Owner's message bundled this into 'F033' (payment/subscription/account scope) alongside F032 and F033 below — the real audit ID for the full-payment-vs-deposit topic specifically is F031."
     },
     "F032": {
       "severity": "Medium",
-      "status": "Open",
+      "status": "Resolved",
       "ownerDecision": true,
       "domainSession": 5,
-      "summary": "Subscription plan scope (edits, hours, carryover) undefined"
+      "summary": "Subscription plan scope (edits, hours, carryover) undefined",
+      "resolutionNote": "Owner decision (verification only, no code change): both subscription plans (Website Care Plan $39/mo, Small Business IT Support $79/mo) already state billing frequency up front (not buried in fine print), and the 'cancel anytime with written notice before your next billing date' language is already consistent between the section intro copy and the detailed price-note. No new scope/hours/carryover terms were added, per the owner instruction not to invent new refund/cancellation/renewal terms.",
+      "ownerLabelNote": "Owner's message bundled this into 'F033' (payment/subscription/account scope) alongside F031 and F033 — the real audit ID for the subscription-scope topic specifically is F032."
     },
     "F033": {
       "severity": "Low",
-      "status": "Open",
+      "status": "Resolved",
       "ownerDecision": true,
       "domainSession": 7,
-      "summary": "Account-system feature scope and open-registration policy"
+      "summary": "Account-system feature scope and open-registration policy",
+      "resolutionNote": "Owner decision (verification only, no code change): account creation ('Create an account') exists only on the utility myaccount.html sign-in page itself and is not promoted anywhere in the primary marketing journey (homepage, service pages, About). The header account icon was already relabeled 'Client Sign In' (see F017/commit a123a9b) to reflect its actual utility purpose rather than implying a social/community feature. No auth/password-reset/messaging protections were touched; npm test (16/16) continues to pass.",
+      "ownerLabelNote": "Owner's message bundled this into 'F033' (payment/subscription/account scope) alongside F031 and F032 — this one actually does correspond to real F033 (account-system scope)."
     },
     "F034": {
       "severity": "Low",
@@ -409,8 +439,8 @@
   },
   "counts": {
     "total": 47,
-    "resolved": 36,
-    "ownerDecisionOpen": 11,
+    "resolved": 47,
+    "ownerDecisionOpen": 0,
     "engineeringOpen": 0
   },
   "implementationPasses": [
