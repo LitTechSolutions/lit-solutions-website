@@ -138,34 +138,34 @@
 <main id="main">
   <section class="page-hero">
     <div class="wrap">
-      <p class="eyebrow">Search</p>
-      <h1>Search this site.</h1>
-      <p class="section-lede">Search every page, service, and article on the site.</p>
+      <p class="eyebrow" data-i18n="search.hero_eyebrow">Search</p>
+      <h1 data-i18n="search.hero_h1">Search this site.</h1>
+      <p class="section-lede" data-i18n="search.hero_lede">Search every page, service, and article on the site.</p>
     </div>
   </section>
 
   <section>
     <div class="wrap">
       <form id="searchForm" class="search-form" role="search">
-        <label class="visually-hidden" for="searchInput">Search this site</label>
-        <input id="searchInput" type="search" placeholder="Search services, blog posts, pages&hellip;" autofocus>
-        <button type="submit" class="btn btn-primary">Search</button>
+        <label class="visually-hidden" for="searchInput" data-i18n="search.input_label">Search this site</label>
+        <input id="searchInput" type="search" placeholder="Search services, blog posts, pages&hellip;" autofocus data-i18n-attr-placeholder="search.input_placeholder">
+        <button type="submit" class="btn btn-primary" data-i18n="search.submit_button">Search</button>
       </form>
 
       <p style="margin:.6rem 0 0;">
-        <button type="button" id="saveSearchBtn" class="btn btn-ghost btn-small" hidden>Save this search</button>
-        <a href="myaccount.html#searches" id="signInToSaveLink" class="form-note" style="text-decoration:underline; display:none;">Sign in to save searches</a>
+        <button type="button" id="saveSearchBtn" class="btn btn-ghost btn-small" hidden data-i18n="search.save_search_button">Save this search</button>
+        <a href="myaccount.html#searches" id="signInToSaveLink" class="form-note" style="text-decoration:underline; display:none;" data-i18n="search.sign_in_to_save_link">Sign in to save searches</a>
         <span class="form-note" id="saveSearchStatus"></span>
       </p>
 
-      <div class="search-filter-bar" id="searchFilterBar" role="group" aria-label="Filter by section">
-        <button type="button" class="is-active" data-scope="All">All</button>
-        <button type="button" data-scope="Services">Services</button>
-        <button type="button" data-scope="Pricing">Pricing</button>
-        <button type="button" data-scope="Company">Company</button>
-        <button type="button" data-scope="Resources">Resources</button>
-        <button type="button" data-scope="Legal">Legal</button>
-        <button type="button" data-scope="Pages">Pages</button>
+      <div class="search-filter-bar" id="searchFilterBar" role="group" aria-label="Filter by section" data-i18n-attr-aria-label="search.filter_bar_aria_label">
+        <button type="button" class="is-active" data-scope="All" data-i18n="search.filter_all">All</button>
+        <button type="button" data-scope="Services" data-i18n="search.filter_services">Services</button>
+        <button type="button" data-scope="Pricing" data-i18n="search.filter_pricing">Pricing</button>
+        <button type="button" data-scope="Company" data-i18n="search.filter_company">Company</button>
+        <button type="button" data-scope="Resources" data-i18n="search.filter_resources">Resources</button>
+        <button type="button" data-scope="Legal" data-i18n="search.filter_legal">Legal</button>
+        <button type="button" data-scope="Pages" data-i18n="search.filter_pages">Pages</button>
       </div>
 
       <p id="search-status" role="status"></p>
@@ -218,7 +218,7 @@
     </nav>
   </div>
   <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span data-i18n="footer.rights">All rights reserved.</span></p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version 2.2.2</a></p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version 2.3.0</a></p>
   <p class="footer-version"><a href="admin.html" data-i18n="footer.staff_signin">Staff Sign In</a></p>
 </footer>
 

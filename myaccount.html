@@ -138,9 +138,9 @@
 <main id="main">
   <section class="page-hero">
     <div class="wrap">
-      <p class="eyebrow">My Account</p>
+      <p class="eyebrow" data-i18n="myaccount.hero_eyebrow">My Account</p>
       <h1 id="acctPageTitle">My Account</h1>
-      <p class="section-lede">Sign in to view your invoices, receipts, and paperwork, and manage your login.</p>
+      <p class="section-lede" data-i18n="myaccount.hero_lede">Sign in to view your invoices, receipts, and paperwork, and manage your login.</p>
     </div>
   </section>
 
@@ -196,7 +196,7 @@
     </nav>
   </div>
   <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span data-i18n="footer.rights">All rights reserved.</span></p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version 2.2.2</a></p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version 2.3.0</a></p>
   <p class="footer-version"><a href="admin.html" data-i18n="footer.staff_signin">Staff Sign In</a></p>
 </footer>
 
@@ -223,6 +223,24 @@
   }
   function el(html) { var d = document.createElement("div"); d.innerHTML = html.trim(); return d.firstChild; }
 
+  function tt(path, fallback) {
+    return window.LTS_I18N ? window.LTS_I18N.t(path, fallback) : fallback;
+  }
+
+  // Sets both the browser tab title and the on-page H1. The H1 also gets a
+  // data-i18n attribute so that if i18n.js's dictionary finishes loading
+  // *after* this runs (a real race: this view can render before the i18n
+  // fetch resolves), the existing live-DOM-scan in i18n.js's applyDict()
+  // still catches it and corrects the text -- same mechanism every other
+  // element on this page already relies on.
+  function setPageTitle(key, fallback) {
+    var translated = tt(key, fallback);
+    document.title = translated + " — My Account — Little Technical Solutions LLC";
+    var h1 = document.getElementById("acctPageTitle");
+    h1.textContent = translated;
+    h1.setAttribute("data-i18n", key);
+  }
+
   async function api(path, opts) {
     opts = opts || {};
     try {
@@ -239,9 +257,9 @@
     var tabsEl = document.getElementById("accountTabs");
     if (state.user) {
       tabsEl.hidden = false;
-      tabsEl.innerHTML = '<a href="#dashboard">Dashboard</a><a href="#documents">Documents</a><a href="#messages">Messages</a>' +
-        '<a href="#favorites">Favorites</a><a href="#notifications">Notifications<span class="tab-badge" id="notifTabBadge" hidden>0</span></a>' +
-        '<a href="#profile">Profile &amp; Login</a><a href="#" id="account-signout">Sign out</a>';
+      tabsEl.innerHTML = '<a href="#dashboard" data-i18n="myaccount.tab_dashboard">Dashboard</a><a href="#documents" data-i18n="myaccount.tab_documents">Documents</a><a href="#messages" data-i18n="myaccount.tab_messages">Messages</a>' +
+        '<a href="#favorites" data-i18n="myaccount.tab_favorites">Favorites</a><a href="#notifications">Notifications<span class="tab-badge" id="notifTabBadge" hidden>0</span></a>' +
+        '<a href="#profile" data-i18n="myaccount.tab_profile_login">Profile &amp; Login</a><a href="#" id="account-signout" data-i18n="myaccount.tab_sign_out">Sign out</a>';
       document.getElementById("account-signout").addEventListener("click", async function (e) {
         e.preventDefault();
         await api("auth-logout", { method: "POST" });
@@ -281,15 +299,14 @@
   var views = {};
 
   views.signin = function () {
-    document.title = "Sign In — My Account — Little Technical Solutions LLC";
-    document.getElementById("acctPageTitle").textContent = "Sign in";
-    var v = el('<div class="card"><h2 style="font-size:1.2rem; margin-bottom:1rem;">Sign in</h2>' +
-      '<div class="form-row"><label for="si-email">Email</label><input id="si-email" type="email"></div>' +
-      '<div class="form-row"><label for="si-password">Password</label><input id="si-password" type="password"></div>' +
-      '<button class="btn btn-primary" id="si-submit">Sign in</button>' +
+    setPageTitle("myaccount.signin_heading", "Sign in");
+    var v = el('<div class="card"><h2 style="font-size:1.2rem; margin-bottom:1rem;" data-i18n="myaccount.signin_heading">Sign in</h2>' +
+      '<div class="form-row"><label for="si-email" data-i18n="myaccount.signin_email_label">Email</label><input id="si-email" type="email"></div>' +
+      '<div class="form-row"><label for="si-password" data-i18n="myaccount.signin_password_label">Password</label><input id="si-password" type="password"></div>' +
+      '<button class="btn btn-primary" id="si-submit" data-i18n="myaccount.signin_submit">Sign in</button>' +
       '<p class="form-note" id="si-status"></p>' +
-      '<p style="margin-top:1rem; font-size:.88rem;"><a href="#reset-request" style="color:var(--accent-teal-text); text-decoration:underline;">Forgot password?</a></p>' +
-      '<p style="margin-top:.5rem; font-size:.88rem;">New here? <a href="#register" style="color:var(--accent-teal-text); text-decoration:underline;">Create an account</a></p>' +
+      '<p style="margin-top:1rem; font-size:.88rem;"><a href="#reset-request" style="color:var(--accent-teal-text); text-decoration:underline;" data-i18n="myaccount.signin_forgot_password">Forgot password?</a></p>' +
+      '<p style="margin-top:.5rem; font-size:.88rem;" data-i18n-html="myaccount.signin_register_prompt">New here? <a href="#register" style="color:var(--accent-teal-text); text-decoration:underline;">Create an account</a></p>' +
       '</div>');
     v.querySelector("#si-submit").addEventListener("click", async function () {
       var status = v.querySelector("#si-status");
@@ -323,14 +340,13 @@
   };
 
   views.register = function () {
-    document.title = "Create Account — My Account — Little Technical Solutions LLC";
-    document.getElementById("acctPageTitle").textContent = "Create an account";
-    var v = el('<div class="card"><h2 style="font-size:1.2rem; margin-bottom:1rem;">Create an account</h2>' +
-      '<p style="font-size:.88rem; color:var(--ink-soft); margin-bottom:1rem;">Track your invoices, receipts, and paperwork, and message us directly. This is separate from making a payment — payments are still handled on the <a href="payment.html" style="color:var(--accent-teal-text); text-decoration:underline;">Payments page</a>. We\'ll email you a verification link before your account can sign in.</p>' +
-      '<div class="form-row"><label for="rg-name">Name</label><input id="rg-name" type="text"></div>' +
-      '<div class="form-row"><label for="rg-email">Email</label><input id="rg-email" type="email"></div>' +
-      '<div class="form-row"><label for="rg-password">Password <span style="font-weight:400; color:var(--ink-faint);">(at least 10 characters)</span></label><input id="rg-password" type="password"></div>' +
-      '<button class="btn btn-primary" id="rg-submit">Create account</button>' +
+    setPageTitle("myaccount.register_heading", "Create an account");
+    var v = el('<div class="card"><h2 style="font-size:1.2rem; margin-bottom:1rem;" data-i18n="myaccount.register_heading">Create an account</h2>' +
+      '<p style="font-size:.88rem; color:var(--ink-soft); margin-bottom:1rem;" data-i18n-html="myaccount.register_intro">Track your invoices, receipts, and paperwork, and message us directly. This is separate from making a payment — payments are still handled on the <a href="payment.html" style="color:var(--accent-teal-text); text-decoration:underline;">Payments page</a>. We\'ll email you a verification link before your account can sign in.</p>' +
+      '<div class="form-row"><label for="rg-name" data-i18n="myaccount.register_name_label">Name</label><input id="rg-name" type="text"></div>' +
+      '<div class="form-row"><label for="rg-email" data-i18n="myaccount.register_email_label">Email</label><input id="rg-email" type="email"></div>' +
+      '<div class="form-row"><label for="rg-password" data-i18n-html="myaccount.register_password_label">Password <span style="font-weight:400; color:var(--ink-faint);">(at least 10 characters)</span></label><input id="rg-password" type="password"></div>' +
+      '<button class="btn btn-primary" id="rg-submit" data-i18n="myaccount.register_submit">Create account</button>' +
       '<p class="form-note" id="rg-status"></p></div>');
     v.querySelector("#rg-submit").addEventListener("click", async function () {
       var status = v.querySelector("#rg-status");
@@ -343,13 +359,12 @@
   };
 
   views.verify = function () {
-    document.title = "Verify Email — My Account — Little Technical Solutions LLC";
-    document.getElementById("acctPageTitle").textContent = "Verify your email";
+    setPageTitle("myaccount.verify_page_title", "Verify your email");
     var params = new URLSearchParams(window.location.hash.split("?")[1] || "");
     var token = params.get("token") || "";
-    var v = el('<div class="card"><h2 style="font-size:1.2rem; margin-bottom:1rem;">Verifying&hellip;</h2>' +
+    var v = el('<div class="card"><h2 style="font-size:1.2rem; margin-bottom:1rem;" data-i18n="myaccount.verify_heading">Verifying&hellip;</h2>' +
       '<p class="form-note" id="vf-status"></p>' +
-      '<p style="margin-top:1rem;"><a href="#signin" style="color:var(--accent-teal-text); text-decoration:underline;">Go to sign in</a></p></div>');
+      '<p style="margin-top:1rem;"><a href="#signin" style="color:var(--accent-teal-text); text-decoration:underline;" data-i18n="myaccount.verify_go_to_signin">Go to sign in</a></p></div>');
     var status = v.querySelector("#vf-status");
     if (!token) {
       status.textContent = "Missing verification token.";
@@ -364,13 +379,12 @@
   };
 
   views["reset-request"] = function () {
-    document.title = "Reset Password — My Account — Little Technical Solutions LLC";
-    document.getElementById("acctPageTitle").textContent = "Reset your password";
-    var v = el('<div class="card"><h2 style="font-size:1.2rem; margin-bottom:1rem;">Reset your password</h2>' +
-      '<div class="form-row"><label for="rr-email">Email</label><input id="rr-email" type="email"></div>' +
-      '<button class="btn btn-primary" id="rr-submit">Send reset link</button>' +
+    setPageTitle("myaccount.reset_request_heading", "Reset your password");
+    var v = el('<div class="card"><h2 style="font-size:1.2rem; margin-bottom:1rem;" data-i18n="myaccount.reset_request_heading">Reset your password</h2>' +
+      '<div class="form-row"><label for="rr-email" data-i18n="myaccount.reset_request_email_label">Email</label><input id="rr-email" type="email"></div>' +
+      '<button class="btn btn-primary" id="rr-submit" data-i18n="myaccount.reset_request_submit">Send reset link</button>' +
       '<p class="form-note" id="rr-status"></p>' +
-      '<p style="font-size:.8rem; color:var(--ink-faint); margin-top:1rem;">Automatic email delivery isn\'t wired up yet. Call <a href="tel:+16364260289" style="color:var(--accent-teal-text); text-decoration:underline;">636-426-0289</a> or email <a href="mailto:dylan@lit-solutions.tech" style="color:var(--accent-teal-text); text-decoration:underline;">dylan@lit-solutions.tech</a> and we\'ll help you get back in.</p></div>');
+      '<p style="font-size:.8rem; color:var(--ink-faint); margin-top:1rem;" data-i18n-html="myaccount.reset_request_contact_note">Automatic email delivery isn\'t wired up yet. Call <a href="tel:+16364260289" style="color:var(--accent-teal-text); text-decoration:underline;">636-426-0289</a> or email <a href="mailto:dylan@lit-solutions.tech" style="color:var(--accent-teal-text); text-decoration:underline;">dylan@lit-solutions.tech</a> and we\'ll help you get back in.</p></div>');
     v.querySelector("#rr-submit").addEventListener("click", async function () {
       var status = v.querySelector("#rr-status");
       var r = await api("auth-password-reset", { method: "POST", body: JSON.stringify({ action: "request", email: v.querySelector("#rr-email").value }) });
@@ -381,13 +395,12 @@
   };
 
   views.reset = function () {
-    document.title = "Set New Password — My Account — Little Technical Solutions LLC";
-    document.getElementById("acctPageTitle").textContent = "Set a new password";
+    setPageTitle("myaccount.reset_heading", "Set a new password");
     var params = new URLSearchParams(window.location.hash.split("?")[1] || "");
     var token = params.get("token") || "";
-    var v = el('<div class="card"><h2 style="font-size:1.2rem; margin-bottom:1rem;">Set a new password</h2>' +
-      '<div class="form-row"><label for="rc-password">New password</label><input id="rc-password" type="password"></div>' +
-      '<button class="btn btn-primary" id="rc-submit">Update password</button>' +
+    var v = el('<div class="card"><h2 style="font-size:1.2rem; margin-bottom:1rem;" data-i18n="myaccount.reset_heading">Set a new password</h2>' +
+      '<div class="form-row"><label for="rc-password" data-i18n="myaccount.reset_new_password_label">New password</label><input id="rc-password" type="password"></div>' +
+      '<button class="btn btn-primary" id="rc-submit" data-i18n="myaccount.reset_submit">Update password</button>' +
       '<p class="form-note" id="rc-status"></p></div>');
     v.querySelector("#rc-submit").addEventListener("click", async function () {
       var status = v.querySelector("#rc-status");
@@ -401,17 +414,18 @@
 
   views.dashboard = function () {
     if (!requireAuth()) return el("<div></div>");
-    document.title = "Dashboard — My Account — Little Technical Solutions LLC";
-    document.getElementById("acctPageTitle").textContent = "Welcome, " + esc(state.user.name);
+    document.title = tt("myaccount.tab_dashboard", "Dashboard") + " — My Account — Little Technical Solutions LLC";
+    var h1 = document.getElementById("acctPageTitle");
+    h1.innerHTML = '<span data-i18n="myaccount.dash_welcome_prefix">Welcome, </span>' + esc(state.user.name);
     var v = el('<div>' +
       '<div class="account-shortcuts" id="dashShortcuts">' +
-      '<a href="#documents" class="account-shortcut"><strong>&hellip;</strong><span>Documents</span></a>' +
-      '<a href="#favorites" class="account-shortcut"><strong>&hellip;</strong><span>Favorites</span></a>' +
-      '<a href="#notifications" class="account-shortcut"><strong>&hellip;</strong><span>Unread notifications</span></a>' +
-      '<a href="#messages" class="account-shortcut"><strong>&rarr;</strong><span>Messages</span></a>' +
+      '<a href="#documents" class="account-shortcut"><strong>&hellip;</strong><span data-i18n="myaccount.dash_shortcut_documents">Documents</span></a>' +
+      '<a href="#favorites" class="account-shortcut"><strong>&hellip;</strong><span data-i18n="myaccount.dash_shortcut_favorites">Favorites</span></a>' +
+      '<a href="#notifications" class="account-shortcut"><strong>&hellip;</strong><span data-i18n="myaccount.dash_shortcut_notifications">Unread notifications</span></a>' +
+      '<a href="#messages" class="account-shortcut"><strong>&rarr;</strong><span data-i18n="myaccount.dash_shortcut_messages">Messages</span></a>' +
       '</div>' +
-      '<div class="card" style="margin-top:1.5rem;"><h2 style="font-size:1.05rem; margin-bottom:.75rem;">Recently viewed</h2>' +
-      '<div id="dashRecent"><p style="color:var(--ink-faint); font-size:.9rem;">Loading&hellip;</p></div></div>' +
+      '<div class="card" style="margin-top:1.5rem;"><h2 style="font-size:1.05rem; margin-bottom:.75rem;" data-i18n="myaccount.dash_recent_heading">Recently viewed</h2>' +
+      '<div id="dashRecent"><p style="color:var(--ink-faint); font-size:.9rem;" data-i18n="myaccount.loading_placeholder">Loading&hellip;</p></div></div>' +
       '</div>');
 
     Promise.all([api("documents"), api("favorites"), api("notifications")]).then(function (results) {
@@ -442,10 +456,9 @@
 
   views.documents = function () {
     if (!requireAuth()) return el("<div></div>");
-    document.title = "My Documents — My Account — Little Technical Solutions LLC";
-    document.getElementById("acctPageTitle").textContent = "My documents";
-    var v = el('<div><h2 style="font-size:1.2rem; margin-bottom:1rem;">Your invoices, receipts &amp; paperwork</h2>' +
-      '<div class="account-doc-list" id="docList"><p style="color:var(--ink-faint); font-size:.9rem;">Loading&hellip;</p></div>' +
+    setPageTitle("myaccount.documents_page_title", "My documents");
+    var v = el('<div><h2 style="font-size:1.2rem; margin-bottom:1rem;" data-i18n="myaccount.documents_heading">Your invoices, receipts &amp; paperwork</h2>' +
+      '<div class="account-doc-list" id="docList"><p style="color:var(--ink-faint); font-size:.9rem;" data-i18n="myaccount.loading_placeholder">Loading&hellip;</p></div>' +
       '<div class="card" id="docDetail" hidden style="margin-top:1.5rem;"></div></div>');
 
     api("documents").then(function (r) {
@@ -491,13 +504,12 @@
 
   views.messages = function () {
     if (!requireAuth()) return el("<div></div>");
-    document.title = "Messages — My Account — Little Technical Solutions LLC";
-    document.getElementById("acctPageTitle").textContent = "Messages";
+    setPageTitle("myaccount.tab_messages", "Messages");
     var v = el('<div>' +
-      '<div class="msg-thread" id="msgThread"><p style="color:var(--ink-faint); font-size:.9rem;">Loading&hellip;</p></div>' +
+      '<div class="msg-thread" id="msgThread"><p style="color:var(--ink-faint); font-size:.9rem;" data-i18n="myaccount.loading_placeholder">Loading&hellip;</p></div>' +
       '<div class="card" style="margin-top:1.25rem;">' +
-      '<div class="form-row"><label for="msg-body">Send a message</label><textarea id="msg-body" rows="3" placeholder="What can we help with?"></textarea></div>' +
-      '<button class="btn btn-primary" id="msg-send-btn">Send</button>' +
+      '<div class="form-row"><label for="msg-body" data-i18n="myaccount.messages_send_label">Send a message</label><textarea id="msg-body" rows="3" placeholder="What can we help with?" data-i18n-attr-placeholder="myaccount.messages_placeholder"></textarea></div>' +
+      '<button class="btn btn-primary" id="msg-send-btn" data-i18n="myaccount.messages_send_button">Send</button>' +
       '<p class="form-note" id="msg-send-status"></p>' +
       '</div></div>');
 
@@ -545,13 +557,12 @@
 
   views.favorites = function () {
     if (!requireAuth()) return el("<div></div>");
-    document.title = "Favorites — My Account — Little Technical Solutions LLC";
-    document.getElementById("acctPageTitle").textContent = "Favorites & saved searches";
+    setPageTitle("myaccount.favorites_page_title", "Favorites & saved searches");
     var v = el('<div>' +
-      '<h2 style="font-size:1.05rem; margin-bottom:.75rem;">Bookmarked pages</h2>' +
-      '<div class="account-doc-list" id="favList"><p style="color:var(--ink-faint); font-size:.9rem;">Loading&hellip;</p></div>' +
-      '<h2 style="font-size:1.05rem; margin:1.75rem 0 .75rem;">Saved searches</h2>' +
-      '<div class="account-doc-list" id="savedSearchList"><p style="color:var(--ink-faint); font-size:.9rem;">Loading&hellip;</p></div>' +
+      '<h2 style="font-size:1.05rem; margin-bottom:.75rem;" data-i18n="myaccount.favorites_bookmarks_heading">Bookmarked pages</h2>' +
+      '<div class="account-doc-list" id="favList"><p style="color:var(--ink-faint); font-size:.9rem;" data-i18n="myaccount.loading_placeholder">Loading&hellip;</p></div>' +
+      '<h2 style="font-size:1.05rem; margin:1.75rem 0 .75rem;" data-i18n="myaccount.favorites_saved_searches_heading">Saved searches</h2>' +
+      '<div class="account-doc-list" id="savedSearchList"><p style="color:var(--ink-faint); font-size:.9rem;" data-i18n="myaccount.loading_placeholder">Loading&hellip;</p></div>' +
       '</div>');
 
     function load() {
@@ -601,11 +612,10 @@
 
   views.notifications = function () {
     if (!requireAuth()) return el("<div></div>");
-    document.title = "Notifications — My Account — Little Technical Solutions LLC";
-    document.getElementById("acctPageTitle").textContent = "Notifications";
+    setPageTitle("myaccount.notifications_page_title", "Notifications");
     var v = el('<div>' +
-      '<button type="button" class="btn btn-ghost btn-small" id="markAllReadBtn">Mark all read</button>' +
-      '<div class="account-doc-list" id="notifList" style="margin-top:1rem;"><p style="color:var(--ink-faint); font-size:.9rem;">Loading&hellip;</p></div>' +
+      '<button type="button" class="btn btn-ghost btn-small" id="markAllReadBtn" data-i18n="myaccount.notifications_mark_all_read">Mark all read</button>' +
+      '<div class="account-doc-list" id="notifList" style="margin-top:1rem;"><p style="color:var(--ink-faint); font-size:.9rem;" data-i18n="myaccount.loading_placeholder">Loading&hellip;</p></div>' +
       '</div>');
 
     function load() {
@@ -652,34 +662,33 @@
 
   views.profile = function () {
     if (!requireAuth()) return el("<div></div>");
-    document.title = "Profile & Login — My Account — Little Technical Solutions LLC";
-    document.getElementById("acctPageTitle").textContent = "Profile & login";
+    setPageTitle("myaccount.tab_profile_login", "Profile & Login");
     var prefs = state.user.preferences || { language: "en", timezone: "", emailNotifications: true };
     var LANGUAGES = [["en", "English"], ["es", "Español"], ["fr", "Français"], ["de", "Deutsch"]];
 
     var v = el('<div>' +
       '<div class="card"><p style="font-size:.9rem; color:var(--ink-soft);">Signed in as <strong>' + esc(state.user.name) + '</strong> (' + esc(state.user.email) + ').</p></div>' +
-      '<div class="card" style="margin-top:1.25rem;"><h2 style="font-size:1.05rem; margin-bottom:1rem;">Your name</h2>' +
-      '<div class="form-row"><label for="pf-name">Name</label><input id="pf-name" type="text" value="' + esc(state.user.name) + '"></div>' +
-      '<button class="btn btn-primary" id="pf-name-submit">Update name</button>' +
+      '<div class="card" style="margin-top:1.25rem;"><h2 style="font-size:1.05rem; margin-bottom:1rem;" data-i18n="myaccount.profile_name_heading">Your name</h2>' +
+      '<div class="form-row"><label for="pf-name" data-i18n="myaccount.profile_name_label">Name</label><input id="pf-name" type="text" value="' + esc(state.user.name) + '"></div>' +
+      '<button class="btn btn-primary" id="pf-name-submit" data-i18n="myaccount.profile_name_submit">Update name</button>' +
       '<p class="form-note" id="pf-name-status"></p></div>' +
-      '<div class="card" style="margin-top:1.25rem;"><h2 style="font-size:1.05rem; margin-bottom:1rem;">Change email</h2>' +
-      '<div class="form-row"><label for="pf-new-email">New email</label><input id="pf-new-email" type="email"></div>' +
-      '<div class="form-row"><label for="pf-email-pw">Current password</label><input id="pf-email-pw" type="password"></div>' +
-      '<button class="btn btn-primary" id="pf-email-submit">Update email</button>' +
+      '<div class="card" style="margin-top:1.25rem;"><h2 style="font-size:1.05rem; margin-bottom:1rem;" data-i18n="myaccount.profile_email_heading">Change email</h2>' +
+      '<div class="form-row"><label for="pf-new-email" data-i18n="myaccount.profile_new_email_label">New email</label><input id="pf-new-email" type="email"></div>' +
+      '<div class="form-row"><label for="pf-email-pw" data-i18n="myaccount.profile_email_current_password_label">Current password</label><input id="pf-email-pw" type="password"></div>' +
+      '<button class="btn btn-primary" id="pf-email-submit" data-i18n="myaccount.profile_email_submit">Update email</button>' +
       '<p class="form-note" id="pf-email-status"></p></div>' +
-      '<div class="card" style="margin-top:1.25rem;"><h2 style="font-size:1.05rem; margin-bottom:1rem;">Change password</h2>' +
-      '<div class="form-row"><label for="pf-current-pw">Current password</label><input id="pf-current-pw" type="password"></div>' +
-      '<div class="form-row"><label for="pf-new-pw">New password <span style="font-weight:400; color:var(--ink-faint);">(at least 10 characters)</span></label><input id="pf-new-pw" type="password"></div>' +
-      '<button class="btn btn-primary" id="pf-pw-submit">Update password</button>' +
+      '<div class="card" style="margin-top:1.25rem;"><h2 style="font-size:1.05rem; margin-bottom:1rem;" data-i18n="myaccount.profile_password_heading">Change password</h2>' +
+      '<div class="form-row"><label for="pf-current-pw" data-i18n="myaccount.profile_password_current_label">Current password</label><input id="pf-current-pw" type="password"></div>' +
+      '<div class="form-row"><label for="pf-new-pw" data-i18n-html="myaccount.profile_password_new_label">New password <span style="font-weight:400; color:var(--ink-faint);">(at least 10 characters)</span></label><input id="pf-new-pw" type="password"></div>' +
+      '<button class="btn btn-primary" id="pf-pw-submit" data-i18n="myaccount.profile_password_submit">Update password</button>' +
       '<p class="form-note" id="pf-pw-status"></p></div>' +
-      '<div class="card" style="margin-top:1.25rem;"><h2 style="font-size:1.05rem; margin-bottom:1rem;">Preferences</h2>' +
-      '<div class="form-row"><label for="pf-language">Language</label><select id="pf-language">' +
+      '<div class="card" style="margin-top:1.25rem;"><h2 style="font-size:1.05rem; margin-bottom:1rem;" data-i18n="myaccount.profile_preferences_heading">Preferences</h2>' +
+      '<div class="form-row"><label for="pf-language" data-i18n="myaccount.profile_language_label">Language</label><select id="pf-language">' +
       LANGUAGES.map(function (l) { return '<option value="' + l[0] + '"' + (l[0] === prefs.language ? " selected" : "") + '>' + l[1] + '</option>'; }).join("") +
       '</select></div>' +
-      '<div class="form-row"><label for="pf-timezone">Timezone <span style="font-weight:400; color:var(--ink-faint);">(optional, e.g. America/New_York)</span></label><input id="pf-timezone" type="text" value="' + esc(prefs.timezone) + '"></div>' +
+      '<div class="form-row"><label for="pf-timezone" data-i18n-html="myaccount.profile_timezone_label">Timezone <span style="font-weight:400; color:var(--ink-faint);">(optional, e.g. America/New_York)</span></label><input id="pf-timezone" type="text" value="' + esc(prefs.timezone) + '"></div>' +
       '<div class="form-row"><label style="display:flex; align-items:center; gap:.5rem; font-weight:400;"><input id="pf-email-notif" type="checkbox"' + (prefs.emailNotifications ? " checked" : "") + '> Email me when I get a new message or document</label></div>' +
-      '<button class="btn btn-primary" id="pf-prefs-submit">Save preferences</button>' +
+      '<button class="btn btn-primary" id="pf-prefs-submit" data-i18n="myaccount.profile_preferences_submit">Save preferences</button>' +
       '<p class="form-note" id="pf-prefs-status"></p></div>' +
       '</div>');
 
@@ -724,7 +733,7 @@
     var view = views[hash];
     var container = document.getElementById("accountView");
     container.innerHTML = "";
-    if (!view) { container.appendChild(el('<div class="card"><p>That page doesn\'t exist. <a href="#signin">Sign in</a>.</p></div>')); return; }
+    if (!view) { container.appendChild(el('<div class="card"><p data-i18n-html="myaccount.route_not_found">That page doesn\'t exist. <a href="#signin">Sign in</a>.</p></div>')); return; }
     container.appendChild(view());
   }
 

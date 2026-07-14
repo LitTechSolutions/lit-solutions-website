@@ -140,24 +140,24 @@
   <section class="page-hero">
     <div class="wrap">
       <p class="eyebrow">404</p>
-      <h1>That page doesn't exist &mdash; or moved.</h1>
-      <p class="section-lede">Let's get you back on track. Try the search below, or jump to a popular page.</p>
+      <h1 data-i18n="error404.hero_h1">That page doesn't exist &mdash; or moved.</h1>
+      <p class="section-lede" data-i18n="error404.hero_lede">Let's get you back on track. Try the search below, or jump to a popular page.</p>
     </div>
   </section>
 
   <section>
     <div class="wrap">
       <form id="searchForm" class="search-form" role="search" action="search.html" method="get">
-        <label class="visually-hidden" for="notFoundSearchInput">Search this site</label>
-        <input id="notFoundSearchInput" name="q" type="search" placeholder="Search services, blog posts, pages&hellip;">
-        <button type="submit" class="btn btn-primary">Search</button>
+        <label class="visually-hidden" for="notFoundSearchInput" data-i18n="error404.search_label">Search this site</label>
+        <input id="notFoundSearchInput" name="q" type="search" placeholder="Search services, blog posts, pages&hellip;" data-i18n-attr-placeholder="error404.search_placeholder">
+        <button type="submit" class="btn btn-primary" data-i18n="error404.search_button">Search</button>
       </form>
 
       <div class="cred-list" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:1rem; margin-top:2.5rem;">
-        <a href="index.html" class="related-service-card reveal"><h3>Home</h3></a>
-        <a href="services.html" class="related-service-card reveal"><h3>Services</h3></a>
-        <a href="pricing.html" class="related-service-card reveal"><h3>Pricing</h3></a>
-        <a href="contact.html" class="related-service-card reveal"><h3>Contact</h3></a>
+        <a href="index.html" class="related-service-card reveal"><h3 data-i18n="error404.related_home">Home</h3></a>
+        <a href="services.html" class="related-service-card reveal"><h3 data-i18n="error404.related_services">Services</h3></a>
+        <a href="pricing.html" class="related-service-card reveal"><h3 data-i18n="error404.related_pricing">Pricing</h3></a>
+        <a href="contact.html" class="related-service-card reveal"><h3 data-i18n="error404.related_contact">Contact</h3></a>
       </div>
     </div>
   </section>
@@ -207,7 +207,7 @@
     </nav>
   </div>
   <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span data-i18n="footer.rights">All rights reserved.</span></p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version 2.2.2</a></p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version 2.3.0</a></p>
   <p class="footer-version"><a href="admin.html" data-i18n="footer.staff_signin">Staff Sign In</a></p>
 </footer>
 

@@ -138,9 +138,9 @@
 <main id="main">
   <section class="page-hero">
     <div class="wrap">
-      <p class="eyebrow">Blog</p>
-      <h1>Practical write-ups, no jargon.</h1>
-      <p class="section-lede">Short, useful articles on websites, security, and networking — written for people who'd rather fix the problem than read a sales pitch.</p>
+      <p class="eyebrow" data-i18n="blog.hero_eyebrow">Blog</p>
+      <h1 data-i18n="blog.hero_h1">Practical write-ups, no jargon.</h1>
+      <p class="section-lede" data-i18n="blog.hero_lede">Short, useful articles on websites, security, and networking — written for people who'd rather fix the problem than read a sales pitch.</p>
     </div>
   </section>
 
@@ -150,28 +150,28 @@
         <a href="5-signs-your-website-needs-a-redesign.html" class="blog-card reveal">
           <div class="blog-card-art"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16v16H4z" opacity="0"/><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M8 13h8M8 16h5"/></svg></div>
           <div class="blog-card-body">
-            <div class="blog-card-meta">2026-06-15 &middot; Website</div>
-            <h2>5 Signs Your Small Business Website Needs a Redesign</h2>
-            <p>If your site is quietly costing you customers, it's usually one of these five problems.</p>
-            <span class="card__link">Read more &rarr;</span>
+            <div class="blog-card-meta" data-i18n="blog.post1_meta">2026-06-15 &middot; Website</div>
+            <h2 data-i18n="blog.post1_title">5 Signs Your Small Business Website Needs a Redesign</h2>
+            <p data-i18n="blog.post1_excerpt">If your site is quietly costing you customers, it's usually one of these five problems.</p>
+            <span class="card__link" data-i18n="blog.post1_read_more">Read more &rarr;</span>
           </div>
         </a>
         <a href="why-small-businesses-need-a-password-manager.html" class="blog-card reveal">
           <div class="blog-card-art"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16v16H4z" opacity="0"/><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M8 13h8M8 16h5"/></svg></div>
           <div class="blog-card-body">
-            <div class="blog-card-meta">2026-06-22 &middot; Cybersecurity</div>
-            <h2>Why Every Small Business Should Use a Password Manager</h2>
-            <p>The single highest-impact, lowest-cost security upgrade most small businesses haven't made yet.</p>
-            <span class="card__link">Read more &rarr;</span>
+            <div class="blog-card-meta" data-i18n="blog.post2_meta">2026-06-22 &middot; Cybersecurity</div>
+            <h2 data-i18n="blog.post2_title">Why Every Small Business Should Use a Password Manager</h2>
+            <p data-i18n="blog.post2_excerpt">The single highest-impact, lowest-cost security upgrade most small businesses haven't made yet.</p>
+            <span class="card__link" data-i18n="blog.post2_read_more">Read more &rarr;</span>
           </div>
         </a>
         <a href="wifi-dead-zones-explained.html" class="blog-card reveal">
           <div class="blog-card-art"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16v16H4z" opacity="0"/><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M8 13h8M8 16h5"/></svg></div>
           <div class="blog-card-body">
-            <div class="blog-card-meta">2026-07-01 &middot; Networking</div>
-            <h2>Wi-Fi Dead Zones: What's Actually Causing Them</h2>
-            <p>It's rarely your internet plan. Here's what's usually really going on.</p>
-            <span class="card__link">Read more &rarr;</span>
+            <div class="blog-card-meta" data-i18n="blog.post3_meta">2026-07-01 &middot; Networking</div>
+            <h2 data-i18n="blog.post3_title">Wi-Fi Dead Zones: What's Actually Causing Them</h2>
+            <p data-i18n="blog.post3_excerpt">It's rarely your internet plan. Here's what's usually really going on.</p>
+            <span class="card__link" data-i18n="blog.post3_read_more">Read more &rarr;</span>
           </div>
         </a>
       </div>
@@ -182,15 +182,15 @@
     <div class="wrap">
       <div class="newsletter-box reveal">
         <div class="newsletter-copy">
-          <h2>Get new articles by email</h2>
-          <p>Occasional, practical write-ups — no spam.</p>
+          <h2 data-i18n="blog.newsletter_h2">Get new articles by email</h2>
+          <p data-i18n="blog.newsletter_lede">Occasional, practical write-ups — no spam.</p>
         </div>
         <div>
           <form name="newsletter" class="newsletter-form" method="POST" data-netlify="true" netlify-honeypot="bot-field">
             <input type="hidden" name="form-name" value="newsletter">
             <p class="visually-hidden"><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
-            <input type="email" name="email" placeholder="you@email.com" required aria-label="Email address">
-            <button type="submit" class="btn btn-primary">Subscribe</button>
+            <input type="email" name="email" placeholder="you@email.com" required aria-label="Email address" data-i18n-attr-placeholder="blog.newsletter_email_placeholder" data-i18n-attr-aria-label="blog.newsletter_email_aria">
+            <button type="submit" class="btn btn-primary" data-i18n="blog.newsletter_button">Subscribe</button>
           </form>
           <p class="newsletter-status"></p>
         </div>
@@ -243,7 +243,7 @@
     </nav>
   </div>
   <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span data-i18n="footer.rights">All rights reserved.</span></p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version 2.2.2</a></p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version 2.3.0</a></p>
   <p class="footer-version"><a href="admin.html" data-i18n="footer.staff_signin">Staff Sign In</a></p>
 </footer>
 

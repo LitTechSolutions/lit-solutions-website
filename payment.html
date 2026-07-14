@@ -141,9 +141,9 @@
 
   <section class="intake-hero">
     <div class="wrap">
-      <p class="eyebrow">Payments</p>
-      <h1>Payments &amp; Subscriptions.</h1>
-      <p class="section-lede">All payments are processed securely by Square. We never see or store your card information. Pick one-time payment for a quoted job or invoice, or subscriptions for ongoing monthly plans.</p>
+      <p class="eyebrow" data-i18n="payment.hero_eyebrow">Payments</p>
+      <h1 data-i18n="payment.hero_h1">Payments &amp; Subscriptions.</h1>
+      <p class="section-lede" data-i18n="payment.hero_lede">All payments are processed securely by Square. We never see or store your card information. Pick one-time payment for a quoted job or invoice, or subscriptions for ongoing monthly plans.</p>
     </div>
   </section>
 
@@ -152,37 +152,37 @@
 
       <div class="terms-agree" id="termsAgreeBlock">
         <input type="checkbox" id="agreeTerms">
-        <label for="agreeTerms">I have read and agree to the <a href="terms.html" target="_blank" rel="noopener">Terms &amp; Conditions</a>, including the payment, refund, and dispute policies. This is required before any payment or subscribe button on this page will work.</label>
+        <label for="agreeTerms" data-i18n-html="payment.terms_agree_label">I have read and agree to the <a href="terms.html" target="_blank" rel="noopener">Terms &amp; Conditions</a>, including the payment, refund, and dispute policies. This is required before any payment or subscribe button on this page will work.</label>
       </div>
-      <p class="terms-warning" id="termsWarning">Please check the box above to agree to our Terms &amp; Conditions before paying or subscribing.</p>
+      <p class="terms-warning" id="termsWarning" data-i18n="payment.terms_warning">Please check the box above to agree to our Terms &amp; Conditions before paying or subscribing.</p>
 
       <div class="price-block" id="one-time-payment">
         <button class="price-block-head" type="button" aria-expanded="true">
           <span class="price-block-head-left">
-            <h2>One-Time Payment</h2>
+            <h2 data-i18n="payment.onetime_h2">One-Time Payment</h2>
           </span>
           <span class="price-block-toggle">
-            <span class="price-block-count">Pay a quote or invoice</span>
+            <span class="price-block-count" data-i18n="payment.onetime_count">Pay a quote or invoice</span>
             <svg class="price-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
           </span>
         </button>
         <div class="price-list-wrap">
           <div style="padding: 0 1.75rem 1.75rem;">
-            <p class="pay-block-copy">
+            <p class="pay-block-copy" data-i18n="payment.onetime_copy">
               Use this to pay for services we've quoted or invoiced &mdash; a website package, a repair job, a deposit, or any amount listed on your quote or signed agreement. Enter the exact total shown there, after agreeing to our Terms above.
             </p>
-            <a href="https://square.link/u/2oozkfhz" class="btn btn-primary pay-btn" target="_blank" rel="noopener">
+            <a href="https://square.link/u/2oozkfhz" class="btn btn-primary pay-btn" target="_blank" rel="noopener" data-i18n="payment.onetime_pay_btn">
               Make a Payment
             </a>
 
             <div class="pay-reference">
               <div class="pay-reference-item">
-                <strong>Paying for a website?</strong>
-                <span>Starter is $699, Business is $1,299 &mdash; see <a href="pricing.html">full pricing</a>.</span>
+                <strong data-i18n="payment.website_price_q">Paying for a website?</strong>
+                <span data-i18n-html="payment.website_price_desc">Starter is $699, Business is $1,299 &mdash; see <a href="pricing.html">full pricing</a>.</span>
               </div>
               <div class="pay-reference-item">
-                <strong>Qualify for a discount?</strong>
-                <span>Active duty military, veterans, teachers, first responders, doctors, TSA agents, police, firefighters, and Virginia FFL holders &mdash; see the <a href="heroes-pricing.html">American Heroes Discount</a> page, then contact us to confirm your eligibility and rate before paying here.</span>
+                <strong data-i18n="payment.discount_q">Qualify for a discount?</strong>
+                <span data-i18n-html="payment.discount_desc">Active duty military, veterans, teachers, first responders, doctors, TSA agents, police, firefighters, and Virginia FFL holders &mdash; see the <a href="heroes-pricing.html">American Heroes Discount</a> page, then contact us to confirm your eligibility and rate before paying here.</span>
               </div>
             </div>
           </div>
@@ -192,16 +192,16 @@
       <div class="price-block" id="subscriptions">
         <button class="price-block-head" type="button" aria-expanded="false">
           <span class="price-block-head-left">
-            <h2>Subscriptions</h2>
+            <h2 data-i18n="payment.subs_h2">Subscriptions</h2>
           </span>
           <span class="price-block-toggle">
-            <span class="price-block-count">2 monthly plans</span>
+            <span class="price-block-count" data-i18n="payment.subs_count">2 monthly plans</span>
             <svg class="price-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
           </span>
         </button>
         <div class="price-list-wrap">
           <div style="padding: 0 1.75rem 1.75rem;">
-            <p class="pay-block-copy">
+            <p class="pay-block-copy" data-i18n="payment.subs_copy">
               Two monthly plans, billed automatically through Square so you never have to think about it. Cancel anytime with written notice before your next billing date.
             </p>
 
@@ -210,36 +210,36 @@
               <article class="sub-card">
                 <div class="sub-card-head">
                   <span class="ticket-code">WEB&#8209;SUB</span>
-                  <h2>Website Care Plan</h2>
+                  <h2 data-i18n="payment.web_plan_h2">Website Care Plan</h2>
                 </div>
-                <p class="sub-card-desc">Ongoing hosting coordination, small content edits, platform checks, and general website maintenance &mdash; so your site stays online, current, and working without you having to manage it yourself.</p>
-                <p class="sub-restriction-note">
+                <p class="sub-card-desc" data-i18n="payment.web_plan_desc">Ongoing hosting coordination, small content edits, platform checks, and general website maintenance &mdash; so your site stays online, current, and working without you having to manage it yourself.</p>
+                <p class="sub-restriction-note" data-i18n-html="payment.web_plan_restriction">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
                   Only available for websites built by Little Technical Solutions LLC. If your site was built by another company, we can only take it on with full source code access &mdash; either you provide it, or we're able to obtain it directly.
                 </p>
                 <div class="sub-price">
-                  <span class="sub-price-amount">$39</span><span class="sub-price-period">/month</span>
+                  <span class="sub-price-amount">$39</span><span class="sub-price-period" data-i18n="payment.per_month">/month</span>
                 </div>
-                <a href="https://square.link/u/lmJbZea7" class="btn btn-primary pay-btn" target="_blank" rel="noopener">Subscribe</a>
-                <p class="pay-vet-note">
+                <a href="https://square.link/u/lmJbZea7" class="btn btn-primary pay-btn" target="_blank" rel="noopener" data-i18n="payment.subscribe_btn">Subscribe</a>
+                <p class="pay-vet-note" data-i18n-html="payment.web_plan_vet_note">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z"/></svg>
-                  American Heroes Discount rate: <strong>$37/month</strong> &mdash; see <a href="heroes-pricing.html">eligibility &amp; verification</a>.
+                  American Heroes Discount rate: <strong>$37/month</strong> &mdash; see <a href="heroes-pricing.html" data-i18n="payment.eligibility_verification_link">eligibility &amp; verification</a>.
                 </p>
               </article>
 
               <article class="sub-card">
                 <div class="sub-card-head">
                   <span class="ticket-code">BIZ&#8209;SUB</span>
-                  <h2>Small Business IT Support</h2>
+                  <h2 data-i18n="payment.biz_plan_h2">Small Business IT Support</h2>
                 </div>
-                <p class="sub-card-desc">Ongoing small-business IT support outside of one-off project work &mdash; a technician on call for the day-to-day stuff, without a per-visit invoice every time something comes up.</p>
+                <p class="sub-card-desc" data-i18n="payment.biz_plan_desc">Ongoing small-business IT support outside of one-off project work &mdash; a technician on call for the day-to-day stuff, without a per-visit invoice every time something comes up.</p>
                 <div class="sub-price">
-                  <span class="sub-price-amount">$79</span><span class="sub-price-period">/month</span>
+                  <span class="sub-price-amount">$79</span><span class="sub-price-period" data-i18n="payment.per_month">/month</span>
                 </div>
-                <a href="https://square.link/u/CrpV0Rqf" class="btn btn-primary pay-btn" target="_blank" rel="noopener">Subscribe</a>
-                <p class="pay-vet-note">
+                <a href="https://square.link/u/CrpV0Rqf" class="btn btn-primary pay-btn" target="_blank" rel="noopener" data-i18n="payment.subscribe_btn">Subscribe</a>
+                <p class="pay-vet-note" data-i18n-html="payment.biz_plan_vet_note">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z"/></svg>
-                  American Heroes Discount rate: <strong>$75/month</strong> &mdash; see <a href="heroes-pricing.html">eligibility &amp; verification</a>.
+                  American Heroes Discount rate: <strong>$75/month</strong> &mdash; see <a href="heroes-pricing.html" data-i18n="payment.eligibility_verification_link">eligibility &amp; verification</a>.
                 </p>
               </article>
 
@@ -247,7 +247,7 @@
 
             <div class="price-note" style="margin-top:1.5rem;">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
-              <p>Subscriptions are billed monthly through Square and renew automatically until canceled. You can cancel either plan anytime with written notice (a call, text, or email works) before your next billing date &mdash; no long-term contract. Scope for Small Business IT Support is confirmed with you before your first billing cycle. Server and infrastructure costs behind these plans are not discounted, which is why the American Heroes Discount on subscriptions is 5% rather than 15%.</p>
+              <p data-i18n="payment.subs_note">Subscriptions are billed monthly through Square and renew automatically until canceled. You can cancel either plan anytime with written notice (a call, text, or email works) before your next billing date &mdash; no long-term contract. Scope for Small Business IT Support is confirmed with you before your first billing cycle. Server and infrastructure costs behind these plans are not discounted, which is why the American Heroes Discount on subscriptions is 5% rather than 15%.</p>
             </div>
           </div>
         </div>
@@ -255,13 +255,13 @@
 
       <div class="price-note">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
-        <p>Payments are securely processed by Square. Little Technical Solutions LLC does not collect, see, or store your card details. Refunds and disputes are handled per our standard service terms — contact us directly with any billing questions before opening a dispute with your bank or card issuer, so we can make it right.</p>
+        <p data-i18n="payment.final_note">Payments are securely processed by Square. Little Technical Solutions LLC does not collect, see, or store your card details. Refunds and disputes are handled per our standard service terms — contact us directly with any billing questions before opening a dispute with your bank or card issuer, so we can make it right.</p>
       </div>
 
       <div class="pricing-cta">
-        <h2>Not sure which one you need?</h2>
-        <p>Fill out our project form and tell us what you're picturing &mdash; we'll help you figure out what makes sense.</p>
-        <a href="intake.html" class="btn btn-primary">Get a Custom Quote</a>
+        <h2 data-i18n="payment.cta_h2">Not sure which one you need?</h2>
+        <p data-i18n="payment.cta_p">Fill out our project form and tell us what you're picturing &mdash; we'll help you figure out what makes sense.</p>
+        <a href="intake.html" class="btn btn-primary" data-i18n="payment.cta_btn">Get a Custom Quote</a>
       </div>
 
     </div>
@@ -333,7 +333,7 @@
     </nav>
   </div>
   <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span data-i18n="footer.rights">All rights reserved.</span></p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version 2.2.2</a></p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version 2.3.0</a></p>
   <p class="footer-version"><a href="admin.html" data-i18n="footer.staff_signin">Staff Sign In</a></p>
 </footer>
 
