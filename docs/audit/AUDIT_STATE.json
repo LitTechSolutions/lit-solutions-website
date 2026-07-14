@@ -402,7 +402,7 @@
       "severity": "Medium",
       "status": "Resolved",
       "domainSession": 9,
-      "commit": "PENDING",
+      "commit": "9c159b9",
       "summary": "JS-generated form-status messages (contact form sending/success/error, missing-fields intros, newsletter signup success/error, placeholder-link not-connected-yet alert) were hardcoded English with no i18n lookup, unlike the rest of the site",
       "resolutionNote": "Fixed: wired all 10 strings through the existing tt()/window.LTS_I18N.t() pattern in js/main.js and js/intake.js, added the keys to en.json, translated to all 15 other languages (parity-checked), verified live in English/Spanish/Arabic-RTL including missing-key fallback behavior."
     }
