@@ -312,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
       const msg = link.dataset.notConnectedMsg ||
-        "This isn't connected yet. Please call 636-426-0289 or email dylan@littletechicalsolutions.com.";
+        "This isn't connected yet. Please call 636-426-0289 or email dylan@lit-solutions.tech.";
       alert(msg);
     });
   });
@@ -466,14 +466,14 @@ document.addEventListener('DOMContentLoaded', () => {
           if (statusEl) {
             statusEl.textContent = res.ok
               ? "You're on the list — thanks for signing up!"
-              : "Something went wrong. Please try again or email dylan@littletechicalsolutions.com.";
+              : "Something went wrong. Please try again or email dylan@lit-solutions.tech.";
             statusEl.classList.toggle('is-error', !res.ok);
           }
           if (res.ok) form.reset();
         })
         .catch(() => {
           if (statusEl) {
-            statusEl.textContent = "Something went wrong. Please try again or email dylan@littletechicalsolutions.com.";
+            statusEl.textContent = "Something went wrong. Please try again or email dylan@lit-solutions.tech.";
             statusEl.classList.add('is-error');
           }
         });
