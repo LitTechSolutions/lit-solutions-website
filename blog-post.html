@@ -13,12 +13,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Blog Post — Little Technical Solutions LLC</title>
-<meta name="description" content="Practical, jargon-free articles on websites, cybersecurity, and networking for small businesses and homeowners.">
+<meta name="description" id="cmsPostMetaDescription" content="Practical, jargon-free articles on websites, cybersecurity, and networking for small businesses and homeowners.">
+<link rel="canonical" id="cmsPostCanonical" href="https://lit-solutions.tech/blog.html">
 <!-- Intentionally indexable: Google renders JS, so admin-added posts here
      do get crawled and indexed even though the content is client-rendered.
+     js/cms.js's mountBlogPost() updates the description and canonical tags
+     above once a real post loads, so Google (which the comment above notes
+     does execute this page's JS) sees per-post values.
      Known limitation: because every post shares this one template, Open
      Graph tags below stay generic rather than per-post -- link previews on
-     Facebook/etc. won't show each post's real title/excerpt. The 3
+     Facebook/etc. won't show each post's real title/excerpt, since those
+     crawlers largely don't execute JS the way Google's does. The 3
      original articles are still separate static pages with real per-page
      SEO tags and aren't affected. -->
 

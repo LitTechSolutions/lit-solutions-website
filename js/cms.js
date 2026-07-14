@@ -192,6 +192,20 @@
     if (titleEl) titleEl.textContent = post.title;
     if (metaEl) metaEl.textContent = [post.date, post.category, "Little Technical Solutions LLC"].filter(Boolean).join(" · ");
     if (bodyEl) bodyEl.innerHTML = paragraphs(post.body);
+
+    // Every post shares this one template, so without this the canonical
+    // URL and meta description would stay stuck on the generic template
+    // defaults for every post -- Google does execute this page's JS (see
+    // the <head> comment), so it's worth setting these per-post even
+    // though non-JS crawlers (Facebook/etc., see the OG tags) won't see it.
+    var canonicalEl = document.getElementById("cmsPostCanonical");
+    if (canonicalEl) canonicalEl.href = "https://lit-solutions.tech/blog-post.html?slug=" + encodeURIComponent(post.slug);
+    var descEl = document.getElementById("cmsPostMetaDescription");
+    if (descEl) {
+      var plain = String(post.body || "").replace(/\s+/g, " ").trim();
+      var excerpt = plain.length > 155 ? plain.slice(0, 155).replace(/\s+\S*$/, "") + "…" : plain;
+      if (excerpt) descEl.setAttribute("content", excerpt);
+    }
     if (imgWrap && post.imageDataUri) {
       imgWrap.innerHTML = '<img class="blog-post-image" src="' + post.imageDataUri + '" alt="' + esc(post.title) + '">';
     }
