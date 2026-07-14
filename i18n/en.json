@@ -577,7 +577,7 @@
     "hero_eyebrow": "Payments",
     "hero_h1": "Payments & Subscriptions.",
     "hero_lede": "All payments are processed securely by Square. We never see or store your card information. Pick one-time payment for a quoted job or invoice, or subscriptions for ongoing monthly plans.",
-    "terms_agree_label": "I have read and agree to the <a href=\"terms.html\" target=\"_blank\" rel=\"noopener\">Terms & Conditions</a>, including the payment, refund, and dispute policies. This is required before any payment or subscribe button on this page will work.",
+    "terms_agree_label": "I have read and agree to the <a href=\"terms.html\" target=\"_blank\" rel=\"noopener\">Terms & Conditions</a> and <a href=\"privacy.html\" target=\"_blank\" rel=\"noopener\">Privacy Policy</a>, including the payment, refund, and dispute policies. This is required before any payment or subscribe button on this page will work.",
     "terms_warning": "Please check the box above to agree to our Terms & Conditions before paying or subscribing.",
     "onetime_h2": "One-Time Payment",
     "onetime_count": "Pay a quote or invoice",
