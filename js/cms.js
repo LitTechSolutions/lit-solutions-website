@@ -131,7 +131,7 @@
   function renderBlogCard(post) {
     var meta = [esc(post.date || ""), esc(post.category || "")].filter(Boolean).join(" &middot; ");
     var art = post.imageDataUri
-      ? '<img class="blog-card-art" src="' + post.imageDataUri + '" alt="">'
+      ? '<img class="blog-card-art" src="' + post.imageDataUri + '" alt="' + esc(post.title) + '">'
       : '<div class="blog-card-art">' + DOC_ICON + '</div>';
     return '<a href="blog-post.html?slug=' + encodeURIComponent(post.slug) + '" class="blog-card reveal is-visible">' +
       art +
@@ -182,7 +182,7 @@
     if (metaEl) metaEl.textContent = [post.date, post.category, "Little Technical Solutions LLC"].filter(Boolean).join(" · ");
     if (bodyEl) bodyEl.innerHTML = paragraphs(post.body);
     if (imgWrap && post.imageDataUri) {
-      imgWrap.innerHTML = '<img class="blog-post-image" src="' + post.imageDataUri + '" alt="">';
+      imgWrap.innerHTML = '<img class="blog-post-image" src="' + post.imageDataUri + '" alt="' + esc(post.title) + '">';
     }
     mountBookmark("#cmsBookmarkMount", { itemId: "blog:" + post.slug, label: post.title, href: "blog-post.html?slug=" + encodeURIComponent(post.slug) });
   }
@@ -201,7 +201,7 @@
     if (!mount) return;
     mount.innerHTML = items.map(function (item) {
       var img = item.imageDataUri
-        ? '<img class="portfolio-card-img" src="' + item.imageDataUri + '" alt="">'
+        ? '<img class="portfolio-card-img" src="' + item.imageDataUri + '" alt="' + esc(item.title) + '">'
         : '<div class="portfolio-card-img portfolio-card-img--empty">' + IMG_ICON + '</div>';
       return '<div class="portfolio-card reveal is-visible">' + img +
         '<div class="portfolio-card-body"><h3>' + esc(item.title) + '</h3><p>' + esc(item.description) + '</p>' +
