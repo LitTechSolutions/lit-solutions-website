@@ -184,14 +184,11 @@ feed the sales pipeline rather than being an island.
   (~10s on the free/starter tiers) — the 8s fetch timeout (§6) leaves
   headroom for analysis + response.
 
-## 11. Open Questions for Dylan
+## 11. Decisions (resolved 2026-07-14)
 
-- PDF generation: client-side (reuse the `jsPDF` pattern, meaning the
-  browser re-fetches/re-renders the report to build the PDF) vs.
-  server-side (a Node PDF library added as a dependency)? Client-side is
-  more consistent with the existing codebase; server-side is more robust
-  if the report needs to be emailed reliably without depending on the
-  visitor's browser staying open.
-- Should the PageSpeed Insights API (free, Google-provided) be wired in
-  for v1 rather than deferred to v2, given how central "site speed" is to
-  the pitch? It would need a Google Cloud API key.
+- **PDF generation: client-side**, reusing the existing `jsPDF` pattern
+  from `website-designer.js` exactly — no new backend PDF dependency.
+- **PageSpeed Insights API: deferred to v2.** v1 ships with the lighter
+  checks in §3 only (mobile viewport, HTTPS, basic SEO, structured data,
+  accessibility basics, outdated-tech signals). Revisit real Core Web
+  Vitals data once v1 is live and generating leads.

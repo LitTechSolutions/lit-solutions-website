@@ -32,12 +32,14 @@ now captures, and reduces "just checking in on my project" phone calls.
    (reuses the same `leads` store already populated by
    `website-designer.js` — no new store needed here, just a new field on
    existing records).
-4. Advancing status optionally sends the customer a notification (reusing
+4. Advancing status **always** sends the customer a notification (reusing
    the existing `notifications.js` function and in-app notification
    system already built for the account portal) — e.g. "Your project
    moved to 'In Progress'" — with an optional custom note from staff
    attached to the status change ("Contract sent to your email — check
-   your inbox").
+   your inbox"). Dylan chose to notify on every change rather than only
+   at major milestones, so `notifyCustomer` is not a per-change toggle in
+   the admin UI — it fires automatically every time.
 5. Customer-facing: `myaccount.html` gains a "My Projects" view listing
    each lead tied to their account (matched by email — see §6) with a
    visual stepper showing current stage, and the most recent staff note
@@ -55,10 +57,12 @@ now captures, and reduces "just checking in on my project" phone calls.
 
 `POST /.netlify/functions/project-status` (admin/staff only)
 ```json
-{ "leadId": "WD-...", "newStatus": "contract_sent", "note": "Contract sent to your email -- check your inbox.", "notifyCustomer": true }
+{ "leadId": "WD-...", "newStatus": "contract_sent", "note": "Contract sent to your email -- check your inbox." }
 ```
 → `200 { "ok": true }`; `403` if not staff; `400` if `newStatus` isn't a
-recognized value or the transition is invalid (see §6).
+recognized value or the transition is invalid (see §6). Notification to
+the customer is automatic on every successful call — there is no
+`notifyCustomer` flag to suppress it (see §3.4).
 
 ## 5. Data Model
 
@@ -135,12 +139,10 @@ an empty `statusHistory` on record creation.
 - Low write volume (status changes happen a handful of times per
   project, not per request) — no special performance considerations.
 
-## 11. Open Questions for Dylan
+## 11. Decisions (resolved 2026-07-14)
 
-- Do you want customers notified by default on every status change, or
-  only on specific ones (e.g., silent for `in_review`, notified for
-  `contract_sent` and `delivered`)? Affects the default value of
-  `notifyCustomer` in the admin UI.
-- Should `cancelled` leads be deletable, or always retained for your own
-  records? (Recommend: always retained, just hidden from the customer
-  view — matches how the rest of this codebase treats records as durable.)
+- **Notify on every status change** — no per-change suppression, see §3.4.
+- **`cancelled` leads are always retained**, never deleted — just hidden
+  from the customer-facing "My Projects" view. Matches how the rest of
+  this codebase treats records as durable. No "delete" action needed in
+  the admin UI for this at all.

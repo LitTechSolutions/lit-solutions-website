@@ -1,159 +1,196 @@
 # `quote-acceptance` — System Requirements
 
+> **Revised after Dylan's answers (2026-07-14).** The real workflow is:
+> Dylan sends a DocuSign envelope (invoice + contract) → both parties
+> sign in DocuSign → customer pays the **full amount up front** (not a
+> deposit) → work begins. Dylan wants full e-signature/payment
+> automation, but currently only has **manual web-app access to
+> DocuSign** (no API/developer plan). This changes the spec from the
+> original "lightweight custom acceptance" design into a two-phase plan
+> below — read §11 before scoping any build work here.
+
 ## 1. Overview & Goal
 
-Once Dylan has manually confirmed a quote with a customer (by phone/email,
-as happens today), this function lets the customer formally accept it
-and pay a deposit online, closing the gap between "customer says yes" and
-"work starts" without needing full contract/e-signature software.
-Deliberately scoped as **lightweight acceptance + deposit collection**,
-not a full e-signature/legal-contract platform — see §11 for why, and
-what would be needed to go further.
+Closes the gap between "customer says yes" and "work starts" by making
+the existing DocuSign-based accept-and-pay-in-full step a tracked part of
+the lead pipeline, instead of something that happens entirely outside the
+system (Dylan currently has no way to reflect "sent for signature" /
+"signed and paid" status anywhere in `leads`/`project-status`).
 
-Business goal: shortens the yes-to-start gap on every job, and gives
-Dylan a single link to send instead of a manual back-and-forth for
-deposit collection.
+Business goal: shortens the yes-to-start gap, and — once Phase 2 (§11) is
+in place — removes a genuinely manual, error-prone step (Dylan
+remembering to check DocuSign and his payment records, then separately
+updating the lead) from every single job.
 
 ## 2. Actors
 
-- **Customer**, holding a link Dylan sends after verbally/by-email
-  confirming a final quote.
-- **Dylan** — generates the acceptance link from a lead's detail view
-  (`leads-dashboard`) once terms are settled, and sees when a customer
-  has accepted/paid.
+- **Customer** — receives a DocuSign envelope from Dylan, signs it, pays
+  the full invoiced amount, and work begins.
+- **Dylan** — today, manages this entirely inside DocuSign's web app plus
+  his own payment tracking; this function's job is to give that process
+  a home inside `leads-dashboard`/`project-status` rather than replace
+  DocuSign itself.
 
-## 3. Functional Requirements
+## 3. Functional Requirements (Phase 1 — buildable now, no new cost)
 
-1. From a lead's detail view, Dylan enters the **confirmed** final scope
-   and price (which may differ from the Website Designer's starting
-   estimate — this is expected, since every estimate on this site is
-   explicitly "confirmed by us before any work begins") and generates a
-   single-use acceptance link.
-2. The customer opens the link and sees: the confirmed scope/price in
-   plain language, a checkbox-style acceptance ("I agree to proceed at
-   this price and scope"), and — if deposit collection is enabled for
-   this quote — a deposit amount/percentage due before work starts.
-3. Acceptance is recorded with a timestamp and the accepting party's
-   name (typed, not a drawn signature — see §11 on why this isn't a legal
-   e-signature product).
-4. If a deposit is required, accepting redirects to the **existing**
-   external payment flow already linked from `payment.html` (this
-   codebase does not have its own payment processor integration today —
-   this function should not attempt to build one; it hands off to
-   whatever Dylan already uses) with the confirmed amount pre-filled
-   where the payment provider supports that, or otherwise displays the
-   exact amount to enter manually.
-5. Once accepted (and paid, if applicable), the lead's status
-   automatically advances (via `project-status`, e.g. to
-   `"contract_sent"` or directly to `"in_progress"` depending on whether
-   deposit payment is confirmed automatically or manually) and Dylan is
-   notified.
-6. Since this codebase has no payment webhook today, **payment
-   confirmation itself remains a manual step** Dylan performs after
-   seeing the payment land wherever he already receives it — this
-   function tracks *acceptance*, not *confirmed payment*, unless/until a
-   real payment-provider integration is added (see §11).
+Phase 1 does **not** integrate with DocuSign's API (Dylan doesn't have
+API access on his current plan — see §11). It's a tracking companion to
+his existing manual process:
+
+1. From a lead's detail view (`leads-dashboard`), once Dylan has sent a
+   DocuSign envelope through DocuSign's own website as he does today, he
+   marks the lead **"Sent for signature"** in the LTS admin panel,
+   optionally noting the confirmed final price (which may differ from
+   the Website Designer estimate — expected, since every estimate on
+   this site is explicitly "confirmed by us before any work begins").
+2. Once DocuSign confirms both parties have signed (Dylan sees this in
+   his DocuSign inbox, as today) and the customer's full payment has
+   landed (wherever Dylan currently receives it), Dylan marks the lead
+   **"Signed & paid in full"** in the admin panel.
+3. Marking "Signed & paid in full" automatically advances the lead's
+   status (via `project-status`) to `"in_progress"` and notifies the
+   customer that work is starting.
+4. This phase adds **no new customer-facing page and no DocuSign API
+   calls** — it is purely two new buttons/fields in the existing
+   `leads-dashboard` lead-detail view, plus the status-advance side
+   effect. Low effort, no new cost, no new external dependency.
+
+## 3a. Functional Requirements (Phase 2 — requires a DocuSign API-enabled plan)
+
+Only build this phase if/when Dylan upgrades to a DocuSign plan with
+eSignature REST API access (see §11 — this has a real cost implication
+to confirm first):
+
+1. Dylan generates the DocuSign envelope **from inside `leads-dashboard`**
+   instead of DocuSign's own website — pre-filled with the customer's
+   name/email and the confirmed price, using the DocuSign eSignature API
+   (`envelopes:create`).
+2. DocuSign Connect (DocuSign's webhook mechanism) notifies this function
+   when the envelope is completed (both parties signed) — no more manual
+   "I saw it in my inbox" step.
+3. **Payment**: DocuSign has an optional add-on ("DocuSign Payments")
+   that can collect payment as part of the signing flow, integrating
+   with a processor like Stripe. If Dylan's plan/workflow uses this,
+   the webhook payload includes payment confirmation and the full
+   automation described in §11's "want full automation" answer is
+   achievable end-to-end. If DocuSign Payments is *not* in use (payment
+   happens via a separate invoice/link outside DocuSign), full payment
+   confirmation still requires either a separate payment-processor
+   webhook (Stripe/Square) or a manual confirmation step — **this
+   codebase does not currently know which of these describes Dylan's
+   actual payment mechanism, and that needs to be confirmed before
+   Phase 2 can be fully scoped** (see §11).
+4. Once both signature-complete and payment-confirmed signals are
+   received, status advances to `"in_progress"` automatically, with no
+   manual admin click required at all.
 
 ## 4. API Contract
 
+**Phase 1:**
+
+`POST /.netlify/functions/quote-acceptance` (admin/staff only)
+```json
+{ "leadId": "WD-...", "action": "mark-sent", "confirmedPrice": 1450 }
+```
+```json
+{ "leadId": "WD-...", "action": "mark-signed-and-paid" }
+```
+→ `200 { "ok": true }`; triggers the `project-status` advance in both
+cases (to e.g. `"contract_sent"` and `"in_progress"` respectively).
+
+**Phase 2 (additive, once scoped):**
+
 `POST /.netlify/functions/quote-acceptance` (admin/staff only) — generate
-```json
-{ "leadId": "WD-...", "confirmedScope": "...", "confirmedPrice": 1450, "depositRequired": true, "depositAmount": 300 }
-```
-→ `201 { "acceptanceId": "QA-...", "acceptanceUrl": "https://lit-solutions.tech/accept-quote.html?token=..." }`
+and send envelope via DocuSign API instead of manually.
 
-`GET /.netlify/functions/quote-acceptance?token=...` — customer views terms
-→ `{ "businessName": "...", "confirmedScope": "...", "confirmedPrice": 1450, "depositAmount": 300, "status": "pending" | "accepted" }`
-(`410` if already accepted or expired/revoked)
-
-`POST /.netlify/functions/quote-acceptance` — customer accepts
-```json
-{ "token": "...", "acceptedByName": "Jane Customer" }
-```
-→ `200 { "ok": true, "paymentUrl": "https://.../payment.html?..." }` (or
-no `paymentUrl` if no deposit required) — this write is authorized by
-possession of the single-use token, not a login.
+`POST /.netlify/functions/quote-acceptance-webhook` (DocuSign Connect
+callback, authenticated via DocuSign's HMAC signature verification, not
+this codebase's normal session auth) — receives envelope-completed and
+(if applicable) payment-confirmed events.
 
 ## 5. Data Model
 
-New blob store: **`quote_acceptances`** — key = acceptance id
-(`QA-<id>`).
+Extends existing **`leads`** records (no new store needed for Phase 1):
 ```
 {
-  id, leadId, confirmedScope, confirmedPrice,
-  depositRequired: boolean, depositAmount: number | null,
-  status: "pending" | "accepted" | "revoked" | "expired",
-  acceptedByName: string | null, acceptedAt: number | null,
-  createdAt, expiresAt
+  ...existing fields...,
+  acceptance: {
+    stage: "not_sent" | "sent_for_signature" | "signed_and_paid",
+    confirmedPrice: number | null,
+    sentAt: number | null,
+    completedAt: number | null
+  }
 }
 ```
-Token itself is a signed value (reuse `createSingleUseToken`/`verify`
-from `_lib/auth_utils.js`) encoding the acceptance id, not the id in
-plaintext in the URL.
+Phase 2 would add a `docusignEnvelopeId` field to this same object once
+real API integration exists.
 
 ## 6. Business Rules & Validation
 
-- Acceptance is **single-use**: once `status` moves to `"accepted"`, the
-  link becomes read-only (still viewable as a receipt/confirmation, but
-  the accept action itself can't fire twice).
-- Dylan can revoke a pending (not-yet-accepted) acceptance link (e.g., if
-  terms change before the customer responds) — a revoked link shows a
-  clear "this quote has been updated, please contact us" message rather
-  than a bare error.
-- Expiry (e.g., 14 days) prevents an old, possibly-stale quote from being
-  silently accepted long after terms may have changed in conversation —
-  configurable, not hardcoded.
+- `mark-signed-and-paid` should only be reachable after `mark-sent` has
+  happened for that lead (Phase 1 has no way to verify this server-side
+  since DocuSign isn't integrated yet — this is a soft UI-level ordering,
+  not enforceable business logic, until Phase 2).
+- Every transition in Phase 1 is a deliberate, manual admin action —
+  there is no customer-facing step in Phase 1 at all (unlike the
+  original lightweight-acceptance design, which had a public
+  `accept-quote.html` page; that page is **not** part of Phase 1, since
+  DocuSign itself is already the customer-facing acceptance surface).
 
 ## 7. Integration Points
 
-- `_lib/auth_utils.js` — `createSingleUseToken`/`verify` for the
-  acceptance link.
-- `_lib/email.js` — sends the acceptance link to the customer, and
-  notifies Dylan on acceptance.
-- `payment.html` — the deposit hand-off target; this function does not
-  replace or modify the existing payment page, just pre-fills/links to
-  it with the confirmed amount.
-- `project-status` — acceptance should trigger a status advance (§3.5).
-- New customer-facing page `accept-quote.html`, matching the existing
-  site's page conventions (header/footer, i18n scaffolding via
-  `data-i18n`, since this is public-facing content a non-English-speaking
-  customer might view).
+- `leads-dashboard` — Phase 1 lives entirely here as two new actions on
+  the lead-detail view.
+- `project-status` — both Phase 1 actions trigger a status advance.
+- `_lib/email.js` — notify the customer when "Signed & paid in full" is
+  marked (work is starting).
+- Phase 2 only: DocuSign eSignature REST API + DocuSign Connect webhooks;
+  possibly Stripe/Square if payment isn't handled via DocuSign Payments
+  (see §3a.3).
 
 ## 8. Error Handling
 
-- Expired/revoked/already-accepted token: clear, distinct message per
-  state (don't collapse all three into one generic "invalid link" error —
-  "already accepted" should show the acceptance confirmation, not an
-  error at all).
-- Missing `acceptedByName`: `400`, require a name for the acceptance
-  record to mean anything as a record of who agreed.
+- Phase 1 is simple admin-panel state transitions — the main failure
+  mode is Dylan clicking the wrong button; make both actions easily
+  reversible (a lead can be moved back a stage by staff, consistent with
+  `project-status`'s own "corrections allowed" rule).
 
 ## 9. Security & Privacy Considerations
 
-- Token-based access (no login required for the customer side) is a
-  deliberate, scoped choice mirroring the existing password-reset and
-  (proposed) booking-reschedule pattern — the token only ever grants
-  control over one specific acceptance record.
-- This is **not a legally binding e-signature** in the DocuSign/HelloSign
-  sense (no identity verification, no tamper-evident signature
-  certificate) — see §11. Do not represent it as one in the UI copy; use
-  plain "I agree to proceed" language, not "sign here."
+- Phase 1: admin/staff-only, same role-check pattern as `content.js` —
+  no new customer-facing surface, so limited new attack surface.
+- Phase 2: DocuSign Connect webhook payloads must be signature-verified
+  (DocuSign provides an HMAC mechanism) before being trusted — treat this
+  the same way any inbound webhook from a third party should be treated,
+  never accept an unverified payload as authoritative.
 
 ## 10. Non-Functional Requirements
 
-- No special performance considerations — low volume, simple reads/writes.
+- Phase 1 has no performance considerations of note.
+- Phase 2's webhook endpoint needs to respond quickly (DocuSign expects a
+  timely 200) — do the actual status-advance/notification work
+  asynchronously if it risks being slow, acknowledging the webhook first.
 
-## 11. Open Questions for Dylan
+## 11. Decisions & Open Items (resolved/updated 2026-07-14)
 
-- **Scope check**: this spec deliberately stops short of real
-  e-signature/contract software (DocuSign-style identity verification,
-  tamper-evident audit trail) and real payment-webhook automation
-  (Stripe/Square integration confirming payment server-side). Both are
-  meaningfully larger undertakings than anything else in this batch. Is
-  "lightweight acceptance + manual deposit confirmation" sufficient for
-  how you actually operate, or is one of those two a real prerequisite
-  you'd want scoped as its own project? Worth deciding before building,
-  since it changes this function's shape substantially.
-- What's your actual deposit policy (flat amount, percentage, only on
-  certain package tiers)? Needed to finalize the acceptance-generation
-  UI in `leads-dashboard`.
+- **Confirmed: full payment up front, not a deposit.** The original
+  spec's "deposit" framing throughout is replaced by "full payment before
+  work begins" everywhere in this revised document.
+- **Confirmed: Dylan wants full e-signature/payment automation** as the
+  end goal — but he currently has **manual web-app-only DocuSign access**,
+  no API/developer plan. True automation (Phase 2) requires upgrading to
+  a DocuSign plan with eSignature REST API access, which has a real
+  monthly cost increase over his current plan — **this is a decision for
+  Dylan to make (is the automation worth the plan upgrade?) before Phase
+  2 is scoped further**, not something to build around silently.
+- **Recommended path**: ship Phase 1 now (real value, zero new cost, a
+  few hours of work) as the immediate improvement, and treat Phase 2 as
+  its own future decision once the DocuSign plan-upgrade cost/benefit is
+  weighed.
+- **Still needed before Phase 2 could be fully scoped**: does Dylan's
+  actual payment collection happen *through* DocuSign (i.e., would he
+  also adopt DocuSign Payments), or via a separate invoice/payment link
+  outside DocuSign? This determines whether Phase 2 needs a second
+  payment-processor integration (Stripe/Square) in addition to the
+  DocuSign API, or whether DocuSign's webhook alone covers both
+  signature and payment confirmation.

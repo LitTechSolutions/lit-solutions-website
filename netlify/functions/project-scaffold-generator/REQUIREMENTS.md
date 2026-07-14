@@ -61,6 +61,9 @@ content-fragments/
   services-outline.md
   contact-info.md
   brand.css        (CSS custom properties from brief.brandColors, best-effort)
+  images/
+    logo.<ext>           (present if the lead has a logo attachment)
+    photo-1.<ext> ...     (present if the lead has photo attachments)
 ```
 `404` if lead not found; `400` if lead is stage `"quick"` (no brief exists
 yet to scaffold from — this function only makes sense for `"full"` leads).
@@ -121,18 +124,20 @@ avoid confusion about whether this step has been done.
 
 - Zip generation for a handful of small text files is trivial in terms
   of performance/timeout risk — no special handling needed.
-- If image attachments are included (open question below), watch
-  Netlify Functions' response size limits — should be fine for a few
-  photos under the existing 4MB-per-photo cap already enforced by
-  `website-designer.js`, but worth a sanity check once built.
+- Image attachments **are** included (§11), so watch Netlify Functions'
+  response size limits — should be fine for a few photos under the
+  existing 4MB-per-photo cap already enforced by `website-designer.js`,
+  but worth a sanity check once built (a logo + up to 4 photos at 4MB
+  each is a meaningfully larger response than the text-only version —
+  confirm this stays comfortably under Netlify's function response size
+  ceiling before shipping).
 
-## 11. Open Questions for Dylan
+## 11. Decisions (resolved 2026-07-14)
 
-- Should the zip include the actual logo/photo files from the
-  submission, or just reference that they exist (and where to find them
-  — email attachment)? Simpler to reference; more convenient to include.
-- Is a downloadable zip the right output shape, or would you rather this
-  create a draft page directly inside whatever you use to track projects
-  (e.g., if you adopt a lightweight project-tracking tool later, per the
-  broader review's CRM discussion)? Zip is the lowest-effort v1 that
-  doesn't assume any tool you haven't chosen yet.
+- **Include the actual logo/photo files** in the zip (under
+  `content-fragments/images/`), not just a reference to them — everything
+  for the project lands in one place. Update §4's zip contents to add
+  this directory and §9 to note the added sensitivity of bundling
+  customer-uploaded images alongside the brief text.
+- **Zip file confirmed as the output shape** for v1 — no project-tracking
+  tool integration to build against yet.

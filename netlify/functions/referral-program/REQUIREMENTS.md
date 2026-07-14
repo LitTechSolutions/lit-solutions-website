@@ -43,9 +43,10 @@ and this is one of the lowest-effort items in the whole review to build.
    → status (pending / converted / rewarded) for each person they've
    referred (first name / business name only, not full contact details,
    to respect the referee's privacy).
-6. Reward mechanics are configurable (not hardcoded), e.g. "$50 credit to
-   referrer, 10% off first invoice for referee" — stored as a single
-   config record so Dylan can change terms without a code deploy.
+6. Reward mechanics are configurable (not hardcoded) but ship with real,
+   confirmed default terms (see §11): **$50 credit to the referrer, 10%
+   off the referee's first invoice** — stored as a single config record
+   so Dylan can change terms later without a code deploy.
 
 ## 4. API Contract
 
@@ -140,10 +141,13 @@ posts/portfolio/etc. (though this is a single-record editor, not a list).
   speed-dial" framing) — 8 alphanumeric characters is a reasonable
   ceiling.
 
-## 11. Open Questions for Dylan
+## 11. Decisions (resolved 2026-07-14)
 
-- What should the actual reward amounts/terms be? (Placeholder above:
-  $50 credit / 10% off — needs your real numbers before this ships.)
-- Is a discount credit applied manually at invoicing acceptable for v1,
-  or is automatic payment-integration a prerequisite you'd want built
-  first (bigger scope, depends on how you currently take payment)?
+- **Reward terms confirmed: $50 credit to the referrer, 10% off the
+  referee's first invoice.** Ship this as the seeded default in the
+  `referral-config` record (§5), editable later without a deploy.
+- **Manual payout confirmation is fine for v1.** Dylan marks a referral
+  "converted" himself once payment is confirmed, matching how the rest
+  of the lead pipeline already works (see `quote-acceptance`, which
+  formalizes this same manual-confirmation pattern for the main quote
+  flow too).

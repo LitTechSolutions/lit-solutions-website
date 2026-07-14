@@ -149,11 +149,16 @@ subject lines/timing/copy without a code deploy:
   per invocation) to stay well within Netlify's function execution time
   limits as the lead volume grows.
 
-## 11. Open Questions for Dylan
+## 11. Decisions (resolved 2026-07-14)
 
-- What should the actual follow-up timing/content be? (Placeholder
-  above: 3 days, then 10 days, then stop.)
-- Do you want to review/approve automated emails before this goes live
-  with real send volume, or are you comfortable with the sequence
-  running unattended once configured? Recommend at minimum a dry-run
-  period.
+- **Cadence confirmed: 3 days, then 10 days, then stop** — matches the
+  `afterHours: 72` / `afterHours: 240` placeholders in §5 exactly; those
+  values are now final, not placeholder. Actual email *copy* (subject
+  lines, body content) still needs to be written before this ships —
+  the sequence config in §5 has the timing right but needs real text.
+- **Comfortable running unattended once configured** — no mandatory
+  review/approval gate before going live. The `dryRun: true` admin action
+  in §4 is still worth keeping in the implementation (cheap to include,
+  useful for verifying segment logic after any future change to the
+  matching criteria in §3.2), just not required as a blocking step before
+  this goes live for the first time.

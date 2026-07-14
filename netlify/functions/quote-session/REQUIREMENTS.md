@@ -1,165 +1,118 @@
 # `quote-session` — System Requirements
 
+> **Decision (resolved 2026-07-14): same-device only.** Dylan chose the
+> simpler scope over cross-device/emailed-link resume. As a result, this
+> feature needs **no backend function at all** — it's pure `localStorage`
+> persistence inside `js/website-designer.js`. This folder is kept as the
+> spec record for that decision, but there is nothing to deploy under
+> `netlify/functions/quote-session/` — do not build a `.js` entry point
+> here.
+
 ## 1. Overview & Goal
 
-Server-side save/resume for an in-progress Website Designer session.
-Today, closing the browser tab mid-flow (package chosen, features
-checked, maybe even the quick-quote form half-filled) loses everything —
-there is no persistence beyond the current page's in-memory JS `state`
-object. This is the "cart abandonment" gap of the whole site: e-commerce
-research consistently shows recoverable-session flows meaningfully lift
-completion, and the Website Designer is functionally a cart.
+Recovers the one clear "cart abandonment" gap in the current Website
+Designer flow: closing the tab mid-session (package chosen, features
+checked, quick-quote form half-filled) loses everything today, since
+nothing persists beyond the page's in-memory JS `state` object.
 
-Business goal: recover demand that's currently lost silently — visitors
-who get interrupted, want to think it over, or are comparing quotes
-across devices.
+Business goal: recover demand that's currently lost silently to
+interruption (a phone call, closing the tab to think it over, an
+accidental refresh) — without the added complexity of cross-device
+resume, which Dylan decided isn't worth the extra scope for now.
 
 ## 2. Actors
 
-- **Prospective customer**, mid-Website-Designer-session, on any device.
-- **Same customer, later** — possibly a different device/browser (e.g.
-  they started on their phone during a break, want to finish on a
-  desktop) — this is the specific case a pure-`localStorage` approach
-  cannot cover, and the reason this belongs in `netlify/functions` at all
-  rather than being purely client-side.
+- **Prospective customer**, mid-Website-Designer-session, same browser,
+  same device, returning later (could be minutes or days later).
 
 ## 3. Functional Requirements
 
-1. As soon as a package is selected (Step 1 → Step 2 transition in
-   `website-designer.js`), the client silently creates a session record
-   server-side and receives a short session id.
-2. On every meaningful state change thereafter (feature toggle, business
-   name entered, heroes-discount checkbox, moving between steps), the
-   client sends a lightweight debounced PATCH updating the stored state —
-   this should be cheap and frequent enough that closing the tab at any
-   point loses nothing.
-3. The session id is written to `localStorage` immediately (so returning
-   in the *same* browser "just works" with zero friction, no email/link
-   needed) AND is included as a `?resume=<id>` query param usable from any
-   device if the visitor asks to have a resume link emailed to them (an
-   optional, explicit action — "email me a link to finish this later").
-4. On page load, `website-designer.js` checks for a resume id (query
-   param takes priority over `localStorage`, so an emailed link always
-   wins over local state) and, if found and not expired, restores
-   package/features/business name/heroes-discount and jumps to the
-   correct step — this replaces Step 1 entirely for a returning visitor,
-   dropping them back where they left off.
-5. Sessions expire after a fixed window (e.g. 14 days) — this is a
-   convenience feature, not permanent storage; a stale abandoned session
-   past that point should just start fresh rather than accumulate
-   indefinitely.
-6. Once a quick-quote or full-brief submission actually completes (see
-   `website-designer.js`'s existing submit handlers), the session record
-   is marked `completed` so it's excluded from any future resume checks
-   and from the abandoned-session segment used by `lead-followup`.
+1. On every meaningful state change (package chosen, feature toggled,
+   business name entered, heroes-discount checked, step changed), write
+   the current `state` object to `localStorage` under a fixed key (e.g.
+   `lts-wd-session`).
+2. On page load, before `loadCatalog()` would normally wait for a
+   package-selection click, check for a saved session:
+   - If found and not expired (§3.4), restore `package`, `businessName`,
+     `optionalSelected`, `premiumSelected`, `heroesDiscount`, and jump to
+     the step the visitor was on.
+   - If none found (first visit, or a previous session already
+     completed/expired), behave exactly as today — start at Step 1.
+3. Once a quick-quote or full-brief submission actually completes (the
+   existing `showPanel('prompt')`/`showPanel('done')` transitions in
+   `js/website-designer.js`), clear the saved session — a completed quote
+   should never be "resumed" into a stale, already-submitted state.
+4. Saved sessions expire after a fixed window (e.g. 14 days) — store a
+   timestamp alongside the state and simply ignore/overwrite anything
+   older than that on load, rather than resuming a very stale session.
+5. No confirmation prompt needed to restore — silently resuming to the
+   last state is the expected, low-friction behavior (equivalent to how
+   a shopping cart persists without asking permission).
 
-## 4. API Contract
+## 4. Implementation Notes (replaces API Contract / Data Model)
 
-`POST /.netlify/functions/quote-session` — create
-```json
-{ "package": "starter" }
-```
-→ `{ "sessionId": "QS-<id>" }`
+No API, no new blob store, no new Netlify Function. Everything lives in
+`js/website-designer.js`:
 
-`PATCH /.netlify/functions/quote-session` — update (called frequently,
-debounced client-side to ~1/second max)
-```json
-{ "sessionId": "QS-...", "state": { "package": "...", "businessName": "...", "optionalSelected": [...], "premiumSelected": [...], "heroesDiscount": false, "currentStep": "2" } }
-```
-→ `204 No Content`
+```js
+const SESSION_KEY = 'lts-wd-session';
+const SESSION_TTL_MS = 14 * 24 * 60 * 60 * 1000;
 
-`GET /.netlify/functions/quote-session?id=QS-...` — resume
-→ `{ "state": {...}, "expired": false }` or `404` if unknown/expired.
-
-`POST /.netlify/functions/quote-session` — action `email-resume-link`
-```json
-{ "sessionId": "QS-...", "email": "customer@example.com" }
-```
-→ sends an email with a `website-designer.html?resume=QS-...` link;
-`204` on success.
-
-## 5. Data Model
-
-New blob store: **`quote_sessions`** — key = session id
-(`QS-<timestamp base36>-<random hex>`, matching the existing id
-convention).
-
-```
-{
-  id, state: { package, businessName, optionalSelected, premiumSelected,
-               heroesDiscount, currentStep },
-  status: "active" | "completed" | "expired",
-  createdAt, lastUpdatedAt, expiresAt,
-  emailedTo: string | null   // if a resume link was ever requested
+function saveSession() {
+  localStorage.setItem(SESSION_KEY, JSON.stringify({
+    savedAt: Date.now(),
+    package: state.package,
+    businessName: businessNameEl.value,
+    // ...selected features, heroesDiscount, currentStep
+  }));
 }
+
+function loadSession() {
+  const raw = localStorage.getItem(SESSION_KEY);
+  if (!raw) return null;
+  const saved = JSON.parse(raw);
+  if (Date.now() - saved.savedAt > SESSION_TTL_MS) { clearSession(); return null; }
+  return saved;
+}
+
+function clearSession() { localStorage.removeItem(SESSION_KEY); }
 ```
 
-## 6. Business Rules & Validation
+Hook `saveSession()` into the same chokepoints already used for
+recalculating price/preview (`updatePriceAndBreakdown()`,
+`onFeatureToggle()`, `businessNameEl`'s `input` listener) — these already
+fire on every relevant state change, so no new event wiring is needed
+beyond calling `saveSession()` from inside them.
 
-- No PII is required to create a session (package/feature selections
-  only) — an email is only attached if the visitor explicitly asks for a
-  resume link, keeping this feature low-friction and privacy-respecting
-  by default.
-- `PATCH` payload size should be capped (e.g., reject anything over ~10KB)
-  since this is an unauthenticated, frequently-called endpoint — a
-  reasonable state object is a few hundred bytes; anything wildly larger
-  suggests abuse.
-- Debounce on the client (not just documented, actually implemented in
-  `website-designer.js`) to avoid hammering the function on every single
-  checkbox click — batch rapid changes into one PATCH after a short quiet
-  period (e.g. 800ms).
+## 5. Business Rules & Validation
 
-## 7. Integration Points
+- Guard `JSON.parse` in a try/catch — a corrupted or manually-edited
+  `localStorage` value should fall back to "no session found," never
+  throw and break page load.
+- Restoring feature selections needs to re-check them against the
+  freshly-loaded catalog (the existing `lts:langchange` handler in
+  `website-designer.js` already has this exact "re-check inputs by
+  `data-title` after a rebuild" logic — reuse the same pattern for
+  session restore instead of writing a second implementation).
 
-- `js/website-designer.js` — this is almost entirely a client-side
-  integration: the existing `state` object gains a `sessionId` field, a
-  debounced sync-to-server call fires from the existing
-  `updatePriceAndBreakdown()`/`onFeatureToggle()` hooks (already the
-  central "something changed" chokepoint in that file), and page-load
-  logic gains a resume-check step before `loadCatalog()` normally runs.
-- `_lib/email.js` for the optional resume-link email.
-- Feeds `lead-followup`: a session that's been inactive for N hours/days
-  without completing is exactly the "abandoned" segment that automation
-  should target — but note this is a *pre-contact-info* abandonment
-  signal (no email captured unless resume-link was requested), so most
-  abandoned quote-sessions can't actually be emailed; this feature's real
-  value is same-device/same-visit recovery, with cross-device resume as
-  a secondary, opt-in bonus.
+## 6. Integration Points
 
-## 8. Error Handling
+- `js/website-designer.js` only. No backend, no other function in this
+  batch depends on this one (in particular, `lead-followup` was
+  originally going to treat abandoned server-side sessions as a
+  follow-up signal — with this scope decision, that signal doesn't
+  exist; `lead-followup` operates purely on `leads` records that already
+  have a captured email, which is unaffected by this decision).
 
-- Expired/unknown resume id: silently fall through to a normal fresh
-  Step 1 (never show a customer-facing error for a stale bookmark/link —
-  just start over).
-- PATCH failures (network blip): fail silently and retry on the next
-  debounced tick — this is best-effort persistence, not a critical write
-  the user should ever be blocked on.
+## 7. Non-Functional Requirements
 
-## 9. Security & Privacy Considerations
+- Trivial performance footprint — `localStorage` reads/writes are
+  synchronous and effectively free at this data size.
 
-- Session ids should be unguessable (the existing random-hex-suffix id
-  pattern used elsewhere in this codebase is sufficient) since anyone
-  with a session id can view/resume that session's selections — low
-  sensitivity data (no PII in the base case), but still worth using a
-  non-sequential id.
-- Rate-limit `email-resume-link` specifically (reuse `rateLimited()`)
-  since it's the one action in this function that sends unsolicited
-  email and could be abused to spam an arbitrary address.
+## 8. Decisions (resolved 2026-07-14)
 
-## 10. Non-Functional Requirements
-
-- Must not introduce perceptible latency to the Website Designer's
-  interactive feel — all sync calls are fire-and-forget from the
-  customer's perspective (no loading state tied to them).
-- 14-day expiry (or whatever's chosen) should be enforced by a check at
-  read-time (`GET`) rather than requiring a separate cleanup job — Netlify
-  Blobs has no native TTL, so expired-but-not-yet-deleted records are
-  fine to leave in place and just treat as `404` once past `expiresAt`.
-
-## 11. Open Questions for Dylan
-
-- Is cross-device resume (the emailed-link case) actually valuable
-  enough to build, or is same-device `localStorage`-only resume (a much
-  smaller, purely-client-side feature) sufficient? The server-side
-  version is meaningfully more work for a feature that may see light use
-  — worth deciding scope before building.
+- **Same-device only**, no emailed resume link, no server-side session
+  storage. If cross-device resume becomes worth revisiting later (e.g.
+  after seeing real abandonment data once `leads-dashboard` is live),
+  the original server-side design (session id + optional emailed resume
+  link) is a natural v2 — but is out of scope for now.

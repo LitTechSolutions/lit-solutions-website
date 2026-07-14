@@ -124,10 +124,10 @@ should do the same with `source: "website-audit"` when built.
   different storage/indexing approach is needed — not a concern at
   today's scale.
 
-## 11. Open Questions for Dylan
+## 11. Decisions (resolved 2026-07-14)
 
-- Should this dashboard also surface `website-audit` leads once that
-  function exists, or do you want audit-tool leads kept visually
-  separate from quote leads (different urgency/intent)? Recommend: same
-  list, clearly labeled by source, since they're all leads you'd want to
-  triage together.
+- **Confirmed: one shared list, labeled by source.** `website-audit`
+  leads (once that function exists) appear alongside
+  `website-designer`-sourced leads in the same list/filters, distinguished
+  by the `source` field (§5) rather than a separate view — matches §6's
+  existing design as written, no changes needed to this spec.

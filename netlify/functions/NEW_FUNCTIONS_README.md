@@ -2,38 +2,56 @@
 
 Nine folders below, each holding a `REQUIREMENTS.md` with full system
 requirements. Nothing here is implemented yet — these are specs to build
-from, scaffolded on request. Each doc follows the same structure: overview,
-actors, functional requirements, API contract, data model, business rules,
-integration points, error handling, security, non-functional requirements,
-and open questions that need your input before/while building.
+from. Each doc follows the same structure: overview, actors, functional
+requirements, API contract, data model, business rules, integration
+points, error handling, security, non-functional requirements, and (now)
+a **Decisions** section recording Dylan's answers to every open question
+as of 2026-07-14 — see each doc's final section for specifics.
+
+**Two of the nine turned out not to be "backend function" work once
+scoped:**
+- **`quote-session`** — Dylan chose same-device-only resume, which needs
+  no server component at all; it's pure `localStorage` inside
+  `js/website-designer.js`. The folder is kept for the spec record, but
+  there's no `.js` entry point to build here.
+- **`quote-acceptance`** — split into **Phase 1** (a same-day admin-panel
+  tracking companion to Dylan's existing manual DocuSign process — real
+  value, no new cost) and **Phase 2** (true DocuSign API integration,
+  which requires Dylan to upgrade his DocuSign plan first — a cost
+  decision to make before that phase is built, not an engineering
+  decision).
 
 ## Suggested build order
 
-These aren't independent — building in roughly this order avoids rework:
-
-1. **`leads-dashboard`** — the connective tissue. Nothing else here is
-   very useful without a way to actually see the leads it's about, and
-   several other functions plug into it.
+1. **`leads-dashboard`** — the connective tissue; several other functions
+   plug into it, and it's the one thing that makes all the others
+   actually usable day-to-day.
 2. **`project-status`** — small, high-value, extends existing `leads`
-   records with a status field. Natural to build alongside
-   `leads-dashboard`.
-3. **`website-audit`** — the top-of-funnel lead magnet, and the item with
-   the clearest standalone ROI. No dependency on the others.
-4. **`quote-session`** — recovers lost demand in the existing Website
-   Designer flow. No dependency on the others, but touches
-   `js/website-designer.js` directly so it's worth doing as its own
-   focused pass.
-5. **`lead-followup`** — depends on `leads-dashboard` existing (to
-   surface follow-up state) and benefits from `website-audit` existing
-   (a second lead source to follow up on), but its core logic only
-   needs the `leads` store.
-6. **`booking-scheduler`** and **`project-scaffold-generator`** — both
-   depend on a `full`-stage lead existing to act on; natural to build
-   once `leads-dashboard` gives you a place to trigger them from.
-7. **`referral-program`** and **`quote-acceptance`** — lowest urgency,
-   both have open scope questions (reward terms; e-signature/payment
-   scope) that need your input before they're ready to build regardless
-   of engineering order.
+   records with a status field. Build alongside `leads-dashboard`.
+3. **`quote-acceptance` Phase 1 only** — genuinely tiny (two admin
+   actions + a status-advance hook) now that it's de-scoped from the
+   original DocuSign-API design. Very high value-to-effort ratio; do
+   this right after `leads-dashboard`/`project-status` exist.
+4. **`website-audit`** — the top-of-funnel lead magnet, clearest
+   standalone ROI, no dependency on the others.
+5. **`quote-session`** — client-side only now; a focused, self-contained
+   pass on `js/website-designer.js` whenever convenient.
+6. **`lead-followup`** — cadence and running-unattended are both decided;
+   just needs real email copy written before it can ship. Benefits from
+   `leads-dashboard` existing to surface follow-up state.
+7. **`booking-scheduler`** — bigger than originally scoped now that real
+   Google Calendar sync is confirmed in scope (OAuth setup, Freebusy
+   API, event creation — see that doc's §4a). Budget more time for this
+   one than the others.
+8. **`project-scaffold-generator`** — depends on `full`-stage leads
+   existing to act on; natural to build once `leads-dashboard` gives you
+   a place to trigger it from.
+9. **`referral-program`** — reward terms are settled ($50 / 10%), so this
+   is ready to build whenever it's prioritized; no remaining blockers.
+10. **`quote-acceptance` Phase 2** — hold until Dylan decides whether the
+    DocuSign API plan upgrade is worth it (see that doc's §11). Not
+    ready to build regardless of engineering priority until that call is
+    made.
 
 ## Cross-cutting things every one of these assumes
 
@@ -49,3 +67,15 @@ These aren't independent — building in roughly this order avoids rework:
   `rateLimited()`.
 - Every id follows the existing `<PREFIX>-<timestamp base36>-<random
   hex>` convention already used for `WD-...` lead ids.
+
+## Still-open items across the batch (not blocking, but worth tracking)
+
+- `booking-scheduler`: exact weekly availability hours (weekends
+  confirmed in scope, specific times still needed) and confirmation of
+  whether Dylan's Google account is personal Gmail or Google Workspace
+  (changes the OAuth setup approach).
+- `quote-acceptance` Phase 2: whether payment happens through DocuSign
+  Payments or a separate processor — determines if a second
+  payment-integration is needed alongside the DocuSign API work.
+- `lead-followup`: the actual subject lines/email copy for both
+  follow-up steps (timing is final; content is not written yet).

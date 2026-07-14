@@ -19,9 +19,10 @@ the whole gap between "customer says yes" and "work visibly starts."
 - **Customer**, immediately after full-brief submission (or later, via a
   link in the confirmation email) — picks an available slot for a
   kickoff call.
-- **Dylan** — defines available windows (reusing whatever cadence he
-  already works, e.g. weekday evenings) and receives a calendar-style
-  notification per booking.
+- **Dylan** — defines available windows (confirmed: weekday **and**
+  weekend windows are both in scope — see §11 for exact hours still
+  needed) and sees every booking land directly on his **Google
+  Calendar** (confirmed requirement, not deferred — see §4a/§11).
 
 ## 3. Functional Requirements
 
@@ -70,6 +71,43 @@ email rather than a login:
 { "action": "cancel", "token": "..." }
 ```
 
+## 4a. Google Calendar Integration (confirmed requirement, not v1-optional)
+
+Dylan confirmed real Google Calendar sync is needed, not just an email +
+dashboard listing. This is a real scope increase over a pure-Netlify-Blobs
+implementation and needs its own sub-requirements:
+
+1. **Auth**: a Google Cloud project with the Calendar API enabled, and
+   OAuth 2.0 credentials. Since this is a single-business-owner
+   integration (not multi-tenant), the simplest correct approach is a
+   **service account with domain-wide delegation** if Dylan's calendar is
+   on Google Workspace, or a one-time OAuth consent flow storing a
+   refresh token if it's a personal Gmail account — confirm which before
+   building, since the setup differs (see §11).
+2. **Availability source of truth becomes Dylan's actual calendar**, not
+   just the `booking-availability` config record: before returning open
+   slots (§4's `GET .../availability`), the function should call the
+   Google Calendar Freebusy API for Dylan's calendar across the requested
+   window and exclude any time that's already busy there — this is what
+   makes "real sync" actually useful (avoids double-booking against
+   personal/other-business appointments already on his calendar, not just
+   against bookings made through this system).
+3. **On a confirmed booking**, create a real Google Calendar event (not
+   just an `.ics` email attachment) on Dylan's calendar via the Calendar
+   API `events.insert`, with the customer invited as an attendee (so it
+   also lands on *their* calendar automatically if they accept, in
+   addition to the emailed `.ics` fallback for customers who don't use
+   Google Calendar).
+4. **On cancel/reschedule**, delete or update the corresponding Google
+   Calendar event (`events.delete`/`events.patch`) — store the returned
+   Google event id on the `bookings` record (§5) specifically so this is
+   possible.
+5. Refresh-token storage: store the OAuth refresh token as a Netlify
+   environment variable (matching this codebase's existing pattern of
+   secrets living in env vars, e.g. `RESEND_API_KEY` /
+   `LTS_SESSION_SECRET`), not in Blobs — this is a credential, not
+   application data.
+
 ## 5. Data Model
 
 New blob store: **`bookings`** — key = booking id (`BK-<id>`).
@@ -78,15 +116,26 @@ New blob store: **`bookings`** — key = booking id (`BK-<id>`).
   id, leadId: string | null, slotStart, slotEnd,
   customerName, email, phone,
   status: "confirmed" | "cancelled" | "rescheduled",
+  googleEventId: string | null,   // for delete/patch on cancel/reschedule, see §4a.4
   createdAt
 }
 ```
 
 New small config record (store `content`, slug `booking-availability`) —
 editable via `admin.html`, following the existing pattern used for other
-site content:
+site content. **Confirmed to include weekend windows**, not just
+weekdays — exact hours still need to be filled in with Dylan's real
+schedule (see §11):
 ```
-{ weeklyWindows: [{ day: "mon", start: "18:00", end: "20:00" }, ...], slotLengthMinutes: 30, minNoticeHours: 4 }
+{
+  weeklyWindows: [
+    { day: "mon", start: "18:00", end: "20:00" },
+    { day: "sat", start: "10:00", end: "14:00" }
+    // ... full week's real windows, placeholder until confirmed
+  ],
+  slotLengthMinutes: 30,
+  minNoticeHours: 4
+}
 ```
 
 ## 6. Business Rules & Validation
@@ -110,9 +159,13 @@ site content:
   page or a dedicated flow reusing `booking.html`'s existing markup/URL).
 - `_lib/auth_utils.js` — reuse `createSingleUseToken`/`verify` for
   reschedule/cancel links.
-- `_lib/email.js` — booking confirmation (with `.ics` attachment —
-  generating a valid `.ics` file is plain text generation, no new
-  dependency needed) and the Dylan-facing notification.
+- `_lib/email.js` — booking confirmation (with `.ics` attachment as a
+  fallback for non-Google-Calendar customers) and the Dylan-facing
+  notification.
+- **Google Calendar API** (new integration, see §4a) — this is now a
+  hard dependency of the function, not an optional enhancement. Needs a
+  Google Cloud project, Calendar API enabled, and credentials configured
+  as Netlify environment variables before this can go live at all.
 - `admin.html` — new small "Booking availability" settings panel, and
   ideally a simple upcoming-bookings list (could live alongside
   `leads-dashboard`, since both are "what's coming up" admin views).
@@ -140,18 +193,24 @@ site content:
 
 ## 10. Non-Functional Requirements
 
-- `.ics` generation and slot-availability computation are both
-  lightweight, in-function logic — no external calendar API dependency
-  needed for v1 (i.e., no requirement to integrate with Google
-  Calendar/Outlook directly, which would need OAuth and is meaningfully
-  more infrastructure).
+- `.ics` generation is lightweight, in-function logic. The Google
+  Calendar Freebusy/events calls (§4a) add real external-API latency and
+  a real failure mode (Google API outage/rate limit) that §8's error
+  handling needs to account for — if the Calendar API call fails, the
+  function should still let the booking succeed in `bookings` (Blobs) and
+  notify Dylan by email, rather than blocking the whole booking on a
+  third-party API being up. Treat the calendar event creation as
+  best-effort on top of a Blobs-backed booking, not as the source of
+  truth itself.
 
-## 11. Open Questions for Dylan
+## 11. Decisions (resolved 2026-07-14)
 
-- What are your actual real availability windows/cadence for kickoff
-  calls? Needed to seed the config record.
-- Would you eventually want this synced to a calendar you actually check
-  (Google Calendar, etc.), or is "I get an email + it shows in the admin
-  dashboard" sufficient? The email-only version above is the
-  lower-effort v1; calendar sync is a real scope increase (OAuth,
-  refresh tokens, a provider-specific API).
+- **Availability windows include weekends**, in addition to weekdays.
+  Dylan's exact hours (which weekdays, which times, Saturday/Sunday
+  windows) still need to be gathered to seed the real
+  `booking-availability` config — the values in §5 remain placeholders
+  until then.
+- **Real Google Calendar sync is a confirmed requirement**, not deferred
+  — see §4a for the full integration spec this adds. Before building,
+  confirm whether Dylan's Google account is a personal Gmail or Google
+  Workspace, since that changes the OAuth setup approach (§4a.1).
