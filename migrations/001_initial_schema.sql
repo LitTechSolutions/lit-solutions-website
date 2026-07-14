@@ -454,3 +454,49 @@ CREATE TABLE template_definitions (
   body TEXT NOT NULL,
   allowed_variables JSONB NOT NULL
 );
+
+-- ============================================================
+-- F044 -- IT support classification (one row per ticket, mirrors
+-- triage_results/priority_assessments' "persist one engine's decision"
+-- shape)
+-- ============================================================
+
+CREATE TABLE it_support_classifications (
+  ticket_id UUID PRIMARY KEY REFERENCES tickets(id),
+  classification TEXT NOT NULL CHECK (classification IN ('remote', 'on_site', 'safety_conscious')),
+  requires_physical_access BOOLEAN NOT NULL,
+  safety_risk BOOLEAN NOT NULL,
+  decided_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- ============================================================
+-- F054 -- Operational metrics. MetricEvent has exactly 3 allowed fields
+-- at the app layer (src/domain/... via operationalMetrics.js) and
+-- structurally no payload column here either -- see
+-- assertValidMetricEvent's ALLOWED_FIELDS.
+-- ============================================================
+
+CREATE TABLE metric_events (
+  id UUID PRIMARY KEY,
+  type TEXT NOT NULL,
+  occurred_at TIMESTAMPTZ NOT NULL,
+  organization_id UUID REFERENCES organizations(id)
+);
+CREATE INDEX idx_metric_events_type_time ON metric_events(type, occurred_at DESC);
+
+-- ============================================================
+-- F057 -- Webhook event log. Records every verification attempt
+-- (success or failure) for observability -- this codebase has no real
+-- provider integration yet, so nothing writes here until one exists,
+-- but the table is ready per SYS-API-008's audit-adjacent intent.
+-- ============================================================
+
+CREATE TABLE webhook_events (
+  id UUID PRIMARY KEY,
+  provider TEXT NOT NULL,
+  received_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  verified BOOLEAN NOT NULL,
+  verification_reason TEXT NOT NULL,
+  event_type TEXT
+);
+CREATE INDEX idx_webhook_events_provider_time ON webhook_events(provider, received_at DESC);

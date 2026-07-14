@@ -110,6 +110,21 @@ A real bug surfaced during this batch: `assetStore.js`'s `markBackupRestoreVerif
 
 Still not blocked-but-unbuilt: F002 (registration model), F007/F058 (privacy findings + retention), F026/F027/F028/F049/F050/F052 (pricing/plan-limit values, though their engines are already built), F013/F014 (deferred — existing Blobs `messages`/`documents` stores reused as-is, org-scoping retrofit is a distinct future migration per `MIGRATION_PLAN.md`), F035/F036/F038/F039/F040 (check-execution engines, not a data-store question), F056 (deliberately stayed on Blobs), F060 (AI gate).
 
+## Post-Session-11: persistence completed for every engine-complete function that doesn't need business content decided first
+
+Extended `migrations/001_initial_schema.sql` with three tables the existing schema was missing (`it_support_classifications`, `metric_events`, `webhook_events`) — safe since the migration has never been run. Built persistence for the remaining engine-complete functions:
+
+| Function | Code | Wired to |
+|---|---|---|
+| F044 (IT support classification) | `src/db/itSupportStore.js` | `src/policy/itSupportClassification.js` |
+| F046/F047 (readiness checklists) | `src/db/checklistStore.js` | `src/policy/readinessChecklist.js`'s `scoreChecklist()` — same engine, proven again to serve both functions, this time via two parallel fetch queries feeding one scoring call |
+| F051 (admin work queue) | `src/db/workQueueQuery.js` | `src/admin/workQueueViewModel.js`'s `assembleWorkQueue()` — the one legitimate cross-organization query in this codebase, joining tickets/priority_assessments/approval_requests/payment_requests/incident_records |
+| F054 (operational metrics) | `src/db/metricsStore.js` | `src/analytics/operationalMetrics.js` — `MetricEvent`'s no-payload-field guarantee now enforced at the persistence boundary too |
+| F055 (communication templates) | `src/db/templateStore.js` | `src/templates/templateRenderer.js` — fetch-then-render, so the two-way variable-allowlist enforcement stays in one place regardless of storage |
+| F057 (webhook events) | `src/db/webhookEventStore.js` | `src/webhooks/webhookVerification.js` — logs every verification attempt, success AND failure, not just the happy path; nothing calls this in production yet since no provider is integrated, but it's ready |
+
+With this batch, **every function with a complete pure engine now also has persistence**, except where a function deliberately has no dedicated table (F009/F012/F015's view-models compose other stores' data; F056 stays on Blobs by design).
+
 ## Coverage note
 
-311 automated tests exist as of this update (`evidence/tests/session-11-persistence-expansion.txt`), all passing — up from 259 after the first persistence batch, 236 after Session 7, 200 after Session 6, 173 after Session 5, 155 after Session 4, 123 after Session 3, 77 after Session 2, and 44 after Session 1. 52 of the newest tests exercise persistence (against fake injected database clients — still not run against a live Neon database, see `MIGRATION_PLAN.md`).
+335 automated tests exist as of this update (`evidence/tests/session-12-persistence-final-batch.txt`), all passing — up from 311 after the previous batch, 259 before that, 236 after Session 7, 200 after Session 6, 173 after Session 5, 155 after Session 4, 123 after Session 3, 77 after Session 2, and 44 after Session 1. 99 tests now exercise persistence across 21 `src/db/` files — all against fake injected database clients, none yet against a live Neon database (see `MIGRATION_PLAN.md`, still the single highest-priority verification gap).
