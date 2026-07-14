@@ -386,7 +386,7 @@
       "severity": "Low",
       "status": "Resolved",
       "domainSession": 9,
-      "commit": "PENDING",
+      "commit": "9dfb629",
       "summary": "netlify.toml sends X-Frame-Options/X-Content-Type-Options/Referrer-Policy/Permissions-Policy/CSP but no Strict-Transport-Security header",
       "resolutionNote": "Fixed: added Strict-Transport-Security: max-age=31536000; includeSubDomains. Deliberately no preload directive -- that requires submission to browser vendors' HSTS preload list and is much harder to reverse than a header change, an owner-level call outside this pass's scope."
     }
