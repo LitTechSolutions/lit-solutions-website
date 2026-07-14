@@ -301,7 +301,11 @@
     "cta_h3": "准备好开始一个项目了吗?",
     "cta_lede": "我们的项目表单只需几分钟,能准确告诉我们您的需求 — 服务内容、时间安排、预算等等 — 这样我们就能直接给出实质性的答复,而不用来回反复询问。",
     "cta_button": "填写项目表单",
-    "cta_note": "更喜欢直接打电话或发邮件?使用上方的联系方式即可 — 我们很乐意直接和您沟通。"
+    "cta_note": "更喜欢直接打电话或发邮件?使用上方的联系方式即可 — 我们很乐意直接和您沟通。",
+    "missing_fields_intro": "请填写以下内容：",
+    "status_sending": "发送中…",
+    "status_success": "谢谢！我们将在一个工作日内回复您。",
+    "status_error": "出现了一些问题。请直接致电或发送邮件与我们联系。"
   },
   "wd": {
     "hero_eyebrow": "网站设计工具",
@@ -907,7 +911,9 @@
     "form_certifications_label": "相关认证(例如 SDVOSB、8(a)、HUBZone、WOSB)",
     "gov_sensitive_note": "<svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><path d=\"M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z\"/></svg> 请勿在此处填写您的税号(Tax ID)、社会安全号码(SSN)或其他敏感身份信息 — 我们绝不会将这些信息发布在您的网站上,而且本表单也不是发送此类信息的安全渠道。",
     "block5_title": "<span class=\"intake-block-num\">5</span> 还有什么其他需要我们了解的吗?<span class=\"intake-block-optional\">(选填)</span>",
-    "form_submit": "提交申请"
+    "form_submit": "提交申请",
+    "missing_fields_intro": "提交前请填写以下内容（如某问题不适用于您，请填写\"N/A\"）：",
+    "missing_field_fallback": "必填字段"
   },
   "heroes": {
     "badge_label": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z\"/></svg> 美国英雄优惠",
@@ -1577,5 +1583,13 @@
     "related_card1_title": "小型企业网站需要改版的5个信号",
     "related_card2_title": "为什么每家小型企业都应该使用密码管理器",
     "related_all_articles": "所有文章"
+  },
+  "forms": {
+    "not_connected_yet": "此功能尚未连接。请致电 636-426-0289 或发送邮件至 dylan@lit-solutions.tech。",
+    "missing_field_fallback": "必填字段"
+  },
+  "newsletter": {
+    "status_success": "您已成功订阅，感谢加入！",
+    "status_error": "出现了一些问题。请重试，或发送邮件至 dylan@lit-solutions.tech。"
   }
 }

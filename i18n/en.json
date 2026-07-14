@@ -216,7 +216,11 @@
     "cta_h3": "Ready to start a project?",
     "cta_lede": "Our project form takes a few minutes and tells us exactly what you need — services, timeline, budget, and more — so we can follow up with a real answer instead of a round of back-and-forth questions.",
     "cta_button": "Fill Out Project Form",
-    "cta_note": "Prefer to just call or email? Use the details above — we're happy to talk it through directly."
+    "cta_note": "Prefer to just call or email? Use the details above — we're happy to talk it through directly.",
+    "missing_fields_intro": "Please fill in the following:",
+    "status_sending": "Sending…",
+    "status_success": "Thanks — we'll follow up within one business day.",
+    "status_error": "Something went wrong. Please call or email us directly."
   },
   "faq": {
     "eyebrow": "FAQ",
@@ -499,7 +503,9 @@
     "form_certifications_label": "Relevant certifications (e.g. SDVOSB, 8(a), HUBZone, WOSB)",
     "gov_sensitive_note": "\n            <svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><path d=\"M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z\"/></svg>\n            Please don't include your Tax ID, SSN, or other sensitive identifiers here — we'll never publish those on your site, and this form isn't a secure place to send them.\n          ",
     "block5_title": "<span class=\"intake-block-num\">5</span> Anything else we should know? <span class=\"intake-block-optional\">(optional)</span>",
-    "form_submit": "Submit Request"
+    "form_submit": "Submit Request",
+    "missing_fields_intro": "Please fill in the following before submitting (type N/A if a question doesn't apply to you):",
+    "missing_field_fallback": "A required field"
   },
   "myaccount": {
     "hero_eyebrow": "My Account",
@@ -1578,5 +1584,13 @@
     "status_building_pdf": "Building your PDF and sending it over...",
     "status_reading_files": "Reading your files...",
     "status_sending_quote": "Sending your quote request..."
+  },
+  "forms": {
+    "not_connected_yet": "This isn't connected yet. Please call 636-426-0289 or email dylan@lit-solutions.tech.",
+    "missing_field_fallback": "A required field"
+  },
+  "newsletter": {
+    "status_success": "You're on the list — thanks for signing up!",
+    "status_error": "Something went wrong. Please try again or email dylan@lit-solutions.tech."
   }
 }

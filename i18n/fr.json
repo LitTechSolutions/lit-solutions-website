@@ -301,7 +301,11 @@
     "cta_h3": "Prêt à démarrer un projet?",
     "cta_lede": "Notre formulaire de projet prend quelques minutes et nous indique exactement ce dont vous avez besoin — services, échéancier, budget et plus encore — afin que nous puissions vous répondre concrètement, plutôt que d'échanger plusieurs questions.",
     "cta_button": "Remplir le formulaire de projet",
-    "cta_note": "Vous préférez simplement appeler ou écrire? Utilisez les coordonnées ci-dessus — nous serons heureux d'en discuter directement avec vous."
+    "cta_note": "Vous préférez simplement appeler ou écrire? Utilisez les coordonnées ci-dessus — nous serons heureux d'en discuter directement avec vous.",
+    "missing_fields_intro": "Veuillez remplir les champs suivants :",
+    "status_sending": "Envoi en cours…",
+    "status_success": "Merci — nous vous répondrons sous un jour ouvré.",
+    "status_error": "Une erreur s'est produite. Merci de nous appeler ou de nous écrire directement."
   },
   "wd": {
     "hero_eyebrow": "Concepteur de site Web",
@@ -907,7 +911,9 @@
     "form_certifications_label": "Certifications pertinentes (p. ex. SDVOSB, 8(a), HUBZone, WOSB)",
     "gov_sensitive_note": "<svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><path d=\"M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z\"/></svg> Veuillez ne pas inclure votre numéro d'identification fiscale, votre NAS ou d'autres identifiants sensibles ici — nous ne publierons jamais ceux-ci sur votre site, et ce formulaire n'est pas un endroit sécurisé pour les transmettre.",
     "block5_title": "<span class=\"intake-block-num\">5</span> Autre chose que nous devrions savoir? <span class=\"intake-block-optional\">(facultatif)</span>",
-    "form_submit": "Envoyer la demande"
+    "form_submit": "Envoyer la demande",
+    "missing_fields_intro": "Veuillez remplir les champs suivants avant d'envoyer (indiquez N/A si une question ne vous concerne pas) :",
+    "missing_field_fallback": "Un champ obligatoire"
   },
   "heroes": {
     "badge_label": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z\"/></svg> Rabais Héros",
@@ -1577,5 +1583,13 @@
     "related_card1_title": "5 signes que le site Web de votre petite entreprise a besoin d'une refonte",
     "related_card2_title": "Pourquoi chaque petite entreprise devrait utiliser un gestionnaire de mots de passe",
     "related_all_articles": "Tous les articles"
+  },
+  "forms": {
+    "not_connected_yet": "Ce n'est pas encore connecté. Appelez le 636-426-0289 ou écrivez à dylan@lit-solutions.tech.",
+    "missing_field_fallback": "Un champ obligatoire"
+  },
+  "newsletter": {
+    "status_success": "Vous êtes inscrit — merci de votre inscription !",
+    "status_error": "Une erreur s'est produite. Veuillez réessayer ou écrire à dylan@lit-solutions.tech."
   }
 }

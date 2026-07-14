@@ -301,7 +301,11 @@
     "cta_h3": "Sẵn sàng bắt đầu một dự án?",
     "cta_lede": "Biểu mẫu dự án của chúng tôi chỉ mất vài phút và cho chúng tôi biết chính xác những gì bạn cần — dịch vụ, thời gian, ngân sách, và hơn thế nữa — để chúng tôi có thể phản hồi bằng câu trả lời thực sự thay vì phải hỏi qua lại nhiều lần.",
     "cta_button": "Điền biểu mẫu dự án",
-    "cta_note": "Muốn gọi điện hoặc gửi email trực tiếp hơn? Hãy dùng thông tin liên hệ ở trên — chúng tôi rất sẵn lòng trao đổi trực tiếp với bạn."
+    "cta_note": "Muốn gọi điện hoặc gửi email trực tiếp hơn? Hãy dùng thông tin liên hệ ở trên — chúng tôi rất sẵn lòng trao đổi trực tiếp với bạn.",
+    "missing_fields_intro": "Vui lòng điền vào các mục sau:",
+    "status_sending": "Đang gửi…",
+    "status_success": "Cảm ơn bạn — chúng tôi sẽ phản hồi trong vòng một ngày làm việc.",
+    "status_error": "Đã xảy ra sự cố. Vui lòng gọi điện hoặc gửi email trực tiếp cho chúng tôi."
   },
   "wd": {
     "hero_eyebrow": "Công cụ thiết kế website",
@@ -907,7 +911,9 @@
     "form_certifications_label": "Các chứng nhận liên quan (ví dụ: SDVOSB, 8(a), HUBZone, WOSB)",
     "gov_sensitive_note": "<svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><path d=\"M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z\"/></svg> Vui lòng không bao gồm Mã số Thuế, SSN, hoặc các thông tin định danh nhạy cảm khác ở đây — chúng tôi sẽ không bao giờ công khai những thông tin đó trên website của bạn, và biểu mẫu này không phải là nơi an toàn để gửi chúng.",
     "block5_title": "<span class=\"intake-block-num\">5</span> Còn điều gì khác chúng tôi nên biết không? <span class=\"intake-block-optional\">(không bắt buộc)</span>",
-    "form_submit": "Gửi Yêu cầu"
+    "form_submit": "Gửi Yêu cầu",
+    "missing_fields_intro": "Vui lòng điền vào các mục sau trước khi gửi (nhập N/A nếu câu hỏi không áp dụng cho bạn):",
+    "missing_field_fallback": "Một trường bắt buộc"
   },
   "heroes": {
     "badge_label": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z\"/></svg> Ưu đãi Anh hùng nước Mỹ",
@@ -1577,5 +1583,13 @@
     "related_card1_title": "5 Dấu hiệu Website Doanh nghiệp Nhỏ của Bạn Cần Thiết kế lại",
     "related_card2_title": "Vì sao Mọi Doanh nghiệp Nhỏ Nên Sử dụng Trình quản lý Mật khẩu",
     "related_all_articles": "Tất cả bài viết"
+  },
+  "forms": {
+    "not_connected_yet": "Chức năng này chưa được kết nối. Vui lòng gọi 636-426-0289 hoặc email dylan@lit-solutions.tech.",
+    "missing_field_fallback": "Một trường bắt buộc"
+  },
+  "newsletter": {
+    "status_success": "Bạn đã có trong danh sách — cảm ơn bạn đã đăng ký!",
+    "status_error": "Đã xảy ra sự cố. Vui lòng thử lại hoặc email dylan@lit-solutions.tech."
   }
 }

@@ -301,7 +301,11 @@
     "cta_h3": "Bereit, ein Projekt zu starten?",
     "cta_lede": "Unser Projektformular dauert nur wenige Minuten und sagt uns genau, was Sie brauchen — Leistungen, Zeitrahmen, Budget und mehr —, damit wir mit einer echten Antwort zurückmelden können, statt mit endlosem Hin und Her nachzufragen.",
     "cta_button": "Projektformular ausfüllen",
-    "cta_note": "Rufen Sie lieber direkt an oder schreiben Sie eine E-Mail? Nutzen Sie die Angaben oben — wir besprechen es gerne direkt mit Ihnen."
+    "cta_note": "Rufen Sie lieber direkt an oder schreiben Sie eine E-Mail? Nutzen Sie die Angaben oben — wir besprechen es gerne direkt mit Ihnen.",
+    "missing_fields_intro": "Bitte fülle Folgendes aus:",
+    "status_sending": "Wird gesendet…",
+    "status_success": "Danke — wir melden uns innerhalb eines Werktages.",
+    "status_error": "Etwas ist schiefgelaufen. Bitte ruf uns an oder schreib uns direkt."
   },
   "wd": {
     "hero_eyebrow": "Website-Designer",
@@ -907,7 +911,9 @@
     "form_certifications_label": "Relevante Zertifizierungen (z. B. SDVOSB, 8(a), HUBZone, WOSB)",
     "gov_sensitive_note": "<svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><path d=\"M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z\"/></svg> Bitte geben Sie hier nicht Ihre Steuernummer, Sozialversicherungsnummer oder andere sensible Kennungen an — wir werden diese niemals auf Ihrer Website veröffentlichen, und dieses Formular ist kein sicherer Ort, um sie zu übermitteln.",
     "block5_title": "<span class=\"intake-block-num\">5</span> Gibt es noch etwas, das wir wissen sollten? <span class=\"intake-block-optional\">(optional)</span>",
-    "form_submit": "Anfrage absenden"
+    "form_submit": "Anfrage absenden",
+    "missing_fields_intro": "Bitte fülle Folgendes aus, bevor du absendest (gib N/A ein, wenn eine Frage nicht zutrifft):",
+    "missing_field_fallback": "Ein Pflichtfeld"
   },
   "heroes": {
     "badge_label": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z\"/></svg> Amerikanischer Helden-Rabatt",
@@ -1577,5 +1583,13 @@
     "related_card1_title": "5 Anzeichen, dass Ihre Website für Ihr kleines Unternehmen ein Redesign braucht",
     "related_card2_title": "Warum jedes kleine Unternehmen einen Passwort-Manager nutzen sollte",
     "related_all_articles": "Alle Artikel"
+  },
+  "forms": {
+    "not_connected_yet": "Das ist noch nicht verbunden. Bitte ruf 636-426-0289 an oder schreib an dylan@lit-solutions.tech.",
+    "missing_field_fallback": "Ein Pflichtfeld"
+  },
+  "newsletter": {
+    "status_success": "Du stehst auf der Liste — danke für deine Anmeldung!",
+    "status_error": "Etwas ist schiefgelaufen. Bitte versuche es erneut oder schreib an dylan@lit-solutions.tech."
   }
 }

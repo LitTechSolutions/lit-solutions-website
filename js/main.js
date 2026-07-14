@@ -1,5 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+  // Same t()-with-English-fallback pattern js/cms.js, js/website-designer.js,
+  // and js/intake.js already use for JS-generated text that data-i18n's
+  // static-HTML pass never touches.
+  function tt(path, fallback) {
+    return window.LTS_I18N ? window.LTS_I18N.t(path, fallback) : fallback;
+  }
+
   // Dark/light mode toggle
   const themeToggle = document.getElementById('themeToggle');
   if (themeToggle) {
@@ -312,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
       const msg = link.dataset.notConnectedMsg ||
-        "This isn't connected yet. Please call 636-426-0289 or email dylan@lit-solutions.tech.";
+        tt('forms.not_connected_yet', "This isn't connected yet. Please call 636-426-0289 or email dylan@lit-solutions.tech.");
       alert(msg);
     });
   });
@@ -413,7 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
           field.setAttribute('aria-invalid', 'true');
           if (missingNote && missingNote.id) field.setAttribute('aria-describedby', missingNote.id);
           const label = simpleContactForm.querySelector(`label[for="${field.id}"]`);
-          missing.push(label ? label.textContent.trim() : 'A required field');
+          missing.push(label ? label.textContent.trim() : tt('forms.missing_field_fallback', 'A required field'));
           if (!firstBadEl) firstBadEl = field;
         }
       });
@@ -422,7 +429,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (missing.length) {
         if (missingNote) {
-          missingNote.innerHTML = `<strong>Please fill in the following:</strong><ul>${missing.map(m => `<li>${m}</li>`).join('')}</ul>`;
+          const intro = tt('contact.missing_fields_intro', 'Please fill in the following:');
+          missingNote.innerHTML = `<strong>${intro}</strong><ul>${missing.map(m => `<li>${m}</li>`).join('')}</ul>`;
           missingNote.classList.add('is-visible');
         }
         if (firstBadEl) firstBadEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -431,20 +439,20 @@ document.addEventListener('DOMContentLoaded', () => {
       if (missingNote) missingNote.classList.remove('is-visible');
 
       const formData = new FormData(simpleContactForm);
-      if (statusEl) { statusEl.textContent = 'Sending…'; statusEl.classList.remove('form-note--error'); }
+      if (statusEl) { statusEl.textContent = tt('contact.status_sending', 'Sending…'); statusEl.classList.remove('form-note--error'); }
       fetch('/', { method: 'POST', body: formData })
         .then(res => {
           if (statusEl) {
             statusEl.textContent = res.ok
-              ? "Thanks — we'll follow up within one business day."
-              : 'Something went wrong. Please call or email us directly.';
+              ? tt('contact.status_success', "Thanks — we'll follow up within one business day.")
+              : tt('contact.status_error', 'Something went wrong. Please call or email us directly.');
             statusEl.classList.toggle('form-note--error', !res.ok);
           }
           if (res.ok) simpleContactForm.reset();
         })
         .catch(() => {
           if (statusEl) {
-            statusEl.textContent = 'Something went wrong. Please call or email us directly.';
+            statusEl.textContent = tt('contact.status_error', 'Something went wrong. Please call or email us directly.');
             statusEl.classList.add('form-note--error');
           }
         });
@@ -465,15 +473,15 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(res => {
           if (statusEl) {
             statusEl.textContent = res.ok
-              ? "You're on the list — thanks for signing up!"
-              : "Something went wrong. Please try again or email dylan@lit-solutions.tech.";
+              ? tt('newsletter.status_success', "You're on the list — thanks for signing up!")
+              : tt('newsletter.status_error', 'Something went wrong. Please try again or email dylan@lit-solutions.tech.');
             statusEl.classList.toggle('is-error', !res.ok);
           }
           if (res.ok) form.reset();
         })
         .catch(() => {
           if (statusEl) {
-            statusEl.textContent = "Something went wrong. Please try again or email dylan@lit-solutions.tech.";
+            statusEl.textContent = tt('newsletter.status_error', 'Something went wrong. Please try again or email dylan@lit-solutions.tech.');
             statusEl.classList.add('is-error');
           }
         });

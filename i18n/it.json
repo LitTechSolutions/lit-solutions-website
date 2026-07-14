@@ -301,7 +301,11 @@
     "cta_h3": "Pronto a iniziare un progetto?",
     "cta_lede": "Il nostro modulo di progetto richiede pochi minuti e ci indica esattamente ciò di cui ha bisogno — servizi, tempistiche, budget e altro — così possiamo rispondere con una risposta concreta invece di un continuo scambio di domande.",
     "cta_button": "Compila il Modulo di Progetto",
-    "cta_note": "Preferisce semplicemente chiamare o scrivere un'email? Usi i contatti qui sopra — saremo felici di parlarne direttamente."
+    "cta_note": "Preferisce semplicemente chiamare o scrivere un'email? Usi i contatti qui sopra — saremo felici di parlarne direttamente.",
+    "missing_fields_intro": "Compila quanto segue:",
+    "status_sending": "Invio in corso…",
+    "status_success": "Grazie — ti risponderemo entro un giorno lavorativo.",
+    "status_error": "Qualcosa è andato storto. Chiamaci o scrivici direttamente."
   },
   "wd": {
     "hero_eyebrow": "Configuratore Sito Web",
@@ -907,7 +911,9 @@
     "form_certifications_label": "Certificazioni pertinenti (es. SDVOSB, 8(a), HUBZone, WOSB)",
     "gov_sensitive_note": "<svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><path d=\"M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z\"/></svg> La preghiamo di non includere qui il Suo Tax ID, SSN o altri identificatori sensibili — non li pubblicheremo mai sul Suo sito, e questo modulo non è un luogo sicuro per inviarli.",
     "block5_title": "<span class=\"intake-block-num\">5</span> C'è altro che dovremmo sapere? <span class=\"intake-block-optional\">(facoltativo)</span>",
-    "form_submit": "Invia Richiesta"
+    "form_submit": "Invia Richiesta",
+    "missing_fields_intro": "Compila quanto segue prima di inviare (scrivi N/A se una domanda non ti riguarda):",
+    "missing_field_fallback": "Un campo obbligatorio"
   },
   "heroes": {
     "badge_label": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z\"/></svg> Sconto Eroi Americani",
@@ -1577,5 +1583,13 @@
     "related_card1_title": "5 Segnali che il Sito Web della Sua Piccola Impresa ha Bisogno di un Restyling",
     "related_card2_title": "Perché Ogni Piccola Impresa Dovrebbe Usare un Gestore Password",
     "related_all_articles": "Tutti gli articoli"
+  },
+  "forms": {
+    "not_connected_yet": "Questo non è ancora collegato. Chiama il 636-426-0289 o scrivi a dylan@lit-solutions.tech.",
+    "missing_field_fallback": "Un campo obbligatorio"
+  },
+  "newsletter": {
+    "status_success": "Sei nella lista — grazie per esserti iscritto!",
+    "status_error": "Qualcosa è andato storto. Riprova oppure scrivi a dylan@lit-solutions.tech."
   }
 }

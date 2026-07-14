@@ -397,11 +397,19 @@
       "commit": "PENDING",
       "summary": "js/main.js had a typo'd, non-existent email domain (dylan@littletechicalsolutions.com) in 3 error/fallback messages -- newsletter signup failure (x2) and the not-connected-yet placeholder-link guard -- while every other file on the site correctly uses dylan@lit-solutions.tech",
       "resolutionNote": "Fixed: corrected all 3 occurrences to the real domain. A visitor hitting any of these 3 error paths would previously have been told to email a dead address."
+    },
+    "F047": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "domainSession": 9,
+      "commit": "PENDING",
+      "summary": "JS-generated form-status messages (contact form sending/success/error, missing-fields intros, newsletter signup success/error, placeholder-link not-connected-yet alert) were hardcoded English with no i18n lookup, unlike the rest of the site",
+      "resolutionNote": "Fixed: wired all 10 strings through the existing tt()/window.LTS_I18N.t() pattern in js/main.js and js/intake.js, added the keys to en.json, translated to all 15 other languages (parity-checked), verified live in English/Spanish/Arabic-RTL including missing-key fallback behavior."
     }
   },
   "counts": {
-    "total": 46,
-    "resolved": 35,
+    "total": 47,
+    "resolved": 36,
     "ownerDecisionOpen": 11,
     "engineeringOpen": 0
   },

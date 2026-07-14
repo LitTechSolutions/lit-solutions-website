@@ -301,7 +301,11 @@
     "cta_h3": "Ou pare pou kòmanse yon pwojè?",
     "cta_lede": "Fòm pwojè nou an pran kèk minit e li di nou egzakteman sa ou bezwen — sèvis, delè, bidjè, e plis ankò — konsa nou ka swiv ak yon repons reyèl olye yon seri kesyon vini-ale.",
     "cta_button": "Ranpli Fòm Pwojè a",
-    "cta_note": "Ou pito jis rele oswa voye imèl? Itilize detay ki anwo yo — n ap kontan pale avè w dirèkteman."
+    "cta_note": "Ou pito jis rele oswa voye imèl? Itilize detay ki anwo yo — n ap kontan pale avè w dirèkteman.",
+    "missing_fields_intro": "Tanpri ranpli enfòmasyon sa yo:",
+    "status_sending": "Ap voye…",
+    "status_success": "Mèsi — n ap voye yon repons nan yon jou ouvrab.",
+    "status_error": "Gen yon bagay ki mal pase. Tanpri rele oswa voye imèl ba nou dirèkteman."
   },
   "wd": {
     "hero_eyebrow": "Desiyatè Sit Wèb",
@@ -907,7 +911,9 @@
     "form_certifications_label": "Sètifikasyon ki gen rapò (pa egzanp SDVOSB, 8(a), HUBZone, WOSB)",
     "gov_sensitive_note": "<svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><path d=\"M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z\"/></svg> Tanpri pa enkli Tax ID ou, nimewo sekirite sosyal, oswa lòt idantifyan sansib isit la — nou pap janm pibliye yo sou sit ou, e fòm sa a se pa yon kote an sekirite pou voye yo.",
     "block5_title": "<span class=\"intake-block-num\">5</span> Gen lòt bagay nou ta dwe konnen? <span class=\"intake-block-optional\">(opsyonèl)</span>",
-    "form_submit": "Soumèt Demann"
+    "form_submit": "Soumèt Demann",
+    "missing_fields_intro": "Tanpri ranpli enfòmasyon sa yo anvan ou soumèt (ekri N/A si yon kesyon pa aplikab pou ou):",
+    "missing_field_fallback": "Yon chan obligatwa"
   },
   "heroes": {
     "badge_label": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z\"/></svg> Rabè pou Ewo Ameriken",
@@ -1577,5 +1583,13 @@
     "related_card1_title": "5 Siy Sit Wèb Ti Biznis Ou Bezwen yon Refonte",
     "related_card2_title": "Poukisa Chak Ti Biznis Ta Dwe Itilize yon Jesyonè Modpas",
     "related_all_articles": "Tout atik"
+  },
+  "forms": {
+    "not_connected_yet": "Sa a poko konekte. Tanpri rele 636-426-0289 oswa voye yon imèl bay dylan@lit-solutions.tech.",
+    "missing_field_fallback": "Yon chan obligatwa"
+  },
+  "newsletter": {
+    "status_success": "Ou sou lis la — mèsi paske ou enskri!",
+    "status_error": "Gen yon bagay ki mal pase. Tanpri eseye ankò oswa voye imèl bay dylan@lit-solutions.tech."
   }
 }

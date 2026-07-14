@@ -301,7 +301,11 @@
     "cta_h3": "Gotowy, by rozpocząć projekt?",
     "cta_lede": "Wypełnienie naszego formularza projektowego zajmuje kilka minut i mówi nam dokładnie, czego potrzebujesz — usługi, harmonogram, budżet i inne — dzięki czemu możemy odpowiedzieć konkretnie, zamiast wymieniać się serią pytań.",
     "cta_button": "Wypełnij formularz projektowy",
-    "cta_note": "Wolisz po prostu zadzwonić lub napisać e-mail? Skorzystaj z danych powyżej — chętnie porozmawiamy bezpośrednio."
+    "cta_note": "Wolisz po prostu zadzwonić lub napisać e-mail? Skorzystaj z danych powyżej — chętnie porozmawiamy bezpośrednio.",
+    "missing_fields_intro": "Proszę uzupełnić następujące pola:",
+    "status_sending": "Wysyłanie…",
+    "status_success": "Dziękujemy — odpowiemy w ciągu jednego dnia roboczego.",
+    "status_error": "Coś poszło nie tak. Zadzwoń do nas lub napisz bezpośrednio."
   },
   "wd": {
     "hero_eyebrow": "Kreator stron internetowych",
@@ -907,7 +911,9 @@
     "form_certifications_label": "Odpowiednie certyfikaty (np. SDVOSB, 8(a), HUBZone, WOSB)",
     "gov_sensitive_note": "<svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><path d=\"M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z\"/></svg> Prosimy nie podawać tutaj numeru NIP/Tax ID, numeru ubezpieczenia społecznego (SSN) ani innych wrażliwych danych identyfikacyjnych — nigdy nie opublikujemy ich na Twojej stronie, a ten formularz nie jest bezpiecznym miejscem do ich przesyłania.",
     "block5_title": "<span class=\"intake-block-num\">5</span> Czy jest coś jeszcze, o czym powinniśmy wiedzieć? <span class=\"intake-block-optional\">(opcjonalnie)</span>",
-    "form_submit": "Wyślij zgłoszenie"
+    "form_submit": "Wyślij zgłoszenie",
+    "missing_fields_intro": "Proszę uzupełnić poniższe pola przed wysłaniem (wpisz N/A, jeśli pytanie Cię nie dotyczy):",
+    "missing_field_fallback": "Pole wymagane"
   },
   "heroes": {
     "badge_label": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z\"/></svg> Zniżka dla Bohaterów",
@@ -1577,5 +1583,13 @@
     "related_card1_title": "5 oznak, że Twoja mała firma potrzebuje przeprojektowania strony internetowej",
     "related_card2_title": "Dlaczego każda mała firma powinna korzystać z menedżera haseł",
     "related_all_articles": "Wszystkie artykuły"
+  },
+  "forms": {
+    "not_connected_yet": "To jeszcze nie zostało podłączone. Zadzwoń pod numer 636-426-0289 lub napisz na dylan@lit-solutions.tech.",
+    "missing_field_fallback": "Pole wymagane"
+  },
+  "newsletter": {
+    "status_success": "Zapisano Cię — dzięki za dołączenie!",
+    "status_error": "Coś poszło nie tak. Spróbuj ponownie lub napisz na dylan@lit-solutions.tech."
   }
 }

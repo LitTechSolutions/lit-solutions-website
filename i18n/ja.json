@@ -301,7 +301,11 @@
     "cta_h3": "プロジェクトを始める準備はできましたか?",
     "cta_lede": "プロジェクトフォームは数分で完了します — 必要なサービス、スケジュール、ご予算など、必要な情報を正確にお伝えいただけます — やり取りを何度も重ねることなく、具体的な回答をお送りできます。",
     "cta_button": "プロジェクトフォームに記入する",
-    "cta_note": "お電話やメールの方がよろしければ、上記の連絡先をご利用ください — 直接お話しさせていただくのも大歓迎です。"
+    "cta_note": "お電話やメールの方がよろしければ、上記の連絡先をご利用ください — 直接お話しさせていただくのも大歓迎です。",
+    "missing_fields_intro": "以下の項目をご入力ください：",
+    "status_sending": "送信中…",
+    "status_success": "ありがとうございます。1営業日以内にご連絡いたします。",
+    "status_error": "エラーが発生しました。お電話またはメールで直接ご連絡ください。"
   },
   "wd": {
     "hero_eyebrow": "ウェブサイトデザイナー",
@@ -907,7 +911,9 @@
     "form_certifications_label": "関連する認証(例:SDVOSB、8(a)、HUBZone、WOSB)",
     "gov_sensitive_note": "<svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><path d=\"M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z\"/></svg> こちらには税務ID、社会保障番号(SSN)、その他の機密性の高い識別情報を記載しないでください — これらをお客様のサイトに公開することは決してありませんし、本フォームはそうした情報を安全に送信できる場所ではありません。",
     "block5_title": "<span class=\"intake-block-num\">5</span> その他お伝えいただきたいことはありますか? <span class=\"intake-block-optional\">(任意)</span>",
-    "form_submit": "依頼を送信する"
+    "form_submit": "依頼を送信する",
+    "missing_fields_intro": "送信前に以下の項目をご入力ください（該当しない質問には「N/A」とご入力ください）：",
+    "missing_field_fallback": "必須項目"
   },
   "heroes": {
     "badge_label": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z\"/></svg> アメリカン・ヒーローズ割引",
@@ -1577,5 +1583,13 @@
     "related_card1_title": "中小企業のウェブサイトにリニューアルが必要な5つのサイン",
     "related_card2_title": "中小企業がパスワードマネージャーを使うべき理由",
     "related_all_articles": "すべての記事"
+  },
+  "forms": {
+    "not_connected_yet": "この機能はまだ接続されていません。636-426-0289までお電話いただくか、dylan@lit-solutions.techまでメールをお送りください。",
+    "missing_field_fallback": "必須項目"
+  },
+  "newsletter": {
+    "status_success": "登録が完了しました。ご登録ありがとうございます！",
+    "status_error": "エラーが発生しました。もう一度お試しいただくか、dylan@lit-solutions.techまでメールをお送りください。"
   }
 }

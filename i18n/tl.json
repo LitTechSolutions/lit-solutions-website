@@ -301,7 +301,11 @@
     "cta_h3": "Handa nang Magsimula ng Proyekto?",
     "cta_lede": "Ilang minuto lang ang aming project form at doon mo isasaad nang eksakto kung ano ang kailangan mo — mga serbisyo, timeline, budget, at iba pa — para makapagbigay kami ng tunay na sagot imbes na paulit-ulit na tanungan ka.",
     "cta_button": "Punan ang Project Form",
-    "cta_note": "Mas gusto mo bang tumawag o mag-email na lang? Gamitin ang detalye sa itaas — masaya kaming makipag-usap nang direkta."
+    "cta_note": "Mas gusto mo bang tumawag o mag-email na lang? Gamitin ang detalye sa itaas — masaya kaming makipag-usap nang direkta.",
+    "missing_fields_intro": "Mangyaring punan ang mga sumusunod:",
+    "status_sending": "Ipinapadala…",
+    "status_success": "Salamat — sasagot kami sa loob ng isang araw ng negosyo.",
+    "status_error": "May nangyaring mali. Mangyaring tumawag o mag-email sa amin nang direkta."
   },
   "wd": {
     "hero_eyebrow": "Website Designer",
@@ -907,7 +911,9 @@
     "form_certifications_label": "Mga kaugnay na certification (hal. SDVOSB, 8(a), HUBZone, WOSB)",
     "gov_sensitive_note": "<svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><path d=\"M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z\"/></svg> Mangyaring huwag isama ang iyong Tax ID, SSN, o iba pang sensitibong identifier dito — hindi namin ito kailanman ilalathala sa iyong site, at ang form na ito ay hindi secure na lugar para ipadala ang mga ito.",
     "block5_title": "<span class=\"intake-block-num\">5</span> May iba pa ba kaming dapat malaman? <span class=\"intake-block-optional\">(opsyonal)</span>",
-    "form_submit": "Isumite ang Kahilingan"
+    "form_submit": "Isumite ang Kahilingan",
+    "missing_fields_intro": "Mangyaring punan ang mga sumusunod bago mag-submit (i-type ang N/A kung hindi angkop sa iyo ang tanong):",
+    "missing_field_fallback": "Isang kinakailangang field"
   },
   "heroes": {
     "badge_label": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z\"/></svg> Diskwento Para sa mga Amerikanong Bayani",
@@ -1577,5 +1583,13 @@
     "related_card1_title": "5 Palatandaan na Kailangan nang I-redesign ang Website ng Iyong Maliit na Negosyo",
     "related_card2_title": "Bakit Dapat Gumamit ng Password Manager ang Bawat Maliit na Negosyo",
     "related_all_articles": "Lahat ng artikulo"
+  },
+  "forms": {
+    "not_connected_yet": "Hindi pa ito naka-connect. Mangyaring tumawag sa 636-426-0289 o mag-email sa dylan@lit-solutions.tech.",
+    "missing_field_fallback": "Isang kinakailangang field"
+  },
+  "newsletter": {
+    "status_success": "Nasa listahan ka na — salamat sa pagsali!",
+    "status_error": "May nangyaring mali. Pakisubukang muli o mag-email sa dylan@lit-solutions.tech."
   }
 }
