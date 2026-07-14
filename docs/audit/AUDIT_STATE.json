@@ -365,11 +365,19 @@
       "commit": "47e7970",
       "summary": "Mobile hamburger nav-toggle lacked flex-shrink:0 (unlike its header-actions siblings), so it silently squeezed below usable width on narrow phones (24px wide at 375px viewport) while absorbing the header row's space deficit alone",
       "resolutionNote": "Fixed: added flex-shrink:0 and an explicit bar width so the icon no longer distorts; also added an invisible ::before hit-slop to theme-toggle/search-toggle/nav-toggle so touch targets reach ~44px without growing visible chrome. Verified via mobile (375) and desktop (1280) presets."
+    },
+    "F043": {
+      "severity": "Low",
+      "status": "Resolved",
+      "domainSession": 9,
+      "commit": "05bf40b",
+      "summary": "Eyebrow labels on fixed-dark hero bands (.hero/.page-hero/.intake-hero/.contact) used the theme-adaptive --accent-teal, which fell to a sub-AA 4.40:1 contrast ratio against the dark background specifically in light theme",
+      "resolutionNote": "Fixed: added a fixed --accent-teal-on-dark constant (matching --on-dark's existing pattern) and pointed all four dark-band eyebrow rules at it, plus added the missing .hero .eyebrow rule and removed a conflicting inline style. Verified 8.81:1/7.47:1 contrast in light theme."
     }
   },
   "counts": {
-    "total": 42,
-    "resolved": 31,
+    "total": 43,
+    "resolved": 32,
     "ownerDecisionOpen": 11,
     "engineeringOpen": 0
   },
