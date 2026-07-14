@@ -91,8 +91,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function clearErrors() {
-    form.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
-    form.querySelectorAll('.group-error').forEach(el => el.classList.remove('group-error'));
+    form.querySelectorAll('.field-error').forEach(el => { el.classList.remove('field-error'); el.removeAttribute('aria-invalid'); el.removeAttribute('aria-describedby'); });
+    form.querySelectorAll('.group-error').forEach(el => { el.classList.remove('group-error'); el.removeAttribute('aria-invalid'); el.removeAttribute('aria-describedby'); });
     missingNote.classList.remove('is-visible');
     missingNote.innerHTML = '';
   }
@@ -112,6 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!isFilled(el)) {
         missing.push(fieldLabel(el));
         if (!firstBadEl) firstBadEl = el;
+        el.setAttribute('aria-invalid', 'true');
+        el.setAttribute('aria-describedby', 'missingFieldsNote');
         if (isGroupField(el)) {
           el.classList.add('group-error');
         } else {

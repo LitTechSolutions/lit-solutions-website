@@ -406,7 +406,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const ok = field.value.trim().length > 0 &&
           (field.type !== 'email' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value));
         field.classList.toggle('field-error', !ok);
-        if (!ok) {
+        if (ok) {
+          field.removeAttribute('aria-invalid');
+          field.removeAttribute('aria-describedby');
+        } else {
+          field.setAttribute('aria-invalid', 'true');
+          if (missingNote && missingNote.id) field.setAttribute('aria-describedby', missingNote.id);
           const label = simpleContactForm.querySelector(`label[for="${field.id}"]`);
           missing.push(label ? label.textContent.trim() : 'A required field');
           if (!firstBadEl) firstBadEl = field;

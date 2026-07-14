@@ -36,7 +36,7 @@
 <div class="lang-bar">
   <div class="wrap lang-bar-inner">
     <div class="nav-dropdown">
-      <button type="button" class="nav-dropdown-toggle lang-dropdown-toggle" aria-expanded="false" aria-controls="langMenu" aria-label="Choose language" data-i18n-attr-aria-label="header.choose_language">
+      <button type="button" class="nav-dropdown-toggle lang-dropdown-toggle" aria-haspopup="listbox" aria-expanded="false" aria-controls="langMenu" aria-label="Choose language" data-i18n-attr-aria-label="header.choose_language">
         <span id="langCurrentLabel">ENG</span>
         <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
       </button>
@@ -75,7 +75,7 @@
 
     <nav class="main-nav" id="mainNav" aria-label="Primary">
       <div class="nav-dropdown">
-        <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-controls="servicesDropdown">
+        <button type="button" class="nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="servicesDropdown">
           <span data-i18n="nav.services">Services</span>
           <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
         </button>
@@ -93,7 +93,7 @@
       <a href="website-designer.html" data-i18n="nav.website_designer">Website Designer</a>
       <a href="heroes-pricing.html" data-i18n="nav.heroes_discount">Heroes Discount</a>
       <div class="nav-dropdown">
-        <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-controls="resourcesDropdown">
+        <button type="button" class="nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="resourcesDropdown">
           <span data-i18n="nav.resources">Resources</span>
           <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
         </button>
@@ -190,7 +190,7 @@
             <label for="contact-message" data-i18n="contact.form_message_label">Message</label>
             <textarea id="contact-message" name="message" rows="4" required></textarea>
           </div>
-          <p class="form-note form-note--missing" role="alert"></p>
+          <p class="form-note form-note--missing" id="contactMissingNote" role="alert"></p>
           <button class="btn btn-primary btn-block" type="submit" data-i18n="contact.form_submit">Send message</button>
           <p class="form-note" role="status"></p>
         </form>
