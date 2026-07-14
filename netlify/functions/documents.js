@@ -23,6 +23,7 @@ const { readCookie, getSession, json } = require("./_lib/auth_utils");
 const { getJSON, setJSON, deleteKey, store } = require("./_lib/blob_store");
 const { createNotification } = require("./notifications");
 const { sendEmail } = require("./_lib/email");
+const { isRecognizedDataUri } = require("./_lib/file_signatures");
 
 const MAX_DATA_URI_LENGTH = 4 * 1024 * 1024; // ~4MB base64 string
 const VALID_TYPES = ["invoice", "receipt", "paperwork", "other"];
@@ -99,7 +100,12 @@ exports.handler = async (event) => {
     if (!VALID_TYPES.includes(body.type)) return json(400, { error: `type must be one of: ${VALID_TYPES.join(", ")}` });
     if (body.status && !VALID_STATUSES.includes(body.status)) return json(400, { error: `status must be one of: ${VALID_STATUSES.join(", ")}` });
     if (body.fileDataUri) {
-      if (!/^data:(application\/pdf|image\/)/.test(body.fileDataUri)) return json(400, { error: "Attachment must be a PDF or image." });
+      // Sniff the real file signature rather than trusting the data: URI's
+      // declared MIME type (see _lib/file_signatures.js) -- SVG is
+      // deliberately not allowed here since it can carry executable script.
+      if (!isRecognizedDataUri(body.fileDataUri, { allowSvg: false, allowPdf: true })) {
+        return json(400, { error: "Attachment must be a PDF, PNG, JPEG, or WEBP image." });
+      }
       if (body.fileDataUri.length > MAX_DATA_URI_LENGTH) return json(400, { error: "Attachment too large (max ~3MB)." });
     }
 

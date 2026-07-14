@@ -131,34 +131,10 @@ const BRIEF_CONTENT_LABELS = {
 // attribute on the file inputs is a UI hint only, not a real guarantee.
 // Sniff the actual file-format signature server-side before ever attaching
 // it to an outbound email, so this can't be used to relay arbitrary file
-// content through the business's email sender.
-const IMAGE_SIGNATURES = [
-  { name: "png", bytes: Buffer.from([0x89, 0x50, 0x4e, 0x47]) },
-  { name: "jpeg", bytes: Buffer.from([0xff, 0xd8, 0xff]) },
-  { name: "webp", bytes: Buffer.from("RIFF", "ascii"), offset: 0, secondary: { bytes: Buffer.from("WEBP", "ascii"), offset: 8 } },
-];
-
-function isRecognizedImage(base64Content, { allowSvg } = {}) {
-  if (!base64Content || typeof base64Content !== "string") return false;
-  let head;
-  try {
-    head = Buffer.from(base64Content.slice(0, 64), "base64");
-  } catch (e) {
-    return false;
-  }
-  if (head.length < 4) return false;
-  for (const sig of IMAGE_SIGNATURES) {
-    if (head.subarray(sig.offset || 0, (sig.offset || 0) + sig.bytes.length).equals(sig.bytes)) {
-      if (!sig.secondary) return true;
-      if (head.subarray(sig.secondary.offset, sig.secondary.offset + sig.secondary.bytes.length).equals(sig.secondary.bytes)) return true;
-    }
-  }
-  if (allowSvg) {
-    const text = head.toString("utf8").trim().toLowerCase();
-    if (text.startsWith("<?xml") || text.startsWith("<svg")) return true;
-  }
-  return false;
-}
+// content through the business's email sender. isRecognizedImage lives in
+// _lib/file_signatures.js so admin-images.js and documents.js can share the
+// exact same check instead of a looser MIME-prefix regex.
+const { isRecognizedImage } = require("./_lib/file_signatures");
 
 function esc(s) {
   return String(s || "").replace(/[&<>"']/g, (c) => (
