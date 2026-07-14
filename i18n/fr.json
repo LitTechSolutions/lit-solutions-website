@@ -423,7 +423,8 @@
     "step4_title": "Détails du projet",
     "step4_note": "C'est ce qui nous permet réellement de commencer à créer votre site -- cela sera transformé en résumé de projet PDF et nous sera envoyé directement.",
     "step4_back": "Pas maintenant",
-    "step4_submit": "Soumettre les détails du projet"
+    "step4_submit": "Soumettre les détails du projet",
+    "start_over": "Recommencer"
   },
   "pricing": {
     "hero_eyebrow": "Tarifs",

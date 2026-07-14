@@ -423,7 +423,8 @@
     "step4_title": "Detalye ng Proyekto",
     "step4_note": "Ito talaga ang nagbibigay-daan sa amin para magsimulang gumawa -- ito ang gagawing project summary PDF at ipapadala nang direkta sa amin.",
     "step4_back": "Sa ibang pagkakataon na lang",
-    "step4_submit": "I-submit ang detalye ng proyekto"
+    "step4_submit": "I-submit ang detalye ng proyekto",
+    "start_over": "Magsimula ulit"
   },
   "pricing": {
     "hero_eyebrow": "Presyo",

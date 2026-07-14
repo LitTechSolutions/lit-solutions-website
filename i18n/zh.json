@@ -423,7 +423,8 @@
     "step4_title": "项目详情",
     "step4_note": "这些信息才是真正能让我们开始动工的关键 -- 它们会生成一份项目摘要PDF,直接发送给我们。",
     "step4_back": "暂时不用",
-    "step4_submit": "提交项目详情"
+    "step4_submit": "提交项目详情",
+    "start_over": "重新开始"
   },
   "pricing": {
     "hero_eyebrow": "价格",

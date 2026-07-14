@@ -423,7 +423,8 @@
     "step4_title": "Szczegóły projektu",
     "step4_note": "To właśnie dzięki temu możemy faktycznie zacząć budowanie -- zamienia się to w podsumowanie projektu w PDF, które trafia bezpośrednio do nas.",
     "step4_back": "Nie teraz",
-    "step4_submit": "Wyślij szczegóły projektu"
+    "step4_submit": "Wyślij szczegóły projektu",
+    "start_over": "Zacznij od nowa"
   },
   "pricing": {
     "hero_eyebrow": "Cennik",

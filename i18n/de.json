@@ -423,7 +423,8 @@
     "step4_title": "Projektangaben",
     "step4_note": "Das ist es, was uns überhaupt erst mit dem Bau beginnen lässt -- daraus wird eine Projektzusammenfassung als PDF erstellt und direkt an uns gesendet.",
     "step4_back": "Nicht jetzt",
-    "step4_submit": "Projektangaben absenden"
+    "step4_submit": "Projektangaben absenden",
+    "start_over": "Von vorn beginnen"
   },
   "pricing": {
     "hero_eyebrow": "Preise",

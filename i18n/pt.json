@@ -423,7 +423,8 @@
     "step4_title": "Detalhes do projeto",
     "step4_note": "É isso que realmente nos permite começar a construir -- isso é transformado em um PDF de resumo do projeto e enviado diretamente para nós.",
     "step4_back": "Agora não",
-    "step4_submit": "Enviar detalhes do projeto"
+    "step4_submit": "Enviar detalhes do projeto",
+    "start_over": "Começar de novo"
   },
   "pricing": {
     "hero_eyebrow": "Preços",

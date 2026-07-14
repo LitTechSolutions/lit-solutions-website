@@ -423,7 +423,8 @@
     "step4_title": "Thông tin dự án",
     "step4_note": "Đây chính là thông tin giúp chúng tôi thực sự bắt đầu xây dựng -- thông tin này sẽ được chuyển thành bản tóm tắt dự án dạng PDF và gửi thẳng đến chúng tôi.",
     "step4_back": "Để sau",
-    "step4_submit": "Gửi thông tin dự án"
+    "step4_submit": "Gửi thông tin dự án",
+    "start_over": "Bắt đầu lại"
   },
   "pricing": {
     "hero_eyebrow": "Bảng giá",
