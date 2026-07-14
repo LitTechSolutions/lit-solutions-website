@@ -32,7 +32,8 @@
     "blog": "Blog",
     "booking": "Booking",
     "payments": "Payments",
-    "contact": "Contact"
+    "contact": "Contact",
+    "home": "Home"
   },
   "footer": {
     "tagline": "Websites, computers, networks, and security — handled by one call.",
@@ -41,7 +42,7 @@
     "sitemap": "Sitemap",
     "privacy_policy": "Privacy Policy",
     "terms": "Terms & Conditions",
-    "patch_notes": "Patch Notes",
+    "patch_notes": "Website Updates",
     "cookie_notice": "Cookie Notice",
     "facebook": "Facebook",
     "find_google": "Find us on Google",
@@ -153,7 +154,7 @@
     "letter_h2": "Thank you for taking the time to learn about us.",
     "letter_body": "Every client places their trust in me, and I take that responsibility seriously. Whether you're launching your first business, modernizing an existing website, or simply need someone local to help with technology, I'd be honored to earn your business and build something we're both proud of.",
     "letter_sign": "— Dylan Little, Founder",
-    "new_business_note": "We're a brand-new business — see our <a href=\"testimonials.html\" style=\"color:inherit; text-decoration:underline; font-weight:600;\">testimonials page</a> for what that means, and consider being one of our first reviews.",
+    "new_business_note": "We're a brand-new business — that means direct, personal attention on every job, without a queue of other clients ahead of you.",
     "cta_h2": "Ready to work together?",
     "cta_p": "Reach out directly or fill out our project form — we typically respond the same business day.",
     "cta_contact": "Contact Us",
@@ -430,7 +431,7 @@
     "cred1_desc": "Fire Controlman, 6 years — including 4 years of hands-on electrical & electronic systems maintenance aboard USS Antietam",
     "cred2_title": "B.S. Cybersecurity Technology",
     "cred3_title": "We're just getting started",
-    "cred3_desc": "New business, launch pricing, and an open invitation to be one of our first reviews — see <a href=\"testimonials.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">testimonials</a>.",
+    "cred3_desc": "New business and launch pricing, with the same Navy-trained discipline and flat, honest pricing on every job.",
     "contact_eyebrow": "Get in touch",
     "contact_h2": "Tell us what needs fixing.",
     "contact_p": "Reach out directly, or fill out our project form so we can get the full picture before we call. We typically respond the same business day.",
