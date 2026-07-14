@@ -45,54 +45,328 @@
       "note": "Consolidated all 41 findings into a tiered fix-now/medium/low roadmap, grouped the 11 owner-decision items into direct questions for Dylan, restated Session 7's build order, and wrote handoff notes for any future implementation session. Audit complete -- no further sessions defined."
     }
   },
-  "findingIdRange": { "next": "F042", "note": "IDs are derived from real findings only; there is no predetermined catalog size such as F001-F060." },
+  "findingIdRange": {
+    "next": "F042",
+    "note": "IDs are derived from real findings only; there is no predetermined catalog size such as F001-F060."
+  },
   "findings": {
-    "F001": { "severity": "Critical", "status": "Resolved", "domainSession": 2, "commit": "9a753a6", "summary": "USS Antietam hull number CG-64 -> CG-54" },
-    "F002": { "severity": "Critical", "status": "Resolved", "domainSession": 2, "commit": "94a9420", "summary": "Testimonials/Portfolio hero contradicted real content" },
-    "F003": { "severity": "High", "status": "Resolved", "domainSession": 2, "commit": "a6912fc", "summary": "Website Designer sticky-preview overlap bug" },
-    "F004": { "severity": "Critical", "status": "Resolved", "domainSession": 6, "commit": "57e124a", "summary": "Light-mode --notice-* CSS token bug" },
-    "F005": { "severity": "Critical", "status": "Resolved", "domainSession": 3, "commit": "57e124a", "summary": "admin-images.js authorization gap (GET checked auth only, not role)" },
-    "F006": { "severity": "Critical", "status": "Open", "domainSession": 3, "summary": "Privacy Policy under-discloses actual data collection" },
-    "F007": { "severity": "Critical", "status": "Open", "domainSession": 3, "summary": "Resend not named as a sub-processor in Privacy Policy" },
-    "F008": { "severity": "Critical", "status": "Open", "ownerDecision": true, "domainSession": 2, "summary": "Gallery empty with full nav prominence" },
-    "F009": { "severity": "Critical", "status": "Open", "ownerDecision": true, "domainSession": 2, "summary": "Booking non-functional with full nav prominence" },
-    "F010": { "severity": "Critical", "status": "Open", "ownerDecision": true, "domainSession": 2, "summary": "Unsourced 'independent 2026 market research' pricing claim" },
-    "F011": { "severity": "High", "status": "Open", "ownerDecision": true, "domainSession": 5, "summary": "Square terms-gate bypassable via direct link" },
-    "F012": { "severity": "High", "status": "Resolved", "domainSession": 4, "commit": "57e124a", "summary": "Website Designer uploads had no server-side MIME validation" },
-    "F013": { "severity": "High", "status": "Resolved", "domainSession": 5, "commit": "57e124a", "summary": "Website Designer backend trusted client-submitted price totals" },
-    "F014": { "severity": "High", "status": "Resolved", "domainSession": 3, "commit": "57e124a", "summary": "messages.js had no rate limit" },
-    "F015": { "severity": "High", "status": "Resolved", "domainSession": 3, "commit": "57e124a", "summary": "auth-register.js account enumeration" },
-    "F016": { "severity": "High", "status": "Open", "domainSession": 6, "summary": "Zero automated tests anywhere in the repository" },
-    "F017": { "severity": "High", "status": "Open", "ownerDecision": true, "domainSession": 2, "summary": "14+ distinct CTA phrasings for one conceptual action" },
-    "F018": { "severity": "High", "status": "Open", "domainSession": 2, "summary": "Intake form's 'just type 4' instruction" },
-    "F019": { "severity": "Medium", "status": "Open", "domainSession": 6, "summary": "Testimonials/Portfolio meta description will go stale once real content exists" },
-    "F020": { "severity": "Medium", "status": "Open", "domainSession": 6, "summary": "Identical LocalBusiness JSON-LD everywhere; no Service/FAQPage/Article schema" },
-    "F021": { "severity": "Medium", "status": "Open", "domainSession": 6, "summary": "Portfolio, blog-card, and blog-post renderers all hardcode alt=\"\" despite title/description being available; Gallery's renderer does this correctly" },
-    "F022": { "severity": "Medium", "status": "Open", "domainSession": 6, "summary": "No aria-live on Website Designer price ticker" },
-    "F023": { "severity": "Medium", "status": "Open", "domainSession": 6, "summary": "RTL sets dir but layout doesn't mirror" },
-    "F024": { "severity": "Medium", "status": "Open", "ownerDecision": true, "domainSession": 2, "summary": "Patch Notes reads as raw engineering changelog" },
-    "F025": { "severity": "Medium", "status": "Open", "domainSession": 6, "summary": "logo-full.png is 156KB, large for a logo" },
-    "F026": { "severity": "Medium", "status": "Open", "domainSession": 6, "summary": "Individual invalid form fields lack aria-invalid/aria-describedby (top-level error summary does correctly carry role=alert)" },
-    "F027": { "severity": "Low", "status": "Open", "domainSession": 3, "summary": "Rate limiter TOCTOU race; SVG not excluded from admin MIME allowlist in admin-images.js and documents.js (fix pattern already exists in website-designer.js's isRecognizedImage())" },
-    "F028": { "severity": "Low", "status": "Open", "domainSession": 6, "summary": "No aria-haspopup on nav dropdown toggles" },
-    "F029": { "severity": "Medium", "status": "Open", "ownerDecision": true, "domainSession": 2, "summary": "Navigation hierarchy may need simplification" },
-    "F030": { "severity": "Medium", "status": "Open", "ownerDecision": true, "domainSession": 3, "summary": "American Heroes Discount document-verification method" },
-    "F031": { "severity": "Medium", "status": "Open", "ownerDecision": true, "domainSession": 5, "summary": "Full-payment-upfront vs. deposit/milestone policy" },
-    "F032": { "severity": "Medium", "status": "Open", "ownerDecision": true, "domainSession": 5, "summary": "Subscription plan scope (edits, hours, carryover) undefined" },
-    "F033": { "severity": "Low", "status": "Open", "ownerDecision": true, "domainSession": 7, "summary": "Account-system feature scope and open-registration policy" },
-    "F034": { "severity": "Low", "status": "Open", "domainSession": 1, "summary": "Version string hardcoded across 33 footers, no shared source" },
-    "F035": { "severity": "Medium", "status": "Open", "domainSession": 1, "summary": "Base prices and Heroes-discount amounts duplicated across multiple files as plain text with no automatic cross-check (contrast the Website Designer's pricing constants, which are duplicated but auto-cross-checked via priceMismatchFlag)" },
-    "F036": { "severity": "Info", "status": "Open", "domainSession": 1, "summary": "Founder biography duplicated across 5 locations x 16 languages" },
-    "F037": { "severity": "High", "status": "Open", "domainSession": 2, "summary": "Homepage hero 'Get a free quote' CTA links to contact.html, contradicting that page's own copy which directs quote-seekers to intake.html" },
-    "F038": { "severity": "High", "status": "Open", "domainSession": 3, "summary": "Password-reset request never emails the reset link; only email-verification actually calls sendEmail()" },
-    "F039": { "severity": "Medium", "status": "Open", "domainSession": 3, "summary": "Account-preference language list hardcoded to 4 of 16 real supported languages" },
-    "F040": { "severity": "High", "status": "Open", "domainSession": 4, "summary": "messages.js embeds message body/sender name unescaped into outbound HTML email, unlike the esc() pattern used elsewhere in the codebase" },
-    "F041": { "severity": "Medium", "status": "Open", "domainSession": 6, "summary": "i18n/en.json has 466 of the 1,496 real translation keys (69% missing) -- stale relative to the 15 real language files, which are all identical to each other; no runtime impact since English never fetches en.json" }
+    "F001": {
+      "severity": "Critical",
+      "status": "Resolved",
+      "domainSession": 2,
+      "commit": "9a753a6",
+      "summary": "USS Antietam hull number CG-64 -> CG-54"
+    },
+    "F002": {
+      "severity": "Critical",
+      "status": "Resolved",
+      "domainSession": 2,
+      "commit": "94a9420",
+      "summary": "Testimonials/Portfolio hero contradicted real content"
+    },
+    "F003": {
+      "severity": "High",
+      "status": "Resolved",
+      "domainSession": 2,
+      "commit": "a6912fc",
+      "summary": "Website Designer sticky-preview overlap bug"
+    },
+    "F004": {
+      "severity": "Critical",
+      "status": "Resolved",
+      "domainSession": 6,
+      "commit": "57e124a",
+      "summary": "Light-mode --notice-* CSS token bug"
+    },
+    "F005": {
+      "severity": "Critical",
+      "status": "Resolved",
+      "domainSession": 3,
+      "commit": "57e124a",
+      "summary": "admin-images.js authorization gap (GET checked auth only, not role)"
+    },
+    "F006": {
+      "severity": "Critical",
+      "status": "Resolved",
+      "domainSession": 3,
+      "summary": "Privacy Policy under-discloses actual data collection",
+      "commit": "8caaae6",
+      "resolutionNote": "Fixed: Privacy Policy \u00a71 now discloses accounts, documents, messages, favorites, notifications, Website Designer uploads, and IP addresses; translated into all 16 languages. Dylan should still review final wording before this is considered final."
+    },
+    "F007": {
+      "severity": "Critical",
+      "status": "Resolved",
+      "domainSession": 3,
+      "summary": "Resend not named as a sub-processor in Privacy Policy",
+      "commit": "8caaae6",
+      "resolutionNote": "Fixed: Privacy Policy \u00a73 now names Resend as the transactional email sub-processor"
+    },
+    "F008": {
+      "severity": "Critical",
+      "status": "Open",
+      "ownerDecision": true,
+      "domainSession": 2,
+      "summary": "Gallery empty with full nav prominence"
+    },
+    "F009": {
+      "severity": "Critical",
+      "status": "Open",
+      "ownerDecision": true,
+      "domainSession": 2,
+      "summary": "Booking non-functional with full nav prominence"
+    },
+    "F010": {
+      "severity": "Critical",
+      "status": "Open",
+      "ownerDecision": true,
+      "domainSession": 2,
+      "summary": "Unsourced 'independent 2026 market research' pricing claim"
+    },
+    "F011": {
+      "severity": "High",
+      "status": "Open",
+      "ownerDecision": true,
+      "domainSession": 5,
+      "summary": "Square terms-gate bypassable via direct link"
+    },
+    "F012": {
+      "severity": "High",
+      "status": "Resolved",
+      "domainSession": 4,
+      "commit": "57e124a",
+      "summary": "Website Designer uploads had no server-side MIME validation"
+    },
+    "F013": {
+      "severity": "High",
+      "status": "Resolved",
+      "domainSession": 5,
+      "commit": "57e124a",
+      "summary": "Website Designer backend trusted client-submitted price totals"
+    },
+    "F014": {
+      "severity": "High",
+      "status": "Resolved",
+      "domainSession": 3,
+      "commit": "57e124a",
+      "summary": "messages.js had no rate limit"
+    },
+    "F015": {
+      "severity": "High",
+      "status": "Resolved",
+      "domainSession": 3,
+      "commit": "57e124a",
+      "summary": "auth-register.js account enumeration"
+    },
+    "F016": {
+      "severity": "High",
+      "status": "Resolved",
+      "domainSession": 6,
+      "summary": "Zero automated tests anywhere in the repository",
+      "commit": "c8387bc",
+      "resolutionNote": "Fixed: node:test coverage added for recomputeEstimate/priceMismatchFlag and a static consistency check of heroes-pricing.html's hand-typed Heroes Discount prices"
+    },
+    "F017": {
+      "severity": "High",
+      "status": "Open",
+      "ownerDecision": true,
+      "domainSession": 2,
+      "summary": "14+ distinct CTA phrasings for one conceptual action"
+    },
+    "F018": {
+      "severity": "High",
+      "status": "Resolved",
+      "domainSession": 2,
+      "summary": "Intake form's 'just type 4' instruction",
+      "commit": "98225ce",
+      "resolutionNote": "Fixed: intake copy replaced \"type 4\" with N/A across en + 15 langs"
+    },
+    "F019": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "domainSession": 6,
+      "summary": "Testimonials/Portfolio meta description will go stale once real content exists",
+      "commit": "e01a0ab",
+      "resolutionNote": "Fixed: js/cms.js updates meta/og:description once portfolio/testimonials get real content"
+    },
+    "F020": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "domainSession": 6,
+      "summary": "Identical LocalBusiness JSON-LD everywhere; no Service/FAQPage/Article schema",
+      "commit": "f088a04",
+      "resolutionNote": "Fixed: Service JSON-LD on the 5 service pages; full FAQPage JSON-LD on faq.html"
+    },
+    "F021": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "domainSession": 6,
+      "summary": "Portfolio, blog-card, and blog-post renderers all hardcode alt=\"\" despite title/description being available; Gallery's renderer does this correctly",
+      "commit": "db24fb7",
+      "resolutionNote": "Fixed: real alt text for blog/portfolio card images in js/cms.js"
+    },
+    "F022": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "domainSession": 6,
+      "summary": "No aria-live on Website Designer price ticker",
+      "commit": "db24fb7",
+      "resolutionNote": "Fixed: aria-live/aria-atomic added to the Website Designer price ticker"
+    },
+    "F023": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "domainSession": 6,
+      "summary": "RTL sets dir but layout doesn't mirror",
+      "commit": "6b4f997",
+      "resolutionNote": "Fixed: [dir=\"rtl\"] CSS override block for custom bullet markers, text-align, and margins that carry real directional meaning"
+    },
+    "F024": {
+      "severity": "Medium",
+      "status": "Open",
+      "ownerDecision": true,
+      "domainSession": 2,
+      "summary": "Patch Notes reads as raw engineering changelog"
+    },
+    "F025": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "domainSession": 6,
+      "summary": "logo-full.png is 156KB, large for a logo",
+      "commit": "939550e",
+      "resolutionNote": "Fixed: logo-full.png recompressed 157KB -> 79KB (palette quantization, imperceptible diff, PNG format kept for crawler compatibility)"
+    },
+    "F026": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "domainSession": 6,
+      "summary": "Individual invalid form fields lack aria-invalid/aria-describedby (top-level error summary does correctly carry role=alert)",
+      "commit": "196c2b2",
+      "resolutionNote": "Fixed: per-field aria-invalid/aria-describedby on contact.html and intake.js form validation"
+    },
+    "F027": {
+      "severity": "Low",
+      "status": "Resolved",
+      "domainSession": 3,
+      "summary": "Rate limiter TOCTOU race; SVG not excluded from admin MIME allowlist in admin-images.js and documents.js (fix pattern already exists in website-designer.js's isRecognizedImage())",
+      "commit": "53c1a99",
+      "resolutionNote": "Fixed: shared magic-byte file-signature sniffing (_lib/file_signatures.js) in admin-images.js and documents.js; TOCTOU limitation documented as accepted (no atomic primitive in @netlify/blobs 8.2.0)"
+    },
+    "F028": {
+      "severity": "Low",
+      "status": "Resolved",
+      "domainSession": 6,
+      "summary": "No aria-haspopup on nav dropdown toggles",
+      "commit": "196c2b2",
+      "resolutionNote": "Fixed: aria-haspopup added to language/services/resources nav dropdowns across all 33 public pages"
+    },
+    "F029": {
+      "severity": "Medium",
+      "status": "Open",
+      "ownerDecision": true,
+      "domainSession": 2,
+      "summary": "Navigation hierarchy may need simplification"
+    },
+    "F030": {
+      "severity": "Medium",
+      "status": "Open",
+      "ownerDecision": true,
+      "domainSession": 3,
+      "summary": "American Heroes Discount document-verification method"
+    },
+    "F031": {
+      "severity": "Medium",
+      "status": "Open",
+      "ownerDecision": true,
+      "domainSession": 5,
+      "summary": "Full-payment-upfront vs. deposit/milestone policy"
+    },
+    "F032": {
+      "severity": "Medium",
+      "status": "Open",
+      "ownerDecision": true,
+      "domainSession": 5,
+      "summary": "Subscription plan scope (edits, hours, carryover) undefined"
+    },
+    "F033": {
+      "severity": "Low",
+      "status": "Open",
+      "ownerDecision": true,
+      "domainSession": 7,
+      "summary": "Account-system feature scope and open-registration policy"
+    },
+    "F034": {
+      "severity": "Low",
+      "status": "Resolved",
+      "domainSession": 1,
+      "summary": "Version string hardcoded across 33 footers, no shared source",
+      "commit": "b72323a",
+      "resolutionNote": "Fixed: js/site-version.js is now the single source of truth for the footer \"Website Version\" string across all 33 pages"
+    },
+    "F035": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "domainSession": 1,
+      "summary": "Base prices and Heroes-discount amounts duplicated across multiple files as plain text with no automatic cross-check (contrast the Website Designer's pricing constants, which are duplicated but auto-cross-checked via priceMismatchFlag)",
+      "commit": "a63186b",
+      "resolutionNote": "Partially fixed: Website Designer client-side base price now derived from catalog JSON instead of hand-typed; remaining hand-typed Heroes Discount prices on heroes-pricing.html now guarded by an automated test (F016) instead of a runtime rewrite"
+    },
+    "F036": {
+      "severity": "Info",
+      "status": "Open",
+      "domainSession": 1,
+      "summary": "Founder biography duplicated across 5 locations x 16 languages"
+    },
+    "F037": {
+      "severity": "High",
+      "status": "Resolved",
+      "domainSession": 2,
+      "summary": "Homepage hero 'Get a free quote' CTA links to contact.html, contradicting that page's own copy which directs quote-seekers to intake.html",
+      "commit": "98225ce",
+      "resolutionNote": "Fixed: homepage CTA now points to intake.html"
+    },
+    "F038": {
+      "severity": "High",
+      "status": "Resolved",
+      "domainSession": 3,
+      "summary": "Password-reset request never emails the reset link; only email-verification actually calls sendEmail()",
+      "commit": "bbc646a",
+      "resolutionNote": "Fixed: password-reset request now emails a real reset link (page-aware admin/myaccount routing)"
+    },
+    "F039": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "domainSession": 3,
+      "summary": "Account-preference language list hardcoded to 4 of 16 real supported languages",
+      "commit": "bbc646a",
+      "resolutionNote": "Fixed: account.js VALID_LANGUAGES and myaccount.html LANGUAGES expanded to all 16 real languages"
+    },
+    "F040": {
+      "severity": "High",
+      "status": "Resolved",
+      "domainSession": 4,
+      "summary": "messages.js embeds message body/sender name unescaped into outbound HTML email, unlike the esc() pattern used elsewhere in the codebase",
+      "commit": "bbc646a",
+      "resolutionNote": "Fixed: messages.js HTML-escapes message content before building the outbound email"
+    },
+    "F041": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "domainSession": 6,
+      "summary": "i18n/en.json has 466 of the 1,496 real translation keys (69% missing) -- stale relative to the 15 real language files, which are all identical to each other; no runtime impact since English never fetches en.json",
+      "commit": "5eadd86",
+      "resolutionNote": "Fixed: i18n/en.json regenerated from 466 to 1,496 keys, exact parity with all 15 real translation files"
+    }
   },
   "counts": {
     "total": 41,
-    "resolved": 9,
+    "resolved": 29,
     "ownerDecisionOpen": 11,
-    "engineeringOpen": 21
-  }
+    "engineeringOpen": 1
+  },
+  "implementationPasses": [
+    {
+      "date": "2026-07-14",
+      "note": "Post-audit engineering fix pass covering every open, engineering-only finding from the Tier 1-3 roadmap in 08_FINAL_AUDIT_AND_ROADMAP.md except F036 (Info, founder-bio duplication -- not in scope this pass). Resolved: F006, F007, F016, F018, F019, F020, F021, F022, F023, F025, F026, F027, F028, F034, F035 (partial -- see its resolutionNote), F037, F038, F039, F040, F041. Commits 98225ce..8caaae6. The 11 Owner-Decision findings (F008-F011, F017, F024, F029-F033) were deliberately left untouched per 00_AUDIT_CONTROL.md's ground rule that Owner-Decision findings should not be silently implemented -- these still need Dylan's direct input."
+    }
+  ]
 }

@@ -42,19 +42,21 @@ than editing `01`–`08` in place.
 - `inventories/` — machine-readable inventories (e.g. `pricing-sources.json`
   when Session 5 produces it).
 
-## Findings summary (as of Session 6)
+## Findings summary (as of the post-audit engineering fix pass, 2026-07-14)
 
 - **41 findings** recorded (`F001`–`F041`).
-- **9 Resolved** this project session: F001–F005, F012–F015.
-- **11 Owner-Decision** findings awaiting Dylan's input: F008, F009, F010,
-  F011, F017, F024, F029, F030, F031, F032, F033.
-- **21 Open** (engineering-only, no owner decision needed): F006, F007,
-  F016, F018–F023, F025–F028, F034–F041.
-- **9 Resolved** this project session: F001–F005, F012–F015.
-- **11 Owner-Decision** findings awaiting Dylan's input: F008, F009, F010,
-  F011, F017, F024, F029, F030, F031, F032, F033.
-- **20 Open** (engineering-only, no owner decision needed): F006, F007,
-  F016, F018–F023, F025–F028, F034–F040.
+- **29 Resolved**: F001–F005, F012–F015 (during the audit itself), plus
+  F006, F007, F016, F018, F019, F020, F021, F022, F023, F025, F026,
+  F027, F028, F034, F035 (partial — see its `resolutionNote` in
+  `AUDIT_STATE.json`), F037, F038, F039, F040, F041 (the engineering fix
+  pass below).
+- **11 Owner-Decision** findings still awaiting Dylan's input: F008,
+  F009, F010, F011, F017, F024, F029, F030, F031, F032, F033 —
+  deliberately untouched per `00_AUDIT_CONTROL.md`'s ground rule that
+  these should not be silently implemented.
+- **1 Open, engineering-only**: F036 (Info — founder biography
+  duplicated across 5 locations × 16 languages; low-value/high-effort,
+  not attempted this pass).
 
 Session 2 added F037 (homepage's primary "quote" CTA links to the wrong
 form) and expanded F017 with a full CTA evidence table; F008, F009,
@@ -104,3 +106,37 @@ items with no owner decision needed, a medium tier, a low/info tier),
 grouped the 11 owner-decision findings into direct questions for Dylan,
 restated the confirmed new-feature build order, and wrote handoff notes
 for whoever picks up implementation next. The audit is now complete.
+
+## Post-audit engineering fix pass (2026-07-14)
+
+Implemented every open, engineering-only finding from the Session 8
+roadmap in one pass, one commit per finding (see `git log` for exact
+commits, also recorded per-finding in `AUDIT_STATE.json`):
+
+F038, F040, F037, F018, F027, F039, F041, F021, F022, F026, F028, F023,
+F020, F019, F035 (partial), F034, F025, F016, F006, F007.
+
+`F035` is only partially closed: the Website Designer's client-side base
+price is now derived from the catalog JSON instead of hand-typed, but
+the Heroes Discount page's hand-typed "was/now" prices were left as
+static translated copy (rewriting them at runtime risked corrupting the
+16-language markup) — instead, `test/heroes-pricing-consistency.test.js`
+(added under F016) automatically catches future drift between
+`pricing.html` and `heroes-pricing.html`.
+
+`F006`/`F007` (Privacy Policy) needed real policy-text drafting rather
+than a mechanical fix — the new disclosures were translated into all 16
+languages, but **Dylan should review the final wording before treating
+this as settled**, per `08_FINAL_AUDIT_AND_ROADMAP.md`'s own note that
+the gap was unambiguous but the exact phrasing wasn't.
+
+**Deliberately not implemented**, per `00_AUDIT_CONTROL.md`'s ground
+rule against silently implementing Owner-Decision findings: F008, F009,
+F010, F011, F017, F024, F029, F030, F031, F032, F033. These need
+Dylan's direct input, not engineering judgment.
+
+**Not attempted** (Info severity, out of scope for this pass): F036
+(founder biography duplicated across 5 locations × 16 languages).
+
+Only remaining engineering-only, non-Owner-Decision item after this
+pass: F036.
