@@ -15,7 +15,7 @@ Process and ground rules for every future development session, mirroring the pat
 
 - Complete only the assigned session/wave. Do not cascade into the next session automatically.
 - Application code changes require the relevant owner decisions to be resolved first (see `OWNER_DECISIONS.md`); documentation and pure-domain-type work does not.
-- Never work on `main` in this workspace, and never push without separate explicit permission — this repo's `origin` remote is the one that deploys `lit-solutions.tech` production.
+- Never work on `main` in this workspace, and **never push, ever, for the entire duration of this build** — Dylan's explicit instruction (2026-07-14) is to keep the whole Business Care Hub build local to this workspace, commits only, no `origin` push, no merge into a new `vN` folder, no merge into `main`, no deploy preview, until he says otherwise. This is not a per-session default that yields to convenience — treat it as standing until Dylan revokes it. See `DEPLOYMENT_PLAN.md` and `DECISION_LOG.md`.
 - Never modify `v23` (or any other `vN` folder) from this workspace.
 - Preserve working features; remove/replace code only after tests prove behavior and a rollback path exists.
 - Domain rules and tests before UI/provider coupling.

@@ -19,3 +19,9 @@ Decisions Claude made within its own discretion this session (not owner-controll
 **Decision:** Did not attempt to run `npm install`, add any dependency, or run any build/lint/test command beyond `node -v`/`npm -v`, since `package.json` has no `scripts` key and no test/lint/build tooling exists at all.
 **Why:** Session 0 explicitly prohibits installing packages; there was nothing to run baseline commands against beyond version checks.
 **How to apply:** The first session that needs a test runner (per `TEST_STRATEGY.md`) will be adding the first `devDependency` this repository has ever had — treat that as a deliberate, visible decision point, not a routine `npm install`.
+
+## 2026-07-14 — Standing instruction (given after Session 0)
+
+**Decision:** Keep everything for the entire Business Care Hub build local to this workspace (`LTS Stand Alone Software`, branch `feature/business-care-hub`). No pushing to `origin`, no merging into a new `vN` folder, no merging into `main`, no Netlify deploy preview — for any future session, not just Session 0 — until Dylan explicitly decides to ship.
+**Why:** Dylan's direct instruction. Supersedes the "two deploy paths" open question raised in `DEPLOYMENT_PLAN.md` during Session 0 — resolved as "neither, stay local" for now.
+**How to apply:** Every future session commits its work to this branch in this workspace and stops there. Don't propose or execute a push/merge/deploy step as part of routine session closure — that requires a separate, explicit, future instruction from Dylan. Updated in `00_DEV_CONTROL.md` ground rules and `DEPLOYMENT_PLAN.md`.

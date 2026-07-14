@@ -2,18 +2,14 @@
 
 ## How this fits the existing deploy model
 
-Production deploys today happen by pushing `main` from whichever `vN` folder under `Business Website/Website Code/` is currently "live" to `github.com/LitTechSolutions/lit-solutions-website`, which Netlify auto-deploys. This workspace (`LTS Stand Alone Software`, copied from `v23`) shares that same git history and `origin` remote, but Business Care Hub work happens on branch `feature/business-care-hub`, never on `main`, and nothing from this workspace gets pushed without separate explicit permission.
+Production deploys today happen by pushing `main` from whichever `vN` folder under `Business Website/Website Code/` is currently "live" to `github.com/LitTechSolutions/lit-solutions-website`, which Netlify auto-deploys. This workspace (`LTS Stand Alone Software`, copied from `v23`) shares that same git history and `origin` remote, but Business Care Hub work happens on branch `feature/business-care-hub`, never on `main`.
 
-Two deploy paths exist once Care Hub code is ready to ship, and which one is used is itself a decision for whenever Session 1+ produces real, mergeable code — not decided here:
-
-1. **Merge into the `vN` lineage:** once Care Hub work is ready, fold `feature/business-care-hub` into a new `v24` folder (copied forward from whatever the then-current live version is, per the existing convention), so the Care Hub deploys the same way the rest of the site always has.
-2. **Merge `feature/business-care-hub` into `main` directly** and push from this workspace, if the `vN`-folder convention is deliberately retired in favor of normal branch-based deploys for this initiative.
+**Decision (Dylan, 2026-07-14): stay entirely local for the whole build.** Everything for the Business Care Hub — every session, every wave, all 60 functions — stays committed to this workspace only. No pushing to `origin`, no merging into a new `vN` folder, no merging into `main`, no Netlify deploy preview, until Dylan explicitly decides to ship. This supersedes the "two deploy paths" question raised in Session 0 — neither path is taken for now. See `DECISION_LOG.md`.
 
 ## Environments
 
-- **Local (this workspace):** `feature/business-care-hub`, no deploys.
-- **Deploy preview:** Netlify's PR/branch-deploy previews are available once this branch (or a PR from it) is pushed — not done yet.
-- **Production:** `main` on the GitHub remote, auto-deployed by Netlify. Untouched by this session.
+- **Local (this workspace):** `feature/business-care-hub`, everything happens here, commits only, no deploys. This is the only environment in play for the entire build unless Dylan says otherwise.
+- **Deploy preview / production:** not used for this project at this time. Revisit only when Dylan decides to ship.
 
 ## Environment variables (document name/purpose/owner/environment/rotation — never values)
 
@@ -37,4 +33,4 @@ Not yet defined for this codebase generally (outside this session's scope to est
 
 ## This session
 
-Documentation only. No deploy, no environment or provider changes, nothing pushed.
+Documentation only. No deploy, no environment or provider changes, nothing pushed. Recorded Dylan's stay-local decision above.
