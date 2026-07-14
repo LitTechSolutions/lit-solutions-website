@@ -315,7 +315,7 @@
       "status": "Resolved",
       "domainSession": 1,
       "summary": "Founder biography duplicated across 5 locations x 16 languages",
-      "commit": "PENDING",
+      "commit": "f7d39ff",
       "resolutionNote": "Fixed (documentation-only, proportionate to Info severity): added a maintenance checklist to CLAUDE.md naming every one of the 5 HTML locations + all 16 i18n/*.json files that independently restate these facts, so a future correction (like the CG-64->CG-54 fix in 9a753a6) has one place to check the full list instead of being rediscovered by grep. Did not build a runtime JS substitution mechanism -- prototyped one but backed out since nested spans inside plain data-i18n (textContent-only) elements don't survive a language round-trip cleanly, which was more cleverness than the Info-severity finding warranted."
     },
     "F037": {
