@@ -841,8 +841,8 @@
   "intake": {
     "hero_eyebrow": "Tiếp nhận khách hàng mới",
     "hero_h1": "Cho chúng tôi biết bạn cần gì.",
-    "hero_lede": "Mọi trường đều cần có câu trả lời trước khi gửi — nếu điều gì đó không áp dụng, chỉ cần nhập số 4. Phần 3 và 4 chỉ áp dụng nếu bạn đánh dấu vào các ô liên quan, và sẽ tự động mở rộng khi bạn làm vậy.",
-    "form_instructions": "Mọi trường bên dưới đều cần có câu trả lời trước khi bạn có thể gửi. Nếu một câu hỏi không áp dụng cho bạn hoặc bạn không chắc chắn, chỉ cần nhập <strong>4</strong> hoặc <strong>N/A</strong> &mdash; cách nào cũng được. Phần 3 và 4 chỉ cần điền nếu bạn đánh dấu vào các ô tương ứng bên dưới; nếu không, bạn có thể bỏ qua (bạn vẫn có thể mở ra xem, không cần phải điền). Phần 5 ở cuối cùng là không bắt buộc.",
+    "hero_lede": "Mọi trường đều cần có câu trả lời trước khi gửi — nếu điều gì đó không áp dụng, chỉ cần nhập N/A. Phần 3 và 4 chỉ áp dụng nếu bạn đánh dấu vào các ô liên quan, và sẽ tự động mở rộng khi bạn làm vậy.",
+    "form_instructions": "Mọi trường bên dưới đều cần có câu trả lời trước khi bạn có thể gửi. Nếu một câu hỏi không áp dụng cho bạn hoặc bạn không chắc chắn, chỉ cần nhập <strong>N/A</strong>. Phần 3 và 4 chỉ cần điền nếu bạn đánh dấu vào các ô tương ứng bên dưới; nếu không, bạn có thể bỏ qua (bạn vẫn có thể mở ra xem, không cần phải điền). Phần 5 ở cuối cùng là không bắt buộc.",
     "block1_title": "<span class=\"intake-block-num\">1</span> Thông tin Liên hệ",
     "form_full_name_label": "Họ và Tên *",
     "form_business_name_label": "Doanh nghiệp / Tổ chức",

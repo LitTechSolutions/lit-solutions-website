@@ -841,8 +841,8 @@
   "intake": {
     "hero_eyebrow": "Nouvo kliyan",
     "hero_h1": "Di nou sa ou bezwen.",
-    "hero_lede": "Chak chan bezwen yon repons anvan soumèt — si yon bagay pa aplike, tou senpleman tape 4. Pati 3 ak 4 aplike sèlman si ou koche bwat ki gen rapò yo, e yo ap ouvri otomatikman lè ou fè sa.",
-    "form_instructions": "Chak chan anba a bezwen yon repons anvan ou ka soumèt. Si yon kesyon pa aplike a ou oswa ou pa sèten, tou senpleman tape <strong>4</strong> oswa <strong>N/A</strong> &mdash; nenpòt de yo fonksyone byen. Pati 3 ak 4 bezwen ranpli sèlman si ou koche bwat ki aplike anba yo; otreman, ou ka sote yo san pwoblèm (ou ka toujou louvri yo pou gade, pa gen presyon pou ranpli yo). Seksyon 5 nan touba a se opsyonèl.",
+    "hero_lede": "Chak chan bezwen yon repons anvan soumèt — si yon bagay pa aplike, tou senpleman tape N/A. Pati 3 ak 4 aplike sèlman si ou koche bwat ki gen rapò yo, e yo ap ouvri otomatikman lè ou fè sa.",
+    "form_instructions": "Chak chan anba a bezwen yon repons anvan ou ka soumèt. Si yon kesyon pa aplike a ou oswa ou pa sèten, tou senpleman tape <strong>N/A</strong>. Pati 3 ak 4 bezwen ranpli sèlman si ou koche bwat ki aplike anba yo; otreman, ou ka sote yo san pwoblèm (ou ka toujou louvri yo pou gade, pa gen presyon pou ranpli yo). Seksyon 5 nan touba a se opsyonèl.",
     "block1_title": "<span class=\"intake-block-num\">1</span> Enfòmasyon Kontak",
     "form_full_name_label": "Non Konplè *",
     "form_business_name_label": "Biznis / Òganizasyon",

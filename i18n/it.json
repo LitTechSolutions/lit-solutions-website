@@ -841,8 +841,8 @@
   "intake": {
     "hero_eyebrow": "Nuovo cliente",
     "hero_h1": "Ci dica di cosa ha bisogno.",
-    "hero_lede": "Ogni campo richiede una risposta prima dell'invio — se qualcosa non si applica, digiti semplicemente 4. Le parti 3 e 4 si applicano solo se seleziona le caselle pertinenti, e si espanderanno automaticamente quando lo fa.",
-    "form_instructions": "Ogni campo qui sotto richiede una risposta prima di poter inviare il modulo. Se una domanda non si applica a Lei o non è sicuro/a, digiti semplicemente <strong>4</strong> o <strong>N/D</strong> &mdash; vanno bene entrambi. Le parti 3 e 4 devono essere compilate solo se seleziona le caselle corrispondenti qui sotto; altrimenti, può tranquillamente saltarle (può comunque aprirle per dare un'occhiata, senza alcun obbligo di compilarle). La Sezione 5 in fondo è facoltativa.",
+    "hero_lede": "Ogni campo richiede una risposta prima dell'invio — se qualcosa non si applica, digiti semplicemente N/D. Le parti 3 e 4 si applicano solo se seleziona le caselle pertinenti, e si espanderanno automaticamente quando lo fa.",
+    "form_instructions": "Ogni campo qui sotto richiede una risposta prima di poter inviare il modulo. Se una domanda non si applica a Lei o non è sicuro/a, digiti semplicemente <strong>N/D</strong>. Le parti 3 e 4 devono essere compilate solo se seleziona le caselle corrispondenti qui sotto; altrimenti, può tranquillamente saltarle (può comunque aprirle per dare un'occhiata, senza alcun obbligo di compilarle). La Sezione 5 in fondo è facoltativa.",
     "block1_title": "<span class=\"intake-block-num\">1</span> Informazioni di Contatto",
     "form_full_name_label": "Nome Completo *",
     "form_business_name_label": "Attività / Organizzazione",

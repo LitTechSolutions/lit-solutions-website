@@ -841,8 +841,8 @@
   "intake": {
     "hero_eyebrow": "Bagong client intake",
     "hero_h1": "Sabihin sa amin ang kailangan mo.",
-    "hero_lede": "Bawat field ay kailangan ng sagot bago magsumite — kung hindi ito naaangkop, i-type na lang ang 4. Ang Parts 3 at 4 ay naaangkop lang kung i-check mo ang kaugnay na kahon, at awtomatikong lalawak kapag ginawa mo iyon.",
-    "form_instructions": "Bawat field sa ibaba ay kailangan ng sagot bago ka makapagsumite. Kung hindi naaangkop sa iyo ang isang tanong o hindi ka sigurado, i-type na lang ang <strong>4</strong> o <strong>N/A</strong> &mdash; parehong gumagana. Ang Parts 3 at 4 ay kailangan lamang punan kung i-check mo ang mga kahong naaangkop sa kanila sa ibaba; kung hindi, huwag mag-alala, maaari mo pa ring buksan ang mga ito para lang tingnan, walang pressure na punan ang mga ito. Ang Section 5 sa pinakababa ay opsyonal.",
+    "hero_lede": "Bawat field ay kailangan ng sagot bago magsumite — kung hindi ito naaangkop, i-type na lang ang N/A. Ang Parts 3 at 4 ay naaangkop lang kung i-check mo ang kaugnay na kahon, at awtomatikong lalawak kapag ginawa mo iyon.",
+    "form_instructions": "Bawat field sa ibaba ay kailangan ng sagot bago ka makapagsumite. Kung hindi naaangkop sa iyo ang isang tanong o hindi ka sigurado, i-type na lang ang <strong>N/A</strong>. Ang Parts 3 at 4 ay kailangan lamang punan kung i-check mo ang mga kahong naaangkop sa kanila sa ibaba; kung hindi, huwag mag-alala, maaari mo pa ring buksan ang mga ito para lang tingnan, walang pressure na punan ang mga ito. Ang Section 5 sa pinakababa ay opsyonal.",
     "block1_title": "<span class=\"intake-block-num\">1</span> Impormasyon sa Contact",
     "form_full_name_label": "Buong Pangalan *",
     "form_business_name_label": "Negosyo / Organisasyon",

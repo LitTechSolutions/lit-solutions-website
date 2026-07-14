@@ -841,8 +841,8 @@
   "intake": {
     "hero_eyebrow": "Zgłoszenie nowego klienta",
     "hero_h1": "Powiedz nam, czego potrzebujesz.",
-    "hero_lede": "Każde pole wymaga odpowiedzi przed przesłaniem — jeśli coś Cię nie dotyczy, wpisz po prostu 4. Części 3 i 4 dotyczą tylko sytuacji, gdy zaznaczysz odpowiednie pola, i rozwiną się automatycznie, gdy to zrobisz.",
-    "form_instructions": "Każde poniższe pole wymaga odpowiedzi, zanim będziesz mógł przesłać formularz. Jeśli pytanie Cię nie dotyczy lub nie masz pewności, wpisz po prostu <strong>4</strong> lub <strong>N/D</strong> &mdash; obie odpowiedzi są w porządku. Części 3 i 4 trzeba wypełnić tylko wtedy, gdy zaznaczysz odpowiednie pola poniżej; w przeciwnym razie możesz je pominąć (możesz je nadal otworzyć, by zerknąć — nie musisz ich wypełniać). Sekcja 5 na samym dole jest opcjonalna.",
+    "hero_lede": "Każde pole wymaga odpowiedzi przed przesłaniem — jeśli coś Cię nie dotyczy, wpisz po prostu N/D. Części 3 i 4 dotyczą tylko sytuacji, gdy zaznaczysz odpowiednie pola, i rozwiną się automatycznie, gdy to zrobisz.",
+    "form_instructions": "Każde poniższe pole wymaga odpowiedzi, zanim będziesz mógł przesłać formularz. Jeśli pytanie Cię nie dotyczy lub nie masz pewności, wpisz po prostu <strong>N/D</strong>. Części 3 i 4 trzeba wypełnić tylko wtedy, gdy zaznaczysz odpowiednie pola poniżej; w przeciwnym razie możesz je pominąć (możesz je nadal otworzyć, by zerknąć — nie musisz ich wypełniać). Sekcja 5 na samym dole jest opcjonalna.",
     "block1_title": "<span class=\"intake-block-num\">1</span> Dane kontaktowe",
     "form_full_name_label": "Imię i nazwisko *",
     "form_business_name_label": "Firma / organizacja",

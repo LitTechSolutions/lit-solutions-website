@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (missing.length) {
-      missingNote.innerHTML = `<strong>Please fill in the following before submitting (type 4 or N/A if a question doesn't apply to you):</strong><ul>${missing.map(m => `<li>${m}</li>`).join('')}</ul>`;
+      missingNote.innerHTML = `<strong>Please fill in the following before submitting (type N/A if a question doesn't apply to you):</strong><ul>${missing.map(m => `<li>${m}</li>`).join('')}</ul>`;
       missingNote.classList.add('is-visible');
       if (firstBadEl) {
         firstBadEl.scrollIntoView({ behavior: 'smooth', block: 'center' });

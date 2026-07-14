@@ -841,8 +841,8 @@
   "intake": {
     "hero_eyebrow": "Admissão de novos clientes",
     "hero_h1": "Conte-nos o que você precisa.",
-    "hero_lede": "Todos os campos precisam de uma resposta antes de enviar — se algo não se aplica, apenas digite 4. As Partes 3 e 4 só se aplicam se você marcar as caixas relevantes, e se expandirão automaticamente quando você o fizer.",
-    "form_instructions": "Todos os campos abaixo precisam de uma resposta antes que você possa enviar. Se uma pergunta não se aplicar a você ou você não tiver certeza, apenas digite <strong>4</strong> ou <strong>N/A</strong> &mdash; qualquer um dos dois funciona bem. As Partes 3 e 4 só precisam ser preenchidas se você marcar as caixas correspondentes abaixo; caso contrário, sinta-se à vontade para pular (você ainda pode abri-las para olhar, sem pressão para preenchê-las). A Seção 5, bem no final, é opcional.",
+    "hero_lede": "Todos os campos precisam de uma resposta antes de enviar — se algo não se aplica, apenas digite N/A. As Partes 3 e 4 só se aplicam se você marcar as caixas relevantes, e se expandirão automaticamente quando você o fizer.",
+    "form_instructions": "Todos os campos abaixo precisam de uma resposta antes que você possa enviar. Se uma pergunta não se aplicar a você ou você não tiver certeza, apenas digite <strong>N/A</strong>. As Partes 3 e 4 só precisam ser preenchidas se você marcar as caixas correspondentes abaixo; caso contrário, sinta-se à vontade para pular (você ainda pode abri-las para olhar, sem pressão para preenchê-las). A Seção 5, bem no final, é opcional.",
     "block1_title": "<span class=\"intake-block-num\">1</span> Informações de Contato",
     "form_full_name_label": "Nome Completo *",
     "form_business_name_label": "Empresa / Organização",

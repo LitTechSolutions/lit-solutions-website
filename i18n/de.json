@@ -841,8 +841,8 @@
   "intake": {
     "hero_eyebrow": "Neukundenaufnahme",
     "hero_h1": "Sagen Sie uns, was Sie brauchen.",
-    "hero_lede": "Jedes Feld muss vor dem Absenden ausgefüllt werden — wenn etwas nicht zutrifft, geben Sie einfach 4 ein. Teil 3 und 4 gelten nur, wenn Sie die entsprechenden Kästchen ankreuzen, und werden dann automatisch eingeblendet.",
-    "form_instructions": "Jedes Feld unten muss ausgefüllt werden, bevor Sie absenden können. Wenn eine Frage nicht auf Sie zutrifft oder Sie sich nicht sicher sind, geben Sie einfach <strong>4</strong> oder <strong>N/A</strong> &mdash; beides ist in Ordnung. Teil 3 und 4 müssen nur ausgefüllt werden, wenn Sie die entsprechenden Kästchen unten ankreuzen; andernfalls können Sie sie einfach überspringen (Sie können sie trotzdem zur Ansicht öffnen, ohne sie ausfüllen zu müssen). Abschnitt 5 ganz unten ist optional.",
+    "hero_lede": "Jedes Feld muss vor dem Absenden ausgefüllt werden — wenn etwas nicht zutrifft, geben Sie einfach N/A ein. Teil 3 und 4 gelten nur, wenn Sie die entsprechenden Kästchen ankreuzen, und werden dann automatisch eingeblendet.",
+    "form_instructions": "Jedes Feld unten muss ausgefüllt werden, bevor Sie absenden können. Wenn eine Frage nicht auf Sie zutrifft oder Sie sich nicht sicher sind, geben Sie einfach <strong>N/A</strong> ein. Teil 3 und 4 müssen nur ausgefüllt werden, wenn Sie die entsprechenden Kästchen unten ankreuzen; andernfalls können Sie sie einfach überspringen (Sie können sie trotzdem zur Ansicht öffnen, ohne sie ausfüllen zu müssen). Abschnitt 5 ganz unten ist optional.",
     "block1_title": "<span class=\"intake-block-num\">1</span> Kontaktinformationen",
     "form_full_name_label": "Vollständiger Name *",
     "form_business_name_label": "Unternehmen / Organisation",

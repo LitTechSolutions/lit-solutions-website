@@ -841,8 +841,8 @@
   "intake": {
     "hero_eyebrow": "Accueil des nouveaux clients",
     "hero_h1": "Dites-nous ce dont vous avez besoin.",
-    "hero_lede": "Chaque champ doit être rempli avant l'envoi — si quelque chose ne s'applique pas, écrivez simplement 4. Les parties 3 et 4 ne s'appliquent que si vous cochez les cases pertinentes, et elles se déploient automatiquement lorsque vous le faites.",
-    "form_instructions": "Chaque champ ci-dessous doit être rempli avant l'envoi. Si une question ne s'applique pas à vous ou que vous n'êtes pas certain, écrivez simplement <strong>4</strong> ou <strong>S.O.</strong> &mdash; les deux fonctionnent tout aussi bien. Les parties 3 et 4 ne doivent être remplies que si vous cochez les cases correspondantes ci-dessous; sinon, sentez-vous libre de les ignorer (vous pouvez tout de même les ouvrir pour y jeter un coup d'œil, sans obligation de les remplir). La section 5, tout en bas, est facultative.",
+    "hero_lede": "Chaque champ doit être rempli avant l'envoi — si quelque chose ne s'applique pas, écrivez simplement S.O. Les parties 3 et 4 ne s'appliquent que si vous cochez les cases pertinentes, et elles se déploient automatiquement lorsque vous le faites.",
+    "form_instructions": "Chaque champ ci-dessous doit être rempli avant l'envoi. Si une question ne s'applique pas à vous ou que vous n'êtes pas certain, écrivez simplement <strong>S.O.</strong> Les parties 3 et 4 ne doivent être remplies que si vous cochez les cases correspondantes ci-dessous; sinon, sentez-vous libre de les ignorer (vous pouvez tout de même les ouvrir pour y jeter un coup d'œil, sans obligation de les remplir). La section 5, tout en bas, est facultative.",
     "block1_title": "<span class=\"intake-block-num\">1</span> Coordonnées",
     "form_full_name_label": "Nom complet *",
     "form_business_name_label": "Entreprise / Organisation",
