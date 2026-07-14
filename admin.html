@@ -176,11 +176,11 @@
       '<div class="form-row"><label for="rr-email">Email</label><input id="rr-email" type="email"></div>' +
       '<button class="btn btn-primary" id="rr-submit">Generate reset link</button>' +
       '<p class="status" id="rr-status"></p>' +
-      '<p style="font-size:.8rem; color:var(--ink-faint); margin-top:1rem;">Automatic email delivery isn\'t wired up yet -- after requesting, find the token in the Netlify Blobs dashboard (Site &gt; Blobs &gt; "tokens" store) and open <code>admin.html#reset?token=&lt;token&gt;</code> yourself. See README_ADMIN_SETUP.md.</p>' +
+      '<p style="font-size:.8rem; color:var(--ink-faint); margin-top:1rem;">Check your email for a reset link. If it doesn\'t arrive, see README_ADMIN_SETUP.md for how to fetch the token by hand.</p>' +
       '</div>');
     v.querySelector("#rr-submit").addEventListener("click", async function () {
       var status = v.querySelector("#rr-status");
-      var r = await api("auth-password-reset", { method: "POST", body: JSON.stringify({ action: "request", email: v.querySelector("#rr-email").value }) });
+      var r = await api("auth-password-reset", { method: "POST", body: JSON.stringify({ action: "request", email: v.querySelector("#rr-email").value, page: "admin" }) });
       status.textContent = (r.body && r.body.message) || "Request sent.";
       status.className = "status ok";
     });

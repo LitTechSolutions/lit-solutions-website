@@ -1450,7 +1450,7 @@
     "reset_request_heading": "パスワードをリセット",
     "reset_request_email_label": "メールアドレス",
     "reset_request_submit": "リセット用リンクを送信",
-    "reset_request_contact_note": "自動メール送信機能はまだ準備中です。<a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a>までお電話いただくか、<a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a>までメールをお送りください。ログインできるようサポートいたします。",
+    "reset_request_contact_note": "メールが届きませんか？迷惑メールフォルダをご確認いただくか、<a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a>までお電話いただくか、<a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a>までメールをお送りください。ログインできるようサポートいたします。",
     "reset_heading": "新しいパスワードを設定",
     "reset_new_password_label": "新しいパスワード",
     "reset_submit": "パスワードを更新",

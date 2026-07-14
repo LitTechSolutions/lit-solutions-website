@@ -1450,7 +1450,7 @@
     "reset_request_heading": "Reimposta la Sua password",
     "reset_request_email_label": "Email",
     "reset_request_submit": "Invia link di reimpostazione",
-    "reset_request_contact_note": "L'invio automatico delle email non è ancora attivo. Chiami il <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> o scriva a <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a> e La aiuteremo a rientrare.",
+    "reset_request_contact_note": "Non hai ricevuto l'email? Controlli la cartella spam, oppure chiami il <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> o scriva a <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a> e La aiuteremo a rientrare.",
     "reset_heading": "Imposta una nuova password",
     "reset_new_password_label": "Nuova password",
     "reset_submit": "Aggiorna password",

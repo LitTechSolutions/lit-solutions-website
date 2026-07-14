@@ -1450,7 +1450,7 @@
     "reset_request_heading": "I-reset ang iyong password",
     "reset_request_email_label": "Email",
     "reset_request_submit": "Ipadala ang reset link",
-    "reset_request_contact_note": "Hindi pa naka-set up ang awtomatikong email delivery. Tumawag sa <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> o mag-email sa <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a> at tutulungan ka naming makapasok muli.",
+    "reset_request_contact_note": "Hindi natanggap ang email? Suriin ang iyong spam folder, o tumawag sa <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> o mag-email sa <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a> at tutulungan ka naming makapasok muli.",
     "reset_heading": "Magtakda ng bagong password",
     "reset_new_password_label": "Bagong password",
     "reset_submit": "I-update ang password",

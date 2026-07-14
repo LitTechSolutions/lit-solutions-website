@@ -1450,7 +1450,7 @@
     "reset_request_heading": "Zresetuj hasło",
     "reset_request_email_label": "E-mail",
     "reset_request_submit": "Wyślij link do resetowania",
-    "reset_request_contact_note": "Automatyczne wysyłanie e-maili nie jest jeszcze skonfigurowane. Zadzwoń pod <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> lub napisz e-mail na <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a>, a pomożemy Ci odzyskać dostęp.",
+    "reset_request_contact_note": "Nie otrzymałeś e-maila? Sprawdź folder ze spamem, albo zadzwoń pod <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> lub napisz e-mail na <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a>, a pomożemy Ci odzyskać dostęp.",
     "reset_heading": "Ustaw nowe hasło",
     "reset_new_password_label": "Nowe hasło",
     "reset_submit": "Zaktualizuj hasło",

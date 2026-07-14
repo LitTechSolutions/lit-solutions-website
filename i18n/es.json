@@ -1450,7 +1450,7 @@
     "reset_request_heading": "Restablece tu contraseña",
     "reset_request_email_label": "Correo electrónico",
     "reset_request_submit": "Enviar enlace de restablecimiento",
-    "reset_request_contact_note": "El envío automático de correos electrónicos aún no está configurado. Llama al <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> o escribe a <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a> y te ayudaremos a recuperar el acceso.",
+    "reset_request_contact_note": "¿No recibiste el correo? Revisa tu carpeta de spam, o llama al <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> o escribe a <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a> y te ayudaremos a recuperar el acceso.",
     "reset_heading": "Establece una nueva contraseña",
     "reset_new_password_label": "Nueva contraseña",
     "reset_submit": "Actualizar contraseña",

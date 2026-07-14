@@ -1450,7 +1450,7 @@
     "reset_request_heading": "Passwort zurücksetzen",
     "reset_request_email_label": "E-Mail",
     "reset_request_submit": "Link zum Zurücksetzen senden",
-    "reset_request_contact_note": "Der automatische E-Mail-Versand ist noch nicht eingerichtet. Rufen Sie <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> an oder schreiben Sie eine E-Mail an <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a>, und wir helfen Ihnen, wieder Zugriff zu erhalten.",
+    "reset_request_contact_note": "Keine E-Mail erhalten? Prüfen Sie Ihren Spam-Ordner, oder rufen Sie <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> an oder schreiben Sie eine E-Mail an <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a>, und wir helfen Ihnen, wieder Zugriff zu erhalten.",
     "reset_heading": "Neues Passwort festlegen",
     "reset_new_password_label": "Neues Passwort",
     "reset_submit": "Passwort aktualisieren",

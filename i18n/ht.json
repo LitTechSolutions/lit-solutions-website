@@ -1450,7 +1450,7 @@
     "reset_request_heading": "Reyajiste modpas ou",
     "reset_request_email_label": "Imèl",
     "reset_request_submit": "Voye lyen reyajisteman",
-    "reset_request_contact_note": "Livrezon imèl otomatik poko enstale. Rele <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> oswa voye imèl bay <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a> e n ap ede ou antre ankò.",
+    "reset_request_contact_note": "Ou pa resevwa imèl la? Tcheke katab spam ou, oswa rele <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> oswa voye imèl bay <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a> e n ap ede ou antre ankò.",
     "reset_heading": "Mete yon nouvo modpas",
     "reset_new_password_label": "Nouvo modpas",
     "reset_submit": "Mete modpas ajou",

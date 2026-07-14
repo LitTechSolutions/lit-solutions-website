@@ -384,7 +384,7 @@
       '<div class="form-row"><label for="rr-email" data-i18n="myaccount.reset_request_email_label">Email</label><input id="rr-email" type="email"></div>' +
       '<button class="btn btn-primary" id="rr-submit" data-i18n="myaccount.reset_request_submit">Send reset link</button>' +
       '<p class="form-note" id="rr-status"></p>' +
-      '<p style="font-size:.8rem; color:var(--ink-faint); margin-top:1rem;" data-i18n-html="myaccount.reset_request_contact_note">Automatic email delivery isn\'t wired up yet. Call <a href="tel:+16364260289" style="color:var(--accent-teal-text); text-decoration:underline;">636-426-0289</a> or email <a href="mailto:dylan@lit-solutions.tech" style="color:var(--accent-teal-text); text-decoration:underline;">dylan@lit-solutions.tech</a> and we\'ll help you get back in.</p></div>');
+      '<p style="font-size:.8rem; color:var(--ink-faint); margin-top:1rem;" data-i18n-html="myaccount.reset_request_contact_note">Didn\'t get the email? Check your spam folder, or call <a href="tel:+16364260289" style="color:var(--accent-teal-text); text-decoration:underline;">636-426-0289</a> or email <a href="mailto:dylan@lit-solutions.tech" style="color:var(--accent-teal-text); text-decoration:underline;">dylan@lit-solutions.tech</a> and we\'ll help you get back in.</p></div>');
     v.querySelector("#rr-submit").addEventListener("click", async function () {
       var status = v.querySelector("#rr-status");
       var r = await api("auth-password-reset", { method: "POST", body: JSON.stringify({ action: "request", email: v.querySelector("#rr-email").value }) });

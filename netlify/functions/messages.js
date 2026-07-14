@@ -29,12 +29,23 @@ async function findUserByEmail(email) {
   return getJSON("users", email.toLowerCase());
 }
 
+// Matches the esc() helper already used consistently in
+// website-designer.js for building outbound HTML email from user input --
+// message body/sender name are both customer-controlled and must never be
+// interpolated into an HTML email unescaped.
+function esc(s) {
+  return String(s || "").replace(/[&<>"']/g, (c) => (
+    { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
+  ));
+}
+
 async function notifyNewMessage(event, { toEmail, fromName, body }) {
   const snippet = body.length > 240 ? body.slice(0, 240) + "…" : body;
+  const safeSnippet = esc(snippet).replace(/\n/g, "<br>");
   await sendEmail({
     to: toEmail,
     subject: `New message from ${fromName} — Little Technical Solutions LLC`,
-    html: `<p>${fromName} sent you a message:</p><blockquote>${snippet.replace(/\n/g, "<br>")}</blockquote>` +
+    html: `<p>${esc(fromName)} sent you a message:</p><blockquote>${safeSnippet}</blockquote>` +
       `<p>Sign in to read the full conversation and reply.</p>`,
   });
 }

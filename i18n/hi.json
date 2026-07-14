@@ -1450,7 +1450,7 @@
     "reset_request_heading": "अपना पासवर्ड रीसेट करें",
     "reset_request_email_label": "ईमेल",
     "reset_request_submit": "रीसेट लिंक भेजें",
-    "reset_request_contact_note": "स्वचालित ईमेल डिलीवरी अभी सेट नहीं है। <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> पर कॉल करें या <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a> पर ईमेल करें और हम आपको वापस अंदर आने में मदद करेंगे।",
+    "reset_request_contact_note": "ईमेल नहीं मिला? अपना स्पैम फ़ोल्डर देखें, या <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> पर कॉल करें या <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a> पर ईमेल करें और हम आपको वापस अंदर आने में मदद करेंगे।",
     "reset_heading": "एक नया पासवर्ड सेट करें",
     "reset_new_password_label": "नया पासवर्ड",
     "reset_submit": "पासवर्ड अपडेट करें",

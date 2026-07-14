@@ -1450,7 +1450,7 @@
     "reset_request_heading": "Réinitialiser votre mot de passe",
     "reset_request_email_label": "Courriel",
     "reset_request_submit": "Envoyer le lien de réinitialisation",
-    "reset_request_contact_note": "L'envoi automatique de courriels n'est pas encore configuré. Appelez au <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> ou écrivez à <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a> et nous vous aiderons à retrouver l'accès.",
+    "reset_request_contact_note": "Vous n'avez pas reçu l'e-mail ? Vérifiez votre dossier spam, ou appelez au <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> ou écrivez à <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a> et nous vous aiderons à retrouver l'accès.",
     "reset_heading": "Définir un nouveau mot de passe",
     "reset_new_password_label": "Nouveau mot de passe",
     "reset_submit": "Mettre à jour le mot de passe",

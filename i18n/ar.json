@@ -1450,7 +1450,7 @@
     "reset_request_heading": "إعادة تعيين كلمة المرور",
     "reset_request_email_label": "البريد الإلكتروني",
     "reset_request_submit": "إرسال رابط إعادة التعيين",
-    "reset_request_contact_note": "لم يتم ربط الإرسال التلقائي للبريد الإلكتروني بعد. اتصل على <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> أو راسلنا عبر البريد الإلكتروني على <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a> وسنساعدك على استعادة الدخول.",
+    "reset_request_contact_note": "لم تصلك الرسالة؟ تحقق من مجلد الرسائل غير المرغوب فيها، أو اتصل على <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> أو راسلنا عبر البريد الإلكتروني على <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a> وسنساعدك على استعادة الدخول.",
     "reset_heading": "تعيين كلمة مرور جديدة",
     "reset_new_password_label": "كلمة المرور الجديدة",
     "reset_submit": "تحديث كلمة المرور",

@@ -1450,7 +1450,7 @@
     "reset_request_heading": "Redefina sua senha",
     "reset_request_email_label": "E-mail",
     "reset_request_submit": "Enviar link de redefinição",
-    "reset_request_contact_note": "O envio automático de e-mail ainda não está configurado. Ligue para <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> ou envie um e-mail para <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a> e vamos te ajudar a recuperar o acesso.",
+    "reset_request_contact_note": "Não recebeu o e-mail? Verifique sua pasta de spam, ou ligue para <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> ou envie um e-mail para <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a> e vamos te ajudar a recuperar o acesso.",
     "reset_heading": "Defina uma nova senha",
     "reset_new_password_label": "Nova senha",
     "reset_submit": "Atualizar senha",

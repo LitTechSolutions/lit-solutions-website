@@ -1450,7 +1450,7 @@
     "reset_request_heading": "비밀번호 재설정",
     "reset_request_email_label": "이메일",
     "reset_request_submit": "재설정 링크 보내기",
-    "reset_request_contact_note": "자동 이메일 발송 기능은 아직 연동되지 않았습니다. <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a>로 전화하시거나 <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a>로 이메일을 보내주시면 다시 로그인하실 수 있도록 도와드리겠습니다.",
+    "reset_request_contact_note": "이메일을 받지 못하셨나요? 스팸 폴더를 확인하시거나, <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a>로 전화하시거나 <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a>로 이메일을 보내주시면 다시 로그인하실 수 있도록 도와드리겠습니다.",
     "reset_heading": "새 비밀번호 설정",
     "reset_new_password_label": "새 비밀번호",
     "reset_submit": "비밀번호 업데이트",

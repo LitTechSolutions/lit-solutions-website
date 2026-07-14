@@ -1439,7 +1439,7 @@
     "reset_request_heading": "Восстановление пароля",
     "reset_request_email_label": "Email",
     "reset_request_submit": "Отправить ссылку для восстановления",
-    "reset_request_contact_note": "Автоматическая отправка писем пока не настроена. Позвоните по номеру <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> или напишите на <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a>, и мы поможем вам восстановить доступ.",
+    "reset_request_contact_note": "Не получили письмо? Проверьте папку со спамом, или позвоните по номеру <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> или напишите на <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a>, и мы поможем вам восстановить доступ.",
     "reset_heading": "Задайте новый пароль",
     "reset_new_password_label": "Новый пароль",
     "reset_submit": "Обновить пароль",

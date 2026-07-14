@@ -1450,7 +1450,7 @@
     "reset_request_heading": "Đặt lại mật khẩu của bạn",
     "reset_request_email_label": "Email",
     "reset_request_submit": "Gửi liên kết đặt lại",
-    "reset_request_contact_note": "Tính năng gửi email tự động chưa được thiết lập. Hãy gọi <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> hoặc gửi email đến <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a> và chúng tôi sẽ giúp bạn đăng nhập lại.",
+    "reset_request_contact_note": "Không nhận được email? Hãy kiểm tra thư mục spam, hoặc gọi <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> hoặc gửi email đến <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a> và chúng tôi sẽ giúp bạn đăng nhập lại.",
     "reset_heading": "Đặt mật khẩu mới",
     "reset_new_password_label": "Mật khẩu mới",
     "reset_submit": "Cập nhật mật khẩu",
