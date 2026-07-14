@@ -1,0 +1,33 @@
+Session 0 baseline command evidence
+====================================
+Date: 2026-07-14
+Workspace: LTS Stand Alone Software (copied from v23 @ 1570734)
+
+$ node --version
+v24.18.0
+
+$ npm --version
+11.16.0
+
+$ cat package.json
+{
+  "name": "lts-website",
+  "private": true,
+  "description": "Little Technical Solutions LLC website + admin content module (Netlify Functions + Blobs).",
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}
+(No "scripts" key present -- no build, test, lint, or typecheck command exists to run.)
+
+$ find . -maxdepth 1 -iname ".eslintrc*" -o -maxdepth 1 -iname "jest.config*" -o -maxdepth 1 -iname "playwright.config*" -o -maxdepth 1 -iname "tsconfig*"
+(no output -- none of these config files exist)
+
+$ ls node_modules
+@netlify   .package-lock.json
+(only @netlify/blobs and its own lockfile; no bundler, test framework, or linter installed)
+
+Conclusion: no baseline build/test/lint/typecheck commands exist to run against this
+repository as of Session 0. This is expected for a static, build-less site and is
+recorded here rather than treated as a failure. TEST_STRATEGY.md documents the planned
+tooling decision for when the first tests are needed.
