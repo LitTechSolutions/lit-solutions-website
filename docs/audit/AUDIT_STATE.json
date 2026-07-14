@@ -2,7 +2,7 @@
   "project": "lit-solutions.tech",
   "repoVersion": "v23",
   "auditFramework": "docs/audit/",
-  "readyForSession": 6,
+  "readyForSession": 7,
   "sessions": {
     "1": {
       "doc": "01_REPOSITORY_BASELINE.md",
@@ -29,11 +29,15 @@
       "status": "complete",
       "note": "Reviewed Website Designer pricing/discount logic (client + server recompute), catalogs, pricing.html, heroes-pricing.html, payment.html, terms.html. No new findings -- re-verified F010, F011 (with exact terms-gate mechanism), F031, F032 (refined), F035 (clarified: constants are cross-checked, plain-text figures are not). All spot-checked dollar figures are currently mathematically correct."
     },
-    "6": { "doc": "06_QUALITY_AUDIT.md", "status": "not_started" },
+    "6": {
+      "doc": "06_QUALITY_AUDIT.md",
+      "status": "complete",
+      "note": "Reviewed css/style.css notice tokens and RTL rules, js/cms.js image alt rendering, website-designer price ticker, intake.js form-error markup, nav dropdown ARIA, and all 16 i18n/*.json files for key parity. Confirmed F004 resolved; re-verified F016/F019/F020/F022/F023/F025/F026/F028 unchanged. Expanded F021 to include blog images. Added F041 (en.json 69% incomplete vs. the 15 real translation files, no runtime impact)."
+    },
     "7": { "doc": "07_REQUIREMENTS_GAP_MATRIX.md", "status": "not_started" },
     "8": { "doc": "08_FINAL_AUDIT_AND_ROADMAP.md", "status": "not_started" }
   },
-  "findingIdRange": { "next": "F041", "note": "IDs are derived from real findings only; there is no predetermined catalog size such as F001-F060." },
+  "findingIdRange": { "next": "F042", "note": "IDs are derived from real findings only; there is no predetermined catalog size such as F001-F060." },
   "findings": {
     "F001": { "severity": "Critical", "status": "Resolved", "domainSession": 2, "commit": "9a753a6", "summary": "USS Antietam hull number CG-64 -> CG-54" },
     "F002": { "severity": "Critical", "status": "Resolved", "domainSession": 2, "commit": "94a9420", "summary": "Testimonials/Portfolio hero contradicted real content" },
@@ -55,12 +59,12 @@
     "F018": { "severity": "High", "status": "Open", "domainSession": 2, "summary": "Intake form's 'just type 4' instruction" },
     "F019": { "severity": "Medium", "status": "Open", "domainSession": 6, "summary": "Testimonials/Portfolio meta description will go stale once real content exists" },
     "F020": { "severity": "Medium", "status": "Open", "domainSession": 6, "summary": "Identical LocalBusiness JSON-LD everywhere; no Service/FAQPage/Article schema" },
-    "F021": { "severity": "Medium", "status": "Open", "domainSession": 6, "summary": "Portfolio card renderer hardcodes alt=\"\"" },
+    "F021": { "severity": "Medium", "status": "Open", "domainSession": 6, "summary": "Portfolio, blog-card, and blog-post renderers all hardcode alt=\"\" despite title/description being available; Gallery's renderer does this correctly" },
     "F022": { "severity": "Medium", "status": "Open", "domainSession": 6, "summary": "No aria-live on Website Designer price ticker" },
     "F023": { "severity": "Medium", "status": "Open", "domainSession": 6, "summary": "RTL sets dir but layout doesn't mirror" },
     "F024": { "severity": "Medium", "status": "Open", "ownerDecision": true, "domainSession": 2, "summary": "Patch Notes reads as raw engineering changelog" },
     "F025": { "severity": "Medium", "status": "Open", "domainSession": 6, "summary": "logo-full.png is 156KB, large for a logo" },
-    "F026": { "severity": "Medium", "status": "Open", "domainSession": 6, "summary": "Form errors lack aria-invalid/aria-describedby/role=alert" },
+    "F026": { "severity": "Medium", "status": "Open", "domainSession": 6, "summary": "Individual invalid form fields lack aria-invalid/aria-describedby (top-level error summary does correctly carry role=alert)" },
     "F027": { "severity": "Low", "status": "Open", "domainSession": 3, "summary": "Rate limiter TOCTOU race; SVG not excluded from admin MIME allowlist in admin-images.js and documents.js (fix pattern already exists in website-designer.js's isRecognizedImage())" },
     "F028": { "severity": "Low", "status": "Open", "domainSession": 6, "summary": "No aria-haspopup on nav dropdown toggles" },
     "F029": { "severity": "Medium", "status": "Open", "ownerDecision": true, "domainSession": 2, "summary": "Navigation hierarchy may need simplification" },
@@ -74,12 +78,13 @@
     "F037": { "severity": "High", "status": "Open", "domainSession": 2, "summary": "Homepage hero 'Get a free quote' CTA links to contact.html, contradicting that page's own copy which directs quote-seekers to intake.html" },
     "F038": { "severity": "High", "status": "Open", "domainSession": 3, "summary": "Password-reset request never emails the reset link; only email-verification actually calls sendEmail()" },
     "F039": { "severity": "Medium", "status": "Open", "domainSession": 3, "summary": "Account-preference language list hardcoded to 4 of 16 real supported languages" },
-    "F040": { "severity": "High", "status": "Open", "domainSession": 4, "summary": "messages.js embeds message body/sender name unescaped into outbound HTML email, unlike the esc() pattern used elsewhere in the codebase" }
+    "F040": { "severity": "High", "status": "Open", "domainSession": 4, "summary": "messages.js embeds message body/sender name unescaped into outbound HTML email, unlike the esc() pattern used elsewhere in the codebase" },
+    "F041": { "severity": "Medium", "status": "Open", "domainSession": 6, "summary": "i18n/en.json has 466 of the 1,496 real translation keys (69% missing) -- stale relative to the 15 real language files, which are all identical to each other; no runtime impact since English never fetches en.json" }
   },
   "counts": {
-    "total": 40,
+    "total": 41,
     "resolved": 9,
     "ownerDecisionOpen": 11,
-    "engineeringOpen": 20
+    "engineeringOpen": 21
   }
 }
