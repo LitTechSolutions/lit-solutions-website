@@ -733,13 +733,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function loadCatalog(pkg) {
     state.package = pkg;
-    state.basePrice = pkg === 'business' ? 1299 : 699;
     state.displayedTotal = 0;
     const file = pkg === 'business' ? 'business-catalog.json' : 'starter-catalog.json';
     fetch(file)
       .then(r => r.json())
       .then(data => {
         state.catalog = data;
+        state.basePrice = data.base_price;
         renderIncludedSummary();
         renderCategoryGroup(optionalContainer, data.categories, 'C');
         renderCategoryGroup(premiumContainer, data.categories, 'S');
