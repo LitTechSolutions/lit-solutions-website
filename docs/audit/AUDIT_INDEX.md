@@ -21,7 +21,7 @@ machine-readable state, and `00_AUDIT_CONTROL.md` for process/ground rules.
 | [02_PUBLIC_SITE_AUDIT.md](02_PUBLIC_SITE_AUDIT.md) | Done | Homepage, header/footer/nav, all public pages, CTAs, content accuracy; finding F037 |
 | [03_IDENTITY_DATA_SECURITY.md](03_IDENTITY_DATA_SECURITY.md) | Done | Auth, authorization, sessions, customer data, privacy; findings F038, F039 |
 | [04_BACKEND_INTEGRATIONS.md](04_BACKEND_INTEGRATIONS.md) | Done | Every Netlify Function, forms, files, email/PDF, providers; finding F040 |
-| 05_PRICING_AND_BUSINESS_RULES.md | Not started | Website Designer, pricing/discount logic, plans, payments |
+| [05_PRICING_AND_BUSINESS_RULES.md](05_PRICING_AND_BUSINESS_RULES.md) | Done | Website Designer, pricing/discount logic, plans, payments; no new findings, F010/F011/F031/F032/F035 refined |
 | 06_QUALITY_AUDIT.md | Not started | Accessibility, mobile, performance, SEO, translation, quality states |
 | 07_REQUIREMENTS_GAP_MATRIX.md | Not started | Classify candidate functions vs. what exists, value, risk |
 | 08_FINAL_AUDIT_AND_ROADMAP.md | Not started | Consolidated findings, roadmap, Extra Intelligence handoff |
@@ -33,9 +33,10 @@ machine-readable state, and `00_AUDIT_CONTROL.md` for process/ground rules.
 - `inventories/` — machine-readable inventories (e.g. `pricing-sources.json`
   when Session 5 produces it).
 
-## Findings summary (as of Session 4)
+## Findings summary (as of Session 5)
 
-- **40 findings** recorded (`F001`–`F040`).
+- **40 findings** recorded (`F001`–`F040`) — Session 5 added none, only
+  re-verification and refinement.
 - **9 Resolved** this project session: F001–F005, F012–F015.
 - **11 Owner-Decision** findings awaiting Dylan's input: F008, F009, F010,
   F011, F017, F024, F029, F030, F031, F032, F033.
@@ -59,3 +60,10 @@ strengths hold across `documents.js`, `messages.js`, `favorites.js`, and
 unescaped into an outbound HTML email, unlike the `esc()` pattern used
 consistently in `website-designer.js`); expanded F027 with a second
 occurrence of the same SVG-allowlist gap in `documents.js`.
+
+Session 5 verified the Website Designer's pricing/discount engine is
+sound (client/server constants are duplicated but auto-cross-checked via
+`priceMismatchFlag`, unlike F035's plain-text figures) and every dollar
+amount spot-checked is currently correct; confirmed F010, F011 (with the
+exact terms-gate mechanism), F031, and F032 (refined) unchanged, with no
+new findings.

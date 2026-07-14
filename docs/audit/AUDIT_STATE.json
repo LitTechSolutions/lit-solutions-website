@@ -2,7 +2,7 @@
   "project": "lit-solutions.tech",
   "repoVersion": "v23",
   "auditFramework": "docs/audit/",
-  "readyForSession": 5,
+  "readyForSession": 6,
   "sessions": {
     "1": {
       "doc": "01_REPOSITORY_BASELINE.md",
@@ -24,7 +24,11 @@
       "status": "complete",
       "note": "Reviewed documents.js, messages.js, favorites.js, notifications.js, content.js, website-designer.js (forms/files/email/PDF), and contact/intake form wiring. Confirmed F012/F013 fixes and ownership-check strengths hold. Added F040 (messages.js email HTML-injection); expanded F027 with a second occurrence in documents.js."
     },
-    "5": { "doc": "05_PRICING_AND_BUSINESS_RULES.md", "status": "not_started" },
+    "5": {
+      "doc": "05_PRICING_AND_BUSINESS_RULES.md",
+      "status": "complete",
+      "note": "Reviewed Website Designer pricing/discount logic (client + server recompute), catalogs, pricing.html, heroes-pricing.html, payment.html, terms.html. No new findings -- re-verified F010, F011 (with exact terms-gate mechanism), F031, F032 (refined), F035 (clarified: constants are cross-checked, plain-text figures are not). All spot-checked dollar figures are currently mathematically correct."
+    },
     "6": { "doc": "06_QUALITY_AUDIT.md", "status": "not_started" },
     "7": { "doc": "07_REQUIREMENTS_GAP_MATRIX.md", "status": "not_started" },
     "8": { "doc": "08_FINAL_AUDIT_AND_ROADMAP.md", "status": "not_started" }
@@ -65,7 +69,7 @@
     "F032": { "severity": "Medium", "status": "Open", "ownerDecision": true, "domainSession": 5, "summary": "Subscription plan scope (edits, hours, carryover) undefined" },
     "F033": { "severity": "Low", "status": "Open", "ownerDecision": true, "domainSession": 7, "summary": "Account-system feature scope and open-registration policy" },
     "F034": { "severity": "Low", "status": "Open", "domainSession": 1, "summary": "Version string hardcoded across 33 footers, no shared source" },
-    "F035": { "severity": "Medium", "status": "Open", "domainSession": 1, "summary": "Base prices and Heroes-discount amounts duplicated across multiple files" },
+    "F035": { "severity": "Medium", "status": "Open", "domainSession": 1, "summary": "Base prices and Heroes-discount amounts duplicated across multiple files as plain text with no automatic cross-check (contrast the Website Designer's pricing constants, which are duplicated but auto-cross-checked via priceMismatchFlag)" },
     "F036": { "severity": "Info", "status": "Open", "domainSession": 1, "summary": "Founder biography duplicated across 5 locations x 16 languages" },
     "F037": { "severity": "High", "status": "Open", "domainSession": 2, "summary": "Homepage hero 'Get a free quote' CTA links to contact.html, contradicting that page's own copy which directs quote-seekers to intake.html" },
     "F038": { "severity": "High", "status": "Open", "domainSession": 3, "summary": "Password-reset request never emails the reset link; only email-verification actually calls sendEmail()" },
