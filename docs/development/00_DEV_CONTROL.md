@@ -23,7 +23,7 @@ Process and ground rules for every future development session, mirroring the pat
 - Centralize prices, discounts, plan terms, statuses, workflows, service areas, contact details, and feature configuration — do not duplicate them across new code the way the existing Website Designer pricing is duplicated by necessity.
 - Never invent business facts, prices, terms, legal conclusions, response times, guarantees, or credentials.
 - Treat AI output, uploaded files, external content, provider payloads, and customer HTML/text as untrusted input.
-- Update `DEV_STATE.json`, `REQUIREMENTS_TRACEABILITY.md` (created starting Session 1, once there's something to trace), and the relevant `sessions/SESSION_NN_*.md` at the end of every session.
+- Update `DEV_STATE.json`, `REQUIREMENTS_TRACEABILITY.md` (created in Session 1), and the relevant `sessions/SESSION_NN_*.md` at the end of every session.
 - Stop and request Dylan's approval before changing pricing, discounts, payment policy, plan limits, legal language, retention, public claims, or customer data handling.
 
 ## Document map

@@ -1,0 +1,56 @@
+
+> test
+> node --test
+
+✔ shapeAuditEvent fills id and occurredAt when not provided (1.366834ms)
+✔ shapeAuditEvent rejects an event missing a required field (0.361792ms)
+✔ shapeAuditEvent rejects an invalid outcome (0.197625ms)
+✔ shapeAuditEvent rejects metadata containing a nested object (no arbitrary payloads) (0.161084ms)
+✔ shapeAuditEvent accepts organizationId: null for platform-level events (0.194875ms)
+✔ createAuditRecorder rejects a sink without write() (0.105ms)
+✔ createAuditRecorder shapes, validates, and writes through to the sink (0.431916ms)
+✔ createAuditRecorder never writes an event that fails validation (0.34975ms)
+✔ denied authorization decisions are representable as audit events (integration with rbac.js's decision shape) (1.274833ms)
+✔ default deny: unknown role (0.995208ms)
+✔ default deny: unknown action for an otherwise-privileged role (0.112917ms)
+✔ default deny: missing context (0.04725ms)
+✔ org_owner can act within their own organization, with an active membership (0.095583ms)
+✔ two-org isolation: org_owner of Org A cannot act on Org B's resource (0.096209ms)
+✔ two-org isolation: org_member of Org A cannot view Org B's document (0.048583ms)
+✔ two-org isolation: read_only_customer of Org A cannot view Org B's project (0.073958ms)
+✔ org_member has no financial-approval capability regardless of org match (0.157917ms)
+✔ read_only_customer cannot upload files (view-only role) (0.046708ms)
+✔ org_owner denied when membership status is suspended, even within their own organization (0.185458ms)
+✔ org_member denied by default when actorMembershipStatus is not provided (fail closed) (0.12275ms)
+✔ membership-status check does not apply to platform_admin, technician, or automated_service (0.089167ms)
+✔ platform_admin can act across organizations for platform-scoped actions (0.060375ms)
+✔ platform_admin bypasses the org-match check on org-scoped actions (0.647292ms)
+✔ technician denied on assigned resource without explicit assignment (0.11575ms)
+✔ technician allowed on resource with explicit assignment (0.144875ms)
+✔ automated_service denied without an explicit per-call grant (0.133041ms)
+✔ automated_service allowed when explicitly granted for this call and org matches (0.317708ms)
+✔ automated_service grant does not extend across organizations (cannot impersonate a human approver cross-tenant) (0.090459ms)
+✔ every capability granted to a customer/technician role is also declared org-scoped (0.109542ms)
+✔ every decision includes a non-empty reason (for downstream audit-event shaping) (0.064042ms)
+✔ createEmptyDocument starts at version 0 with no settings or flags (0.821167ms)
+✔ applySettingUpdate adds a new setting and increments document version (0.97625ms)
+✔ applySettingUpdate increments the individual setting's version on repeat updates (0.0645ms)
+✔ applySettingUpdate rejects a value that looks like a secret (0.162125ms)
+✔ applySettingUpdate rejects a value/valueType mismatch (0.124375ms)
+✔ applyFeatureFlagUpdate adds a flag, defaults are fail-closed until set (0.44525ms)
+✔ applyFeatureFlagUpdate requires updatedBy (audited configuration change, SYS-NFR-020) (0.058875ms)
+✔ unknown feature flag key is treated as disabled, not an error (fail closed) (0.035625ms)
+✔ test/fixtures/organizations.js (30.678334ms)
+✔ fixture organizations satisfy the domain validator (0.650292ms)
+✔ fixture memberships satisfy the domain validator (0.1475ms)
+✔ fixture matrix covers Org A, Org B, an authorized owner, a member, a suspended member, and a cross-org owner (0.172666ms)
+✔ integration: Org A owner authorized within Org A, denied on Org B via rbac.authorize (0.185542ms)
+✔ integration: a fixture with a suspended membership is denied by rbac.authorize() itself (SYS-AUTH-005) (0.286834ms)
+ℹ tests 44
+ℹ suites 0
+ℹ pass 44
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 72.806292
