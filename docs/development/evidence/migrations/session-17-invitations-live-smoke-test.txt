@@ -1,0 +1,19 @@
+PASS -- POST /organizations creates a real org (201) :: status=201
+PASS -- POST /invitations creates a real pending invitation (201) :: status=201
+PASS -- the invitation token was captured from the (logged, not sent) email
+PASS -- GET /invitations lists the real invitation (200)
+PASS -- GET /invitations as a non-admin is denied (403) :: status=403
+PASS -- GET /invitation-accept peeks the real pending invitation (200) :: status=200, body={"email":"session17-invitee@example.com","role":"org_member","organizationName":"Session 17 Smoke Test Org","expiresAt":"2026-07-22T13:59:49.859Z"}
+PASS -- peek shows the real organization name
+PASS -- POST /invitation-accept activates the account for real (201) :: status=201, body={"message":"Account activated. Please sign in.","email":"session17-invitee@example.com"}
+PASS -- a real organization_membership row now exists for the new user
+PASS -- membership row is real: org_member, active
+PASS -- both consent records were written for real (marketing declined, terms_privacy granted)
+PASS -- invitation status is now 'accepted' in Postgres
+PASS -- re-redeeming the same token is rejected (400) -- single-use enforced for real :: status=400
+PASS -- PATCH resend works for real (200) :: status=200
+PASS -- PATCH revoke works for real (200), status is now revoked
+
+--- summary ---
+15/15 PASS
+test data left in place: organizationId=0063f0f0-b039-4fed-8767-1005d5148049, invitationId=62e203b4-c22f-4fe2-8424-e0f3281cd106, newUserId(Postgres membership only, Blobs was faked)=336e5c5b19b831a5d36a9119

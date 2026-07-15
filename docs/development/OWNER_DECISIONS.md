@@ -1,6 +1,6 @@
 # Owner Decisions Required
 
-Consolidated from `v23/docs/audit/AUDIT_STATE.json` (11 owner-decision findings), the Master Function Index's 8-item "Stop-and-Approve Owner Decisions" list, and engineering findings surfaced across Sessions 0–9. Status as of 2026-07-14: **items #1, #2, and #3 are RESOLVED**; 7 remain open. Item #1's resolution unblocked F001/F005 persistence and, by extension, real endpoints for most previously-built work; items #2/#3's resolution unblocks the last five engine-complete functions (F026/F027/F028/F049/F050/F052) with real business values, not just engines.
+Consolidated from `v23/docs/audit/AUDIT_STATE.json` (11 owner-decision findings), the Master Function Index's 8-item "Stop-and-Approve Owner Decisions" list, and engineering findings surfaced across Sessions 0–9. Status as of 2026-07-15: **items #1, #2, #3, and #4 are RESOLVED**; 6 remain open. Item #1's resolution unblocked F001/F005 persistence and, by extension, real endpoints for most previously-built work; items #2/#3's resolution unblocks the last five engine-complete functions (F026/F027/F028/F049/F050/F052) with real business values, not just engines; item #4's resolution (invite-only) unblocked F002 end to end.
 
 ## 1. Primary data store — ✅ RESOLVED (Dylan, 2026-07-14)
 
@@ -39,10 +39,15 @@ Consolidated from `v23/docs/audit/AUDIT_STATE.json` (11 owner-decision findings)
 - **Implemented:** `src/policy/overageBilling.js` (rate calculation), real rows seeded into the live `entitlement_limits` table (`src/db/entitlementStore.js`), wired to the existing `entitlementCheck.js` engine (Session 4).
 - **Blocks (now unblocked):** F049 (Plan Entitlement/Usage Tracking), F021's fifth scoring factor (entitlement-aware priority), F052 (Subscription/Billing Plan Management).
 
-## 4. Customer account registration model (audit F033; Master Index item 3)
+## 4. Customer account registration model — ✅ RESOLVED (approved directive, 2026-07-15)
 
-- Open registration vs. invite-only customer portal — undefined.
-- **Blocks:** F002 (Customer Invitation & Account Activation) needs this decided before its flow can be finalized (invite-only changes the entire activation UX vs. open self-registration).
+- **Decision:** Invite-only at launch. Public users may submit contact forms, quotes, and intake forms, but may not create a Care Hub account directly. Only a `platform_admin` (legacy "admin" session role) may invite a customer, typically after a purchase, signed agreement, or approved project.
+- **Invitation mechanics:** single-use, 7-day expiry (`src/policy/invitationLifecycle.js`'s `TOKEN_TTL_DAYS`); only a SHA-256 hash of the token is ever persisted; the invitation link itself (delivered to the invitee's email) is treated as email-ownership proof, so no separate post-acceptance verification email is sent. Resend issues a fresh token/window and immediately invalidates the old one (overwrite, not append). Full lifecycle — create, resend, revoke, accept, and failed-accept attempts — is audited (F008).
+- **Open self-registration** (`auth-register.js`) is NOT removed — it stays behind a new `open_registration` feature flag (F056 settings document), which defaults OFF/fail-closed like every other flag in this codebase, so it can be enabled later via settings without a code deploy, and is never live by accident.
+- **Consent capture** happens at invitation acceptance (`invitation-accept.js`): an explicit, server-validated `termsAccepted === true` (never inferred) records a `terms_privacy` consent row with the current Terms/Privacy version stamps; a separate, optional `marketing` consent row records the actual choice (including an explicit decline) — see `src/domain/consent.js` and item #6 below.
+- **Implemented:** `migrations/002_invitations_and_consent.sql` (token/consent columns and the new `consent_records` table), `src/policy/invitationLifecycle.js`, `src/db/invitationStore.js`, `src/db/consentStore.js`, `netlify/functions/invitations.js` (admin management), `netlify/functions/invitation-accept.js` (public activation). Live-verified against Neon end to end — see `docs/development/evidence/migrations/session-17-invitations-live-smoke-test.txt`.
+- **Not yet built this round:** MFA for administrator accounts (explicitly required at launch per the approved directive) and optional customer MFA — tracked as follow-up work, not silently dropped. No UI exists yet for any of this either.
+- **Blocked (unaffected by this decision):** F002 itself is now fully unblocked; F006/F007's Critical privacy findings (item #6 below) are separate and still open.
 
 ## 5. Data retention, deletion, backup-aging, legal holds (Master Index item 4)
 

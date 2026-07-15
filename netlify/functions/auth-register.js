@@ -1,17 +1,15 @@
-// auth-register.js -- account registration. Open to anyone (customers
-// self-register for the customer portal at myaccount.html), rate-limited
-// against spam/abuse. Every new account defaults to role "customer" and
-// has zero admin/staff capability -- there's no self-service path to
-// "admin" here, on purpose. The one and only admin account (Dylan, for
-// admin.html) is created the same way and then promoted by hand via the
-// Netlify Blobs dashboard -- see README_ADMIN_SETUP.md.
+// auth-register.js -- open self-registration. DISABLED BY DEFAULT as of
+// Session 17 (OWNER_DECISIONS.md #4, resolved): the Care Hub launches
+// invite-only -- see invitations.js/invitation-accept.js for the real
+// account-creation path. This endpoint stays in place, gated behind the
+// "open_registration" feature flag (src/settings, defaults OFF / fail
+// closed like every other flag in this codebase), so open registration
+// can be turned on later via F056's settings document without a code
+// deploy, without ever being live by accident.
 //
-// New accounts start unverified and can't sign in (see auth-login.js)
-// until they click the link in the verification email -- the main
-// defense against bot/junk registrations, on top of the rate limit below.
-// If RESEND_API_KEY/EMAIL_FROM aren't configured yet, the email is logged
-// instead of sent -- see auth-verify-email.js and README_ADMIN_SETUP.md
-// for how to verify an account by hand in the meantime.
+// The behavior below (rate-limited, unverified-until-email-click,
+// generic responses to prevent email enumeration) is unchanged from
+// before Session 17 -- only the new flag check at the top is new.
 //
 // POST { email, password, name }
 
@@ -19,6 +17,10 @@ const { hashPassword, json, rateLimited } = require("./_lib/auth_utils");
 const { getJSON, setJSON } = require("./_lib/blob_store");
 const { sendVerificationEmail } = require("./_lib/verification");
 const { sendEmail } = require("./_lib/email");
+const { loadSettingsDocument } = require("../../src/settings/blobsSettingsStore");
+const { isFeatureEnabled } = require("../../src/settings/settingsStore");
+
+const REGISTRATION_DISABLED_MESSAGE = "Open registration is currently disabled. Please contact us to request an invitation.";
 
 // Shown for both a brand-new registration and an already-registered email --
 // deliberately identical, so the response itself can't be used to check
@@ -26,11 +28,18 @@ const { sendEmail } = require("./_lib/email");
 // for the same pattern on that endpoint).
 const GENERIC_MESSAGE = "If this email can be registered, check your inbox for next steps.";
 
-exports.handler = async (event) => {
+exports.handler = async (event, context, deps = {}) => {
   if (event.httpMethod !== "POST") return json(405, { error: "Method not allowed" });
 
+  const loadSettingsDocumentFn = deps.loadSettingsDocument || loadSettingsDocument;
+  const settingsDocument = await loadSettingsDocumentFn();
+  if (!isFeatureEnabled(settingsDocument, "open_registration")) {
+    return json(403, { error: REGISTRATION_DISABLED_MESSAGE, code: "registration_disabled" });
+  }
+
+  const rateLimitedFn = deps.rateLimited || rateLimited;
   const ip = event.headers["x-nf-client-connection-ip"] || event.headers["client-ip"] || "unknown";
-  if (await rateLimited("register", ip, 10, 3600)) {
+  if (await rateLimitedFn("register", ip, 10, 3600)) {
     return json(429, { error: "Too many registration attempts. Try again later." });
   }
 
