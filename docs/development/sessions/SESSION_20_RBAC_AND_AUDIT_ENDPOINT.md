@@ -505,45 +505,99 @@ remaining endpoints in one pass.
 - my-memberships.js (new): 5 cases.
 - Full suite: **763/763 passing**, up from 702 at the end of step 5.
 
+### Step 9 -- legal drafts (data-flow inventory, Privacy Policy, ToS, launch checklist)
+
+Documentation only, no code -- Dylan chose this over step 10
+(a11y/security/e2e testing) and step 8 (Square/email, which needs
+externally-supplied credentials this session cannot accept). All four
+deliverables live under `docs/development/legal/`, each explicitly
+marked DRAFT per the standing rule against inventing final,
+attorney-approved legal wording:
+
+- **`00_LEGAL_DRAFTS_README.md`** -- orientation: what's in the folder,
+  why now, how the Care Hub drafts relate to the existing public-site
+  `privacy.html`/`terms.html` (separate documents, not a rewrite), and
+  what was deliberately not invented (Square and F060 AI are described
+  as planned/not-active, not live).
+- **`DATA_FLOW_AND_SUBPROCESSORS.md`** -- the factual source of truth
+  the other three documents are built from: every data category
+  actually collected (cross-referenced against `migrations/001-004`
+  and the Blobs stores), every real sub-processor (Netlify, Neon,
+  Resend, planned Square), and the Session 17 retention targets
+  (30-day/12-month/24-month/7-year/90-day) explicitly flagged as
+  *approved policy, not yet enforced by code*.
+- **`CARE_HUB_PRIVACY_POLICY_DRAFT.md`** -- scoped to the authenticated
+  portal specifically, written to name Resend as a sub-processor
+  (closing part of what open audit finding F007 flags as missing from
+  the *public* site) and to accurately describe the full data model
+  (open audit finding F006's gap) for the Care Hub itself. Drafting
+  notes at the bottom flag that this does not resolve F006/F007
+  against `privacy.html` -- that's the audit process's job, not this
+  draft's.
+- **`CARE_HUB_TERMS_OF_SERVICE_DRAFT.md`** -- covers accounts, roles,
+  acceptable use, content ownership, and termination from what's
+  actually built (invite-only registration, RBAC roles, service
+  records). Liability/indemnification and governing-law/dispute
+  clauses are left as explicit placeholders, not generic boilerplate,
+  since those require attorney judgment this session isn't positioned
+  to invent.
+- **`LAUNCH_LEGAL_REVIEW_CHECKLIST.md`** -- every open item gating real
+  customer accounts, organized as blocking-now / blocking-before-Square
+  / blocking-before-AI / should-resolve / verify-before-launch, so a
+  future session or Dylan directly can see exactly what's left without
+  re-deriving it.
+- A new `DECISION_LOG.md` entry records why the Care Hub drafts stay
+  separate from (not merged into) the public site's existing policies.
+- No test/build impact -- this step touched no application code.
+  `npm test` (763/763) and `care-hub-app`'s `npm run build` were
+  re-verified after this step purely to confirm the doc-only nature of
+  the change, not because anything here could plausibly break them.
+
 ## What's still not done
 
 Step 7 closed the two staff-side gaps called out at the end of step 6
-(staff checklist review, staff ticket work queue/transition). Steps 8-10
-of Dylan's directive are **not started** -- each is substantial enough to
-be its own session(s):
+(staff checklist review, staff ticket work queue/transition). Step 9
+delivered the legal drafts. Steps 8 and 10 of Dylan's directive are
+**not started** -- each is substantial enough to be its own session(s):
 
 1. Wiring the remaining endpoints into real screens beyond tickets and
    checklists -- the typed client covers all of them, but only
    `Dashboard.tsx`, `Tickets.tsx`, and `Checklists.tsx` actually call one
    from a rendered route.
-2. Square Sandbox integration and fail-closed email configuration.
-3. The legal drafts (data-flow/processor inventory, draft Privacy
-   Policy, draft Care Hub Terms of Service, launch-time legal review
-   checklist) -- all explicitly DRAFT-only per Dylan's directive.
-4. Accessibility, security, responsive, and end-to-end testing at
+2. Square Sandbox integration and fail-closed email configuration --
+   blocked on Dylan supplying real Square/Resend credentials via
+   Netlify environment variables (cannot be pasted into chat or
+   committed).
+3. Accessibility, security, responsive, and end-to-end testing at
    real-feature scale.
-5. QR-code rendering for MFA enrollment (currently manual-entry key
+4. QR-code rendering for MFA enrollment (currently manual-entry key
    only).
-6. A live smoke test of the real sign-in -> MFA -> dashboard ->
+5. A live smoke test of the real sign-in -> MFA -> dashboard ->
    tickets/checklists path against `netlify dev` -- this session
    verified the backend live (Postgres) and the frontend's build/
    typecheck/component logic, but could not get a faked authenticated
    session rendering in the browser preview (see step 6's "frontend
    verification limits" note above). Still applies to step 7's new
    staff screens.
-7. The pre-existing `org_owner` ticket-capability gap surfaced in step 6
+6. The pre-existing `org_owner` ticket-capability gap surfaced in step 6
    (`org_owner` lacks `request.submit`/`request.view` in `rbac.js`,
    unlike `org_member`) -- flagged for Dylan's attention, not fixed,
    since it predates this session and changing it wasn't requested.
-8. No organization-directory/list-all-orgs endpoint exists, so the new
+7. No organization-directory/list-all-orgs endpoint exists, so the new
    staff checklist review screen requires staff to manually type an
    `organizationId` into a text input rather than picking from a list --
    documented as a stopgap in `staffOrgPickerHelp`, not built out this
    pass since it was out of step 7's chosen scope.
-9. No single-ticket-fetch-by-id endpoint exists on `tickets.js` -- the
+8. No single-ticket-fetch-by-id endpoint exists on `tickets.js` -- the
    staff ticket work queue (`work-queue.js`, cross-org, open tickets
    only) doubles as the "detail" surface via an inline per-row
    status-transition control, rather than a dedicated detail page.
+9. Everything itemized in `docs/development/legal/
+   LAUNCH_LEGAL_REVIEW_CHECKLIST.md` -- attorney review of the new
+   drafts, resolving audit findings F006/F007 against the *existing*
+   `privacy.html`, filling in the Terms of Service's placeholder
+   liability/governing-law sections, and the several pricing/
+   object-storage owner decisions those drafts depend on.
 
 ## Files changed
 
@@ -658,3 +712,12 @@ be its own session(s):
   `saveAssessment`/`savingAssessment`/`returnForChanges`/
   `returnReasonLabel`/`returnButton`/`verifyButton`/`reviewing`/
   `scoreLabel`/`audienceLabels`).
+- New (step 9, legal drafts -- docs only, no code):
+  `docs/development/legal/00_LEGAL_DRAFTS_README.md`,
+  `docs/development/legal/DATA_FLOW_AND_SUBPROCESSORS.md`,
+  `docs/development/legal/CARE_HUB_PRIVACY_POLICY_DRAFT.md`,
+  `docs/development/legal/CARE_HUB_TERMS_OF_SERVICE_DRAFT.md`,
+  `docs/development/legal/LAUNCH_LEGAL_REVIEW_CHECKLIST.md`.
+- Modified (step 9): `docs/development/DECISION_LOG.md` (+1 entry on
+  keeping the Care Hub legal drafts separate from the public site's
+  `privacy.html`/`terms.html`).
