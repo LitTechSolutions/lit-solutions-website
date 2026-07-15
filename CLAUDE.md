@@ -43,7 +43,7 @@ actually changes.
   version's folder is what actually deploys.
 - The in-page "Website Version" footer string (visible on all 33 public
   pages) follows semver: **major** = large redesign/rework, **minor** =
-  feature addition, **patch** = bug/security fix only. Current: `3.2.2`.
+  feature addition, **patch** = bug/security fix only. Current: `3.3.0`.
 - There is no build step and no shared include/template mechanism, so a
   version bump (or any header/footer change) means editing the string in
   all 33 public HTML files directly — this repo has done that via a

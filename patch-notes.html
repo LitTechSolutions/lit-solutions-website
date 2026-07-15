@@ -136,8 +136,22 @@
 
         <article class="patch-entry">
           <div class="patch-entry-head">
-            <span class="patch-version patch-version--current">v3.2.2</span>
+            <span class="patch-version patch-version--current">v3.3.0</span>
             <span class="patch-tag">Current</span>
+          </div>
+          <ul class="patch-changes">
+            <li><strong>Website Designer now hands your full project details to a dedicated worksheet, opened in its own tab.</strong> After your quick quote, choosing to continue no longer expands a long form in place on the same page -- it opens a separate, focused "Website Project Details Worksheet" instead, so your business details, file uploads, and content plans get a page of their own. Your quote request has already been sent either way; the worksheet is entirely optional and can be finished later, and progress is saved automatically as you go</li>
+            <li>Your quote and selections are handed to that new tab through a private, one-time link rather than ever appearing in a web address, so nothing about your project shows up in a browser's address bar or history</li>
+            <li><strong>Fixed a real bug: on Safari, that new tab could look like it failed to open even when it had actually opened correctly.</strong> Safari treats a certain browser instruction as a signal to hide the result from the page that opened it, and this tool was relying on that same result to decide whether to show a "your browser blocked this" fallback message -- so every Safari visitor saw that fallback, whether or not the tab really opened. Fixed so Safari now reports it accurately</li>
+            <li>Replaced the plain-text project summary PDF with a fully redesigned, professionally branded document -- a proper cover page, clearly itemized pricing, and your submitted business details laid out across as many pages as needed</li>
+            <li>Fixed a real bug: a few new button labels introduced for this release kept showing in whatever language you'd previously chosen instead of correct, updated wording -- now translated properly in all 15 supported languages</li>
+            <li>Fixed a leftover color mismatch on the featured "Business" package card (Website Designer and Pricing pages) -- its highlight glow was still tinted an old brand color from a previous redesign instead of matching its own border</li>
+          </ul>
+        </article>
+
+        <article class="patch-entry">
+          <div class="patch-entry-head">
+            <span class="patch-version">v3.2.2</span>
           </div>
           <ul class="patch-changes">
             <li>Corrected the hull number in founder Dylan's Navy photo caption on the About page -- USS Antietam is CG-54, not CG-64 as it previously read</li>
