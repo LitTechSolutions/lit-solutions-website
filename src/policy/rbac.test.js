@@ -279,6 +279,39 @@ test("every capability granted to a customer/technician role is also declared or
   }
 });
 
+test("platform_admin can view the cross-org operational metrics dashboard (metrics.view, deliberately unscoped)", () => {
+  const decision = authorize({ actorRole: "platform_admin", action: "metrics.view", actorOrgId: null });
+  assert.equal(decision.allowed, true);
+  assert.equal(ORG_SCOPED_ACTIONS.has("metrics.view"), false);
+});
+
+test("all three customer roles can view their own org's service records, website profiles, assets, entitlements, subscriptions, and checklist scores", () => {
+  const viewActions = ["service_record.view", "website_profile.view", "asset.view", "entitlement.view", "subscription.view", "checklist.view"];
+  for (const role of ["org_owner", "org_member", "read_only_customer"]) {
+    for (const action of viewActions) {
+      const decision = authorize({ actorRole: role, action, actorOrgId: ORG_A, resourceOrgId: ORG_A, actorMembershipStatus: "active" });
+      assert.equal(decision.allowed, true, `${role} should be able to ${action} within their own org`);
+      const crossOrgDecision = authorize({ actorRole: role, action, actorOrgId: ORG_A, resourceOrgId: ORG_B, actorMembershipStatus: "active" });
+      assert.equal(crossOrgDecision.allowed, false, `${role} should NOT be able to ${action} in another org`);
+    }
+  }
+});
+
+test("all three customer roles can now view their org's activity/history timeline (history.view extended beyond read_only_customer)", () => {
+  for (const role of ["org_owner", "org_member", "read_only_customer"]) {
+    const decision = authorize({ actorRole: role, action: "history.view", actorOrgId: ORG_A, resourceOrgId: ORG_A, actorMembershipStatus: "active" });
+    assert.equal(decision.allowed, true, `${role} should be able to view history.view within their own org`);
+  }
+});
+
+test("technician has none of the new customer-facing view capabilities -- they were never meant to browse a customer's billing/asset records", () => {
+  const viewActions = ["service_record.view", "website_profile.view", "asset.view", "entitlement.view", "subscription.view", "checklist.view"];
+  for (const action of viewActions) {
+    const decision = authorize({ actorRole: "technician", action, actorOrgId: null, resourceOrgId: ORG_A, assigned: true });
+    assert.equal(decision.allowed, false, `technician should not have ${action}`);
+  }
+});
+
 test("every decision includes a non-empty reason (for downstream audit-event shaping)", () => {
   const decisions = [
     authorize({ actorRole: "org_owner", action: "member.invite", actorOrgId: ORG_A, resourceOrgId: ORG_A, actorMembershipStatus: "active" }),

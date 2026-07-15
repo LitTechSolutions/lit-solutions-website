@@ -55,6 +55,17 @@ async function markReminderSent(id, deps = {}) {
   await sql`UPDATE lifecycle_reminders SET sent = true WHERE id = ${id}`;
 }
 
+/**
+ * @param {string} organizationId
+ * @param {{ sql?: Function }} [deps]
+ * @returns {Promise<import("../domain/lifecycleReminder").LifecycleReminder[]>}
+ */
+async function listRemindersForOrganization(organizationId, deps = {}) {
+  const sql = deps.sql || getSql();
+  const rows = await sql`SELECT * FROM lifecycle_reminders WHERE organization_id = ${organizationId} ORDER BY expires_at`;
+  return rows.map(mapRowToReminder);
+}
+
 function mapRowToReminder(row) {
   return {
     id: row.id,
@@ -66,4 +77,4 @@ function mapRowToReminder(row) {
   };
 }
 
-module.exports = { createReminder, listDueReminders, markReminderSent, mapRowToReminder };
+module.exports = { createReminder, listDueReminders, listRemindersForOrganization, markReminderSent, mapRowToReminder };

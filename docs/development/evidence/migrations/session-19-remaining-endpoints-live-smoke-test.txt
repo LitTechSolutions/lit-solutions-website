@@ -1,0 +1,24 @@
+PASS -- real org created
+PASS -- real ticket created
+PASS -- POST /service-records (201) :: status=201
+PASS -- GET /service-records as customer (200)
+PASS -- POST /website-profiles (201) :: status=201
+PASS -- POST /entitlements records real usage against the real seeded limit (201) :: status=201, body={"recorded":true,"withinLimit":true,"remaining":25,"reason":"25 of 30 \"monthly_edit_minutes\" remaining on plan \"website_care\""}
+PASS -- GET /entitlements as customer shows real remaining allowance (200) :: body={"limit":{"planKey":"website_care","usageKey":"monthly_edit_minutes","limit":30,"resetPeriod":"monthly"},"consumed":5,"remaining":25,"periodStart":"2026-07-01T00:00:00.000Z"}
+PASS -- POST /subscriptions (201) :: status=201
+PASS -- POST /technology-assets (201) :: status=201
+PASS -- POST /reminders (201) :: status=201
+PASS -- POST /checklists creates a real definition (201) :: status=201
+PASS -- PATCH /checklists records a real response (200) :: status=200
+PASS -- GET /checklists as customer shows the real score (200) :: body={"score":{"score":1,"unmetItemKeys":[],"summary":"All 1 readiness items are in place."}}
+PASS -- POST /it-support as the assigned technician classifies the real ticket (201) :: status=201, body={"classification":{"ticketId":"d9c7db4c-9b90-49d3-8b69-42a774ee151f","classification":"on_site","reason":"physical access required"}}
+PASS -- POST /work-log records real time against the real ticket (201) :: status=201
+PASS -- GET /work-log shows the real total minutes (200)
+PASS -- POST /ticket-workflow triages the real ticket (201) :: status=201, body={"result":{"ticketId":"d9c7db4c-9b90-49d3-8b69-42a774ee151f","queue":"it-queue","matchedRuleId":"rule-it","decidedAt":"2026-07-15T14:39:18.230Z"}}
+PASS -- GET /activity-timeline as customer shows the real event (200) :: body={"timeline":[{"id":"5db6746f-d283-4fdc-9e2c-eb2b379ce37b","organizationId":"77c6d532-e3b7-4904-9ab3-554b30e7b75b","sourceType":"ticket","sourceId":"d9c7db4c-9b90-49d3-8b69-42a774ee151f","occurredAt":"2026-07-15T14:39:18.262Z","summary":"Session 19 smoke test event","customerVisible":true}]}
+PASS -- GET /metrics as admin (200) :: status=200
+PASS -- POST /templates as admin creates a real template (201) :: status=201
+
+--- summary ---
+20/20 PASS
+test data left in place: organizationId=77c6d532-e3b7-4904-9ab3-554b30e7b75b, ticketId=d9c7db4c-9b90-49d3-8b69-42a774ee151f

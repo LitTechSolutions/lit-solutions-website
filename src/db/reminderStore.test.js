@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { createReminder, listDueReminders, markReminderSent } = require("./reminderStore");
+const { createReminder, listDueReminders, listRemindersForOrganization, markReminderSent } = require("./reminderStore");
 
 const FIXED_ID = () => "reminder-fixed-id";
 const NOW = () => new Date("2026-07-14T00:00:00.000Z");
@@ -54,4 +54,11 @@ test("markReminderSent issues an UPDATE", async () => {
   const sql = fakeSql();
   await markReminderSent("r1", { sql });
   assert.match(sql.calls[0].text, /UPDATE lifecycle_reminders/);
+});
+
+test("listRemindersForOrganization orders by expires_at", async () => {
+  const sql = fakeSql([reminderRow()]);
+  const list = await listRemindersForOrganization("org-a", { sql });
+  assert.equal(list.length, 1);
+  assert.match(sql.calls[0].text, /ORDER BY expires_at/);
 });

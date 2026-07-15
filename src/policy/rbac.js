@@ -41,6 +41,9 @@ const ROLE_CAPABILITIES = {
     // regression guard in rbac.test.js protecting every other technician
     // capability from silently skipping the org/assigned check.
     "workqueue.view",
+    // Same reasoning as workqueue.view -- the operational metrics
+    // dashboard (F054) has no single owning organization either.
+    "metrics.view",
   ]),
   technician: new Set([
     "ticket.view",
@@ -66,6 +69,18 @@ const ROLE_CAPABILITIES = {
     "change_order.view",
     "payment.view",
     "preference.manage",
+    // F017's activity timeline was always meant for every customer role,
+    // not just read_only_customer -- history.view already existed for
+    // exactly this, it just hadn't been extended to org_owner/org_member
+    // yet because no endpoint needed it until now.
+    "history.view",
+    "service_record.view",
+    "website_profile.view",
+    "asset.view",
+    "entitlement.view",
+    "subscription.view",
+    "checklist.view",
+    "reminder.view",
   ]),
   org_member: new Set([
     "request.submit",
@@ -78,8 +93,31 @@ const ROLE_CAPABILITIES = {
     "scope.view",
     "change_order.view",
     "payment.view",
+    "history.view",
+    "service_record.view",
+    "website_profile.view",
+    "asset.view",
+    "entitlement.view",
+    "subscription.view",
+    "checklist.view",
+    "reminder.view",
   ]),
-  read_only_customer: new Set(["project.view", "document.view", "report.view", "history.view", "scope.view", "change_order.view", "payment.view"]),
+  read_only_customer: new Set([
+    "project.view",
+    "document.view",
+    "report.view",
+    "history.view",
+    "scope.view",
+    "change_order.view",
+    "payment.view",
+    "service_record.view",
+    "website_profile.view",
+    "asset.view",
+    "entitlement.view",
+    "subscription.view",
+    "checklist.view",
+    "reminder.view",
+  ]),
 };
 
 // Actions that operate on a specific organization's data and therefore
@@ -117,6 +155,13 @@ const ORG_SCOPED_ACTIONS = new Set([
   "note.internal.write",
   "worklog.write",
   "website_it_ops.perform",
+  "service_record.view",
+  "website_profile.view",
+  "asset.view",
+  "entitlement.view",
+  "subscription.view",
+  "checklist.view",
+  "reminder.view",
 ]);
 
 /**
