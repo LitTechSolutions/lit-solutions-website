@@ -787,6 +787,25 @@ section{ padding: 5.5rem 0; }
 .launch-banner p{ margin:0; font-size:.9rem; color:var(--notice-text); line-height:1.55; }
 .launch-banner strong{ color:var(--notice-text-strong); }
 
+/* Website Designer only: the banner becomes a native <details> disclosure
+   (collapsed by default on phones -- see js/website-designer.js and the
+   max-width:600px block below -- expanded everywhere else) instead of the
+   plain flex <div> the other two pages using .launch-banner still use, so
+   this is scoped to .wd-launch-banner rather than touching the shared
+   base rule those pages rely on. */
+.launch-banner.wd-launch-banner{ display:block; padding:0; }
+.wd-launch-summary{
+  display:flex; align-items:center; gap:.9rem; cursor:pointer; list-style:none;
+  padding:1.1rem 1.3rem; font-weight:600; color:var(--notice-text-strong); font-size:.9rem;
+}
+.wd-launch-summary::-webkit-details-marker{ display:none; }
+.wd-launch-summary:focus-visible{ outline:2px solid var(--accent-teal); outline-offset:-2px; border-radius: var(--radius); }
+.wd-launch-summary-text{ flex:1; }
+.wd-launch-chevron{ width:18px; height:18px; flex-shrink:0; color:var(--notice-text); transition:transform .18s ease; }
+.wd-launch-banner[open] .wd-launch-chevron{ transform:rotate(180deg); }
+.wd-launch-banner p{ padding:0 1.3rem 1.1rem calc(1.3rem + 32px + .9rem); }
+@media (max-width:600px){ .wd-launch-banner p{ padding-left:1.3rem; } }
+
 /* =========================================================
    Subscriptions
    ========================================================= */
@@ -1195,6 +1214,30 @@ textarea{ resize: vertical; }
   }
   .main-nav .nav-dropdown-menu.is-open{ display:block; }
   .main-nav .nav-dropdown-menu a{ padding:.85rem 28px .85rem 44px; border-bottom:1px solid var(--line); }
+}
+
+/* Below ~400px, logo + theme/search/account icons + the "Request Service"
+   button + the nav-toggle hamburger no longer fit on one row even at
+   their smallest sizes (they need ~360px; .wrap's 28px side padding
+   leaves only ~264px at 320-390px viewports) -- confirmed via
+   document.documentElement.scrollWidth exceeding clientWidth by ~70px on
+   every page, not just the Website Designer. Rather than hiding any of
+   the theme/search/account icons (search.html has a footer link as a
+   fallback, but myaccount.html's "Client Sign In" has no other entry
+   point anywhere on the site -- hiding it would make customer accounts
+   unreachable on the narrowest phones), wrap header-actions onto its own
+   second row. .site-header switches from a fixed height to auto so it
+   can actually grow, and .main-nav's dropdown switches from
+   top:var(--header-h) (a hardcoded single-row height) to top:100% so it
+   tracks the header's real height at any number of rows without needing
+   a second hardcoded value here. */
+@media (max-width:400px){
+  .site-header{ height:auto; min-height:var(--header-h); }
+  .header-inner{ flex-wrap:wrap; row-gap:.5rem; padding-top:.6rem; padding-bottom:.6rem; }
+  .logo{ order:0; }
+  .nav-toggle{ order:1; }
+  .header-actions{ order:2; flex-basis:100%; justify-content:center; }
+  .main-nav{ top:100%; }
 }
 
 @media (max-width: 860px){
@@ -1744,6 +1787,37 @@ textarea{ resize: vertical; }
   font-size:.76rem; color: var(--ink-faint); text-align:center; margin:.75rem 0 0; font-style:italic;
 }
 
+/* ---- Mobile Customize/Live Preview mode switch --------------------------
+   Only relevant at or below 900px (see the max-width:900px block further
+   down, which is the only place that sets display:flex on this and hides
+   one of .wd-studio-preview/.wd-sidebar at a time) -- above that, both
+   columns show at once as normal and this tablist stays display:none, so
+   it never affects desktop layout. */
+.wd-mobile-mode-switch{
+  display:none; gap:.5rem; margin-bottom:1rem;
+  background: var(--paper-alt); border:1px solid var(--line); border-radius:999px; padding:.3rem;
+}
+.wd-mobile-mode-tab{
+  flex:1; display:flex; align-items:center; justify-content:center; gap:.4rem;
+  min-height:44px; border:none; border-radius:999px; background:none; cursor:pointer;
+  font-family: var(--font-display); font-size:.82rem; font-weight:700; color: var(--ink-soft);
+}
+.wd-mobile-mode-tab.is-active{ background: var(--navy-deep); color: var(--on-dark); }
+.wd-mobile-mode-tab:focus-visible{ outline:2px solid var(--accent-teal); outline-offset:2px; }
+.wd-mobile-mode-badge{
+  display:inline-block; font-size:.62rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em;
+  color:#fff; background: var(--accent-orange); border-radius:999px; padding:.1rem .4rem; line-height:1.3;
+}
+.wd-mobile-mode-badge[hidden]{ display:none; }
+
+.wd-preview-back-btn{
+  display:none; align-items:center; gap:.4rem; margin-bottom:.9rem;
+  background:none; border:none; padding:0; cursor:pointer;
+  font-family: var(--font-display); font-size:.82rem; font-weight:700; color: var(--accent-teal-text);
+}
+.wd-preview-back-btn::before{ content:"←"; }
+.wd-preview-back-btn:focus-visible{ outline:2px solid var(--accent-teal); outline-offset:2px; }
+
 /* Grid, not flex: the middle row (minmax(0, 1fr)) is a hard guarantee that
    the scrollable feature list gets 100% of whatever space the header and
    footer don't need -- down to and including 0 if they ever demand more
@@ -1786,8 +1860,7 @@ textarea{ resize: vertical; }
 .wd-feature-tab{
   flex:1; min-width:0; background: var(--paper-alt); border:1px solid var(--line); border-radius:999px;
   padding:.36rem .5rem; font-family: var(--font-display); font-size:.76rem; font-weight:700;
-  color: var(--ink-soft); cursor:pointer; text-align:center; white-space:nowrap;
-  overflow:hidden; text-overflow:ellipsis;
+  color: var(--ink-soft); cursor:pointer; text-align:center; line-height:1.25; overflow-wrap:break-word;
 }
 .wd-feature-tab.is-active{ background: var(--navy-deep); color: var(--on-dark); border-color: var(--navy-deep); }
 .wd-feature-tab:focus-visible{ outline:2px solid var(--accent-teal); outline-offset:2px; }
@@ -1842,7 +1915,9 @@ textarea{ resize: vertical; }
 }
 .wd-mobile-bar-info{ display:flex; flex-direction:column; min-width:0; }
 .wd-mobile-bar-amount{ font-family: var(--font-display); font-size:1.3rem; font-weight:700; color: var(--ink); line-height:1.1; }
+.wd-mobile-bar-meta{ display:flex; align-items:baseline; gap:.4rem; flex-wrap:wrap; }
 .wd-mobile-bar-label{ font-size:.7rem; color: var(--ink-faint); }
+.wd-mobile-bar-count{ font-size:.68rem; color: var(--ink-faint); }
 .wd-mobile-bar .btn{ flex-shrink:0; }
 
 .wd-section-title{ font-size:1.15rem; margin:2rem 0 .3rem; }
@@ -1905,13 +1980,13 @@ textarea{ resize: vertical; }
    the sidebar only -- forced to a single column at every width, never the
    site-wide default's 2-/3-column layout. */
 .wd-sidebar .checkbox-grid{
-  display:grid; grid-template-columns: minmax(0, 1fr); width:100%; min-width:0;
+  display:grid; grid-template-columns: minmax(0, 1fr); gap:.6rem; width:100%; min-width:0;
 }
 .wd-sidebar .wd-feature-pill{
   display:grid; grid-template-columns: auto minmax(0, 1fr) max-content; gap:.6rem;
-  align-items:center; width:100%; min-width:0; max-width:100%; box-sizing:border-box;
+  align-items:center; width:100%; min-width:0; max-width:100%; min-height:44px; box-sizing:border-box;
 }
-.wd-sidebar .wd-feature-pill-label{ min-width:0; overflow-wrap:anywhere; }
+.wd-sidebar .wd-feature-pill-label{ min-width:0; overflow-wrap:anywhere; line-height:1.35; }
 .wd-sidebar .wd-price-tag{
   font-family: var(--font-display); font-size:.72rem; font-weight:700; color: var(--accent-teal-text);
   background: var(--select-bg); border-radius:999px; padding:.15rem .55rem;
@@ -2165,54 +2240,99 @@ textarea{ resize: vertical; }
   .wd-category-chip{ min-height:44px; padding-top:0; padding-bottom:0; display:inline-flex; align-items:center; }
 }
 
-/* ---- Studio responsive column proportions ----------------------------
-   Preview stays on the left and options stay on the right at every one of
-   these widths -- only the share each column gets changes. Each rule below
-   overrides just the previous tier's grid-template-columns (cascade order,
-   not specificity), so narrower viewports pick up all of the compaction
-   from the wider tiers above them as well. */
+/* ---- Studio responsive column proportions (900px and above only) -----
+   Preview stays on the left and options stay on the right, only the share
+   each column gets narrows as the viewport does -- down to 900px. Below
+   900px this stops being a two-column layout at all (see the
+   max-width:900px block below, which switches to the Customize/Live
+   Preview mode-switch instead of continuing to narrow the split into an
+   unusable sliver). */
 @media (max-width:1199px){
   .wd-studio{ grid-template-columns: minmax(0, 52fr) minmax(0, 48fr); }
 }
 
-@media (max-width:899px){
-  .wd-studio{ grid-template-columns: minmax(0, 40fr) minmax(0, 60fr); gap:1rem; }
+/* ---- 900px and below: full-width Customize / Live Preview mode switch --
+   Squeezing both columns side by side stopped being usable well before
+   phone width -- at 390px wide, a 40/60 split left ~97px for the preview
+   and ~225px for options, truncating tab labels and leaving ~257px of
+   actual vertical room for the feature list. Below 900px the two columns
+   stop being simultaneous: .wd-studio becomes a single full-width block,
+   the mode-switch tablist (hidden above 900px) appears, and JS
+   (js/website-designer.js, setMobileMode()) toggles a data-mobile-mode
+   attribute on #wdStudio that this stylesheet uses to show exactly one of
+   .wd-studio-preview / .wd-sidebar at a time -- both keep their normal
+   full internal markup, nothing is reduced to a thumbnail. */
+@media (max-width:900px){
+  .wd-studio{ display:block; }
+  .wd-mobile-mode-switch{ display:flex; }
+  .wd-studio[data-mobile-mode="customize"] .wd-studio-preview{ display:none; }
+  .wd-studio[data-mobile-mode="preview"] .wd-sidebar{ display:none; }
+  .wd-preview-back-btn{ display:inline-flex; }
 
-  /* The preview column is noticeably narrower here, so it's simplified to
-     stay legible in less width: the browser frame, business name, a
-     compact hero, and the selected-feature cards (the actual functional
-     "selected-section indicators") all stay -- the purely decorative
-     filler (a row of 3 fake service cards, a fake about blurb) is hidden
-     rather than squeezed down to illegible sizes. */
-  .wd-browser-viewport{ padding:.8rem; }
-  .wd-preview-services-mock, .wd-preview-about-mock{ display:none; }
-  .wd-preview-hero-mock{ padding:1.1rem .7rem; }
-  .wd-preview-hero-mock-headline{ font-size:1rem; margin-bottom:.7rem; }
+  /* Live Preview mode: full width now (not a squeezed side column), so the
+     browser frame gets real room -- but the purely decorative filler (3
+     fake service cards, a fake about blurb, a fake footer line) still
+     isn't part of the spec's "must include" list for this mode (frame,
+     business name/domain, nav, hero, selected sections, capability
+     indicators, back button), so it stays hidden in favor of keeping the
+     mode focused on what's actually functional. */
+  .wd-preview-services-mock, .wd-preview-about-mock, .wd-preview-footer-mock{ display:none; }
 
-  /* Right panel: tighter padding throughout so more of the narrower column
-     is actual content instead of whitespace, without dropping below 44px
-     on anything tappable. */
+  /* Customize mode: sidebar becomes the full-width primary view instead of
+     a sticky side column. Its own header/scroll/footer grid rows are kept
+     (compact header, one deliberate scrolling feature-list region per
+     the spec, rather than switching to page-level scroll and losing the
+     simple "scrollTop survives being hidden" trick that scroll-position
+     preservation across mode switches relies on) -- just resized to fill
+     real vertical room now that it isn't sharing the row with a preview
+     column. position:static instead of sticky: this is now the primary
+     mobile view, not a side panel racing the page's own scroll. */
+  .wd-sidebar{
+    position:static; height:70vh; height:70dvh; min-height:420px; max-height:720px;
+  }
+  /* One compact estimate control, not two: the sidebar's own desktop-style
+     footer card is replaced by the fixed .wd-mobile-bar below (same one
+     used site-wide at narrow widths already) so there's never a duplicate
+     price/CTA on screen at once. */
+  .wd-sidebar-footer{ display:none; }
+  .wd-mobile-bar.is-visible{ display:flex; }
+  /* padding-bottom on the body (via .has-mobile-bar, JS-set alongside the
+     bar) keeps the real site footer and cookie notice from being covered
+     by the fixed bar at the very bottom of the page -- same calc() used
+     the last time this bar was live: real bar height (synced by a
+     ResizeObserver in js/website-designer.js) plus the safe-area inset it
+     floats above, plus a deliberate minimum 16px breathing room. */
+  body.has-mobile-bar{
+    padding-bottom: calc(var(--wd-mobile-bar-height) + env(safe-area-inset-bottom, 0px) + var(--wd-mobile-bar-gap));
+  }
+  body.has-mobile-bar .cookie-banner{
+    margin-bottom: calc(var(--wd-mobile-bar-height) + env(safe-area-inset-bottom, 0px) + var(--wd-mobile-bar-gap));
+  }
+
+  /* Tighter padding throughout so more of the full-width column is actual
+     content instead of whitespace, without dropping below 44px on
+     anything tappable. */
   .wd-sidebar-header{ padding:.6rem .8rem .5rem; }
   .wd-sidebar-scroll{ padding:.8rem .9rem; }
-  .wd-sidebar-footer{ padding:.6rem .7rem; }
   .wd-category-header{ padding:.75rem .85rem; min-height:44px; }
   .wd-category-panel{ padding:.8rem .85rem .9rem; }
   .wd-feature-search{ padding:.4rem .7rem; }
   .wd-bundle-box{ padding:.65rem .85rem; }
 }
 
-@media (max-width:599px){
-  .wd-studio{ grid-template-columns: minmax(0, 30fr) minmax(0, 70fr); gap:.75rem; }
+@media (max-width:600px){
+  /* The tool didn't appear in the first phone viewport at all -- the hero
+     intro and launch banner (collapsed to a <details> by JS/the
+     .wd-launch-banner rules above) ate too much vertical space before it.
+     Heading stays readable (still comfortably above 1.5rem), just with
+     much less padding above/below it. */
+  .page-hero{ padding: 1.75rem 0 1.25rem; }
+  .page-hero h1{ font-size: clamp(1.5rem, 6vw, 1.9rem); }
+  .wd-tool{ padding-top:1.25rem; }
 
-  /* Narrower still: drop the last piece of decorative preview chrome (a
-     one-line fake footer) and tighten the hero/CTA a bit more -- font
-     sizes stay in the "still comfortably readable" range (.7rem/13px+),
-     nothing shrinks to illegible. */
-  .wd-preview-footer-mock{ display:none; }
-  .wd-browser-viewport{ padding:.6rem; }
   .wd-preview-hero-mock{ padding:.9rem .6rem; }
   .wd-preview-hero-mock-cta{ padding:.5rem 1.1rem; font-size:.74rem; }
-
+  .wd-browser-viewport{ padding:.6rem; }
   .wd-sidebar-header{ padding:.55rem .7rem .45rem; }
   .wd-sidebar-scroll{ padding:.7rem .75rem; }
 }
@@ -2271,3 +2391,62 @@ textarea{ resize: vertical; }
 [dir="rtl"] .price-was{ margin-right:0; margin-left:.4rem; }
 [dir="rtl"] .mock-logo--before{ margin-right:0; margin-left:6px; }
 [dir="rtl"] .cookie-banner-inner{ text-align:right; }
+
+/* ---- website-project-brief.html (standalone worksheet, opened in a new
+   tab from website-designer.html's post-quote prompt) --------------------
+   Deliberately its own compact chrome (see .wpb-header/.wpb-footer below)
+   rather than the full site header/nav -- a customer lands here mid-task
+   from a resume-token link, not browsing the site, so the priority is a
+   focused single column, not full site navigation. */
+.wpb-header .header-inner{ justify-content:space-between; }
+.wpb-footer{ padding:1.5rem 0; text-align:center; }
+.wpb-footer .footer-legal{ margin:0; color: var(--ink-faint); font-size:.8rem; }
+
+.wpb-shell{ padding:2rem 0 4rem; }
+.wpb-wrap{ max-width:900px; margin:0 auto; }
+
+.wpb-state{ display:flex; flex-direction:column; gap:1.2rem; }
+
+.wpb-loading-spinner{
+  width:32px; height:32px; margin:3rem auto 0; border-radius:50%;
+  border:3px solid var(--line-strong); border-top-color: var(--accent-teal-text);
+  animation: wpb-spin 0.8s linear infinite;
+}
+@media (prefers-reduced-motion: reduce){ .wpb-loading-spinner{ animation:none; } }
+@keyframes wpb-spin{ to{ transform:rotate(360deg); } }
+#wpbLoading{ align-items:center; text-align:center; color: var(--ink-faint); }
+
+.wpb-invalid-card{ max-width:640px; margin:2rem auto; text-align:center; }
+.wpb-invalid-card h1{ font-size:1.4rem; margin-bottom:.6rem; }
+.wpb-invalid-card p{ color: var(--ink-faint); margin-bottom:1rem; }
+
+.wpb-summary{ display:block; }
+.wpb-summary-row{ display:grid; grid-template-columns:repeat(4, 1fr); gap:1rem; }
+.wpb-summary-label{ font-family: var(--font-display); font-size:.68rem; font-weight:700; letter-spacing:.03em; text-transform:uppercase; color: var(--ink-faint); margin:0 0 .2rem; }
+.wpb-summary-value{ font-weight:600; margin:0; overflow-wrap:anywhere; }
+@media (max-width:640px){ .wpb-summary-row{ grid-template-columns:1fr 1fr; } }
+
+.wpb-progress-row{ display:flex; align-items:center; gap:.8rem; flex-wrap:wrap; }
+.wpb-progress-track{ flex:1 1 200px; height:8px; border-radius:999px; background: var(--select-bg); overflow:hidden; min-width:120px; }
+.wpb-progress-fill{ height:100%; width:0%; background: var(--accent-teal-text); border-radius:999px; transition:width .25s ease; }
+@media (prefers-reduced-motion: reduce){ .wpb-progress-fill{ transition:none; } }
+.wpb-progress-text{ font-size:.8rem; color: var(--ink-faint); white-space:nowrap; }
+.wpb-autosave-status{ font-size:.8rem; color: var(--ink-faint); white-space:nowrap; margin-inline-start:auto; }
+
+.wpb-intro{ color: var(--ink-faint); }
+
+.wpb-section{ padding:1.4rem 0; border-top:1px solid var(--line-strong); }
+.wpb-section:first-of-type{ border-top:none; }
+.wpb-section-title{ display:flex; align-items:center; gap:.6rem; font-size:1.05rem; margin-bottom:.9rem; }
+.wpb-section-num{
+  display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; flex-shrink:0;
+  border-radius:50%; background: var(--select-bg); color: var(--accent-teal-text);
+  font-family: var(--font-display); font-weight:700; font-size:.8rem;
+}
+.wpb-note-warning{ font-size:.82rem; color: var(--accent-orange-text); margin-top:.4rem; }
+.wpb-panel-actions{ display:flex; gap:.8rem; flex-wrap:wrap; margin-top:1rem; }
+
+@media (max-width:600px){
+  .wpb-shell{ padding:1.2rem 0 3rem; }
+  .wpb-summary-row{ grid-template-columns:1fr 1fr; gap:.7rem; }
+}

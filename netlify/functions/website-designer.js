@@ -1,24 +1,45 @@
 // website-designer.js -- receives Website Designer submissions in one of
-// two stages, persists each as a lead record, and emails Dylan.
+// three stages, persists each as a lead record, and emails Dylan.
 // Public/unauthenticated (like the contact form), rate-limited against
 // spam/abuse.
 //
 // STAGE "quick" -- sent the moment a customer accepts the on-screen price,
 // before any long-form content brief. Minimal required fields (package,
 // businessName, customerName, email, phone, preferredContact) so a lead
-// reaches Dylan's inbox with as little friction as possible.
+// reaches Dylan's inbox with as little friction as possible. On success, a
+// single-use "resume token" is generated and returned ONCE (raw) in the
+// response -- only its SHA-256 hash is ever persisted, alongside the lead
+// record. That token (never the lead id alone) is what the standalone
+// project-details worksheet (website-project-brief.html) uses to fetch this
+// lead's data back and, later, to complete the full submission.
 //   POST { stage: "quick", package, businessName, customerName, email, phone,
 //          preferredContact, subtotal, estimateTotal, heroesDiscount,
 //          bundledCategories: [category], bundleSavings,
 //          optionalSelected: [{title, price}], premiumSelected: [title] }
+//   201 { id, emailSent, resumeToken }
 //
-// STAGE "full" -- sent only if the customer opts in, from the prompt shown
-// right after the quick quote. Carries the full content brief plus the
-// client-generated PDF summary, and references the earlier quick lead (if
-// any) via quickLeadId so the two can be matched up in Dylan's inbox.
-//   POST { stage: "full", quickLeadId, package, businessName, customerName,
-//          email, phone, preferredContact, domain, notes, subtotal,
-//          estimateTotal, heroesDiscount, bundledCategories: [category],
+// STAGE "resume" -- sent by the worksheet page right after it opens, to
+// retrieve a limited summary of the quick lead (business/customer info,
+// selections, pricing) so the worksheet can pre-fill and show a reference
+// without ever putting that data in a URL. Requires both quickLeadId and
+// the raw resumeToken; the id alone is never sufficient. Every failure mode
+// (unknown id, wrong token, expired, already used) returns the exact same
+// generic error, so this endpoint never discloses whether a given lead id
+// exists.
+//   POST { stage: "resume", quickLeadId, token }
+//   200 { quickLeadId, package, businessName, customerName, email, phone,
+//         preferredContact, subtotal, estimateTotal, heroesDiscount,
+//         bundledCategories, bundleSavings, optionalSelected, premiumSelected }
+//   401 { error } -- invalid/expired/unknown (never distinguished)
+//
+// STAGE "full" -- sent only from the worksheet, once the customer completes
+// the full content brief. Requires the same quickLeadId + resumeToken pair
+// (re-validated the same way as "resume"); on success the token is marked
+// used and can never be replayed. Carries the full content brief plus the
+// client-generated PDF summary.
+//   POST { stage: "full", quickLeadId, resumeToken, package, businessName,
+//          customerName, email, phone, preferredContact, domain, notes,
+//          subtotal, estimateTotal, heroesDiscount, bundledCategories: [category],
 //          bundleSavings, optionalSelected: [{title, price}],
 //          premiumSelected: [title], pdfBase64, pdfFilename,
 //          brief: { description, industry, serviceArea, servicesList, brandColors,
@@ -29,17 +50,56 @@
 // `brief` is the content actually needed to start building (not just scope/
 // price) -- description/industry/serviceArea/servicesList are required;
 // everything else is optional or only sent when its triggering feature is
-// selected (see CONTENT_BRIEF_TRIGGER_TITLES in js/website-designer.js).
-//
-// Requests with no `stage` (or an unrecognized one) are treated as "full"
-// for backward compatibility with any already-open tab running older
-// client JS.
+// selected (see CONTENT_BRIEF_TRIGGER_TITLES in js/website-project-brief.js).
 
+const crypto = require("crypto");
 const { json, rateLimited } = require("./_lib/auth_utils");
 const { setJSON, getJSON } = require("./_lib/blob_store");
 const { sendEmail } = require("./_lib/email");
 const STARTER_CATALOG = require("../../starter-catalog.json");
 const BUSINESS_CATALOG = require("../../business-catalog.json");
+
+// ---- Resume-token helpers ------------------------------------------------
+// A quick lead's resumeTokenHash/resumeTokenExpiresAt/resumeTokenUsed live
+// directly on its "leads" record (no separate store needed) -- the raw
+// token itself is NEVER persisted or logged anywhere, only this SHA-256
+// hash, so reading the "leads" store (e.g. from the admin side, or a future
+// export) can never recover a working token. Validation re-hashes the
+// candidate and compares with crypto.timingSafeEqual (constant-time) rather
+// than string/Buffer.equals, so response timing can't leak how many hash
+// bytes matched.
+const RESUME_TOKEN_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+function generateResumeToken() {
+  return crypto.randomBytes(32).toString("hex"); // 256 bits, unguessable
+}
+
+function hashResumeToken(token) {
+  return crypto.createHash("sha256").update(token).digest("hex");
+}
+
+function resumeTokenMatches(candidateToken, storedHashHex) {
+  if (!candidateToken || !storedHashHex) return false;
+  const candidate = Buffer.from(hashResumeToken(candidateToken), "hex");
+  const stored = Buffer.from(storedHashHex, "hex");
+  return candidate.length === stored.length && crypto.timingSafeEqual(candidate, stored);
+}
+
+// Single choke point for "is this token currently good for this record" --
+// used identically by both the "resume" (read) and "full" (spend) stages,
+// so their validation can never silently drift apart.
+function resumeTokenValid(record, token) {
+  if (!record || !record.resumeTokenHash) return false;
+  if (record.resumeTokenUsed) return false;
+  if (!record.resumeTokenExpiresAt || Date.now() > record.resumeTokenExpiresAt) return false;
+  return resumeTokenMatches(token, record.resumeTokenHash);
+}
+
+// Every invalid-resume-token outcome (unknown lead id, wrong token, expired,
+// already used) returns this exact same shape/status -- distinguishing any
+// of them would let a caller enumerate valid quick-lead ids or brute-force
+// tokens against a "yes this part matched" oracle.
+const RESUME_INVALID = { error: "This link is invalid or has expired." };
 
 // Matches js/website-designer.js's own constants exactly (see that file's
 // HEROES_DISCOUNT_RATE/BUNDLE_DISCOUNT_RATE/BUNDLE_MIN_ITEMS) -- kept as a
@@ -154,7 +214,7 @@ const PREFERRED_CONTACT_VALUES = ["phone", "text", "email"];
 const PREFERRED_CONTACT_LABELS = { phone: "Phone call", text: "Text message", email: "Email" };
 
 function newLeadId() {
-  return "WD-" + Date.now().toString(36).toUpperCase() + "-" + require("crypto").randomBytes(3).toString("hex").toUpperCase();
+  return "WD-" + Date.now().toString(36).toUpperCase() + "-" + crypto.randomBytes(3).toString("hex").toUpperCase();
 }
 
 // Stage "quick" -- fired the moment a customer accepts the on-screen price.
@@ -175,6 +235,7 @@ async function handleQuickSubmission(body, ip) {
   }
 
   const id = newLeadId();
+  const resumeToken = generateResumeToken();
   const record = {
     id, stage: "quick", package: pkg, businessName: businessName.trim(), customerName: customerName.trim(),
     email: email.toLowerCase().trim(), phone: phone.trim(), preferredContact,
@@ -185,6 +246,9 @@ async function handleQuickSubmission(body, ip) {
     optionalSelected: Array.isArray(body.optionalSelected) ? body.optionalSelected : [],
     premiumSelected: Array.isArray(body.premiumSelected) ? body.premiumSelected : [],
     completedFull: false, createdAt: Date.now(), ip,
+    resumeTokenHash: hashResumeToken(resumeToken),
+    resumeTokenExpiresAt: Date.now() + RESUME_TOKEN_TTL_MS,
+    resumeTokenUsed: false,
   };
   Object.assign(record, priceMismatchFlag(pkg, record));
   await setJSON("leads", id, record);
@@ -233,18 +297,70 @@ async function handleQuickSubmission(body, ip) {
     html,
   });
 
-  return json(201, { id, emailSent: result.sent });
+  // resumeToken is returned exactly once, here, and never persisted raw or
+  // written to any log -- the client is expected to hand it straight into
+  // a URL fragment (never a query string) and then sessionStorage.
+  return json(201, { id, emailSent: result.sent, resumeToken });
 }
 
-// Stage "full" -- the original submission shape, sent only if the customer
-// opts in to the complete content brief after their quick quote.
+// Stage "resume" -- the worksheet's very first call, using the quickLeadId +
+// raw resumeToken it received via the URL fragment, to fetch back a limited
+// summary of the quick lead so it can pre-fill the worksheet. Deliberately
+// read-only: does not mark the token used (the same token is required again,
+// unchanged, at full-submission time) and does not touch server-side ip/
+// internal bookkeeping fields.
+async function handleResumeRequest(body, ip) {
+  // A separate, more generous budget than the 8/hour submission limiter --
+  // reloading the worksheet tab legitimately re-calls this, and a wrong-
+  // guess attempt against a 256-bit token is computationally infeasible
+  // regardless of rate limit, so this mainly guards against casual lead-id
+  // enumeration/probing rather than a realistic brute force.
+  if (await rateLimited("website-designer-resume", ip, 20, 3600)) {
+    return json(429, { error: "Too many attempts. Please try again later, or call 636-426-0289 / email dylan@lit-solutions.tech directly." });
+  }
+
+  const { quickLeadId, token } = body;
+  if (typeof quickLeadId !== "string" || !/^WD-/.test(quickLeadId) || typeof token !== "string" || !token) {
+    return json(401, RESUME_INVALID);
+  }
+  const record = await getJSON("leads", quickLeadId);
+  if (!resumeTokenValid(record, token)) return json(401, RESUME_INVALID);
+
+  return json(200, {
+    quickLeadId: record.id,
+    package: record.package,
+    businessName: record.businessName,
+    customerName: record.customerName,
+    email: record.email,
+    phone: record.phone,
+    preferredContact: record.preferredContact,
+    subtotal: record.subtotal,
+    estimateTotal: record.estimateTotal,
+    heroesDiscount: record.heroesDiscount,
+    bundledCategories: record.bundledCategories,
+    bundleSavings: record.bundleSavings,
+    optionalSelected: record.optionalSelected,
+    premiumSelected: record.premiumSelected,
+  });
+}
+
+// Stage "full" -- sent only from the standalone project-details worksheet,
+// once the customer completes the full content brief. Always requires the
+// quickLeadId + resumeToken pair issued at quick-submission time -- a
+// predictable quickLeadId alone is never sufficient to authorize this.
 async function handleFullSubmission(body, ip) {
   const {
     package: pkg, businessName, customerName, email, phone, preferredContact, domain, notes,
     subtotal, estimateTotal, heroesDiscount, bundledCategories, bundleSavings,
     optionalSelected, premiumSelected, pdfBase64, pdfFilename,
-    brief, logo, photos, quickLeadId,
+    brief, logo, photos, quickLeadId, resumeToken,
   } = body;
+
+  if (typeof quickLeadId !== "string" || !/^WD-/.test(quickLeadId) || typeof resumeToken !== "string" || !resumeToken) {
+    return json(401, RESUME_INVALID);
+  }
+  const quickRecord = await getJSON("leads", quickLeadId);
+  if (!resumeTokenValid(quickRecord, resumeToken)) return json(401, RESUME_INVALID);
 
   if (pkg !== "starter" && pkg !== "business") return json(400, { error: "Invalid package." });
   if (!businessName || !businessName.trim()) return json(400, { error: "Business name is required." });
@@ -292,7 +408,7 @@ async function handleFullSubmission(body, ip) {
   }
 
   const id = newLeadId();
-  const cleanQuickLeadId = typeof quickLeadId === "string" && /^WD-/.test(quickLeadId) ? quickLeadId : null;
+  const cleanQuickLeadId = quickLeadId;
   const record = {
     id, stage: "full", quickLeadId: cleanQuickLeadId,
     package: pkg, businessName: businessName.trim(), customerName: customerName.trim(),
@@ -310,10 +426,10 @@ async function handleFullSubmission(body, ip) {
   };
   Object.assign(record, priceMismatchFlag(pkg, record));
   await setJSON("leads", id, record);
-  if (cleanQuickLeadId) {
-    const quickRecord = await getJSON("leads", cleanQuickLeadId);
-    if (quickRecord) await setJSON("leads", cleanQuickLeadId, { ...quickRecord, completedFull: true, fullLeadId: id });
-  }
+  // The resume token is single-use: once it has successfully completed a
+  // full submission, mark it spent so the same link/token can never be
+  // replayed to submit again or to keep reading resume data back.
+  await setJSON("leads", cleanQuickLeadId, { ...quickRecord, completedFull: true, fullLeadId: id, resumeTokenUsed: true });
 
   const optionalRows = record.optionalSelected.length
     ? record.optionalSelected.map((f) => `<li>${esc(f.title)} -- $${Number(f.price) || 0}</li>`).join("")
@@ -396,18 +512,29 @@ exports.handler = async (event) => {
   if (event.httpMethod !== "POST") return json(405, { error: "Method not allowed" });
 
   const ip = event.headers["x-nf-client-connection-ip"] || event.headers["client-ip"] || "unknown";
-  if (await rateLimited("website-designer", ip, 8, 3600)) {
-    return json(429, { error: "Too many submissions. Please call 636-426-0289 or email dylan@lit-solutions.tech directly." });
-  }
 
   let body;
   try { body = JSON.parse(event.body || "{}"); } catch (e) { return json(400, { error: "Invalid submission." }); }
 
+  // "resume" has its own, separate rate-limit budget (see
+  // handleResumeRequest) instead of sharing the 8/hour submission limiter --
+  // it's a read, not a submission, and a customer legitimately reloading
+  // the worksheet tab should never be confused with someone submitting
+  // repeatedly.
+  if (body.stage === "resume") return handleResumeRequest(body, ip);
+
+  if (await rateLimited("website-designer", ip, 8, 3600)) {
+    return json(429, { error: "Too many submissions. Please call 636-426-0289 or email dylan@lit-solutions.tech directly." });
+  }
+
   return body.stage === "quick" ? handleQuickSubmission(body, ip) : handleFullSubmission(body, ip);
 };
 
-// Exported for node:test coverage of the pricing/discount math (F016) --
-// doesn't change anything Netlify actually invokes, which only ever calls
-// exports.handler.
+// Exported for node:test coverage of the pricing/discount math (F016) and
+// the resume-token security model -- doesn't change anything Netlify
+// actually invokes, which only ever calls exports.handler.
 exports.recomputeEstimate = recomputeEstimate;
 exports.priceMismatchFlag = priceMismatchFlag;
+exports.generateResumeToken = generateResumeToken;
+exports.hashResumeToken = hashResumeToken;
+exports.resumeTokenValid = resumeTokenValid;

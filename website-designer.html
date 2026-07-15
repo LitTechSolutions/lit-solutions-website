@@ -129,12 +129,16 @@
 
   <section class="wd-tool">
     <div class="wrap">
-      <div class="launch-banner">
-        <span class="launch-banner-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z"/></svg>
-        </span>
+      <details class="launch-banner wd-launch-banner" id="wdLaunchBanner" open>
+        <summary class="wd-launch-summary">
+          <span class="launch-banner-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z"/></svg>
+          </span>
+          <span class="wd-launch-summary-text" data-i18n="wd.launch_banner_summary">Launch pricing and available discounts</span>
+          <svg class="wd-launch-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
         <p data-i18n-html="wd.launch_banner"><strong>Launch special:</strong> the prices in this tool are introductory rates for our first 25 customers as we get Little Technical Solutions LLC off the ground. Once we hit that milestone, pricing moves to our standard published rates -- but the <strong>bundle discount</strong> and <strong>American Heroes Discount</strong> are permanent and will still apply. All current discounts stack.</p>
-      </div>
+      </details>
 
       <div class="wd-steps-row">
         <div class="wd-steps" role="tablist" aria-label="Website designer steps" data-i18n-attr-aria-label="wd.steps_aria_label">
@@ -145,9 +149,20 @@
         <button type="button" class="wd-start-over" id="wdStartOver" hidden data-i18n="wd.start_over">Start over</button>
       </div>
 
-      <div class="wd-studio">
+      <div class="wd-studio" id="wdStudio" data-mobile-mode="customize">
 
-        <div class="wd-studio-preview" aria-label="Live preview of your website">
+        <div class="wd-mobile-mode-switch" role="tablist" aria-label="Website view" data-i18n-attr-aria-label="wd.mobile_mode_switch_aria_label">
+          <button type="button" class="wd-mobile-mode-tab is-active" id="wdModeTabCustomize" role="tab" aria-selected="true" aria-controls="wdSidebar" data-mobile-mode="customize">
+            <span data-i18n="wd.mobile_mode_customize">Customize</span>
+          </button>
+          <button type="button" class="wd-mobile-mode-tab" id="wdModeTabPreview" role="tab" aria-selected="false" tabindex="-1" aria-controls="wdStudioPreview" data-mobile-mode="preview">
+            <span data-i18n="wd.mobile_mode_preview">Live Preview</span>
+            <span class="wd-mobile-mode-badge" id="wdPreviewUpdatedBadge" hidden data-i18n="wd.preview_updated_badge">Updated</span>
+          </button>
+        </div>
+
+        <div class="wd-studio-preview" id="wdStudioPreview" aria-label="Live preview of your website">
+          <button type="button" class="wd-preview-back-btn" id="wdPreviewBackBtn" data-i18n="wd.preview_back_to_customize">Back to Customize</button>
           <div class="wd-browser" id="wdBrowser">
             <div class="wd-browser-chrome">
               <span class="wd-browser-dot"></span><span class="wd-browser-dot"></span><span class="wd-browser-dot"></span>
@@ -364,137 +379,26 @@
               <p data-i18n="wd.prompt_message">The more we know up front, the faster we can start once you're ready -- but it's completely optional. We'll follow up either way using the contact method you picked.</p>
               <div class="wd-panel-actions">
                 <button type="button" class="btn btn-ghost" data-prompt-choice="no" data-i18n="wd.prompt_no">Not right now</button>
-                <button type="button" class="btn btn-primary" data-prompt-choice="yes" data-i18n="wd.prompt_yes">Yes, let's continue</button>
+                <button type="button" class="btn btn-primary" id="wdPromptYesBtn" data-i18n="wd.prompt_yes">Yes, open project worksheet</button>
               </div>
+              <p class="wd-note" data-i18n="wd.prompt_new_tab_note">This opens a separate project details worksheet in a new browser tab -- your quote request has already been sent either way.</p>
+              <p class="wd-note wd-fallback-link" id="wdWorksheetFallback" hidden>
+                <span data-i18n="wd.prompt_popup_blocked">Your browser blocked the new tab.</span>
+                <a href="#" id="wdWorksheetFallbackLink" target="_blank" rel="noopener" data-i18n="wd.prompt_open_link">Open your project worksheet</a>
+              </p>
             </div>
           </div>
 
-          <!-- Step 4 (optional): full project brief, only reached via the prompt above -->
-          <div class="wd-panel" id="wdStep4" data-panel="4">
-            <h2 class="wd-section-title" id="wdStep4Heading" tabindex="-1" data-i18n="wd.step4_title">Project details</h2>
-            <p class="wd-note" data-i18n="wd.step4_note">This is what actually lets us start building -- it gets turned into a project summary PDF and sent straight to us.</p>
-            <form id="wdBriefForm">
-              <p class="visually-hidden"><label>Don't fill this out: <input name="wd-bot-field" id="wdHoneypotFull"></label></p>
-
-              <div class="form-row form-row--split">
-                <div>
-                  <label for="wdDomain" data-i18n="wd.form_domain_label">Current website or domain (if you have one)</label>
-                  <input type="text" id="wdDomain" name="current_domain">
-                </div>
-                <div>
-                  <label for="wdDesiredDomain" data-i18n="wd.form_desired_domain_label">If you don't have a domain yet, what name would you like? (optional -- we can register it for you)</label>
-                  <input type="text" id="wdDesiredDomain" name="desired_domain" placeholder="e.g. riversideplumbing.com" data-i18n-attr-placeholder="wd.form_desired_domain_placeholder">
-                </div>
-              </div>
-
-              <h3 class="wd-brief-heading" data-i18n="wd.brief_heading">Tell us about your business</h3>
-              <p class="wd-note" data-i18n="wd.brief_intro_note">This is what actually lets us start building -- without it we have to follow up before any work can begin.</p>
-
-              <div class="form-row">
-                <label for="wdBizDescription" data-i18n="wd.brief_description_label">What does your business do, and who are your customers? *</label>
-                <textarea id="wdBizDescription" name="brief_description" rows="3" required placeholder="e.g. We repair residential HVAC systems for homeowners in the Northern Neck of Virginia." data-i18n-attr-placeholder="wd.brief_description_placeholder"></textarea>
-              </div>
-              <div class="form-row form-row--split">
-                <div>
-                  <label for="wdBizIndustry" data-i18n="wd.brief_industry_label">Industry / type of business *</label>
-                  <input type="text" id="wdBizIndustry" name="brief_industry" required placeholder="e.g. HVAC repair" data-i18n-attr-placeholder="wd.brief_industry_placeholder">
-                </div>
-                <div>
-                  <label for="wdServiceArea" data-i18n="wd.brief_service_area_label">City/region(s) you serve *</label>
-                  <input type="text" id="wdServiceArea" name="brief_service_area" required placeholder="e.g. Montross &amp; King George, VA" data-i18n-attr-placeholder="wd.brief_service_area_placeholder">
-                </div>
-              </div>
-              <div class="form-row">
-                <label for="wdServicesList" data-i18n="wd.brief_services_list_label">List your services or products (one per line) *</label>
-                <textarea id="wdServicesList" name="brief_services_list" rows="3" required placeholder="AC repair&#10;Furnace installation&#10;Duct cleaning" data-i18n-attr-placeholder="wd.brief_services_list_placeholder"></textarea>
-              </div>
-              <div class="form-row form-row--split">
-                <div>
-                  <label for="wdBrandColors" data-i18n="wd.brief_brand_colors_label">Brand colors, if you have them</label>
-                  <input type="text" id="wdBrandColors" name="brief_brand_colors" placeholder="e.g. navy blue &amp; orange, or hex codes" data-i18n-attr-placeholder="wd.brief_brand_colors_placeholder">
-                </div>
-                <div>
-                  <label for="wdStyleReferences" data-i18n="wd.brief_style_references_label">Websites whose look you like</label>
-                  <input type="text" id="wdStyleReferences" name="brief_style_references" placeholder="Paste a link or two" data-i18n-attr-placeholder="wd.brief_style_references_placeholder">
-                </div>
-              </div>
-              <div class="form-row form-row--split">
-                <div>
-                  <label for="wdLogoFile" data-i18n="wd.brief_logo_label">Logo file, if you have one</label>
-                  <input type="file" id="wdLogoFile" name="logo_file" accept="image/png,image/jpeg,image/svg+xml,image/webp">
-                  <p class="wd-note wd-note-inline" data-i18n="wd.brief_logo_note">PNG, JPG, SVG, or WebP -- up to 4MB.</p>
-                </div>
-                <div>
-                  <label for="wdPhotosFile" data-i18n="wd.brief_photos_label">A few real photos (team, location, work)</label>
-                  <input type="file" id="wdPhotosFile" name="photo_files" accept="image/png,image/jpeg,image/webp" multiple>
-                  <p class="wd-note wd-note-inline" data-i18n="wd.brief_photos_note">Up to 4 photos, 4MB each. No photos yet? Leave blank -- we'll follow up.</p>
-                </div>
-              </div>
-              <div class="form-row form-row--split">
-                <div>
-                  <label for="wdAddressHours" data-i18n="wd.brief_address_hours_label">Physical address &amp; business hours, if customers visit you</label>
-                  <textarea id="wdAddressHours" name="brief_address_hours" rows="2"></textarea>
-                </div>
-                <div>
-                  <label for="wdSocialLinks" data-i18n="wd.brief_social_links_label">Social media links</label>
-                  <textarea id="wdSocialLinks" name="brief_social_links" rows="2" placeholder="Facebook, Instagram, etc." data-i18n-attr-placeholder="wd.brief_social_links_placeholder"></textarea>
-                </div>
-              </div>
-              <div class="form-row">
-                <label for="wdLaunchDate" data-i18n="wd.brief_launch_date_label">Preferred launch date, if any</label>
-                <input type="date" id="wdLaunchDate" name="brief_launch_date">
-              </div>
-
-              <div id="wdBriefConditional">
-                <div class="form-row wd-brief-group" id="wdBriefGroup_staff" hidden>
-                  <label for="wdBriefStaff" data-i18n="wd.brief_staff_label">Team/staff details *</label>
-                  <textarea id="wdBriefStaff" name="brief_staff" rows="3" placeholder="One person per line: Name — Title — short bio" data-i18n-attr-placeholder="wd.brief_staff_placeholder"></textarea>
-                </div>
-                <div class="form-row wd-brief-group" id="wdBriefGroup_testimonials" hidden>
-                  <label for="wdBriefTestimonials" data-i18n="wd.brief_testimonials_label">Testimonials/reviews to feature *</label>
-                  <textarea id="wdBriefTestimonials" name="brief_testimonials" rows="3" placeholder="One per line: Customer name — their quote" data-i18n-attr-placeholder="wd.brief_testimonials_placeholder"></textarea>
-                </div>
-                <div class="form-row wd-brief-group" id="wdBriefGroup_faq" hidden>
-                  <label for="wdBriefFaq" data-i18n="wd.brief_faq_label">FAQ questions &amp; answers *</label>
-                  <textarea id="wdBriefFaq" name="brief_faq" rows="3" placeholder="One per line: Question? | Answer" data-i18n-attr-placeholder="wd.brief_faq_placeholder"></textarea>
-                </div>
-                <div class="form-row wd-brief-group" id="wdBriefGroup_blog" hidden>
-                  <label for="wdBriefBlog" data-i18n="wd.brief_blog_label">Blog topics to start with *</label>
-                  <textarea id="wdBriefBlog" name="brief_blog" rows="2" placeholder="2-3 topics or article titles" data-i18n-attr-placeholder="wd.brief_blog_placeholder"></textarea>
-                </div>
-                <div class="form-row wd-brief-group" id="wdBriefGroup_gallery" hidden>
-                  <label for="wdBriefGallery" data-i18n="wd.brief_gallery_label">What should the gallery/portfolio show?</label>
-                  <textarea id="wdBriefGallery" name="brief_gallery" rows="2" placeholder="Describe the images, or note you'll send photos separately" data-i18n-attr-placeholder="wd.brief_gallery_placeholder"></textarea>
-                </div>
-                <div class="form-row wd-brief-group" id="wdBriefGroup_pricing" hidden>
-                  <label for="wdBriefPricing" data-i18n="wd.brief_pricing_label">Prices to display *</label>
-                  <textarea id="wdBriefPricing" name="brief_pricing" rows="3" placeholder="List services/packages and prices (or ranges)" data-i18n-attr-placeholder="wd.brief_pricing_placeholder"></textarea>
-                </div>
-                <div class="form-row wd-brief-group" id="wdBriefGroup_booking" hidden>
-                  <label for="wdBriefBooking" data-i18n="wd.brief_booking_label">Booking details *</label>
-                  <textarea id="wdBriefBooking" name="brief_booking" rows="3" placeholder="What can be booked, your typical hours/availability, and how you'd like requests confirmed (call, text, email)" data-i18n-attr-placeholder="wd.brief_booking_placeholder"></textarea>
-                </div>
-                <div class="form-row wd-brief-group" id="wdBriefGroup_newsletter" hidden>
-                  <label for="wdBriefNewsletter" data-i18n="wd.brief_newsletter_label">Newsletter platform</label>
-                  <input type="text" id="wdBriefNewsletter" name="brief_newsletter" placeholder="Mailchimp, Constant Contact, etc. -- or leave blank and we'll recommend one" data-i18n-attr-placeholder="wd.brief_newsletter_placeholder">
-                </div>
-                <div class="form-row wd-brief-group" id="wdBriefGroup_sms" hidden>
-                  <label for="wdBriefSms" data-i18n="wd.brief_sms_label">SMS notifications details *</label>
-                  <textarea id="wdBriefSms" name="brief_sms" rows="3" placeholder="What should trigger a text (appointment reminders, order updates, etc.)? Preferred SMS provider? Note: recipients must explicitly opt in -- we'll help build that consent flow." data-i18n-attr-placeholder="wd.brief_sms_placeholder"></textarea>
-                </div>
-              </div>
-
-              <div class="form-row">
-                <label for="wdNotes" data-i18n="wd.form_notes_label">Notes, questions, or anything specific you want</label>
-                <textarea id="wdNotes" name="notes" rows="4"></textarea>
-              </div>
-
+          <!-- Shown after the worksheet tab has been opened -->
+          <div class="wd-panel" id="wdStepWorksheetOpened" data-panel="worksheet-opened">
+            <div class="card wd-done-card">
+              <h2 id="wdStepWorksheetOpenedHeading" tabindex="-1" data-i18n="wd.worksheet_opened_title">Your project worksheet opened in a new tab.</h2>
+              <p data-i18n="wd.worksheet_opened_message">Your quote request has already been received. Finish the worksheet whenever you're ready -- it stays open in that tab.</p>
               <div class="wd-panel-actions">
-                <button type="button" class="btn btn-ghost" data-prompt-choice="no" data-i18n="wd.step4_back">Not right now</button>
-                <button type="submit" class="btn btn-primary" id="wdSubmitBtn" data-i18n="wd.step4_submit">Submit project details</button>
+                <button type="button" class="btn btn-ghost" id="wdFinishLaterBtn" data-i18n="wd.finish_later">Finish later</button>
+                <button type="button" class="btn btn-primary" id="wdOpenWorksheetAgainBtn" data-i18n="wd.open_worksheet_again">Open worksheet again</button>
               </div>
-              <p class="form-status" role="status" id="wdFormStatus"></p>
-            </form>
+            </div>
           </div>
 
           <!-- Confirmation -->
@@ -529,9 +433,12 @@
       </div>
 
       <div class="wd-mobile-bar" id="wdMobileBar">
-        <div class="wd-mobile-bar-info">
+        <div class="wd-mobile-bar-info" aria-live="polite" aria-atomic="true">
           <span class="wd-mobile-bar-amount" id="wdMobileBarAmount">$0</span>
-          <span class="wd-mobile-bar-label" data-i18n="wd.mobile_bar_label">starting estimate</span>
+          <span class="wd-mobile-bar-meta">
+            <span class="wd-mobile-bar-label" data-i18n="wd.mobile_bar_label">starting estimate</span>
+            <span class="wd-mobile-bar-count" id="wdMobileBarCount" hidden></span>
+          </span>
         </div>
         <button type="button" class="btn btn-primary" id="wdMobileReviewBtn" data-i18n="wd.review_submit_btn">Review &amp; submit</button>
       </div>
@@ -594,6 +501,7 @@
 </div>
 
 <script src="assets/vendor/jspdf/jspdf.umd.min.js"></script>
+<script src="js/website-designer-pdf.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/main.js"></script>
 <script src="js/site-version.js"></script>
