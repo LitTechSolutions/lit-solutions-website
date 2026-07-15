@@ -125,6 +125,19 @@ Extended `migrations/001_initial_schema.sql` with three tables the existing sche
 
 With this batch, **every function with a complete pure engine now also has persistence**, except where a function deliberately has no dedicated table (F009/F012/F015's view-models compose other stores' data; F056 stays on Blobs by design).
 
+## Post-Session-12: live database verified
+
+`migrations/001_initial_schema.sql` executed against the real Neon database (2026-07-14) — 37 tables confirmed via `information_schema.tables`. A 4-function live smoke test then exercised the actual stack, not fake clients:
+
+| Function | Status | Evidence |
+|---|---|---|
+| F001 (`organizationStore.createOrganization`/`getOrganizationById`) | **Verified** — passed live | `evidence/migrations/session-13-live-smoke-test.txt` |
+| F005 (`membershipStore.createMembership`/`resolveAuthorizationContext` → `rbac.authorize()`) | **Verified** — passed live, full chain from persisted membership to policy decision | same |
+| F008 (`pgAuditSink` via `createAuditRecorder()`) | **Verified** — passed live, confirms the interface-first design (Session 1) required zero changes when the sink actually became real | same |
+| F019/F023 (`ticketStore.createTicket`/`transitionTicket`) | **Verified** — passed live, including `ticketSubmission.js` and `ticketLifecycle.js` running for real | same |
+
+These four are the first functions in this project to reach "Verified" status per the master instruction's definition (implemented, tested, traceable, reviewed for authorization, reviewed for failure handling) — everything else remains "tested" (against fakes) but not yet "Verified" (against reality). The other 16 persistence functions have their tables confirmed present and schema-matched, but haven't been individually live-smoke-tested yet.
+
 ## Coverage note
 
-335 automated tests exist as of this update (`evidence/tests/session-12-persistence-final-batch.txt`), all passing — up from 311 after the previous batch, 259 before that, 236 after Session 7, 200 after Session 6, 173 after Session 5, 155 after Session 4, 123 after Session 3, 77 after Session 2, and 44 after Session 1. 99 tests now exercise persistence across 21 `src/db/` files — all against fake injected database clients, none yet against a live Neon database (see `MIGRATION_PLAN.md`, still the single highest-priority verification gap).
+335 automated unit tests (`evidence/tests/session-12-persistence-final-batch.txt`) plus a 4-function live integration smoke test (`evidence/migrations/session-13-live-smoke-test.txt`), all passing. Unit test count progression: 44 (Session 1) → 77 → 123 → 155 → 173 → 200 → 236 → 259 → 311 → 335 (final batch). 99 of the 335 exercise persistence logic; 4 of those code paths are now additionally proven against a real database.

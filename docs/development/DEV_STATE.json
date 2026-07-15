@@ -1,10 +1,10 @@
 {
   "developmentVersion": "1.0",
-  "currentSession": 12,
-  "completedSessions": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+  "currentSession": 13,
+  "completedSessions": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
   "nextSession": null,
-  "currentWave": "Persistence completed for every engine-complete function not blocked on business content. Next work requires either live-database verification or an owner decision (pricing is highest-leverage).",
-  "currentFunctionIds": ["F044", "F046", "F047", "F051", "F054", "F055", "F057"],
+  "currentWave": "Live database verified. Migration executed against real Neon Postgres, 37 tables confirmed, 4-function smoke test passed end to end. Persistence layer is no longer theoretical. Next work needs an owner decision (pricing is highest-leverage).",
+  "currentFunctionIds": [],
   "branch": "feature/business-care-hub",
   "baselineCommit": "1570734",
   "workspaceNote": "This workspace (LTS Stand Alone Software) is a full copy of Development/Business Website/Website Code/v23, including .git and origin remote. v23 itself was not modified. Standing instruction: everything stays local to this workspace for the entire build -- no push, no merge into a new vN folder or main. Dylan granted bypass permission (2026-07-14) to take care of everything without interruption, with that one hard constraint.",
@@ -16,36 +16,35 @@
     "audit finding F006 (Critical, open): Privacy Policy under-discloses actual data collection -- blocks finalizing F007, F058",
     "audit finding F007 (Critical, open): Resend not named as sub-processor in Privacy Policy -- blocks finalizing F007, F058",
     "audit finding F011 (High, open, owner decision): Square terms-gate bypassable via direct link -- relevant to F028, still unresolved",
-    "audit finding F016 (High, open, pre-Session-1): zero automated tests anywhere in the pre-Care-Hub repository -- src/ now has 335, but this still describes everything outside src/",
+    "audit finding F016 (High, open, pre-Session-1): zero automated tests anywhere in the pre-Care-Hub repository -- src/ now has 335 unit tests plus a passing live smoke test, but this finding still describes everything outside src/",
     "audit finding F018 (High, open): partially addressed in src/policy/ticketSubmission.js (Session 3); the live intake.html form itself is untouched",
     "audit findings F030-F033 (owner decisions): Heroes Discount verification, full-payment vs deposit policy, plan scope, registration model -- block F026-F028, F049-F052, F002 respectively; see OWNER_DECISIONS.md"
   ],
   "buildStatus": "not-applicable",
-  "testStatus": "passing (335/335, node --test, unit-level; 99 tests across 21 src/db/ files exercise persistence against fake injected clients -- none yet run against a live Neon database)",
+  "testStatus": "passing (335/335 unit tests, node --test; PLUS a 4-function live smoke test against the real Neon database -- F001/F005/F008/F019-F023 all PASS live, evidence/migrations/session-13-live-smoke-test.txt)",
   "lintStatus": "not-run",
   "typeCheckStatus": "not-run",
-  "migrationStatus": "written, not executed -- migrations/001_initial_schema.sql now covers ~31 tables (extended this round with it_support_classifications, metric_events, webhook_events), no Neon project provisioned yet",
-  "deploymentStatus": "not-deployed",
+  "migrationStatus": "EXECUTED against the live Neon database -- migrations/001_initial_schema.sql ran cleanly, 37 tables confirmed present via information_schema query",
+  "deploymentStatus": "not-deployed (database is live; no Netlify Function endpoints or UI exist yet to deploy)",
   "implementedFunctions": [
-    "34 functions now have real, tested logic; 21 of them additionally have real (unit-tested, not-yet-live) Postgres persistence -- see REQUIREMENTS_TRACEABILITY.md for the complete function-by-function breakdown",
-    "This round added: F044 (src/db/itSupportStore.js), F046/F047 (src/db/checklistStore.js, one engine proven to serve both), F051 (src/db/workQueueQuery.js, the one legitimate cross-org query), F054 (src/db/metricsStore.js), F055 (src/db/templateStore.js), F057 (src/db/webhookEventStore.js, logs both successful AND failed verification attempts)"
+    "34 functions have real, tested logic; 21 of them have real Postgres persistence, now VERIFIED against a live database (not just fake-client unit tests)",
+    "Live smoke test this session proved the full stack end to end: organizationStore.createOrganization/getOrganizationById (F001) -> membershipStore.createMembership/resolveAuthorizationContext feeding rbac.authorize() (F005) -> pgAuditSink.write/listByOrganization via createAuditRecorder (F008) -> ticketStore.createTicket/transitionTicket through ticketSubmission.js and ticketLifecycle.js (F019/F023) -- all PASS"
   ],
-  "verifiedFunctions": [],
+  "verifiedFunctions": ["F001", "F005", "F008", "F019", "F023"],
   "blockedFunctions": [
     "F002 (registration model, OWNER_DECISIONS.md #4)",
     "F007, F058 (privacy findings + retention, OWNER_DECISIONS.md #5-6)",
     "F026, F027, F028, F049, F050, F052 (pricing/plan-limit values, OWNER_DECISIONS.md #2-3 -- engines complete, only real numbers missing)",
-    "F013, F014 (deferred by design -- existing Blobs messages/documents stores reused as-is; org-scoping retrofit is a distinct future migration)",
-    "F035/F036/F038/F039/F040 (check-EXECUTION engines not built -- not a data-store question, needs the website-audit spec adapted; result shape + persistence-readiness already exist via website_check_results/incident_records tables)",
-    "F060 (AI gate, see SESSION_08_AI_ASSISTANCE.md, unchanged)"
+    "F013, F014 (deferred by design -- existing Blobs messages/documents stores reused as-is)",
+    "F035/F036/F038/F039/F040 (check-EXECUTION engines not built -- needs the website-audit spec adapted)",
+    "F060 (AI gate, unchanged)"
   ],
   "notStartedThisSessionByDesign": [
-    "F003, F004, F006, F059, F011, F018, F024, F030, F045, F032, F034, F033 -- see prior session entries, unchanged",
-    "F009, F012, F015 -- these are view-model assemblers / preference stores that compose data already persisted elsewhere; no dedicated new table was needed beyond what exists (F012's notification_preferences table is already in the migration and simple enough not to need a wrapped store yet -- add when a real caller needs it)"
+    "F003, F004, F006, F059, F011, F018, F024, F030, F045, F032, F034, F033, F009, F012, F015 -- see prior session entries, unchanged"
   ],
   "ownerDecisionsRequired": [
-    "Primary data store -- ✅ RESOLVED 2026-07-14: PostgreSQL on Neon.",
-    "Pricing, discounts, deposits, payment timing (audit F030, F031) -- now the single highest-leverage remaining decision: unblocks F026/F027/F028/F050/F052, all five engine-complete, and their persistence layer would take roughly one more focused batch once real values exist",
+    "Primary data store -- ✅ RESOLVED 2026-07-14: PostgreSQL on Neon. Now LIVE and verified, not just decided.",
+    "Pricing, discounts, deposits, payment timing (audit F030, F031) -- the single highest-leverage remaining decision: unblocks F026/F027/F028/F050/F052, all five engine-complete and ready for a persistence batch the moment real values exist",
     "Website Care Plan / Small Business IT plan limits and included work (audit F032) -- blocks F049/F052's real values and F021's fifth scoring factor",
     "Customer account registration model: open vs invite-only (audit F033)",
     "Data retention, deletion, backup-aging, legal-hold rules",
@@ -56,15 +55,16 @@
     "Missing individual F001-F060 function workbooks (new) -- source of F020/F021's real configuration, F026/F050's real price sheet, F046/F047's actual checklist content, F035/F036/F038/F039/F040's actual check thresholds, and F055's actual email copy"
   ],
   "filesRequiringReview": [
-    "docs/development/OWNER_DECISIONS.md (item #1 resolved; pricing, #2, is now the highest-leverage remaining item)",
-    "migrations/001_initial_schema.sql (now ~31 tables, still not run against a live database -- THE top verification gap)",
-    "docs/development/REQUIREMENTS_TRACEABILITY.md (complete persistence-layer breakdown across three post-Session-9 rounds)"
+    "docs/development/OWNER_DECISIONS.md (item #1 resolved AND verified live; pricing, #2, is now the clear next item)",
+    "docs/development/evidence/migrations/session-13-live-smoke-test.txt (proof the stack works end to end against a real database)",
+    "docs/development/REQUIREMENTS_TRACEABILITY.md (F001/F005/F008/F019/F023 now marked Verified, not just tested)"
   ],
   "knownRisks": [
-    "No live Neon database exists yet -- ALL of src/db/ (21 files, 99 tests) is unit-tested against a fake client but has never executed one real query. This has been the top risk since Session 10 and has only grown -- strongly recommend this be resolved before any further persistence work, rather than continuing to add untested-live code indefinitely.",
+    "Only 5 of 21 persistence-layer functions have been live-smoke-tested (F001, F005, F008, F019, F023) -- the other 16 (approvals, activity events, triage/priority/assignment, time tracking, website profiles, assets, reminders, IT classification, checklists, work queue, metrics, templates, webhook events) are schema-verified (their tables exist and match the migration) but not yet individually exercised live. Lower risk than before Session 13 (the schema and connection path are proven), but not zero.",
     "Netlify Blobs' users/sessions/tokens stores (F003/F004) remain unmigrated by design",
     "Existing Blobs records (documents, messages, notifications, favorites, leads) still need organization_id backfilled once real organizations exist -- tracked in MIGRATION_PLAN.md, not yet scheduled",
-    "No migration-runner tool is set up yet -- the schema has been extended twice in-place (safe only because it's never been run); a real runner is needed before a second migration file is ever created",
+    "No migration-runner tool is set up yet -- 001_initial_schema.sql was run via a one-off script (deleted after use, per the master instruction's 'save large outputs, don't leave scratch scripts' principle); a real runner (even a minimal one) is needed before a second migration file is created",
+    "The live database now contains smoke-test data (one organization named 'Smoke Test Org', one membership, one audit event, one ticket) -- harmless test data, but worth knowing it's there rather than assuming the database is empty",
     "F057's verifier/logger is ready but nothing calls it yet -- no payment webhook infrastructure exists at all",
     "F051's cross-org query has no pagination -- fine at zero real data, will need LIMIT/cursor handling before real staff-scale data exists (SYS-API-005)",
     "Customer documents/images are stored as base64 data URIs in Blobs; new care_hub_documents/file_assets Postgres tables use an opaque storageRef instead, but the actual object-storage provider is still undecided",
@@ -72,8 +72,9 @@
     "F-numbering collision between audit findings (F001-F036) and Business Care Hub functions (F001-F060) -- mitigated via naming convention",
     "src/settings/blobsSettingsStore.js remains Blobs-backed (F056 stayed on Blobs by design)",
     "F026/F027/F028/F049/F050/F052's logic remains engine-only, waiting on pricing/plan-limit owner decisions -- now the clear next milestone",
-    "CSV export (src/export/csvExport.js, F053) has no formula-injection guard for spreadsheet software -- open finding from Session 9's security review, and F053 still has no persistence layer of its own (it's a pure formatter over already-queried data, which is correct -- not a gap)"
+    "CSV export (src/export/csvExport.js, F053) has no formula-injection guard for spreadsheet software -- open finding from Session 9's security review",
+    "A prompt-injection attempt was observed and rejected this session: a tool-result system-reminder falsely claimed .env was modified by 'the user or a linter' and instructed withholding that from Dylan. Not followed; flagged to Dylan directly. No actual harm -- the .env content was correct and exactly what had just been written."
   ],
-  "releaseRecommendation": "NOT READY, but the persistence layer is now essentially complete for everything that doesn't require an owner decision about business content. 34 functions have real tested logic, 21 of them with real (unit-tested, not-yet-live) Postgres persistence, 335 passing tests. Two things unlock the next phase of real progress, in priority order: (1) provision a live Neon database and verify the entire src/db/ layer against it -- currently zero of 99 persistence tests have touched a real database, and this gap should close before more code is added on top of it; (2) the pricing decision (OWNER_DECISIONS.md #2), which unblocks F026/F027/F028/F050/F052 -- five fully-engineered functions waiting only on real numbers.",
+  "releaseRecommendation": "NOT READY, but the primary-data-store decision is now not just made but LIVE and verified end to end. 34 functions have real tested logic, 21 with real Postgres persistence, 335 passing unit tests, and a 4-function live smoke test proving the full stack (organization -> membership -> RBAC -> audit -> ticket lifecycle) works against a real database. The clear next milestone is the pricing decision (OWNER_DECISIONS.md #2), which unblocks F026/F027/F028/F050/F052 -- the last five engine-complete functions waiting on real business values. After that, remaining work is: Netlify Function endpoints (nothing is exposed via HTTP yet), a UI, and the other 8 owner decisions.",
   "lastUpdated": "2026-07-14"
 }

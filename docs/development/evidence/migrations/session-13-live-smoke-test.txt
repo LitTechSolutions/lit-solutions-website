@@ -1,0 +1,8 @@
+=== Live smoke test against Neon ===
+
+F001 organizationStore: PASS (id=1801f614-fdc6-459f-b679-c0e47953094b)
+F005 membershipStore -> rbac.authorize(): PASS (role "org_owner" has "member.invite" capability)
+F008 pgAuditSink: PASS (1 event(s) found)
+F019/F023 ticketStore: PASS (ticket=59bb487e-bb1f-40a4-86fd-fa583b139c59)
+
+=== All live smoke tests completed ===

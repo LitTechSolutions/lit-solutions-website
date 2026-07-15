@@ -36,6 +36,7 @@ Human-readable index of the LTS Business Care Hub development effort. See `DEV_S
 | [sessions/SESSION_10_DATA_STORE_DECIDED.md](sessions/SESSION_10_DATA_STORE_DECIDED.md) | Data store decided (Postgres/Neon); F001/F005/F008 persistence built |
 | [sessions/SESSION_11_PERSISTENCE_EXPANSION.md](sessions/SESSION_11_PERSISTENCE_EXPANSION.md) | 12 more functions' persistence built, wired to existing pure engines |
 | [sessions/SESSION_12_PERSISTENCE_FINAL_BATCH.md](sessions/SESSION_12_PERSISTENCE_FINAL_BATCH.md) | Final 6 functions' persistence; persistence layer now essentially complete |
+| [sessions/SESSION_13_LIVE_DATABASE_VERIFIED.md](sessions/SESSION_13_LIVE_DATABASE_VERIFIED.md) | Migration run live, 4-function smoke test passed, a rejected prompt-injection attempt |
 
 **Not yet created** (start when there's something to populate them with): `RELEASE_NOTES.md` (first real release).
 
@@ -49,8 +50,8 @@ Human-readable index of the LTS Business Care Hub development effort. See `DEV_S
 
 ## Current state at a glance
 
-- **Sessions 0–9 complete** (the master instruction's full defined sequence), **plus three post-Session-9 continuation sessions (10–12)** once Dylan resolved the primary-data-store decision directly and granted bypass permission to continue unattended. Nothing published or pushed at any point.
+- **Sessions 0–9 complete** (the master instruction's full defined sequence), **plus four post-Session-9 continuation sessions (10–13)** once Dylan resolved the primary-data-store decision directly and granted bypass permission to continue unattended. Nothing published or pushed at any point.
 - **Workspace:** `LTS Stand Alone Software`, branch `feature/business-care-hub`, copied from `v23` @ `1570734`. `v23` untouched throughout. Everything stays local for the entire build.
-- **Built:** 34 functions with tested domain/policy logic, 21 of them with real (unit-tested, not-yet-live) Postgres persistence. 335 passing unit tests, zero endpoints, zero UI.
+- **Built:** 34 functions with tested domain/policy logic, 21 with real Postgres persistence. 335 passing unit tests. **The database is now live** — `migrations/001_initial_schema.sql` ran against real Neon, 37 tables confirmed, and a 4-function smoke test (F001/F005/F008/F019/F023) passed end to end. Zero endpoints, zero UI still.
 - **Release status:** **not ready** — see `DEV_STATE.json` → `releaseRecommendation`.
-- **The persistence layer is now essentially complete for everything that doesn't require an owner decision about business content.** Two things unlock the next phase, in priority order: (1) provision a live Neon database and verify `src/db/` against it for real — zero of 99 persistence tests have touched a real database, and this gap has grown for three sessions without closing; (2) the pricing decision (`OWNER_DECISIONS.md` #2), unblocking F026/F027/F028/F050/F052.
+- **Next milestone:** the pricing decision (`OWNER_DECISIONS.md` #2), unblocking F026/F027/F028/F050/F052 — the last five engine-complete functions waiting on real business values. After that: Netlify Function endpoints and a UI are the two largest remaining bodies of work.

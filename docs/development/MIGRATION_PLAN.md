@@ -1,6 +1,8 @@
 # Migration Plan
 
-Primary data store decided 2026-07-14: PostgreSQL on Neon (see `OWNER_DECISIONS.md` #1, `ARCHITECTURE.md` §3.3). `migrations/001_initial_schema.sql` is written — a greenfield schema for new Care Hub entities, not a migration of existing production data — and has **not been run against a live database**, since no Neon project has been provisioned yet in this environment. This document tracks that as the next infrastructure step, plus the still-pending Blobs-record retrofit migration below.
+Primary data store decided 2026-07-14: PostgreSQL on Neon (see `OWNER_DECISIONS.md` #1, `ARCHITECTURE.md` §3.3). `migrations/001_initial_schema.sql` **has been run against the live Neon database** (2026-07-14) — 37 tables confirmed present via an `information_schema.tables` query, and a 4-function live smoke test (F001 → F005 → F008 → F019/F023) passed end to end. See `evidence/migrations/session-13-live-smoke-test.txt`. This was a greenfield migration (no existing production data occupied these tables), so protocol steps 3–4 below were trivially satisfied. This document now tracks the still-pending Blobs-record retrofit migration and the no-migration-runner-tool gap.
+
+**Note on how it was run:** no migration-runner tool exists yet, so the SQL file was executed via a one-off Node script (split into individual statements, each run through `@neondatabase/serverless`'s `sql.query()`), then deleted after use. A real runner (even a minimal one — e.g. tracking applied migrations in a `schema_migrations` table) should be adopted before a second migration file is ever created, to avoid manually tracking what's been run.
 
 ## Protocol (mandatory for every future migration, per Global Requirements)
 
@@ -13,15 +15,17 @@ Primary data store decided 2026-07-14: PostgreSQL on Neon (see `OWNER_DECISIONS.
 7. Run production smoke and tenant-isolation tests immediately after cutover.
 8. Keep old data read-only until reconciliation and the rollback window close.
 
-## Next infrastructure step: provision Neon and run `001_initial_schema.sql`
+## ✅ Completed: Neon provisioned, `001_initial_schema.sql` run (2026-07-14)
 
-This is a greenfield migration (no existing production data occupies these tables), so steps 3–4 of the protocol above are trivially satisfied (nothing to back up, nothing to reconcile counts against) — but steps 6–7 still apply once real:
+1. ✅ Dylan provisioned a Neon project and database, and provided the connection string via a local `.env` file (never pasted into chat — see `DECISION_LOG.md` for how this was handled, including a rejected prompt-injection attempt encountered along the way).
+2. ✅ `DATABASE_URL` set in `.env` (gitignored; **not** yet set as a Netlify environment variable, since nothing is deployed — that's a separate step for when a real endpoint exists).
+3. ✅ Ran `migrations/001_initial_schema.sql` — all 65 DDL statements executed successfully via a one-off runner script.
+4. ✅ Confirmed via `information_schema.tables`: all 37 tables present.
+5. ✅ Live smoke test: `organizationStore` (F001), `membershipStore` → `rbac.authorize()` (F005), `pgAuditSink` via `createAuditRecorder()` (F008), `ticketStore` create + transition (F019/F023) — all passed against the real database. `evidence/migrations/session-13-live-smoke-test.txt`.
 
-1. Dylan provisions a Neon project and database.
-2. `DATABASE_URL` (or `NEON_DATABASE_URL`) is set as a Netlify environment variable — see `DEPLOYMENT_PLAN.md`.
-3. Run `migrations/001_initial_schema.sql` against the new database (via Neon's console/CLI or a one-off script — no migration-runner tool is set up yet; a lightweight one should be chosen before a second migration file exists, to avoid manually tracking "what's been run").
-4. Smoke test: run `organizationStore.test.js`, `membershipStore.test.js`, and `pgAuditSink.test.js`'s underlying functions against the real database (they currently run against a fake injected `sql` function — the same test *logic* should be re-run with `deps.sql` omitted, i.e. hitting `getSql()` for real, before this is trusted in any deployed environment).
-5. Confirm `psql \dt` (or equivalent) shows all ~28 tables from the migration file.
+**Still open:** only 5 of 21 persistence functions have been individually live-smoke-tested; the other 16 have their tables confirmed present and matching the migration, but haven't been individually exercised live yet. Lower risk than before, not zero — worth closing before heavy reliance on any single one of them.
+
+**The live database now contains harmless smoke-test data** (one org named "Smoke Test Org", one membership, one audit event, one ticket) — worth knowing before assuming the database is empty in any future session.
 
 ## Known future migration: retrofitting `organization_id` onto existing Blobs records
 
@@ -38,6 +42,6 @@ Once F001 has real organizations (the schema exists; provisioning is the remaini
 
 Not scheduled yet — this is real Wave 1/2 work now that the schema exists, but should follow once real endpoints exist to exercise it, not run speculatively against a still-empty database.
 
-## No migration has been run
+## Status
 
-`001_initial_schema.sql` is written and reviewed but not executed against any database — production and this workspace's local state are both untouched.
+`001_initial_schema.sql` has been executed against the live Neon database (not production — this is a dedicated new database for the Care Hub, and `v23`/production remain completely untouched, as always).
