@@ -283,6 +283,15 @@
 
             <p class="wd-feature-empty-note" id="wdFeatureEmptyNote" hidden data-i18n="wd.feature_search_empty">No features match your search.</p>
 
+            <!-- Scrolls with the rest of the feature list -- only ever
+                 shown during feature selection, never in the persistent
+                 footer, never on the package/review/contact/confirmation
+                 steps. -->
+            <label class="wd-heroes-toggle wd-heroes-toggle--inline">
+              <input type="checkbox" id="wdHeroesDiscount">
+              <span data-i18n-html="wd.heroes_toggle_text">I self-attest that I qualify for the <a href="heroes-pricing.html" target="_blank" rel="noopener">American Heroes Discount</a> (15% off one-time work) &mdash; eligibility is confirmed with you directly before your final price is set</span>
+            </label>
+
             <div class="wd-panel-actions">
               <button type="button" class="btn btn-ghost" data-back="1" data-i18n="wd.step2_back">Back</button>
               <button type="button" class="btn btn-primary" data-next="3" data-i18n="wd.step2_continue">Continue</button>
@@ -300,6 +309,9 @@
               <span class="wd-quote-recap-note" data-i18n="wd.quote_recap_note">Starting price -- confirmed by us before any work begins.</span>
               <div class="wd-cost-breakdown wd-quote-recap-breakdown" id="wdQuoteRecapBreakdown" aria-label="Itemized estimate"></div>
             </div>
+
+            <button type="button" class="btn btn-ghost btn-block" id="wdDownloadPdf" hidden>Download summary (PDF)</button>
+            <p class="wd-pdf-error" id="wdPdfError" role="alert" hidden data-i18n="wd.pdf_init_error">The PDF summary tool didn't load correctly. You can still submit your project -- we'll follow up directly -- or refresh the page to try again.</p>
 
             <form id="wdQuickForm">
               <p class="visually-hidden"><label>Don't fill this out: <input name="wd-bot-field" id="wdHoneypot"></label></p>
@@ -500,23 +512,16 @@
           </div>
 
           <div class="wd-sidebar-footer" id="wdSidebarFooter">
-            <label class="wd-heroes-toggle">
-              <input type="checkbox" id="wdHeroesDiscount">
-              <span data-i18n-html="wd.heroes_toggle_text">I self-attest that I qualify for the <a href="heroes-pricing.html" target="_blank" rel="noopener">American Heroes Discount</a> (15% off one-time work) &mdash; eligibility is confirmed with you directly before your final price is set</span>
-            </label>
-
-            <div class="wd-price-ticker" aria-live="polite" aria-atomic="true">
-              <span class="wd-price-ticker-label" data-i18n="wd.price_ticker_label">Your estimate</span>
-              <span class="wd-price-ticker-amount" id="wdPriceAmount">$0</span>
-              <span class="wd-price-ticker-savings" id="wdPriceSavings" hidden></span>
-              <span class="wd-price-ticker-note" id="wdPriceNote" data-i18n="wd.price_ticker_note_default">Choose a package to begin</span>
-              <span class="wd-price-ticker-count" id="wdFeatureCount" hidden></span>
+            <div class="wd-footer-summary">
+              <div class="wd-footer-summary-info" aria-live="polite" aria-atomic="true">
+                <span class="wd-price-ticker-label" data-i18n="wd.price_ticker_label">Your estimate</span>
+                <span class="wd-price-ticker-amount" id="wdPriceAmount">$0</span>
+                <span class="wd-price-ticker-note" id="wdPriceNote" data-i18n="wd.price_ticker_note_default">Choose a package to begin</span>
+                <span class="wd-price-ticker-count" id="wdFeatureCount" hidden></span>
+                <span class="wd-price-ticker-savings" id="wdPriceSavings" hidden></span>
+              </div>
+              <button type="button" class="btn btn-primary" id="wdReviewSubmitBtn" hidden data-i18n="wd.review_submit_btn">Review &amp; submit</button>
             </div>
-
-            <div class="wd-cost-breakdown" id="wdCostBreakdown"></div>
-            <button type="button" class="btn btn-primary btn-block" id="wdReviewSubmitBtn" hidden data-i18n="wd.review_submit_btn">Review &amp; submit</button>
-            <button type="button" class="btn btn-ghost btn-block" id="wdDownloadPdf" hidden>Download summary (PDF)</button>
-            <p class="wd-pdf-error" id="wdPdfError" role="alert" hidden data-i18n="wd.pdf_init_error">The PDF summary tool didn't load correctly. You can still submit your project -- we'll follow up directly -- or refresh the page to try again.</p>
           </div>
 
         </div>

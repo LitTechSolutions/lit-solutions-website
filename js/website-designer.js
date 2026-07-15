@@ -48,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const previewNavEl = document.getElementById('wdPreviewNav');
   const previewSectionsEl = document.getElementById('wdPreviewSections');
   const previewBadgesEl = document.getElementById('wdPreviewBadges');
-  const costBreakdownEl = document.getElementById('wdCostBreakdown');
   const quoteRecapBreakdownEl = document.getElementById('wdQuoteRecapBreakdown');
   const downloadBtn = document.getElementById('wdDownloadPdf');
   const pdfErrorEl = document.getElementById('wdPdfError');
@@ -699,6 +698,28 @@ document.addEventListener('DOMContentLoaded', () => {
     if (featureToolbarEl) featureToolbarEl.hidden = tab === 'included';
     renderCategoryChips();
     applyFeatureFilters();
+    if (tab === 'addons') openFirstCategoryIfNoneOpen(optionalContainer);
+    if (tab === 'premium') openFirstCategoryIfNoneOpen(premiumContainer);
+  }
+
+  // A customer landing on the feature list for the first time saw every
+  // category collapsed -- no visible checkboxes, no obvious way to tell
+  // "here's what I can actually add." Opens the first visible category so
+  // real, selectable options are on screen immediately, without touching
+  // any category a customer already opened or closed themselves (that's
+  // what the "none already open" check guards against).
+  function openFirstCategoryIfNoneOpen(container) {
+    if (!container) return;
+    const blocks = Array.from(container.querySelectorAll('.wd-category'));
+    if (blocks.some(b => b.classList.contains('is-open'))) return;
+    const first = blocks.find(b => !b.hidden);
+    if (!first) return;
+    const header = first.querySelector('.wd-category-header');
+    const panel = first.querySelector('.wd-category-panel');
+    if (!header || !panel) return;
+    header.setAttribute('aria-expanded', 'true');
+    panel.hidden = false;
+    first.classList.add('is-open');
   }
 
   function selectedInputs(priority) {
@@ -802,7 +823,6 @@ document.addEventListener('DOMContentLoaded', () => {
         html += `<div class="wd-cost-row wd-cost-row--quote"><span>${escHtml(tCatItem(el.dataset.title))}</span><strong>${escHtml(quoteLabel)}</strong></div>`;
       });
     }
-    costBreakdownEl.innerHTML = html;
     if (quoteRecapBreakdownEl) quoteRecapBreakdownEl.innerHTML = html;
     downloadBtn.hidden = false;
     downloadBtn.disabled = !JSPDF_READY;
@@ -1464,6 +1484,13 @@ document.addEventListener('DOMContentLoaded', () => {
     updateBriefVisibility();
     renderCategoryChips();
     applyFeatureFilters();
+    // renderCategoryGroup() just rebuilt every category block from scratch
+    // (fresh accordion markup, nothing open), so re-apply the same
+    // "land on real, selectable options" behavior a first-time catalog
+    // load gets, instead of leaving a customer who switched languages
+    // mid-selection staring at an all-collapsed list.
+    if (state.featureTab === 'addons') openFirstCategoryIfNoneOpen(optionalContainer);
+    if (state.featureTab === 'premium') openFirstCategoryIfNoneOpen(premiumContainer);
     syncMobileBarHeight();
   });
 
