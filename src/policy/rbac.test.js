@@ -31,6 +31,18 @@ test("org_owner can act within their own organization, with an active membership
   assert.equal(decision.allowed, true);
 });
 
+test("org_owner can view their organization's approval inbox, but not another org's", () => {
+  const allowed = authorize({ actorRole: "org_owner", action: "approval.view", actorOrgId: ORG_A, resourceOrgId: ORG_A, actorMembershipStatus: "active" });
+  assert.equal(allowed.allowed, true);
+  const denied = authorize({ actorRole: "org_owner", action: "approval.view", actorOrgId: ORG_A, resourceOrgId: ORG_B, actorMembershipStatus: "active" });
+  assert.equal(denied.allowed, false);
+});
+
+test("org_member cannot view the approval inbox -- approval.view is org_owner only", () => {
+  const decision = authorize({ actorRole: "org_member", action: "approval.view", actorOrgId: ORG_A, resourceOrgId: ORG_A, actorMembershipStatus: "active" });
+  assert.equal(decision.allowed, false);
+});
+
 // The two-organization tenant-isolation matrix required by SYS-SEC-005 /
 // the master instruction's "every customer-data test suite" rule.
 test("two-org isolation: org_owner of Org A cannot act on Org B's resource", () => {
@@ -136,6 +148,17 @@ test("platform_admin bypasses the org-match check on org-scoped actions", () => 
     resourceOrgId: ORG_B,
   });
   assert.equal(decision.allowed, true);
+});
+
+test("platform_admin can view the cross-organization work queue (workqueue.view is deliberately unscoped, not in ORG_SCOPED_ACTIONS)", () => {
+  const decision = authorize({ actorRole: "platform_admin", action: "workqueue.view", actorOrgId: null });
+  assert.equal(decision.allowed, true);
+  assert.equal(ORG_SCOPED_ACTIONS.has("workqueue.view"), false);
+});
+
+test("technician cannot view the work queue -- no role but platform_admin has workqueue.view", () => {
+  const decision = authorize({ actorRole: "technician", action: "workqueue.view", actorOrgId: null, assigned: true });
+  assert.equal(decision.allowed, false);
 });
 
 test("technician denied on assigned resource without explicit assignment", () => {

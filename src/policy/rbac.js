@@ -32,6 +32,15 @@ const ROLE_CAPABILITIES = {
     "audit.review",
     "integrations.manage",
     "billing.reconcile",
+    // F051's work queue is genuinely cross-organization by design (see
+    // src/admin/workQueueViewModel.js's own comment) -- deliberately
+    // NOT in ORG_SCOPED_ACTIONS, since there is no single owning org to
+    // check and no per-resource "assigned" fact to substitute, unlike
+    // technician's ticket.view/ticket.work. Only platform_admin has it;
+    // adding it to technician's capability set would violate the
+    // regression guard in rbac.test.js protecting every other technician
+    // capability from silently skipping the org/assigned check.
+    "workqueue.view",
   ]),
   technician: new Set([
     "ticket.view",
@@ -43,6 +52,7 @@ const ROLE_CAPABILITIES = {
   org_owner: new Set([
     "organization.view",
     "member.invite",
+    "approval.view",
     "scope.approve",
     "change_order.approve",
     "preference.manage",
@@ -70,6 +80,7 @@ const ORG_SCOPED_ACTIONS = new Set([
   "organization.view",
   "organization.suspend",
   "member.invite",
+  "approval.view",
   "scope.approve",
   "change_order.approve",
   "preference.manage",

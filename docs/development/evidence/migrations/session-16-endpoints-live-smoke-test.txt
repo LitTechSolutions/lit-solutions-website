@@ -1,0 +1,12 @@
+PASS -- POST /organizations as admin creates a real organization (201) :: status=201
+PASS -- GET /organizations as admin views it back (200)
+PASS -- GET /organizations as a legacy customer (no membership) is denied (403) :: status=403
+PASS -- PATCH /organizations as admin suspends it (200)
+PASS -- GET /work-queue as admin returns the real assembled cross-org queue (200) :: status=200
+PASS -- GET /work-queue as staff (technician) is denied -- workqueue.view is platform_admin only (403) :: status=403
+PASS -- GET /approvals as org_owner lists the real pending approval (200) :: status=200
+PASS -- PATCH /approvals as org_owner approves it for real (200) :: status=200, body={"approval":{"id":"b4e2504e-2055-47a7-bc17-3a786359bb61","organizationId":"996d098f-d512-4b2e-a605-df64f81f55ed","subjectType":"scope","subjectId":"3af3c0d9-4db6-4187-8a8c-7159d19b941b","status":"approved","requestedAt":"2026-07-15T13:33:12.518Z","requestedBy":"2301081c-ffb4-43fb-a3fd-4fc9c64ea88f","expiresAt":"2026-07-29T13:33:12.518Z","decidedAt":"2026-07-15T13:33:12.656Z","decidedBy":"2301081c-ffb4-43fb-a3fd-4fc9c64ea88f"}}
+
+--- summary ---
+8/8 PASS
+test data: organizationId=996d098f-d512-4b2e-a605-df64f81f55ed, adminId=b0829c80-ffd2-4480-a424-806fb08ddc66, orgOwnerId=2301081c-ffb4-43fb-a3fd-4fc9c64ea88f, approvalId=b4e2504e-2055-47a7-bc17-3a786359bb61 (left in place, same precedent as prior sessions' smoke-test rows)
