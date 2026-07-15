@@ -6,7 +6,7 @@ import { strings } from "../strings/en";
 import { useApi } from "../hooks/useApi";
 import { useMemberships } from "../hooks/useMemberships";
 import { useAuth } from "../auth/AuthContext";
-import { isStaffRole } from "../auth/roles";
+import { isPlatformAdminRole } from "../auth/roles";
 import { Loading } from "../components/states/Loading";
 import { EmptyState } from "../components/states/EmptyState";
 import { ErrorState } from "../components/states/ErrorState";
@@ -30,12 +30,17 @@ function SignInAgain() {
  * platform_admin accounts (legacy session role "admin") have no
  * organization membership at all, so they get the cross-org work queue
  * (StaffWorkQueue) instead of the membership-driven customer flow.
+ * Deliberately platform_admin-only, not isStaffRole: technician (legacy
+ * "staff") has no workqueue.view capability (src/policy/rbac.js), so
+ * routing them here would trade the graceful "not built for you yet"
+ * message the membership-empty CustomerTickets path already shows them
+ * for a raw backend 403.
  */
 export function Tickets() {
   const { state: authState } = useAuth();
-  const isStaff = authState.status === "signedIn" && isStaffRole(authState.user.role);
+  const isPlatformAdmin = authState.status === "signedIn" && isPlatformAdminRole(authState.user.role);
 
-  if (isStaff) return <StaffWorkQueue />;
+  if (isPlatformAdmin) return <StaffWorkQueue />;
   return <CustomerTickets />;
 }
 

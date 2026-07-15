@@ -1,0 +1,59 @@
+=== Migrations 005 + 006 applied against live Neon database ===
+
+Context: commit ddc2cad ("fix: harden Care Hub launch blockers", authored
+by a Codex/ChatGPT session working the same repo in parallel) added
+migrations/005_tenant_parent_integrity.sql and
+migrations/006_atomic_mfa_enrollment_challenges.sql, plus store code
+(src/db/mfaChallengeStore.js, src/db/mfaCredentialStore.js, and the
+atomic UPDATE...RETURNING rewrites in approvalStore.js/ticketStore.js/
+subscriptionStore.js) that assumes these tables/constraints already
+exist. DEV_STATE.json's postClaudeRemediation note confirmed neither
+migration had actually been run. Verified directly: a pre-migration
+information_schema.tables query showed mfa_enrollment_challenges,
+mfa_totp_counters, and mfa_recovery_codes MISSING.
+
+Ran both via a temporary one-off runner script (same pattern as prior
+sessions -- deleted after use, see MIGRATION_PLAN.md / SESSION_13):
+
+migrations/006_atomic_mfa_enrollment_challenges.sql -- 5/5 statements OK
+  (mfa_enrollment_challenges, mfa_totp_counters, mfa_recovery_codes +
+  their indexes)
+
+migrations/005_tenant_parent_integrity.sql -- 6/6 statements OK, including
+  the two ALTER TABLE ... VALIDATE CONSTRAINT statements at the end. This
+  is the statement that would have hard-failed the whole migration if any
+  existing scope_of_work/change_orders row already violated cross-tenant
+  parent ownership (a real risk given the IDOR bug fixed in commit
+  3fb896b predates this migration). It did not fail -- no historical
+  cross-tenant rows existed.
+
+Post-migration information_schema.tables re-query confirms all 6 new/
+existing tables present: tickets, scope_of_work, change_orders,
+mfa_enrollment_challenges, mfa_totp_counters, mfa_recovery_codes.
+
+No application code was deployed as part of this -- this is a database
+schema change only, applied directly against Neon via DATABASE_URL from
+the local .env file, matching every prior session's migration pattern
+(001-004). The live Netlify site's deployed functions are unaffected
+until an actual deploy happens (never performed this session, per
+standing project rule).
+
+=== Live smoke test: src/db/mfaChallengeStore.js + mfaCredentialStore.js ===
+
+Ran the real store functions (not mocked SQL) against the newly-migrated
+tables with a synthetic smoke-test user id, then deleted the test rows:
+
+- createMfaEnrollmentChallenge + claimMfaEnrollmentChallenge: first claim
+  true, second (replay) claim false -- PASS
+- claimMfaTotpCounter: claim counter 5 true, replay counter 5 false,
+  advance to counter 6 true -- PASS
+- syncMfaRecoveryCodeHashes + claimMfaRecoveryCode: first claim true,
+  second (replay) claim false -- PASS
+- deleteMfaEnrollmentChallenge left the already-claimed challenge row in
+  place (by design -- its WHERE clause requires consumed_at IS NULL; the
+  real code only calls it on the email-delivery-failure path, where the
+  challenge was never claimed). Not a bug; manually cleaned up the one
+  leftover smoke-test row afterward.
+
+All atomic single-use/anti-replay guarantees these tables exist to
+provide were exercised against the real database and held.

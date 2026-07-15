@@ -6,7 +6,7 @@ import { strings } from "../strings/en";
 import { useApi } from "../hooks/useApi";
 import { useMemberships } from "../hooks/useMemberships";
 import { useAuth } from "../auth/AuthContext";
-import { isStaffRole } from "../auth/roles";
+import { isPlatformAdminRole } from "../auth/roles";
 import { Loading } from "../components/states/Loading";
 import { ErrorState } from "../components/states/ErrorState";
 import { UnauthorizedState } from "../components/states/UnauthorizedState";
@@ -27,13 +27,17 @@ function SignInAgain() {
  * platform_admin accounts (legacy session role "admin") have no
  * organization membership at all (see care_hub_auth.js), so they get a
  * separate staff review flow (StaffChecklists) instead of the
- * membership-driven customer flow below.
+ * membership-driven customer flow below. Deliberately platform_admin-only,
+ * not isStaffRole: technician (legacy "staff") has no checklist capability
+ * in src/policy/rbac.js, so routing them into StaffChecklists would trade
+ * the graceful "not built for you yet" message the membership-empty
+ * CustomerChecklists path already shows them for a raw backend 403.
  */
 export function Checklists() {
   const { state: authState } = useAuth();
-  const isStaff = authState.status === "signedIn" && isStaffRole(authState.user.role);
+  const isPlatformAdmin = authState.status === "signedIn" && isPlatformAdminRole(authState.user.role);
 
-  if (isStaff) return <StaffChecklists />;
+  if (isPlatformAdmin) return <StaffChecklists />;
   return <CustomerChecklists />;
 }
 

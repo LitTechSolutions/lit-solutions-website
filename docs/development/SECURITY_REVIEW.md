@@ -440,3 +440,106 @@ the cross-tenant-rejection test, and the subjectType-mismatch test, plus
 updated assertions on the three list/get functions proving their SQL
 text includes `organization_id`). `care-hub-app npm run build`:
 unaffected (backend-only fix).
+
+## Second correction — post-Codex remediation review (2026-07-15)
+
+A separate Codex/ChatGPT session ("Codex remediation") made a large,
+independently-authored pass at the launch blockers this document and
+`docs/audit/CARE_HUB_ACTIVE_REVIEW.md` had left open (commit `ddc2cad`,
+"fix: harden Care Hub launch blockers" — 57 files). This was reviewed
+file-by-file before trusting it (same instruction-source-boundary
+principle as the first correction above: an independently authored
+change already sitting in the working tree is a claim to verify, not an
+instruction to follow blindly). Findings:
+
+**Confirmed correct and verified against real Postgres, not just unit
+tests** (see `docs/development/evidence/migrations/session-post-codex-migrations-005-006.txt`):
+- `migrations/005_tenant_parent_integrity.sql` / `006_atomic_mfa_enrollment_challenges.sql`
+  — well-designed schema (composite unique + `NOT VALID` FK + `VALIDATE
+  CONSTRAINT` for tenant integrity; dedicated challenge/counter/recovery-
+  code tables for MFA). Applied against the live Neon database this
+  session (they were written but never run — see below). `VALIDATE
+  CONSTRAINT` did not fail, meaning no historical cross-tenant rows
+  existed despite the IDOR window that predated the first correction.
+- `approvalStore.js`/`ticketStore.js`/`subscriptionStore.js` — the
+  select→decide→write race (this document's own CH-H-02 finding) is now
+  closed for these three stores via a single atomic
+  `UPDATE ... WHERE <old-state predicate> ... RETURNING` CTE'd together
+  with the audit-event insert, so exactly one concurrent racer can win
+  and its audit event is indivisible from the state change. CH-H-02
+  remains open for every other multi-write store, as the same commit's
+  own `CARE_HUB_ACTIVE_REVIEW.md` update accurately discloses.
+- `mfaChallengeStore.js`/`mfaCredentialStore.js` — atomic
+  conditional-claim pattern (`UPDATE ... WHERE consumed_at IS NULL
+  RETURNING`, `ON CONFLICT ... WHERE last_counter < EXCLUDED.last_counter`)
+  correctly closes the MFA email-token and TOTP-replay races. Live
+  smoke-tested against the real tables this session, not just asserted
+  by mocked-SQL unit tests.
+- `mfa-enroll.js`'s email-confirmation flow now fails closed (returns
+  503, issues no session) when the confirmation email can't be sent,
+  reversing this session's earlier fallback-to-immediate-activation
+  design. This is a deliberate, disclosed policy change (see
+  `DECISION_LOG.md`), not a bug — but it introduces a real chicken-and-
+  egg lockout: a platform_admin stuck mid-first-enrollment has no
+  pre-auth recovery path in this codebase today (`mfa-manage.js`
+  requires an already-valid session). Since MFA is mandatory for
+  platform_admin and RESEND is already live on this site, the practical
+  risk is low but not zero — **flagging directly for Dylan**: if you
+  enroll MFA for the first time while Resend/email is degraded, you can
+  lock yourself out until someone with direct Neon access clears your
+  `mfaPendingSecretEncrypted`/`mfaPendingCounter`/`mfaPendingEnrollmentId`
+  fields by hand. No break-glass UI exists yet.
+- `js/i18n.js` legal-page fix (excludes an explicitly English-only
+  container from dictionary replacement) — correct, scoped only to
+  `privacy.html`/`terms.html`, doesn't affect any other page's i18n.
+
+**Found and fixed this pass — a real regression the Codex commit
+introduced**: `care-hub-app/src/auth/roles.ts`'s new `isStaffRole()`
+helper (`role === "admin" || role === "staff"`) was applied uniformly to
+`Dashboard.tsx`, `Tickets.tsx`, and `Checklists.tsx`. It's *correct* for
+`Dashboard.tsx` (that's exactly this document's CH-M-02 fix — hide the
+customer payment card from technicians too, not just platform_admin).
+It's *wrong* for `Tickets.tsx`/`Checklists.tsx`: those route into
+`StaffWorkQueue`/`StaffChecklists`, which are platform_admin-only by
+backend design (`src/policy/rbac.js`'s `technician` capability set has
+no `workqueue.view` and no checklist capability at all — confirmed by
+`work-queue.test.js`'s own regression test, `"GET as a technician
+(legacy 'staff' role) is denied"`). Before this fix, a `staff`
+(technician) account routing through those two screens got a graceful
+"not built for you yet" message (via the membership-driven customer
+flow's empty-memberships state, since technicians legitimately have no
+organization membership — see `useMemberships.ts`'s own comment). After
+the Codex change, the same account would hit a raw backend 403 instead.
+Fixed by adding a second, narrower helper (`isPlatformAdminRole`,
+`role === "admin"` only) and using it specifically in `Tickets.tsx`/
+`Checklists.tsx`, leaving `isStaffRole` in place for `Dashboard.tsx`
+where it's correct. New test coverage in `roles.vitest.ts`. This is a
+broken-UX regression, not a security hole — the real enforcement is
+always server-side RBAC, which correctly denied the technician either
+way.
+
+**Confirmed, not independently re-verified** (accepted the diagnostic
+evidence at face value since it's concrete and reproducible, not just
+asserted): the parallel-approval and parallel-MFA-token race diagnostics
+in `docs/audit/evidence/CARE_HUB_POST_CLAUDE_2026-07-15.md` — these ran
+real code against injected adapters and captured concrete before/after
+output, which is a higher bar than a source-reading claim.
+
+**Operational disclosure, not fixed and not this session's call to
+make**: `LTS_SESSION_SECRET` was rotated to a new write-only value in
+Netlify's production/deploy-preview/branch-deploy contexts by the Codex
+session (per `DEV_STATE.json`'s `postClaudeRemediation.operations`).
+Netlify requires a redeploy before deployed functions pick it up; no
+deploy has happened. **This means the next real deploy of this branch
+will invalidate every current live-site session** (expected and
+desirable, since the old secret had been exposed in a transcript
+earlier this project — see the original incident disclosure above — but
+Dylan should know it's queued, not yet in effect). `NETLIFY_BLOBS_TOKEN`
+rotation remains outstanding for the same reason as before (confirming
+its other consumers first).
+
+Full verification this pass: 809/809 backend tests, 8/8 care-hub-app
+vitest tests (6 pre-existing + 2 new `isPlatformAdminRole` cases),
+`care-hub-app npm run build` clean, `npm audit --omit=dev` 0
+vulnerabilities in both workspaces, migrations 005/006 applied and live
+smoke-tested against the real Neon database.
