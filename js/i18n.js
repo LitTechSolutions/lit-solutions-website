@@ -63,16 +63,27 @@
     return typeof cur === 'string' ? cur : undefined;
   }
 
+  // Legal copy remains in its reviewed English source unless and until
+  // each translation receives equivalent review. Navigation around it may
+  // still translate; the nested lang/dir attributes keep the document's
+  // actual language explicit for browsers and assistive technology.
+  function isEnglishOnlyLegal(el) {
+    return !!el.closest('[data-legal-english-only]');
+  }
+
   function applyDict(dict) {
     document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      if (isEnglishOnlyLegal(el)) return;
       var val = getByPath(dict, el.getAttribute('data-i18n'));
       if (val !== undefined) el.textContent = val;
     });
     document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
+      if (isEnglishOnlyLegal(el)) return;
       var val = getByPath(dict, el.getAttribute('data-i18n-html'));
       if (val !== undefined) el.innerHTML = val;
     });
     Array.prototype.forEach.call(document.querySelectorAll('*'), function (el) {
+      if (isEnglishOnlyLegal(el)) return;
       for (var i = 0; i < el.attributes.length; i++) {
         var attr = el.attributes[i];
         if (attr.name.indexOf('data-i18n-attr-') === 0) {
@@ -91,12 +102,15 @@
   function captureOriginals() {
     originals = { text: [], html: [], attr: [] };
     document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      if (isEnglishOnlyLegal(el)) return;
       originals.text.push([el, el.textContent]);
     });
     document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
+      if (isEnglishOnlyLegal(el)) return;
       originals.html.push([el, el.innerHTML]);
     });
     Array.prototype.forEach.call(document.querySelectorAll('*'), function (el) {
+      if (isEnglishOnlyLegal(el)) return;
       for (var i = 0; i < el.attributes.length; i++) {
         var attr = el.attributes[i];
         if (attr.name.indexOf('data-i18n-attr-') === 0) {

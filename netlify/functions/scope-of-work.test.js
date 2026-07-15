@@ -11,6 +11,7 @@ function routingFakeSql(byTable) {
     const text = strings.join("?");
     calls.push({ text, values });
     if (text.includes("assignments")) return byTable.assignments || [];
+    if (text.includes("FROM tickets")) return byTable.tickets || [];
     if (text.includes("scope_of_work")) return byTable.scopes || [];
     return [];
   };
@@ -50,7 +51,10 @@ test("POST as an unassigned technician is denied", async () => {
 });
 
 test("POST as the assigned technician creates the initial scope", async () => {
-  const sql = routingFakeSql({ assignments: [{ technician_user_id: "tech-1" }] });
+  const sql = routingFakeSql({
+    assignments: [{ technician_user_id: "tech-1" }],
+    tickets: [{ id: "t1", organization_id: "org-a", category: "question", subject: "x", description: "y", status: "assigned", submitted_at: FIXED_NOW().toISOString(), submitted_by: "user-1", updated_at: FIXED_NOW().toISOString(), version: 1 }],
+  });
   const res = await handler(
     { httpMethod: "POST", headers: { cookie: "lts_session=fake-token" }, body: JSON.stringify({ organizationId: "org-a", ticketId: "t1", lineItems: [{ description: "x", quantity: 1, priceRef: "ref-1" }] }) },
     {},
@@ -58,6 +62,20 @@ test("POST as the assigned technician creates the initial scope", async () => {
   );
   assert.equal(res.statusCode, 201);
   assert.equal(JSON.parse(res.body).scope.version, 1);
+});
+
+test("SECURITY: POST rejects a ticket owned by a different organization", async () => {
+  const sql = routingFakeSql({
+    assignments: [{ technician_user_id: "tech-1" }],
+    tickets: [{ id: "t1", organization_id: "org-b", category: "question", subject: "x", description: "y", status: "assigned", submitted_at: FIXED_NOW().toISOString(), submitted_by: "user-2", updated_at: FIXED_NOW().toISOString(), version: 1 }],
+  });
+  const res = await handler(
+    { httpMethod: "POST", headers: { cookie: "lts_session=fake-token" }, body: JSON.stringify({ organizationId: "org-a", ticketId: "t1", lineItems: [{ description: "x", quantity: 1, priceRef: "ref-1" }] }) },
+    {},
+    { ...fakeAuthDeps({ userId: "tech-1", authContext: { actorRole: "technician", actorOrgId: null, actorMembershipStatus: undefined } }), sql }
+  );
+  assert.equal(res.statusCode, 404);
+  assert.equal(sql.calls.some((call) => call.text.includes("INSERT INTO scope_of_work")), false);
 });
 
 test("POST as an org_member (customer) is denied -- scope.create is technician only", async () => {

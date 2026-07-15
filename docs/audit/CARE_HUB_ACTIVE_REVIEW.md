@@ -1,8 +1,8 @@
-# Care Hub Active Code Review
+# Care Hub Post-Claude Code Review
 
-**Status:** Working review while development is active  
-**Reviewed baseline:** commit `4852545`, plus targeted observations of the uncommitted Square dashboard and MFA-enrollment work visible on 2026-07-15  
-**Purpose:** Preserve fix-ready findings without assigning formal `F037+` IDs or changing `AUDIT_STATE.json` while the branch is moving.
+**Status:** Remediation in progress; code stop-ships repaired, operational release gates remain
+**Reviewed baseline:** commit `b2772e9` on 2026-07-15; no tracked worktree changes were present when verification began
+**Purpose:** Preserve fix-ready Care Hub findings until they are reconciled into the numbered security, backend, and quality audit sessions.
 
 This is an audit artifact, not an implementation. Temporary identifiers in
 this file use `CH-*`. They must be reconciled into the appropriate numbered
@@ -10,24 +10,77 @@ audit sessions after the development baseline is stable.
 
 ## Executive result
 
-The Care Hub is not release-ready. The root test suite passes (781/781), the
-React application type-checks and builds, and the supplied Square Payment Link
-resolves to Little Technical Solutions LLC's hosted checkout. Those successes
-do not cover tenant isolation, concurrent writes, provider reconciliation, or
-the browser application. Four actual handlers currently return a different
-organization's record after authorizing only the caller-supplied organization;
-one of those paths mutates the other organization's approval.
+The Care Hub is not release-ready. Claude's final changes did close the four
+previously demonstrated cross-tenant read/write paths, and the final baseline
+passes all 791 backend tests plus the React production build. Those are real
+improvements.
 
-Release posture: **stop-ship until CH-P0-01 and CH-P0-02 are repaired and the
-new negative/concurrency tests pass.** The static Square link may remain only
-as an explicitly manual development payment path; it must not automatically
-change a Care Hub payment state.
+Three stop-ship conditions remain: approval decisions are still non-atomic,
+the new MFA email gate fails open and its supposedly single-use state is
+raceable, and two credentials documented as exposed in the development
+transcript have not been rotated. Parent-resource ownership, multi-write
+transactions, legal-page localization, frontend contracts, and browser
+quality gates also remain incomplete.
 
-## Reproduction evidence
+Release posture: **stop-ship until CH-P0-01, CH-P0-02, and CH-P0-03 are
+repaired and their negative/concurrency/rotation evidence passes.** The static
+Square link is accepted for Dylan's current manual-link-only scope; it must
+remain visibly manual and must not automatically change a Care Hub payment
+state.
+
+## Codex remediation update — 2026-07-15
+
+The following audit findings are repaired in the current worktree and covered
+by automated evidence:
+
+- **CH-P0-01:** approval decisions now use one conditional `UPDATE` CTE with
+  the success audit insert in the same SQL statement. Lost races return no
+  changed row; simultaneous decisions permit one winner.
+- **CH-P0-02:** first enrollment fails closed if confirmation email cannot be
+  delivered. Raw email tokens are not stored; Postgres challenges expire,
+  bind to a unique pending enrollment, invalidate older enrollments, and are
+  atomically consumed. TOTP counters and recovery-code hashes use
+  database-authoritative conditional claims. Parallel tests allow only one
+  session for each credential. The React email landing page requires an
+  explicit button click and has a component regression test proving mount is
+  side-effect free.
+- **CH-H-01:** scope, change-order, and payment-request creation validate the
+  stored parent organization's ownership. Migration `005` adds matching
+  composite ownership constraints for ticket/scope/change-order relations.
+- **CH-H-05:** resolved by the explicit-confirmation landing page.
+- **CH-H-06 / F006 / F007:** legal content is now deliberately one coherent
+  English document, marked `lang="en" dir="ltr"`, with a clear English-only
+  notice. The language engine skips that legal container so stale dictionaries
+  cannot produce mixed or under-disclosing text. The factual data-flow map now
+  reflects Blobs plus Postgres MFA storage accurately.
+- **CH-M-01 / CH-M-02 / CH-M-05:** frontend domain values and invitation
+  responses match backend contracts; technician and admin roles are both
+  treated as staff; Vite was upgraded and the full frontend dependency audit
+  is clean.
+- **CH-M-03 (partial):** the frontend now has component/auth/role tests and
+  preserves network/server failures as an error instead of falsely signing
+  the user out. A full browser/e2e/accessibility deployment gate is still
+  required before launch.
+
+Additional conditional state transitions for tickets, payment requests, and
+subscriptions now bind the expected old status (and ticket version) and write
+their success audit in the same SQL statement. CH-H-02 remains open for the
+remaining multi-write creation/versioning/invitation/checklist/entitlement
+workflows and all cross-provider saga/outbox design.
+
+Operationally, a new `LTS_SESSION_SECRET` has been set as a write-only Netlify
+secret for production/deploy-preview/branch-deploy and rotated locally. It
+will take effect on the next deployment; no deployment was performed because
+the standing project decision keeps this branch local until Dylan explicitly
+ships it. The exposed account-level `NETLIFY_BLOBS_TOKEN` still requires a
+provider-side create-new/revoke-old rotation after confirming the token is not
+shared by other projects. No secret value was read or recorded.
+
+## Historical reproduction evidence (closed at `3fb896b`)
 
 A read-only injected-store diagnostic called the real handler functions with
 an active `org_owner` authorization context for `org-a`, while the fake SQL
-adapter returned rows owned by `org-b`. Current results:
+adapter returned rows owned by `org-b`. Pre-fix results were:
 
 | Handler | Requested authorization scope | Stored row owner | Result |
 |---|---:|---:|---:|
@@ -41,25 +94,29 @@ probe. No live record was read or changed.
 
 ## Stop-ship findings
 
-### CH-P0-01 — Approval decision permits a cross-tenant mutation
+### CH-P0-01 — Approval isolation is fixed, but decision finality is not atomic
 
-**Severity:** Critical  
-**Status:** Open
+**Severity:** Critical
 
-`netlify/functions/approvals.js:51-68` selects the capability and authorizes
-against `organizationId` and `subjectType` supplied by the caller. It then
-passes only `approvalId` into the store. `src/db/approvalStore.js:94-108`
-selects and updates solely by that ID. The stored approval's organization and
-subject type are never required to match the authorized values.
+**Status:** Partially resolved at `3fb896b`; stop-ship concurrency portion open
 
-The update is also a read/decide/unconditional-write sequence. Two concurrent
-decisions can both observe `pending`; the last write can overwrite the first.
+`src/db/approvalStore.js:120-138` now requires `organization_id` in both the
+read and write predicates and rejects a caller-supplied `subjectType` that
+does not match the stored row. That closes the demonstrated cross-tenant IDOR
+and capability-confusion path.
+
+The update is still a read/decide/unconditional-write sequence. The `UPDATE`
+does not require the old status to remain `pending`, has no `RETURNING` row
+count check, and writes the audit event separately. A post-Claude injected-SQL
+diagnostic forced simultaneous approve/reject calls to read the same pending
+row: **both returned success, both issued an update, and neither update had a
+pending-status guard.** The last database write wins even though two success
+responses and two success audit events can exist.
 
 **Required repair:**
 
-1. Resolve the approval before authorization, derive organization and subject
-   type from the stored record, and authorize those derived values. Return a
-   uniform not-found response for an inaccessible ID.
+1. Keep the new tenant/subject predicates and add a handler-level regression
+   test that exercises them through the real endpoint boundary.
 2. Make the decision a conditional atomic operation (`WHERE id = ? AND
    organization_id = ? AND status = 'pending' ... RETURNING *`) or an
    equivalent transactional statement. The request body must not select its
@@ -74,16 +131,22 @@ decisions can both observe `pending`; the last write can overwrite the first.
 **Severity:** Critical  
 **Status:** Open (partly acknowledged in `docs/development/SECURITY_REVIEW.md`)
 
-The pending MFA cookie is signed after password authentication, but the
-server does not require an independent, out-of-band confirmation before first
-enrollment becomes active (`netlify/functions/mfa-enroll.js:106-201`). A
-password-only compromise can therefore register an attacker's authenticator.
-The notification sent after activation is detective, not preventive.
+The final code now emails an out-of-band link, but deliberately bypasses that
+control whenever email is unconfigured or delivery fails
+(`netlify/functions/mfa-enroll.js:308-359`). A password-only compromise can
+therefore still register an attacker's authenticator during any provider or
+configuration failure. The existing unit test at
+`netlify/functions/mfa-enroll.test.js:142-173` proves the fail-open behavior
+and expects a real session plus recovery codes.
 
 Additional gaps remain:
 
 - `netlify/functions/_lib/auth_utils.js:97-100` calls the pending credential a
   single-use token, but its `jti` is not stored or consumed server-side.
+- `netlify/functions/mfa-enroll.js:165-185` performs confirmation-token
+  read/check/write, user activation, and session issuance separately. A
+  post-Claude parallel diagnostic made two requests consume the same token;
+  **both returned 200 and two sessions were issued**.
 - `netlify/functions/mfa-verify.js:70-148` reads the old recovery/TOTP state,
   changes a Blobs record, audits, and issues a session as separate operations.
   Concurrent requests can both validate the same previously unused state.
@@ -98,10 +161,10 @@ with atomic conditional updates; revoke/rotate sessions and challenges on
 state changes; and test real concurrent consumption, not only sequential
 replay.
 
-**In-flight rewrite advisory:** the uncommitted rewrite inspected after this
-finding was recorded does add an email-confirmation link, but deliberately
-falls back to immediate activation when email is unconfigured or delivery
-fails. That is still fail-open for the exact password-only enrollment attack
+**Final rewrite result:** the committed rewrite does add an email-confirmation
+link, but deliberately falls back to immediate activation when email is
+unconfigured or delivery fails. That is still fail-open for the exact
+password-only enrollment attack
 and therefore does **not** resolve this stop-ship finding. A mandatory control
 must fail closed; administrative recovery belongs in a separate, strongly
 authenticated break-glass procedure. The new link consumption also remains a
@@ -110,20 +173,52 @@ Blobs read/check/write sequence: concurrent requests can both observe
 consumption and state transition atomic/idempotent, and do not mark the
 Critical resolved until failure and concurrency tests prove it.
 
+### CH-P0-03 — Documented credential exposure has not been remediated
+
+**Severity:** Critical
+
+**Status:** Open; operational rotation required before release
+
+`docs/development/DEV_STATE.json` → `releaseRecommendation` records that the
+live `LTS_SESSION_SECRET` and `NETLIFY_BLOBS_TOKEN` were printed in plaintext
+to the development transcript and explicitly says they were not rotated. The
+final MFA encryption key was not exposed.
+
+Treat both exposed values as compromised regardless of who is expected to see
+the transcript. Rotate the Netlify Blobs credential, rotate the session
+signing secret (accepting that current sessions will be invalidated), revoke
+the old credentials, and review provider/access logs for unexpected use.
+Capture only the rotation result and time in audit evidence—never the new
+values.
+
 ## High findings
 
-### CH-H-01 — Three customer reads are scoped by child ID, not tenant
+### CH-H-01 — Customer reads are fixed; parent ownership on creation is not
 
-**Severity:** High  
-**Status:** Open
+**Severity:** High
 
-- `netlify/functions/scope-of-work.js:61-74` authorizes the named organization,
-  but `src/db/scopeOfWorkStore.js:125-128` queries only `ticket_id`.
-- `netlify/functions/change-orders.js:62-81` authorizes the named organization,
-  but `src/db/changeOrderStore.js:81-84` queries only `id`.
-- `netlify/functions/payment-requests.js:62-77` authorizes the named
-  organization, but `src/db/paymentRequestStore.js:140-143` queries only
-  `subject_type` and `subject_id`.
+**Status:** Partially resolved at `3fb896b`
+
+The three customer reads now include `organization_id` in their SQL
+predicates (`scopeOfWorkStore.js:136-139`, `changeOrderStore.js:90-93`, and
+`paymentRequestStore.js:149-152`). The original cross-tenant disclosures are
+closed.
+
+Creation paths still accept an organization and a parent/subject ID as
+independent inputs without proving they belong together:
+
+- scope creation passes the body `organizationId` and `ticketId` directly to
+  the insert (`scope-of-work.js:41-55`, `scopeOfWorkStore.js:28-45`);
+- change-order creation loads `originalScopeId` but never requires the
+  scope's stored organization to equal the body organization
+  (`change-orders.js:35-55`);
+- payment-request creation does not resolve or validate the supplied subject
+  before inserting (`payment-requests.js:43-56`).
+
+The schema uses independent foreign keys and has no composite ownership
+constraint (`migrations/001_initial_schema.sql:262-300`). A staff/admin error
+or compromised staff session can therefore create cross-tenant references
+that later appear inside the wrong customer's correctly scoped reads.
 
 **Required repair:** make organization scope mandatory in each store API and
 SQL predicate, validate parent ownership on creation, and add database
@@ -135,7 +230,8 @@ query is constrained by it.
 
 ### CH-H-02 — Multi-write workflows and their audit records are not atomic
 
-**Severity:** High  
+**Severity:** High
+
 **Status:** Open
 
 `src/db/pgClient.js:17-31` exposes individual Neon HTTP queries. The installed
@@ -167,7 +263,7 @@ be atomic.
 
 **Severity:** High if represented as reconciled Care Hub billing; acceptable
 only as a clearly manual development path  
-**Status:** Open
+**Status:** Accepted for the current manual-link-only scope; full integration deferred
 
 The active dashboard work adds the supplied fixed URL. Its own comment
 correctly states that it carries no Care Hub payment request, organization,
@@ -230,11 +326,54 @@ contracts, invoices, reports, or other customer-private files. Confirm the
 selected Cloudinary plan and data-processing terms support the required
 private document behavior before treating this provider decision as complete.
 
+### CH-H-05 — Visiting the MFA email link performs the security action immediately
+
+**Severity:** High
+**Status:** Open
+
+`care-hub-app/src/routes/MfaEnrollVerify.tsx:29-52` calls the activation API
+from a mount-time `useEffect`. There is no review screen or explicit “Confirm”
+button. Email-security scanners and link-preview systems that execute page
+JavaScript can therefore consume the token and activate MFA without a human
+choosing the action. This is especially risky because the token is marked
+used before activation/session creation finishes.
+
+The landing page should validate and describe the pending action without
+changing state. A deliberate button should perform the POST, and the server
+should atomically consume a challenge bound to the exact pending enrollment.
+
+### CH-H-06 — Legal disclosure fixes are incomplete in 15 languages
+
+**Severity:** High
+
+**Status:** Open; formal findings F006/F007 reopened
+
+The English `privacy.html` now names Care Hub data categories, Neon, Resend,
+and Square. The 15 non-English dictionaries do not contain the new Care Hub
+keys, while existing keys such as `privacy.section1_intro` and
+`privacy.section3_body` still contain the old, under-disclosing text. For
+example, `i18n/es.json` still says only directly supplied data is collected
+and names only Netlify and Square; the new Care Hub paragraphs remain English
+on the otherwise-Spanish page because their keys are missing.
+
+That makes the policy internally mixed-language and materially incomplete for
+any visitor with a saved non-English selection. Either supply professionally
+reviewed translations for the legal additions or deliberately present the
+entire legal document in English with a clear notice until translations are
+ready. Attorney review remains required.
+
+The supporting inventory also says MFA secrets and recovery codes are stored
+in Postgres (`docs/development/legal/DATA_FLOW_AND_SUBPROCESSORS.md:24-25`),
+but production code stores them in the Netlify Blobs `users` record
+(`mfa-enroll.js:108-120`, `blob_store.js:7-11`). Correct the factual data map
+before relying on it for policy text or a data-processing review.
+
 ## Medium/correctness findings
 
 ### CH-M-01 — Frontend contracts have drifted from backend domain values
 
-**Severity:** Medium  
+**Severity:** Medium
+
 **Status:** Open
 
 - `care-hub-app/src/api/types.ts:38-43` says a scope approval uses
@@ -258,7 +397,7 @@ contract tests for every endpoint.
 ### CH-M-02 — Current Square dashboard role check exposes the button to staff
 
 **Severity:** Medium  
-**Status:** In active uncommitted code; recheck after Claude's next commit
+**Status:** Confirmed in final baseline
 
 `care-hub-app/src/routes/Dashboard.tsx:25-60` considers only the legacy
 `admin` role to be staff. `AuthenticatedUser.role` also includes `staff`
@@ -283,6 +422,12 @@ and a deploy-preview smoke test against real backend dependencies.
 fetch failure—including a network or server failure—into `signedOut`, losing
 the distinction between unauthenticated and temporarily unavailable.
 
+The product surface is also narrower than the backend inventory: roughly 18
+resource endpoints have no Care Hub screen, and `/account` is still a
+`ComingSoon` placeholder. This can be an acceptable limited MVP only if Dylan
+explicitly defines launch scope as dashboard + tickets + checklists + manual
+Square link; it is not completion of the broader Care Hub requirements.
+
 ### CH-M-04 — Generic webhook verifier is provider-incompatible by design
 
 **Severity:** Medium now; High if wired to a provider  
@@ -295,27 +440,49 @@ Cloudinary notification verification uses its own payload/timestamp format.
 Keep provider adapters separate and share only neutral replay/idempotency and
 audit utilities.
 
+### CH-M-05 — Frontend development dependencies have known vulnerabilities
+
+**Severity:** Medium
+
+**Status:** Open; production bundle dependencies are clean
+
+`care-hub-app npm audit` reports one High and one Moderate development-tool
+finding through Vite/esbuild, including a Vite development-server path
+traversal advisory. `npm audit --omit=dev` is clean, so these packages are not
+shipped in the browser bundle, but the unqualified “0 vulnerabilities in both
+workspaces” statements in development status are inaccurate.
+
+Upgrade Vite and its toolchain through a tested migration rather than running
+the suggested forced major update blindly. Until then, keep the development
+server bound to localhost and do not expose it to an untrusted network.
+
 ## Required repair order
 
-1. Freeze a reviewed commit after Claude finishes the current development
-   cycle. Preserve his work; do not audit a moving diff as if it were final.
-2. Repair CH-P0-01 and CH-H-01 as one tenant-ownership sweep. Add the negative
-   tests first, then constrain handler/store/database boundaries.
-3. Repair MFA enrollment, single-use challenges, recovery/TOTP consumption,
-   and session revocation; run parallel-request security tests.
-4. Introduce atomic conditional transitions and transactional audit writes.
+1. Rotate and revoke the two exposed credentials in CH-P0-03, invalidate old
+   sessions, and capture non-secret completion evidence.
+2. Make MFA fail closed; atomically bind and consume the exact enrollment
+   challenge; require a deliberate confirmation click; make TOTP/recovery-code
+   consumption atomic; and add real parallel-request tests.
+3. Make approval decisions a conditional atomic update with the audit write in
+   the same transaction. The simultaneous approve/reject test must allow
+   exactly one success.
+4. Finish the tenant-ownership sweep by validating parent ownership on every
+   create/update path and adding database constraints where possible.
+5. Introduce atomic conditional transitions and transactional audit writes.
    Cover approval, scope versioning, change orders, payments, invitations,
    checklists, tickets, subscriptions, and entitlements.
-5. Reconcile frontend types with backend contracts and add contract tests.
-6. Keep the fixed Square URL explicitly manual. Build full provider
+6. Reopen F006/F007 until the legal text is coherent in all selectable
+   languages, correct the data-flow inventory, and obtain attorney review.
+7. Reconcile frontend types with backend contracts and add contract tests.
+8. Keep the fixed Square URL explicitly manual. Build full provider
    reconciliation only after the database can persist a canonical amount and
    correlation identifiers.
-7. Implement Cloudinary behind a storage-provider interface with private
+9. Implement Cloudinary behind a storage-provider interface with private
    delivery, scanning/quarantine, tenant ownership, retention, and deletion.
-8. Finish customer/staff routes and execute unit, integration, e2e,
+10. Finish customer/staff routes and execute unit, integration, e2e,
    accessibility, deploy-preview, provider-sandbox, backup/restore, and
    rollback gates.
-9. Update `SECURITY_REVIEW.md`, `DEV_STATE.json`, traceability, legal/data-flow
+11. Update `SECURITY_REVIEW.md`, `DEV_STATE.json`, traceability, legal/data-flow
    documents, and the formal audit state only after evidence matches reality.
 
 ## Verification gates
@@ -331,16 +498,24 @@ audit utilities.
   amount, currency, order, merchant/location, and event id are verified.
 - Cloudinary assets are not anonymously retrievable; signatures expire; a
   user cannot sign, view, overwrite, or delete another organization's asset.
+- A legal page never presents stale or partially English privacy/terms text
+  while declaring another language, and its factual data locations match code.
+- Old session/Blobs credentials are revoked and cannot authenticate.
 - Root tests, Care Hub unit/contract tests, production build, e2e, automated
   accessibility, live/sandbox smoke tests, migration rehearsal, rollback, and
   restore exercise all have captured pass evidence.
 
 ## Current checks
 
-- `npm test`: 781/781 pass at reviewed baseline.
-- `care-hub-app npm run typecheck`: pass with the current uncommitted Square
-  dashboard work.
-- `care-hub-app npm run build`: pass; 61 modules transformed.
-- No Care Hub frontend test files were found.
+- `npm test`: 791/791 pass at `b2772e9`.
+- `care-hub-app npm run build`: pass; TypeScript clean, 62 modules transformed.
+- Root `npm audit --omit=dev`: 0 vulnerabilities.
+- Care Hub `npm audit --omit=dev`: 0 production vulnerabilities; full
+  `npm audit`: 1 High + 1 Moderate development-tool vulnerability.
+- Forced parallel approval diagnostic: both approve and reject returned
+  success; two unguarded updates were issued.
+- Forced parallel MFA email-token diagnostic: both requests returned 200 and
+  two sessions were issued from the same token.
+- No Care Hub frontend/component/e2e/accessibility test files were found.
 - No Square transaction, Netlify deployment, Cloudinary write, or production
   data mutation was performed by this audit.

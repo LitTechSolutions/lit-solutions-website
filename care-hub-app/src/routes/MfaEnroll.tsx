@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api/client";
-import { useAuth } from "../auth/AuthContext";
 import { strings } from "../strings/en";
 import { Loading } from "../components/states/Loading";
 import { ErrorState } from "../components/states/ErrorState";
@@ -17,16 +16,13 @@ import { ErrorState } from "../components/states/ErrorState";
  */
 export function MfaEnroll() {
   const navigate = useNavigate();
-  const { setSignedIn } = useAuth();
 
-  const [phase, setPhase] = useState<"loading" | "confirm" | "recoveryCodes" | "pendingEmailConfirmation" | "error">("loading");
+  const [phase, setPhase] = useState<"loading" | "confirm" | "pendingEmailConfirmation" | "error">("loading");
   const [secret, setSecret] = useState("");
   const [code, setCode] = useState("");
   const [confirming, setConfirming] = useState(false);
   const [confirmError, setConfirmError] = useState<string | null>(null);
   const [startError, setStartError] = useState<string | null>(null);
-  const [recoveryCodes, setRecoveryCodes] = useState<string[]>([]);
-  const [pendingUser, setPendingUser] = useState<Parameters<typeof setSignedIn>[0] | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -53,23 +49,14 @@ export function MfaEnroll() {
     setConfirmError(null);
     try {
       const result = await api.auth.mfaEnrollConfirm(code);
-      if ("pendingEmailConfirmation" in result) {
+      if (result.pendingEmailConfirmation) {
         setPhase("pendingEmailConfirmation");
-        return;
       }
-      setRecoveryCodes(result.recoveryCodes);
-      setPendingUser(result.user);
-      setPhase("recoveryCodes");
     } catch (err) {
       setConfirmError(err instanceof Error ? err.message : strings.auth.mfaIncorrectCode);
     } finally {
       setConfirming(false);
     }
-  }
-
-  function handleContinue() {
-    if (pendingUser) setSignedIn(pendingUser);
-    navigate("/");
   }
 
   if (phase === "loading") return <Loading />;
@@ -87,25 +74,6 @@ export function MfaEnroll() {
         <div className="auth-card card">
           <h1>{strings.auth.mfaCheckEmailTitle}</h1>
           <p>{strings.auth.mfaCheckEmailBody}</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (phase === "recoveryCodes") {
-    return (
-      <div className="auth-page">
-        <div className="auth-card card">
-          <h1>{strings.auth.mfaRecoveryCodesTitle}</h1>
-          <p>{strings.auth.mfaRecoveryCodesBody}</p>
-          <ul className="auth-card__recovery-codes">
-            {recoveryCodes.map((rc) => (
-              <li key={rc}>{rc}</li>
-            ))}
-          </ul>
-          <button type="button" className="btn btn-primary btn-block" onClick={handleContinue}>
-            {strings.auth.mfaRecoveryCodesContinue}
-          </button>
         </div>
       </div>
     );

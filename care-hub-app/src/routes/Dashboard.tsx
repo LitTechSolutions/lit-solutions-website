@@ -9,6 +9,7 @@ import { useApi } from "../hooks/useApi";
 import { useAuth } from "../auth/AuthContext";
 import { strings } from "../strings/en";
 import { SQUARE_DEV_PAYMENT_LINK_URL } from "../config/payments";
+import { isStaffRole } from "../auth/roles";
 
 /**
  * Placeholder landing route -- demonstrates the full loading/empty/
@@ -23,7 +24,7 @@ export function Dashboard() {
   const fetchAccount = useCallback(() => api.account.get(), []);
   const state = useApi(fetchAccount, []);
   const { state: authState } = useAuth();
-  const isStaff = authState.status === "signedIn" && authState.user.role === "admin";
+  const isStaff = authState.status === "signedIn" && isStaffRole(authState.user.role);
 
   switch (state.status) {
     case "loading":

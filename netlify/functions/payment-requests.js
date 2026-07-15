@@ -25,6 +25,24 @@
 const { json } = require("./_lib/auth_utils");
 const { authenticateForOrg, authenticatePlatformAction, denyResponseFor } = require("./_lib/care_hub_auth");
 const { createPaymentRequestsForSchedule, applyPaymentStatusTransition, listPaymentRequestsForSubject } = require("../../src/db/paymentRequestStore");
+const { getScopeById } = require("../../src/db/scopeOfWorkStore");
+const { getChangeOrderById } = require("../../src/db/changeOrderStore");
+const { getSubscriptionById } = require("../../src/db/subscriptionStore");
+
+async function subjectBelongsToOrganization(subjectType, subjectId, organizationId, deps) {
+  if (subjectType === "scope") {
+    const scope = await getScopeById(subjectId, deps);
+    return !!scope && scope.organizationId === organizationId;
+  }
+  if (subjectType === "change_order") {
+    return !!(await getChangeOrderById(subjectId, organizationId, deps));
+  }
+  if (subjectType === "subscription") {
+    const subscription = await getSubscriptionById(subjectId, deps);
+    return !!subscription && subscription.organizationId === organizationId;
+  }
+  return false;
+}
 
 exports.handler = async (event, context, deps = {}) => {
   if (event.httpMethod === "POST") return handleCreate(event, deps);
@@ -50,6 +68,10 @@ async function handleCreate(event, deps) {
 
   const deny = denyResponseFor(auth.authContext, null, "billing.reconcile");
   if (deny) return deny;
+
+  if (!(await subjectBelongsToOrganization(subjectType, subjectId, organizationId, deps))) {
+    return json(404, { error: "Billable subject not found." });
+  }
 
   try {
     const result = await createPaymentRequestsForSchedule({ organizationId, subjectType, subjectId, amountRefPrefix, totalAmount, isThirdPartyExpense }, { ...deps, actorId: auth.session.userId });

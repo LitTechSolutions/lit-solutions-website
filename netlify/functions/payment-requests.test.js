@@ -11,6 +11,7 @@ function routingFakeSql(byTable) {
   const tag = async (strings, ...values) => {
     const text = strings.join("?");
     calls.push({ text, values });
+    if (text.includes("scope_of_work")) return byTable.scopes || [];
     if (text.includes("payment_requests")) return byTable.paymentRequests || [];
     return [];
   };
@@ -54,7 +55,7 @@ function fakeDeps(role) {
 
 test("POST as admin creates a deposit_balance schedule for work at or above $500", async () => {
   idCounter = 0;
-  const sql = routingFakeSql({});
+  const sql = routingFakeSql({ scopes: [{ id: "scope-1", organization_id: "org-a", ticket_id: "ticket-1", version: 1, status: "sent", assumptions: [], exclusions: [], line_items: [], created_at: FIXED_NOW().toISOString(), created_by: "tech-1" }] });
   const res = await handler(
     { httpMethod: "POST", headers: { cookie: "lts_session=fake-token" }, body: JSON.stringify({ organizationId: "org-a", subjectType: "scope", subjectId: "scope-1", amountRefPrefix: "scope-1", totalAmount: 1000 }) },
     {},
@@ -64,6 +65,17 @@ test("POST as admin creates a deposit_balance schedule for work at or above $500
   const body = JSON.parse(res.body);
   assert.equal(body.scheduleType, "deposit_balance");
   assert.equal(body.paymentRequests.length, 2);
+});
+
+test("SECURITY: POST rejects a billable subject owned by another organization", async () => {
+  const sql = routingFakeSql({ scopes: [{ id: "scope-1", organization_id: "org-b", ticket_id: "ticket-1", version: 1, status: "sent", assumptions: [], exclusions: [], line_items: [], created_at: FIXED_NOW().toISOString(), created_by: "tech-1" }] });
+  const res = await handler(
+    { httpMethod: "POST", headers: { cookie: "lts_session=fake-token" }, body: JSON.stringify({ organizationId: "org-a", subjectType: "scope", subjectId: "scope-1", amountRefPrefix: "scope-1", totalAmount: 1000 }) },
+    {},
+    { ...fakeDeps("admin"), sql }
+  );
+  assert.equal(res.statusCode, 404);
+  assert.equal(sql.calls.some((call) => call.text.includes("INSERT INTO payment_requests")), false);
 });
 
 test("POST rejects a non-numeric totalAmount before touching auth", async () => {

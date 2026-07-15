@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "../api/client";
 import { useAuth } from "../auth/AuthContext";
@@ -11,9 +11,9 @@ import { ErrorState } from "../components/states/ErrorState";
  * "confirm" step defers activation (Session 20 step 8 -- the real
  * preventive fix for step 10's Critical MFA-enrollment-hijack finding).
  * Reached with no session and no lts_mfa_pending cookie -- the browser
- * clicking this link is very often not the one that started enrollment
- * -- so this page authenticates purely via the ?token= in the URL, same
- * as the public site's password-reset confirmation link.
+ * clicking this link is very often not the one that started enrollment.
+ * Opening an email must never perform the state-changing request: the user
+ * explicitly confirms here so link scanners and previews cannot activate MFA.
  */
 export function MfaEnrollVerify() {
   const navigate = useNavigate();
@@ -21,35 +21,24 @@ export function MfaEnrollVerify() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
 
-  const [phase, setPhase] = useState<"verifying" | "recoveryCodes" | "error">("verifying");
-  const [error, setError] = useState<string | null>(null);
+  const [phase, setPhase] = useState<"confirm" | "verifying" | "recoveryCodes" | "error">(token ? "confirm" : "error");
+  const [error, setError] = useState<string | null>(token ? null : strings.auth.mfaEmailMissingToken);
   const [recoveryCodes, setRecoveryCodes] = useState<string[]>([]);
   const [pendingUser, setPendingUser] = useState<Parameters<typeof setSignedIn>[0] | null>(null);
 
-  useEffect(() => {
-    if (!token) {
-      setError("This confirmation link is missing its token.");
+  async function handleConfirm() {
+    if (!token) return;
+    setPhase("verifying");
+    try {
+      const result = await api.auth.mfaEnrollVerifyEmail(token);
+      setRecoveryCodes(result.recoveryCodes);
+      setPendingUser(result.user);
+      setPhase("recoveryCodes");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : strings.auth.mfaEmailInvalid);
       setPhase("error");
-      return;
     }
-    let cancelled = false;
-    api.auth
-      .mfaEnrollVerifyEmail(token)
-      .then((result) => {
-        if (cancelled) return;
-        setRecoveryCodes(result.recoveryCodes);
-        setPendingUser(result.user);
-        setPhase("recoveryCodes");
-      })
-      .catch((err) => {
-        if (cancelled) return;
-        setError(err instanceof Error ? err.message : "This confirmation link is invalid or has expired.");
-        setPhase("error");
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [token]);
+  }
 
   function handleContinue() {
     if (pendingUser) setSignedIn(pendingUser);
@@ -57,6 +46,20 @@ export function MfaEnrollVerify() {
   }
 
   if (phase === "verifying") return <Loading />;
+
+  if (phase === "confirm") {
+    return (
+      <div className="auth-page">
+        <div className="auth-card card">
+          <h1>{strings.auth.mfaEmailConfirmTitle}</h1>
+          <p>{strings.auth.mfaEmailConfirmBody}</p>
+          <button type="button" className="btn btn-primary btn-block" onClick={handleConfirm}>
+            {strings.auth.mfaEmailConfirmButton}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (phase === "error") {
     return (

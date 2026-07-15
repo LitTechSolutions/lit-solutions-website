@@ -17,6 +17,7 @@ const { json } = require("./_lib/auth_utils");
 const { authenticateForOrg, denyResponseFor } = require("./_lib/care_hub_auth");
 const { createInitialScope, getScopeById, createNextScopeVersion, listScopeVersionsForTicket } = require("../../src/db/scopeOfWorkStore");
 const { getAssignedTechnician } = require("../../src/db/ticketWorkflowStore");
+const { getTicketById } = require("../../src/db/ticketStore");
 
 exports.handler = async (event, context, deps = {}) => {
   if (event.httpMethod === "POST") return handleCreate(event, deps);
@@ -49,6 +50,11 @@ async function handleCreate(event, deps) {
   const assigned = await technicianAssignedCheck(auth.authContext, ticketId, { ...deps, __sessionUserId: auth.session.userId });
   const deny = denyResponseFor(auth.authContext, organizationId, "scope.create", { assigned });
   if (deny) return deny;
+
+  const ticket = await getTicketById(ticketId, deps);
+  if (!ticket || ticket.organizationId !== organizationId) {
+    return json(404, { error: "Ticket not found." });
+  }
 
   try {
     const scope = await createInitialScope({ organizationId, ticketId, assumptions, exclusions, lineItems, createdBy: auth.session.userId }, { ...deps, actorId: auth.session.userId });
@@ -90,7 +96,7 @@ async function handleNextVersion(event, deps) {
   if (!auth.ok) return auth.response;
 
   const current = await getScopeById(scopeId, deps);
-  if (!current) return json(404, { error: "Scope of work not found." });
+  if (!current || current.organizationId !== organizationId) return json(404, { error: "Scope of work not found." });
 
   const assigned = await technicianAssignedCheck(auth.authContext, current.ticketId, { ...deps, __sessionUserId: auth.session.userId });
   const deny = denyResponseFor(auth.authContext, organizationId, "scope.create", { assigned });

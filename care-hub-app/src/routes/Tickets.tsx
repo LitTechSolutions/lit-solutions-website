@@ -6,6 +6,7 @@ import { strings } from "../strings/en";
 import { useApi } from "../hooks/useApi";
 import { useMemberships } from "../hooks/useMemberships";
 import { useAuth } from "../auth/AuthContext";
+import { isStaffRole } from "../auth/roles";
 import { Loading } from "../components/states/Loading";
 import { EmptyState } from "../components/states/EmptyState";
 import { ErrorState } from "../components/states/ErrorState";
@@ -32,7 +33,7 @@ function SignInAgain() {
  */
 export function Tickets() {
   const { state: authState } = useAuth();
-  const isStaff = authState.status === "signedIn" && authState.user.role === "admin";
+  const isStaff = authState.status === "signedIn" && isStaffRole(authState.user.role);
 
   if (isStaff) return <StaffWorkQueue />;
   return <CustomerTickets />;

@@ -17,6 +17,7 @@ const { determinePaymentSchedule } = require("../policy/paymentSchedule");
 const { transitionPaymentStatus } = require("../policy/paymentReconciliation");
 const { createAuditRecorder } = require("../audit/auditLog");
 const { createPgAuditSink } = require("./pgAuditSink");
+const { shapeAuditEvent } = require("../audit/auditLog");
 
 function resolveAuditRecorder(deps) {
   return deps.auditRecorder || createAuditRecorder(createPgAuditSink({ sql: deps.sql }));
@@ -110,23 +111,32 @@ async function applyPaymentStatusTransition(id, nextStatus, deps = {}) {
     throw new Error(`applyPaymentStatusTransition: ${reason}`);
   }
   const providerReference = deps.providerReference ?? current.providerReference ?? null;
-
-  await sql`UPDATE payment_requests SET status = ${nextStatus}, provider_reference = ${providerReference} WHERE id = ${id}`;
-
-  await auditRecorder.record(
-    {
-      correlationId: id,
-      actorType: "user",
-      actorId: deps.actorId || "system",
-      organizationId: current.organizationId,
-      action: "payment_request.transition",
-      targetType: "payment_request",
-      targetId: id,
-      outcome: "success",
-      metadata: { fromStatus: current.status, toStatus: nextStatus },
-    },
-    deps
-  );
+  const decisionTime = (deps.now || (() => new Date()))();
+  const auditEvent = shapeAuditEvent({
+    correlationId: id,
+    actorType: "user",
+    actorId: deps.actorId || "system",
+    organizationId: current.organizationId,
+    action: "payment_request.transition",
+    targetType: "payment_request",
+    targetId: id,
+    outcome: "success",
+    metadata: { fromStatus: current.status, toStatus: nextStatus },
+  }, { now: () => decisionTime, idGenerator: deps.auditIdGenerator });
+  const changed = await sql`
+    WITH changed AS (
+      UPDATE payment_requests
+      SET status = ${nextStatus}, provider_reference = ${providerReference}
+      WHERE id = ${id} AND status = ${current.status}
+      RETURNING *
+    ), audited AS (
+      INSERT INTO audit_events (id, correlation_id, occurred_at, actor_type, actor_id, actor_role, organization_id, action, target_type, target_id, outcome, metadata)
+      SELECT ${auditEvent.id}, ${auditEvent.correlationId}, ${auditEvent.occurredAt}, ${auditEvent.actorType}, ${auditEvent.actorId}, ${auditEvent.actorRole || null}, ${auditEvent.organizationId}, ${auditEvent.action}, ${auditEvent.targetType}, ${auditEvent.targetId}, ${auditEvent.outcome}, ${JSON.stringify(auditEvent.metadata)}
+      FROM changed RETURNING id
+    )
+    SELECT changed.* FROM changed INNER JOIN audited ON TRUE
+  `;
+  if (changed.length === 0) throw new Error("applyPaymentStatusTransition: payment request changed by another request");
 
   return { ...current, status: nextStatus, providerReference: providerReference || undefined };
 }

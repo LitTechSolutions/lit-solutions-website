@@ -12,14 +12,9 @@
 //      returns the otpauth:// URI + base32 secret for the authenticator
 //      app -- shown exactly once, never re-fetchable, never logged.
 // POST { action: "confirm", code }
-//   -> validates the 6-digit code against the pending secret. If a
-//      confirmation email can be dispatched, MFA is NOT activated yet --
-//      see the Session 20 step 10/8 addendum below -- and the response is
-//      { pendingEmailConfirmation: true }. Only if email delivery fails
-//      (not configured, or a genuine provider error) does this fall back
-//      to the original behavior: activate immediately, generate one-time
-//      recovery codes (shown once, stored hashed), upgrade the pre-auth
-//      cookie to a real session, and clear the pending cookie.
+//   -> validates the 6-digit code against the pending secret and sends a
+//      mandatory out-of-band confirmation email. MFA is not activated and
+//      no session is issued unless that email link is explicitly confirmed.
 // POST { action: "verify-email", token }
 //   -> consumes the single-use link from the confirmation email and
 //      completes activation (same effect as the old immediate-activation
@@ -39,16 +34,11 @@
 // hijack enrollment and lock the real owner out. This is now fixed with a
 // real preventive control, not just a notification: when email delivery
 // is configured and succeeds, activation is deferred until the account
-// owner clicks a single-use, 30-minute link sent to their own inbox --
+// owner explicitly confirms a single-use, 30-minute link sent to their
+// own inbox --
 // an attacker with only the password can no longer complete enrollment
-// unless they also control that inbox. The fallback to immediate
-// activation ONLY fires when the confirmation email genuinely could not
-// be sent (unconfigured RESEND_API_KEY/EMAIL_FROM, or a real provider
-// failure) -- this is deliberate: MFA is mandatory for platform_admin, so
-// a hard requirement on email would risk permanently locking every admin
-// out the moment email breaks. The fallback path still fires the
-// best-effort "MFA was just enabled" notification from step 8 so the
-// gap stays visible in audit-log.js rather than silent.
+// unless they also control that inbox. Email delivery failure is
+// fail-closed; recovery requires a separately authenticated support path.
 
 const {
   verify,
@@ -59,13 +49,20 @@ const {
   json,
   rateLimited,
 } = require("./_lib/auth_utils");
-const { getJSON, setJSON, store } = require("./_lib/blob_store");
+const { setJSON, store } = require("./_lib/blob_store");
 const { siteOrigin } = require("./_lib/verification");
 const { generateTotpSecret, buildOtpauthUri, validateTotpToken } = require("../../src/security/totp");
 const { encryptSecret, decryptSecret, generateRecoveryCodes, hashRecoveryCode } = require("../../src/security/mfaCrypto");
 const { createAuditRecorder } = require("../../src/audit/auditLog");
 const { createPgAuditSink } = require("../../src/db/pgAuditSink");
 const { sendEmail } = require("./_lib/email");
+const {
+  createMfaEnrollmentChallenge,
+  claimMfaEnrollmentChallenge,
+  deleteMfaEnrollmentChallenge,
+} = require("../../src/db/mfaChallengeStore");
+const { claimMfaTotpCounter, syncMfaRecoveryCodeHashes } = require("../../src/db/mfaCredentialStore");
+const crypto = require("node:crypto");
 
 const RECOVERY_CODE_COUNT = 10;
 const MFA_ENROLL_VERIFY_TTL_SECONDS = 60 * 30; // 30 minutes -- matches the password-reset link convention
@@ -100,8 +97,7 @@ async function resolvePendingAuth(event, deps) {
 /**
  * Shared activation step -- flips MFA on, generates and hashes recovery
  * codes, issues a real session, and returns the response shape both the
- * fallback-immediate-activation path (in "confirm") and the
- * email-confirmed path ("verify-email") need. `counter` seeds anti-replay
+ * email-confirmed path needs. `counter` seeds anti-replay
  * tracking (src/security/totp.js's validateTotpToken() result from
  * whichever code originally proved possession of the authenticator).
  */
@@ -109,12 +105,21 @@ async function activateMfa({ user, userKey, counter, deps }) {
   const setJSONFn = deps.setJSON || setJSON;
   const generateRecoveryCodesFn = deps.generateRecoveryCodes || generateRecoveryCodes;
   const recoveryCodes = generateRecoveryCodesFn(RECOVERY_CODE_COUNT);
+  const recoveryCodeHashes = recoveryCodes.map(hashRecoveryCode);
+
+  const claimCounterFn = deps.claimMfaTotpCounter || claimMfaTotpCounter;
+  if (!await claimCounterFn({ userId: user.id, counter }, { sql: deps.sql })) {
+    throw new Error("mfa-enroll: activation counter was already consumed");
+  }
+  const syncRecoveryFn = deps.syncMfaRecoveryCodeHashes || syncMfaRecoveryCodeHashes;
+  await syncRecoveryFn({ userId: user.id, codeHashes: recoveryCodeHashes }, { sql: deps.sql });
 
   user.mfaEnabled = true;
   user.mfaSecretEncrypted = user.mfaPendingSecretEncrypted;
   delete user.mfaPendingSecretEncrypted;
   delete user.mfaPendingCounter;
-  user.mfaRecoveryCodeHashes = recoveryCodes.map(hashRecoveryCode);
+  delete user.mfaPendingEnrollmentId;
+  user.mfaRecoveryCodeHashes = recoveryCodeHashes;
   user.mfaEnrolledAt = new Date().toISOString();
   user.mfaLastUsedCounter = counter;
   await setJSONFn("users", userKey, user);
@@ -144,8 +149,6 @@ async function activateMfa({ user, userKey, counter, deps }) {
  */
 async function handleVerifyEmail(event, body, deps) {
   const verifyFn = deps.verify || verify;
-  const getJSONFn = deps.getJSON || getJSON;
-  const setJSONFn = deps.setJSON || setJSON;
   const findUserByIdFn = deps.findUserById || findUserById;
   const rateLimitedFn = deps.rateLimited || rateLimited;
   const auditRecorder = deps.auditRecorder || createAuditRecorder(createPgAuditSink({ sql: deps.sql }));
@@ -162,11 +165,6 @@ async function handleVerifyEmail(event, body, deps) {
   if (!decoded || decoded.type !== "mfa_enroll_verify" || !decoded.uid) {
     return json(400, { error: "Invalid or expired confirmation link." });
   }
-  const record = await getJSONFn("tokens", token);
-  if (!record || record.used) {
-    return json(400, { error: "This confirmation link has already been used or has expired." });
-  }
-
   const found = await findUserByIdFn(decoded.uid, deps);
   if (!found) return json(400, { error: "Account not found." });
   const { key: userKey, user } = found;
@@ -174,12 +172,18 @@ async function handleVerifyEmail(event, body, deps) {
   if (user.mfaEnabled) {
     return json(400, { error: "Two-factor authentication is already enabled on this account." });
   }
-  if (!user.mfaPendingSecretEncrypted || typeof user.mfaPendingCounter !== "number") {
+  if (!user.mfaPendingSecretEncrypted || typeof user.mfaPendingCounter !== "number" || !user.mfaPendingEnrollmentId) {
     return json(400, { error: "No enrollment confirmation is pending. Start over from the sign-in page." });
   }
 
-  record.used = true;
-  await setJSONFn("tokens", token, record);
+  const claimChallengeFn = deps.claimMfaEnrollmentChallenge || claimMfaEnrollmentChallenge;
+  const claimed = await claimChallengeFn(
+    { token, userId: decoded.uid, enrollmentId: user.mfaPendingEnrollmentId },
+    { sql: deps.sql }
+  );
+  if (!claimed) {
+    return json(400, { error: "This confirmation link has already been used or has expired." });
+  }
 
   const counter = user.mfaPendingCounter;
   const response = await activateMfa({ user, userKey, counter, deps });
@@ -213,7 +217,6 @@ exports.handler = async (event, context, deps = {}) => {
   const pending = await resolvePendingAuth(event, deps);
   if (!pending) return json(401, { error: "No pending sign-in. Please sign in again." });
 
-  const getJSONFn = deps.getJSON || getJSON;
   const setJSONFn = deps.setJSON || setJSON;
   const findUserByIdFn = deps.findUserById || findUserById;
   const rateLimitedFn = deps.rateLimited || rateLimited;
@@ -235,7 +238,9 @@ exports.handler = async (event, context, deps = {}) => {
     const mfaKey = resolveMfaKey(deps);
     const generateTotpSecretFn = deps.generateTotpSecret || generateTotpSecret;
     const secretBase32 = generateTotpSecretFn();
+    const idGenerator = deps.idGenerator || (() => crypto.randomUUID());
     user.mfaPendingSecretEncrypted = encryptSecret(secretBase32, mfaKey);
+    user.mfaPendingEnrollmentId = idGenerator();
     await setJSONFn("users", userKey, user);
 
     await auditRecorder.record(
@@ -271,16 +276,19 @@ exports.handler = async (event, context, deps = {}) => {
       return json(401, { error: "Incorrect code. Try again." });
     }
 
-    // TOTP proven -- stash the counter for whichever path (email
-    // confirmation or fallback) actually activates MFA, then try to
-    // require an out-of-band email confirmation before granting access.
+    // TOTP proven -- stash the counter until the mandatory out-of-band
+    // email confirmation activates MFA.
     user.mfaPendingCounter = counter;
     await setJSONFn("users", userKey, user);
 
     const createSingleUseTokenFn = deps.createSingleUseToken || createSingleUseToken;
     const siteOriginFn = deps.siteOrigin || siteOrigin;
     const confirmToken = createSingleUseTokenFn("mfa_enroll_verify", user.id, MFA_ENROLL_VERIFY_TTL_SECONDS);
-    await setJSONFn("tokens", confirmToken, { type: "mfa_enroll_verify", userId: user.id, used: false });
+    const createChallengeFn = deps.createMfaEnrollmentChallenge || createMfaEnrollmentChallenge;
+    await createChallengeFn(
+      { token: confirmToken, userId: user.id, enrollmentId: user.mfaPendingEnrollmentId, expiresAt: new Date(Date.now() + MFA_ENROLL_VERIFY_TTL_SECONDS * 1000).toISOString() },
+      { sql: deps.sql }
+    );
     const link = `${siteOriginFn(event)}/care-hub/mfa/enroll-verify?token=${confirmToken}`;
 
     const sendEmailFn = deps.sendEmail || sendEmail;
@@ -305,12 +313,11 @@ exports.handler = async (event, context, deps = {}) => {
       });
     }
 
-    // Email couldn't be sent (unconfigured, or a genuine provider
-    // failure) -- fall back to immediate activation rather than risk
-    // locking mandatory platform_admin MFA behind a notification that can
-    // never arrive. Still audit the gap and still fire the best-effort
-    // "MFA was just enabled" notification from step 8, so this stays
-    // visible instead of silent.
+    // Email is a mandatory second factor for first enrollment. Fail closed
+    // when it is unavailable; account recovery belongs to a separately
+    // authenticated break-glass process, never to a password-only fallback.
+    const deleteChallengeFn = deps.deleteMfaEnrollmentChallenge || deleteMfaEnrollmentChallenge;
+    await deleteChallengeFn(confirmToken, { sql: deps.sql });
     await auditRecorder.record(
       {
         correlationId: user.id,
@@ -326,37 +333,9 @@ exports.handler = async (event, context, deps = {}) => {
       deps
     );
 
-    const response = await activateMfa({ user, userKey, counter, deps });
-
-    await auditRecorder.record(
-      { correlationId: user.id, actorType: "user", actorId: user.id, organizationId: null, action: "mfa.enroll.confirm", targetType: "user", targetId: user.id, outcome: "success", metadata: { immediateFallback: true } },
-      deps
-    );
-
-    const notifyDelivery = await sendEmailFn({
-      to: user.email,
-      subject: "Two-factor authentication was just enabled on your account",
-      html:
-        `<p>Two-factor authentication was just enabled on your Little Technical Solutions LLC Care Hub account (${user.email}).</p>` +
-        `<p>If this was you, no action is needed.</p>` +
-        `<p><strong>If this wasn't you</strong>, someone else may have your password -- contact us immediately at dylan@lit-solutions.tech or 636-426-0289.</p>`,
+    return json(503, {
+      error: "We could not send the required confirmation email. Two-factor authentication was not enabled. Try again later or contact support.",
     });
-    await auditRecorder.record(
-      {
-        correlationId: user.id,
-        actorType: "system",
-        actorId: "system",
-        organizationId: null,
-        action: "mfa.enroll.notification",
-        targetType: "user",
-        targetId: user.id,
-        outcome: notifyDelivery.sent ? "success" : "failure",
-        metadata: notifyDelivery.sent ? {} : { reason: String(notifyDelivery.reason || "unknown") },
-      },
-      deps
-    );
-
-    return response;
   }
 
   return json(400, { error: 'action must be "start", "confirm", or "verify-email".' });

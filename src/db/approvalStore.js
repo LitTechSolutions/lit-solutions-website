@@ -9,7 +9,7 @@ const crypto = require("node:crypto");
 const { getSql } = require("./pgClient");
 const { assertValidApprovalRequest } = require("../domain/approval");
 const { transitionApproval } = require("../policy/approvalWorkflow");
-const { createAuditRecorder } = require("../audit/auditLog");
+const { createAuditRecorder, shapeAuditEvent } = require("../audit/auditLog");
 const { createPgAuditSink } = require("./pgAuditSink");
 
 function resolveAuditRecorder(deps) {
@@ -111,7 +111,6 @@ async function listPendingApprovals(organizationId, deps = {}) {
 async function applyApprovalDecision(id, action, decision, deps = {}) {
   const sql = deps.sql || getSql();
   const now = deps.now || (() => new Date());
-  const auditRecorder = resolveAuditRecorder(deps);
 
   if (!decision || !decision.organizationId) {
     throw new Error("applyApprovalDecision: decision.organizationId is required");
@@ -125,19 +124,15 @@ async function applyApprovalDecision(id, action, decision, deps = {}) {
   if (decision.subjectType && current.subjectType !== decision.subjectType) {
     throw new Error(`applyApprovalDecision: no approval request "${id}"`);
   }
-  const result = transitionApproval(current, action, { now });
+  const decisionTime = now();
+  const result = transitionApproval(current, action, { now: () => decisionTime });
   if (!result.allowed) {
     throw new Error(`applyApprovalDecision: ${result.reason}`);
   }
 
-  const nowIso = now().toISOString();
-  await sql`
-    UPDATE approval_requests
-    SET status = ${result.nextStatus}, decided_at = ${nowIso}, decided_by = ${decision.decidedBy || null}, decision_note = ${decision.decisionNote || null}
-    WHERE id = ${id} AND organization_id = ${decision.organizationId}
-  `;
-
-  await auditRecorder.record(
+  const nowIso = decisionTime.toISOString();
+  const expectedSubjectType = decision.subjectType || current.subjectType;
+  const auditEvent = shapeAuditEvent(
     {
       correlationId: id,
       actorType: "user",
@@ -149,8 +144,36 @@ async function applyApprovalDecision(id, action, decision, deps = {}) {
       outcome: "success",
       metadata: { decision: action },
     },
-    deps
+    { now: () => decisionTime, idGenerator: deps.auditIdGenerator }
   );
+
+  // One SQL statement makes the state transition and its success audit event
+  // indivisible. The old status/expiry predicates are deliberately repeated
+  // here even though transitionApproval() already checked them: that closes
+  // the race between the SELECT above and this write. Exactly one concurrent
+  // decision can update the pending row; every loser receives zero rows.
+  const updated = await sql`
+    WITH changed AS (
+      UPDATE approval_requests
+      SET status = ${result.nextStatus}, decided_at = ${nowIso}, decided_by = ${decision.decidedBy || null}, decision_note = ${decision.decisionNote || null}
+      WHERE id = ${id}
+        AND organization_id = ${decision.organizationId}
+        AND subject_type = ${expectedSubjectType}
+        AND status = 'pending'
+        AND expires_at >= ${nowIso}
+      RETURNING *
+    ), audited AS (
+      INSERT INTO audit_events (id, correlation_id, occurred_at, actor_type, actor_id, actor_role, organization_id, action, target_type, target_id, outcome, metadata)
+      SELECT ${auditEvent.id}, ${auditEvent.correlationId}, ${auditEvent.occurredAt}, ${auditEvent.actorType}, ${auditEvent.actorId}, ${auditEvent.actorRole || null}, ${auditEvent.organizationId}, ${auditEvent.action}, ${auditEvent.targetType}, ${auditEvent.targetId}, ${auditEvent.outcome}, ${JSON.stringify(auditEvent.metadata)}
+      FROM changed
+      RETURNING id
+    )
+    SELECT changed.* FROM changed INNER JOIN audited ON TRUE
+  `;
+
+  if (updated.length === 0) {
+    throw new Error("applyApprovalDecision: approval was already decided, expired, or changed by another request");
+  }
 
   return { ...current, status: result.nextStatus, decidedAt: nowIso, ...(decision.decidedBy ? { decidedBy: decision.decidedBy } : {}), ...(decision.decisionNote ? { decisionNote: decision.decisionNote } : {}) };
 }

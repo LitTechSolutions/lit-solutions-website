@@ -31,6 +31,7 @@ const { setJSON, store } = require("./_lib/blob_store");
 const { createAuditRecorder } = require("../../src/audit/auditLog");
 const { createPgAuditSink } = require("../../src/db/pgAuditSink");
 const { sendEmail } = require("./_lib/email");
+const { clearMfaCredentials } = require("../../src/db/mfaCredentialStore");
 
 const ACTION_TO_AUDIT_EVENT = { disable: "mfa.disable", reset: "mfa.reset" };
 
@@ -85,11 +86,15 @@ exports.handler = async (event, context, deps = {}) => {
   user.mfaEnabled = false;
   delete user.mfaSecretEncrypted;
   delete user.mfaPendingSecretEncrypted;
+  delete user.mfaPendingCounter;
+  delete user.mfaPendingEnrollmentId;
   user.mfaRecoveryCodeHashes = [];
   delete user.mfaEnrolledAt;
 
   const setJSONFn = deps.setJSON || setJSON;
   await setJSONFn("users", userKey, user);
+  const clearMfaCredentialsFn = deps.clearMfaCredentials || clearMfaCredentials;
+  await clearMfaCredentialsFn(user.id, { sql: deps.sql });
 
   await auditRecorder.record(
     { correlationId: user.id, actorType: "user", actorId: user.id, organizationId: null, action: auditEventAction, targetType: "user", targetId: user.id, outcome: "success" },

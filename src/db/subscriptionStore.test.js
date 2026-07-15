@@ -73,10 +73,9 @@ test("applySubscriptionStatusTransition allows active -> paused and stamps pause
   assert.equal(updated.pausedAt, "2026-07-14T12:00:00.000Z");
   assert.equal(sql.calls.length, 2, "1 SELECT + 1 UPDATE");
   assert.match(sql.calls[1].text, /UPDATE subscriptions/);
-  assert.equal(auditRecorder.events.length, 1);
-  assert.equal(auditRecorder.events[0].action, "subscription.transition");
-  assert.equal(auditRecorder.events[0].actorId, "user-1");
-  assert.deepEqual(auditRecorder.events[0].metadata, { fromStatus: "active", toStatus: "paused" });
+  assert.match(sql.calls[1].text, /AND status =/);
+  assert.match(sql.calls[1].text, /INSERT INTO audit_events/);
+  assert.match(sql.calls[1].text, /FROM changed/);
 });
 
 test("applySubscriptionStatusTransition allows paused -> active (resume) without re-creating the record", async () => {
@@ -84,7 +83,7 @@ test("applySubscriptionStatusTransition allows paused -> active (resume) without
   const auditRecorder = fakeAuditRecorder();
   const updated = await applySubscriptionStatusTransition("sub-1", "active", { sql, now: FIXED_NOW, auditRecorder });
   assert.equal(updated.status, "active");
-  assert.equal(auditRecorder.events.length, 1);
+  assert.match(sql.calls[1].text, /INSERT INTO audit_events/);
 });
 
 test("applySubscriptionStatusTransition rejects reactivating a cancelled subscription (terminal state)", async () => {

@@ -66,6 +66,17 @@ test("POST as an unassigned technician is denied", async () => {
   assert.equal(res.statusCode, 403);
 });
 
+test("SECURITY: POST rejects a scope owned by a different organization", async () => {
+  const sql = routingFakeSql({ scopes: [scopeRow({ organization_id: "org-b" })], assignments: [{ technician_user_id: "tech-1" }] });
+  const res = await handler(
+    { httpMethod: "POST", headers: { cookie: "lts_session=fake-token" }, body: JSON.stringify({ organizationId: "org-a", originalScopeId: "scope-1", description: "x", addedLineItems: [{ description: "y", quantity: 1, priceRef: "r" }] }) },
+    {},
+    { ...fakeAuthDeps({ userId: "tech-1", authContext: { actorRole: "technician", actorOrgId: null, actorMembershipStatus: undefined } }), sql }
+  );
+  assert.equal(res.statusCode, 404);
+  assert.equal(sql.calls.some((call) => call.text.includes("INSERT INTO change_orders")), false);
+});
+
 test("POST as the assigned technician creates the change order and its paired approval", async () => {
   idCounter = 0;
   const sql = routingFakeSql({ scopes: [scopeRow()], assignments: [{ technician_user_id: "tech-1" }] });

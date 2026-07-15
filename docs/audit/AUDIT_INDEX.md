@@ -25,11 +25,14 @@ machine-readable state, and `00_AUDIT_CONTROL.md` for process/ground rules.
 | 06_QUALITY_AUDIT.md | Not started | Accessibility, mobile, performance, SEO, translation, quality states |
 | 07_REQUIREMENTS_GAP_MATRIX.md | Not started | Classify candidate functions vs. what exists, value, risk |
 | 08_FINAL_AUDIT_AND_ROADMAP.md | Not started | Consolidated findings, roadmap, Extra Intelligence handoff |
+| [CARE_HUB_ACTIVE_REVIEW.md](CARE_HUB_ACTIVE_REVIEW.md) | Post-Claude verification complete | Care Hub-specific security, tenancy, payment, legal, and browser launch gates at `b2772e9` |
 
 ## Evidence & inventories
 
 - `evidence/` — supporting raw evidence (e.g. security observation logs)
   as sessions produce it.
+- `evidence/CARE_HUB_POST_CLAUDE_2026-07-15.md` — final build/test results,
+  parallel approval/MFA diagnostics, and legal-localization evidence.
 - `inventories/` — machine-readable inventories (e.g. `pricing-sources.json`
   when Session 5 produces it).
 

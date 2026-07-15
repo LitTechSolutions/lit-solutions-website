@@ -45,6 +45,7 @@ function baseDeps(users, extra = {}) {
     verifyPassword: async () => true,
     auditRecorder: fakeAuditRecorder(),
     revokeAllSessionsForUser: async (userId) => { revokedFor = userId; },
+    clearMfaCredentials: async () => {},
     _saved: saved,
     _revokedFor: () => revokedFor,
     ...extra,
@@ -114,6 +115,16 @@ test("action: reset has the same effect as disable but is audited under a distin
   assert.equal(res.statusCode, 200);
   assert.equal(deps._saved["dylan@lit-solutions.tech"].mfaEnabled, false);
   assert.equal(deps.auditRecorder.events[0].action, "mfa.reset");
+});
+
+test("a successful reset clears database-authoritative MFA replay state", async () => {
+  const users = { "dylan@lit-solutions.tech": enrolledAdminUser() };
+  let clearedUserId = null;
+  const deps = baseDeps(users, { clearMfaCredentials: async (userId) => { clearedUserId = userId; } });
+  const res = await handler(baseEvent(), {}, deps);
+
+  assert.equal(res.statusCode, 200);
+  assert.equal(clearedUserId, "admin-1");
 });
 
 test("action: disable sends a security notification email and audits successful delivery under a distinct action name", async () => {

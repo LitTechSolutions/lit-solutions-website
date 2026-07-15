@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 
 // Builds to ../care-hub (repo root, published at /care-hub/ alongside the
@@ -21,5 +21,11 @@ export default defineConfig({
       // client uses in production work unchanged in development.
       "/.netlify/functions": "http://localhost:8888",
     },
+  },
+  test: {
+    environment: "jsdom",
+    setupFiles: ["./src/vitest.setup.ts"],
+    include: ["src/**/*.vitest.{ts,tsx}"],
+    clearMocks: true,
   },
 });

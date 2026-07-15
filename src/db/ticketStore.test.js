@@ -86,10 +86,9 @@ test("integration: transitionTicket allows a legal transition, persists it, and 
   const result = await transitionTicket("ticket-1", "triaged", "tech-1", { sql, now: FIXED_NOW, auditRecorder });
   assert.equal(result.status, "triaged");
   assert.match(sql.calls[1].text, /UPDATE tickets/);
-  assert.equal(auditRecorder.events.length, 1);
-  assert.equal(auditRecorder.events[0].action, "ticket.transition");
-  assert.equal(auditRecorder.events[0].actorId, "tech-1");
-  assert.deepEqual(auditRecorder.events[0].metadata, { fromStatus: "submitted", toStatus: "triaged" });
+  assert.match(sql.calls[1].text, /status = .* AND version =/);
+  assert.match(sql.calls[1].text, /INSERT INTO audit_events/);
+  assert.match(sql.calls[1].text, /FROM changed/);
 });
 
 test("integration: transitionTicket refuses an illegal transition without persisting or auditing", async () => {

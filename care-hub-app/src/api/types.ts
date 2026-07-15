@@ -38,7 +38,7 @@ export interface Invitation {
 export interface Approval {
   id: string;
   organizationId: string;
-  subjectType: "scope_of_work" | "change_order";
+  subjectType: "scope" | "change_order" | "deliverable" | "document";
   subjectId: string;
   status: "pending" | "approved" | "rejected" | "expired";
   requestedAt: string;
@@ -98,14 +98,14 @@ export interface Assignment {
 export interface LineItem {
   description: string;
   quantity: number;
-  unitPriceCents: number;
+  priceRef: string;
 }
 export interface ScopeOfWork {
   id: string;
   organizationId: string;
   ticketId: string;
   version: number;
-  status: "draft" | "sent" | "approved" | "rejected" | "superseded";
+  status: "draft" | "sent" | "superseded";
   assumptions: string[];
   exclusions: string[];
   lineItems: LineItem[];
@@ -131,7 +131,7 @@ export interface PaymentRequest {
   subjectType: "scope_of_work" | "change_order" | "subscription";
   subjectId: string;
   amountRef: string;
-  status: "pending" | "paid" | "failed" | "refunded";
+  status: "requested" | "paid" | "reconciliation_pending" | "reconciled" | "failed";
   createdAt: string;
   providerReference?: string;
 }
@@ -391,12 +391,9 @@ export interface MfaEnrollStartResult {
   otpauthUri: string;
   message: string;
 }
-// mfa-enroll.js's "confirm" action returns one of two shapes depending on
-// whether a confirmation email could be sent (Session 20 step 8's real
-// fix for the enrollment-hijack finding): if delivery succeeds,
-// activation is deferred until the emailed link is clicked
-// (MfaEnrollPendingConfirmation); only if email couldn't be delivered
-// does it fall back to the original immediate-activation shape.
+// mfa-enroll.js's "confirm" action only acknowledges that a mandatory
+// email challenge was sent. Activation always waits for explicit email
+// confirmation and never falls back to password-only enrollment.
 export interface MfaEnrollPendingConfirmation {
   pendingEmailConfirmation: true;
   message: string;
@@ -406,7 +403,7 @@ export interface MfaEnrollActivatedResult {
   recoveryCodes: string[];
   user: AuthenticatedUser;
 }
-export type MfaEnrollConfirmResult = MfaEnrollPendingConfirmation | MfaEnrollActivatedResult;
+export type MfaEnrollConfirmResult = MfaEnrollPendingConfirmation;
 // action: "verify-email" always returns the activated shape -- by the
 // time the link is valid and unused, activation always completes.
 export type MfaEnrollVerifyEmailResult = MfaEnrollActivatedResult;

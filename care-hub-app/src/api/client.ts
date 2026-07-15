@@ -97,10 +97,10 @@ export const approvals = {
 // ---- F002 Invitations ----
 export const invitations = {
   create: (input: { organizationId: string; email: string; role: string }) =>
-    request<{ invitation: Invitation; token: string }>("/invitations", { method: "POST", body: input }),
+    request<{ invitation: Invitation }>("/invitations", { method: "POST", body: input }),
   list: (organizationId: string) => request<{ invitations: Invitation[] }>("/invitations", { query: { organizationId } }),
   revoke: (invitationId: string) => request<{ invitation: Invitation }>("/invitations", { method: "PATCH", body: { invitationId, action: "revoke" } }),
-  resend: (invitationId: string) => request<{ invitation: Invitation; token: string }>("/invitations", { method: "PATCH", body: { invitationId, action: "resend" } }),
+  resend: (invitationId: string) => request<{ invitation: Invitation }>("/invitations", { method: "PATCH", body: { invitationId, action: "resend" } }),
   peek: (token: string) => request<{ email: string; role: string; organizationName: string; expiresAt: string }>("/invitation-accept", { query: { token } }),
   accept: (input: { token: string; name: string; password: string; termsAccepted: boolean; marketingConsent: boolean }) =>
     request<{ message: string }>("/invitation-accept", { method: "POST", body: input }),

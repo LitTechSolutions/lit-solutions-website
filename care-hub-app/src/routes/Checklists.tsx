@@ -6,6 +6,7 @@ import { strings } from "../strings/en";
 import { useApi } from "../hooks/useApi";
 import { useMemberships } from "../hooks/useMemberships";
 import { useAuth } from "../auth/AuthContext";
+import { isStaffRole } from "../auth/roles";
 import { Loading } from "../components/states/Loading";
 import { ErrorState } from "../components/states/ErrorState";
 import { UnauthorizedState } from "../components/states/UnauthorizedState";
@@ -30,7 +31,7 @@ function SignInAgain() {
  */
 export function Checklists() {
   const { state: authState } = useAuth();
-  const isStaff = authState.status === "signedIn" && authState.user.role === "admin";
+  const isStaff = authState.status === "signedIn" && isStaffRole(authState.user.role);
 
   if (isStaff) return <StaffChecklists />;
   return <CustomerChecklists />;

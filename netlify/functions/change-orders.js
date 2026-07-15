@@ -41,7 +41,7 @@ async function handleCreate(event, deps) {
   if (!auth.ok) return auth.response;
 
   const scope = await getScopeById(originalScopeId, deps);
-  if (!scope) return json(404, { error: "Original scope of work not found." });
+  if (!scope || scope.organizationId !== organizationId) return json(404, { error: "Original scope of work not found." });
 
   let assigned;
   if (auth.authContext.actorRole === "technician") {

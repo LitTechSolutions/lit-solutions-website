@@ -1,11 +1,13 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { api } from "../api/client";
+import { SessionExpiredError } from "../api/errors";
 import type { AuthenticatedUser } from "../api/types";
 
 type AuthState =
   | { status: "checking" }
   | { status: "signedOut" }
+  | { status: "error"; message: string }
   | { status: "signedIn"; user: AuthenticatedUser };
 
 interface AuthContextValue {
@@ -43,8 +45,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .then(({ user }) => {
         if (!cancelled) setState({ status: "signedIn", user });
       })
-      .catch(() => {
-        if (!cancelled) setState({ status: "signedOut" });
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        if (error instanceof SessionExpiredError) {
+          setState({ status: "signedOut" });
+          return;
+        }
+        setState({
+          status: "error",
+          message: error instanceof Error ? error.message : "Could not verify your session. Try again.",
+        });
       });
     return () => {
       cancelled = true;

@@ -21,9 +21,14 @@ const {
 } = require("./_lib/auth_utils");
 const { setJSON, store } = require("./_lib/blob_store");
 const { validateTotpToken } = require("../../src/security/totp");
-const { decryptSecret, verifyRecoveryCode } = require("../../src/security/mfaCrypto");
+const { decryptSecret, hashRecoveryCode, verifyRecoveryCode } = require("../../src/security/mfaCrypto");
 const { createAuditRecorder } = require("../../src/audit/auditLog");
 const { createPgAuditSink } = require("../../src/db/pgAuditSink");
+const {
+  claimMfaTotpCounter,
+  syncMfaRecoveryCodeHashes,
+  claimMfaRecoveryCode,
+} = require("../../src/db/mfaCredentialStore");
 
 function resolveMfaKey(deps) {
   const key = deps.mfaEncryptionKey || process.env.MFA_ENCRYPTION_KEY;
@@ -103,7 +108,20 @@ exports.handler = async (event, context, deps = {}) => {
     const matchIndex = hashes.findIndex((hash) => verifyRecoveryCode(body.recoveryCode, hash));
     if (matchIndex === -1) return recordFailureAndDeny();
 
-    user.mfaRecoveryCodeHashes = hashes.filter((_, i) => i !== matchIndex); // single-use: consumed
+    // Backfill database-authoritative records for accounts enrolled before
+    // the atomic MFA migration, then let one conditional UPDATE consume it.
+    const syncRecoveryFn = deps.syncMfaRecoveryCodeHashes || syncMfaRecoveryCodeHashes;
+    await syncRecoveryFn({ userId: user.id, codeHashes: hashes }, { sql: deps.sql });
+    const claimRecoveryFn = deps.claimMfaRecoveryCode || claimMfaRecoveryCode;
+    const claimed = await claimRecoveryFn(
+      { userId: user.id, codeHash: hashRecoveryCode(body.recoveryCode) },
+      { sql: deps.sql }
+    );
+    if (!claimed) return recordFailureAndDeny();
+
+    // Compatibility mirror only; the conditional Postgres claim above is
+    // the authoritative single-use decision under concurrent requests.
+    user.mfaRecoveryCodeHashes = hashes.filter((_, i) => i !== matchIndex);
     await setJSONFn("users", userKey, user);
 
     await auditRecorder.record(
@@ -137,6 +155,13 @@ exports.handler = async (event, context, deps = {}) => {
   if (typeof user.mfaLastUsedCounter === "number" && counter <= user.mfaLastUsedCounter) {
     return recordFailureAndDeny();
   }
+
+  const claimCounterFn = deps.claimMfaTotpCounter || claimMfaTotpCounter;
+  const claimedCounter = await claimCounterFn({ userId: user.id, counter }, { sql: deps.sql });
+  if (!claimedCounter) return recordFailureAndDeny();
+
+  // Blob field is retained as a compatibility/cache mirror. Postgres is
+  // authoritative because its monotonic upsert is concurrency-safe.
   user.mfaLastUsedCounter = counter;
   await setJSONFn("users", userKey, user);
 

@@ -21,8 +21,9 @@ Hub existed.
 | Organization membership, role (`org_owner`/`org_member`/`read_only_customer`/`platform_admin`) | Postgres `organizations`, `organization_memberships` | New — no tenant concept existed before Session 1 |
 | Session tokens | Blobs `sessions`, cookie `lts_session` (HMAC-signed, 8h TTL, server-revocable) | Pre-existing |
 | Invitation tokens | Postgres `invitations` | SHA-256 hashed, single-use, 7-day expiry, invite-only registration (Session 17 owner decision) |
-| TOTP MFA secret | Postgres, AES-256-GCM encrypted at rest (`MFA_ENCRYPTION_KEY`) | platform_admin accounts only |
-| MFA recovery codes | Postgres, SHA-256 hashed (one-time use) | platform_admin accounts only |
+| TOTP MFA secret | Blobs `users` store, AES-256-GCM encrypted at rest (`MFA_ENCRYPTION_KEY`) | platform_admin accounts only; Postgres stores only the last atomically consumed TOTP counter |
+| MFA recovery codes | Blobs `users` store plus Postgres `mfa_recovery_codes`, SHA-256 hashed | platform_admin accounts only; Postgres is authoritative for one-time atomic consumption |
+| MFA enrollment email challenges | Postgres `mfa_enrollment_challenges` | Raw emailed tokens are never stored; SHA-256 hashes are expiring and atomically consumed |
 | Consent records (terms/privacy acceptance, marketing opt-in) | Postgres `consent_records` | Version-stamped (`CURRENT_TERMS_VERSION`/`CURRENT_PRIVACY_VERSION`) |
 
 ### 1.2 Customer operations data

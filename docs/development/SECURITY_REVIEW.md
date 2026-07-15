@@ -1,5 +1,13 @@
 # Security Review — Session 9 (Release Readiness), updated Session 20 step 10
 
+> **2026-07-15 remediation update:** Historical sections below describe the
+> audited baseline and may mention the former MFA fail-open fallback. That
+> fallback has been removed. Enrollment email challenges, TOTP counters, and
+> recovery codes now use database-authoritative atomic consumption; challenges
+> bind to a unique pending enrollment; the UI requires an explicit confirmation
+> click; and parallel regression tests permit only one session. See
+> `docs/audit/CARE_HUB_ACTIVE_REVIEW.md` for the current release posture.
+
 **Session 20 step 10 addendum is at the bottom of this file.** Everything
 above the `## Session 20 step 10` heading is the original Session 9
 review, preserved as written — by then, 25 real HTTP endpoints, a live

@@ -122,10 +122,9 @@ test("applyPaymentStatusTransition allows requested -> paid and persists it", as
   assert.equal(updated.status, "paid");
   assert.equal(sql.calls.length, 2, "1 SELECT (fetch current) + 1 UPDATE");
   assert.match(sql.calls[1].text, /UPDATE payment_requests/);
-  assert.equal(auditRecorder.events.length, 1);
-  assert.equal(auditRecorder.events[0].action, "payment_request.transition");
-  assert.equal(auditRecorder.events[0].actorId, "user-1");
-  assert.deepEqual(auditRecorder.events[0].metadata, { fromStatus: "requested", toStatus: "paid" });
+  assert.match(sql.calls[1].text, /AND status =/);
+  assert.match(sql.calls[1].text, /INSERT INTO audit_events/);
+  assert.match(sql.calls[1].text, /FROM changed/);
 });
 
 test("applyPaymentStatusTransition rejects an illegal transition (e.g. requested -> reconciled)", async () => {

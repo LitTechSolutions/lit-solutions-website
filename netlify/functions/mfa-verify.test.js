@@ -49,6 +49,9 @@ function baseDeps(users, extra = {}) {
     mfaEncryptionKey: MFA_KEY,
     auditRecorder: fakeAuditRecorder(),
     createSession: async () => ({ token: "real-session-token", expiresAt: Date.now() + 1000 }),
+    claimMfaTotpCounter: async () => true,
+    syncMfaRecoveryCodeHashes: async () => {},
+    claimMfaRecoveryCode: async () => true,
     _saved: saved,
     ...extra,
   };
@@ -122,6 +125,28 @@ test("a genuinely new counter after a previous successful verification is accept
   assert.equal(deps._saved["dylan@lit-solutions.tech"].mfaLastUsedCounter, 1001);
 });
 
+test("concurrent uses of the same TOTP counter issue only one session", async () => {
+  const users = { "dylan@lit-solutions.tech": enrolledAdminUser() };
+  let available = true;
+  let sessions = 0;
+  const deps = baseDeps(users, {
+    validateTotpToken: () => ({ valid: true, counter: 1000 }),
+    claimMfaTotpCounter: async () => {
+      if (!available) return false;
+      available = false;
+      return true;
+    },
+    createSession: async () => {
+      sessions += 1;
+      return { token: `session-${sessions}`, expiresAt: Date.now() + 1000 };
+    },
+  });
+  const results = await Promise.all([handler(baseEvent(), {}, deps), handler(baseEvent(), {}, deps)]);
+
+  assert.deepEqual(results.map((result) => result.statusCode).sort(), [200, 401]);
+  assert.equal(sessions, 1);
+});
+
 test("a valid, unused recovery code issues a real session and is consumed (single-use)", async () => {
   const codes = generateRecoveryCodes(3);
   const users = { "dylan@lit-solutions.tech": enrolledAdminUser({ mfaRecoveryCodeHashes: codes.map(hashRecoveryCode) }) };
@@ -141,6 +166,29 @@ test("reusing an already-consumed recovery code is denied", async () => {
   const deps = baseDeps(users);
   const res = await handler(baseEvent({ body: JSON.stringify({ recoveryCode: codes[0] }) }), {}, deps);
   assert.equal(res.statusCode, 401);
+});
+
+test("concurrent uses of one recovery code issue only one session", async () => {
+  const codes = generateRecoveryCodes(1);
+  const users = { "dylan@lit-solutions.tech": enrolledAdminUser({ mfaRecoveryCodeHashes: codes.map(hashRecoveryCode) }) };
+  let available = true;
+  let sessions = 0;
+  const deps = baseDeps(users, {
+    claimMfaRecoveryCode: async () => {
+      if (!available) return false;
+      available = false;
+      return true;
+    },
+    createSession: async () => {
+      sessions += 1;
+      return { token: `session-${sessions}`, expiresAt: Date.now() + 1000 };
+    },
+  });
+  const event = baseEvent({ body: JSON.stringify({ recoveryCode: codes[0] }) });
+  const results = await Promise.all([handler(event, {}, deps), handler(event, {}, deps)]);
+
+  assert.deepEqual(results.map((result) => result.statusCode).sort(), [200, 401]);
+  assert.equal(sessions, 1);
 });
 
 test("an unknown recovery code is denied and audited as a failure", async () => {

@@ -71,11 +71,30 @@ test("integration: applyApprovalDecision approves a pending request via the pure
   assert.equal(result.status, "approved");
   assert.equal(sql.calls.length, 2, "one SELECT to fetch current state, one UPDATE to persist the transition");
   assert.match(sql.calls[0].text, /organization_id/, "the fetch must be scoped by organization_id, not id alone");
+  assert.match(sql.calls[1].text, /WITH changed AS/);
   assert.match(sql.calls[1].text, /UPDATE approval_requests/);
   assert.match(sql.calls[1].text, /organization_id/, "the UPDATE's WHERE clause must also be scoped by organization_id");
-  assert.equal(auditRecorder.events.length, 1);
-  assert.equal(auditRecorder.events[0].action, "approval.decision");
-  assert.equal(auditRecorder.events[0].actorId, "user-owner-1");
+  assert.match(sql.calls[1].text, /status = 'pending'/, "the atomic write must reject a concurrent second decision");
+  assert.match(sql.calls[1].text, /INSERT INTO audit_events/, "the success audit must be part of the same SQL statement");
+  assert.match(sql.calls[1].text, /INNER JOIN audited/, "a transition is only returned when its audit insert also succeeds");
+  assert.equal(auditRecorder.events.length, 0, "the decision audit is written atomically in SQL, not as a second call");
+});
+
+test("SECURITY: applyApprovalDecision fails when the atomic conditional update loses a race", async () => {
+  const calls = [];
+  let invocation = 0;
+  const sql = async (strings, ...values) => {
+    calls.push({ text: strings.join("?"), values });
+    invocation += 1;
+    return invocation === 1 ? [pendingRow()] : [];
+  };
+
+  await assert.rejects(
+    () => applyApprovalDecision("appr-1", "approve", { organizationId: "org-a" }, { sql, now: FIXED_NOW }),
+    /already decided, expired, or changed by another request/
+  );
+  assert.equal(calls.length, 2);
+  assert.match(calls[1].text, /status = 'pending'/);
 });
 
 test("integration: applyApprovalDecision refuses to approve an already-decided request (illegal transition)", async () => {

@@ -15,6 +15,7 @@ const { shapeTicketSubmission } = require("../policy/ticketSubmission");
 const { transitionTicketStatus } = require("../policy/ticketLifecycle");
 const { createAuditRecorder } = require("../audit/auditLog");
 const { createPgAuditSink } = require("./pgAuditSink");
+const { shapeAuditEvent } = require("../audit/auditLog");
 
 function resolveAuditRecorder(deps) {
   return deps.auditRecorder || createAuditRecorder(createPgAuditSink({ sql: deps.sql }));
@@ -102,26 +103,31 @@ async function transitionTicket(id, nextStatus, actorId = null, deps = {}) {
 
   const nowIso = now().toISOString();
   const closedAt = nextStatus === "closed" ? nowIso : null;
-  await sql`
-    UPDATE tickets
-    SET status = ${nextStatus}, updated_at = ${nowIso}, closed_at = COALESCE(${closedAt}, closed_at), version = version + 1
-    WHERE id = ${id}
+  const auditEvent = shapeAuditEvent({
+    correlationId: id,
+    actorType: "user",
+    actorId: actorId || "system",
+    organizationId: current.organizationId,
+    action: "ticket.transition",
+    targetType: "ticket",
+    targetId: id,
+    outcome: "success",
+    metadata: { fromStatus: current.status, toStatus: nextStatus },
+  }, { now: () => new Date(nowIso), idGenerator: deps.auditIdGenerator });
+  const changed = await sql`
+    WITH changed AS (
+      UPDATE tickets
+      SET status = ${nextStatus}, updated_at = ${nowIso}, closed_at = COALESCE(${closedAt}, closed_at), version = version + 1
+      WHERE id = ${id} AND status = ${current.status} AND version = ${current.version}
+      RETURNING *
+    ), audited AS (
+      INSERT INTO audit_events (id, correlation_id, occurred_at, actor_type, actor_id, actor_role, organization_id, action, target_type, target_id, outcome, metadata)
+      SELECT ${auditEvent.id}, ${auditEvent.correlationId}, ${auditEvent.occurredAt}, ${auditEvent.actorType}, ${auditEvent.actorId}, ${auditEvent.actorRole || null}, ${auditEvent.organizationId}, ${auditEvent.action}, ${auditEvent.targetType}, ${auditEvent.targetId}, ${auditEvent.outcome}, ${JSON.stringify(auditEvent.metadata)}
+      FROM changed RETURNING id
+    )
+    SELECT changed.* FROM changed INNER JOIN audited ON TRUE
   `;
-
-  await auditRecorder.record(
-    {
-      correlationId: id,
-      actorType: "user",
-      actorId,
-      organizationId: current.organizationId,
-      action: "ticket.transition",
-      targetType: "ticket",
-      targetId: id,
-      outcome: "success",
-      metadata: { fromStatus: current.status, toStatus: nextStatus },
-    },
-    deps
-  );
+  if (changed.length === 0) throw new Error("transitionTicket: ticket changed by another request");
 
   return { ...current, status: nextStatus, updatedAt: nowIso, version: current.version + 1 };
 }

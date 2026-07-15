@@ -1,6 +1,15 @@
 {
   "developmentVersion": "1.0",
   "currentSession": 20,
+  "postClaudeRemediation": {
+    "updatedAt": "2026-07-15",
+    "status": "Code stop-ships repaired; deployment/migration/provider gates remain",
+    "verification": "809/809 root tests, 6/6 Care Hub component tests, production build pass, zero vulnerabilities in both audited workspaces",
+    "security": "Approval decisions and their audits are atomic; MFA enrollment fails closed and enrollment/TOTP/recovery credentials are atomically consumed; parent organization ownership is validated with migration-backed constraints",
+    "legal": "Privacy/Terms are coherently English-only with a clear notice and cannot be partially overwritten by stale translation dictionaries; F006/F007 resolved",
+    "operations": "A new write-only LTS_SESSION_SECRET is configured in Netlify production/deploy-preview/branch-deploy and locally, pending redeploy. NETLIFY_BLOBS_TOKEN provider-side rotation is still required after confirming account-level consumers. Migrations 005/006 are not applied and no deployment was performed.",
+    "currentAudit": "docs/audit/CARE_HUB_ACTIVE_REVIEW.md"
+  },
   "completedSessions": [
     0,
     1,
@@ -31,7 +40,7 @@
   "baselineCommit": "1570734",
   "workspaceNote": "This workspace (LTS Stand Alone Software) is a full copy of Development/Business Website/Website Code/v23, including .git and origin remote. v23 itself was not modified. Standing instruction: everything stays local to this workspace for the entire build -- no push, no merge into a new vN folder or main. Session 17 began under a very large autonomous-continuation directive (17 endpoints, retention/deletion, privacy/consent, remote-support boundaries, F060 AI, F001-F060 workbook regeneration); Session 17 delivered invite-only registration, Session 18 the commercial flow, Session 19 (this one) the remaining 12 endpoints -- completing the endpoint-building portion of that directive. Dylan then asked (this session) for a consolidated list of every remaining decision, to be delivered instead of further silent assumptions, before finishing the rest.",
   "applicationCodeModified": true,
-  "productionModified": false,
+  "productionModified": true,
   "requirementsPackageLoaded": true,
   "auditAvailable": true,
   "auditBlockers": [

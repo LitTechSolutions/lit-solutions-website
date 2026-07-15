@@ -60,6 +60,11 @@ export const strings = {
     noPendingSignIn: "Your sign-in session expired before you finished. Please sign in again.",
     mfaCheckEmailTitle: "Check your email to finish setup",
     mfaCheckEmailBody: "We sent a confirmation link to your email. Click it within 30 minutes to finish enabling two-factor authentication. If you don't see it, check your spam folder or contact us.",
+    mfaEmailConfirmTitle: "Confirm two-factor authentication",
+    mfaEmailConfirmBody: "Only continue if you just requested this change. Confirming will enable two-factor authentication and sign you in.",
+    mfaEmailConfirmButton: "Confirm and enable",
+    mfaEmailMissingToken: "This confirmation link is missing its token.",
+    mfaEmailInvalid: "This confirmation link is invalid or has expired.",
   },
   tickets: {
     title: "Tickets",
