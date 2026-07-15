@@ -1345,19 +1345,23 @@
   },
   "portfolio": {
     "hero_eyebrow": "أعمالنا",
-    "hero_h1": "أعمالنا — نبنيها فعليًا.",
-    "hero_lede": "نفضّل أن نُريك \"ليس بعد\" بصدق على أن نختلق أعمال عملاء لم ننجزها.",
+    "hero_h1": "عمل حقيقي، من عميل حقيقي.",
+    "hero_lede": "نظرة على ما بنيناه فعليًا — سيتم إضافة المزيد من المشاريع هنا عند إطلاقها.",
     "hero_h1_hascontent": "أعمال حديثة",
     "hero_lede_hascontent": "مشاريع حقيقية أنجزناها لعملاء حقيقيين -- شاهد التفاصيل أدناه.",
-    "empty_h2": "نحن عمل تجاري جديد — مكتبة المشاريع لا تزال تنمو.",
-    "empty_desc": "شركة Little Technical Solutions LLC جديدة بما يكفي لعدم امتلاك مكتبة من مشاريع عملاء سابقين لعرضها بعد. ما يمكنك الاطلاع عليه الآن: هذا الموقع الإلكتروني نفسه، الذي بنيناه ونصونه، والعرض التفاعلي قبل/بعد على <a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">صفحة الخدمات</a> الذي يوضح أسلوبنا في تصميم المواقع الإلكترونية. ومع إطلاق مشاريع عملاء فعليين، ستُضاف هنا بإذنهم.",
+    "empty_h2": "المزيد من المشاريع في الطريق.",
+    "empty_desc": "نحن شركة صغيرة وجديدة تمامًا، لذا فإن مكتبة مشاريعنا لا تزال تنمو عميلاً تلو الآخر. ما يمكنك الاطلاع عليه الآن: هذا الموقع نفسه، الذي نقوم ببنائه وصيانته، والعرض التفاعلي لما قبل/بعد على <a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">صفحة الخدمات</a> الذي يوضح أسلوبنا في تصميم المواقع. ومع إطلاق المزيد من مشاريع العملاء، سيتم إضافتها هنا بإذن منهم.",
     "empty_cta": "اطلب الخدمة",
     "meantime_eyebrow": "في هذه الأثناء",
     "meantime_h2": "أعمال يمكنك الاطلاع عليها اليوم",
     "card1_title": "هذا الموقع الإلكتروني",
     "card1_desc": "بنيناه ونتابع إصداراته ونصونه بأنفسنا — اطّلع على سجل التطوير في <a href=\"patch-notes.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\" data-i18n=\"footer.patch_notes\">ملاحظات التحديث</a>.",
     "card2_title": "المدونة",
-    "card2_desc": "<a href=\"blog.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">مقالاتنا</a> عيّنة جيدة لأسلوبنا في شرح العمل التقني بلغة بسيطة."
+    "card2_desc": "<a href=\"blog.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">مقالاتنا</a> عيّنة جيدة لأسلوبنا في شرح العمل التقني بلغة بسيطة.",
+    "featured_eyebrow": "مشروع مميز",
+    "featured_title": "Armour Wireless Solutions",
+    "featured_desc": "تصميم وتطوير موقع إلكتروني مخصص، تم تسليمه من البداية إلى النهاية.",
+    "featured_cta": "زيارة الموقع المباشر ↗"
   },
   "gallery": {
     "hero_eyebrow": "معرض الصور",

@@ -1345,19 +1345,23 @@
   },
   "portfolio": {
     "hero_eyebrow": "저희 작업",
-    "hero_h1": "포트폴리오 — 실제로 하나씩 쌓아가고 있습니다.",
-    "hero_lede": "해보지 않은 고객 작업을 지어내기보다는, 솔직하게 \"아직입니다\"라고 말씀드리고 싶습니다.",
+    "hero_h1": "실제 고객의, 실제 작업물.",
+    "hero_lede": "저희가 실제로 만든 결과물을 확인해 보세요 — 새로운 프로젝트가 공개되는 대로 이곳에 계속 추가됩니다.",
     "hero_h1_hascontent": "최근 작업",
     "hero_lede_hascontent": "실제 고객을 위해 진행한 실제 프로젝트입니다 -- 아래에서 자세히 확인하세요.",
-    "empty_h2": "저희는 신생 업체이며, 프로젝트 라이브러리는 계속 늘어가고 있습니다.",
-    "empty_desc": "Little Technical Solutions LLC는 아직 보여드릴 과거 고객 프로젝트 라이브러리가 없을 만큼 신생 업체입니다. 지금 확인하실 수 있는 것은 저희가 직접 제작하고 유지 관리하는 이 웹사이트 자체, 그리고 저희의 웹사이트 디자인 접근 방식을 보여주는 <a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">서비스 페이지</a>의 대화형 전후 비교 데모입니다. 실제 고객 프로젝트가 런칭되면 허락을 받아 이곳에 추가될 예정입니다.",
+    "empty_h2": "더 많은 프로젝트가 준비 중입니다.",
+    "empty_desc": "저희는 이제 막 시작한 소규모 신생 기업이라, 프로젝트 라이브러리가 한 고객씩 차근차근 늘어가고 있습니다. 지금 확인하실 수 있는 것은 저희가 직접 제작하고 관리하는 이 웹사이트, 그리고 저희의 웹 디자인 접근 방식을 보여주는 <a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">서비스 페이지</a>의 인터랙티브 비포/애프터 데모입니다. 더 많은 고객 프로젝트가 시작되면 허락을 받아 이곳에 추가하겠습니다.",
     "empty_cta": "서비스 신청",
     "meantime_eyebrow": "그동안",
     "meantime_h2": "지금 확인하실 수 있는 작업물",
     "card1_title": "이 웹사이트",
     "card1_desc": "저희가 직접 제작, 버전 관리, 유지 관리하고 있습니다 — <a href=\"patch-notes.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\" data-i18n=\"footer.patch_notes\">패치 노트</a>에서 제작 이력을 확인해 보세요.",
     "card2_title": "블로그",
-    "card2_desc": "저희 <a href=\"blog.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">글</a>은 저희가 기술적인 내용을 얼마나 쉬운 언어로 설명하는지 보여주는 좋은 예시입니다."
+    "card2_desc": "저희 <a href=\"blog.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">글</a>은 저희가 기술적인 내용을 얼마나 쉬운 언어로 설명하는지 보여주는 좋은 예시입니다.",
+    "featured_eyebrow": "주요 프로젝트",
+    "featured_title": "Armour Wireless Solutions",
+    "featured_desc": "맞춤형 웹사이트 디자인 및 개발을 처음부터 끝까지 완료했습니다.",
+    "featured_cta": "실제 사이트 방문하기 ↗"
   },
   "gallery": {
     "hero_eyebrow": "갤러리",

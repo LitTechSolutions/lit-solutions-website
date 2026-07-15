@@ -608,10 +608,10 @@
   },
   "portfolio": {
     "hero_eyebrow": "Our Work",
-    "hero_h1": "Portfolio — building it out for real.",
-    "hero_lede": "We'd rather show you an honest \"not yet\" than fabricate client work we haven't done.",
-    "empty_h2": "We're a new business — the project library is still growing.",
-    "empty_desc": "Little Technical Solutions LLC is new enough that we don't have a library of past client projects to show yet. What you can look at right now: this website itself, built and maintained by us, and the interactive before/after demo on our <a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">Services page</a> showing our website design approach. As real client projects launch, they'll be added here with permission.",
+    "hero_h1": "Real work, from a real client.",
+    "hero_lede": "A look at what we've actually built — more projects will be added here as they launch.",
+    "empty_h2": "More projects are on the way.",
+    "empty_desc": "We're a small, brand-new business, so our project library is still growing one client at a time. What you can look at right now: this website itself, built and maintained by us, and the interactive before/after demo on our <a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">Services page</a> showing our website design approach. As more client projects launch, they'll be added here with permission.",
     "empty_cta": "Request Service",
     "meantime_eyebrow": "In the meantime",
     "meantime_h2": "Work you can look at today",
@@ -620,7 +620,11 @@
     "card2_title": "The blog",
     "card2_desc": "Our <a href=\"blog.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">write-ups</a> are a good sample of how we explain technical work in plain language.",
     "hero_h1_hascontent": "Recent work",
-    "hero_lede_hascontent": "Real projects we've built for real clients -- see the details below."
+    "hero_lede_hascontent": "Real projects we've built for real clients -- see the details below.",
+    "featured_eyebrow": "Featured Project",
+    "featured_title": "Armour Wireless Solutions",
+    "featured_desc": "Custom website design and development, delivered start to finish.",
+    "featured_cta": "Visit the live site ↗"
   },
   "pricing": {
     "hero_eyebrow": "Pricing",

@@ -1345,19 +1345,23 @@
   },
   "portfolio": {
     "hero_eyebrow": "我们的作品",
-    "hero_h1": "作品集 — 正在踏踏实实地积累。",
-    "hero_lede": "比起编造我们从未做过的客户项目,我们更愿意坦诚地告诉您\"暂时还没有\"。",
+    "hero_h1": "真实的作品,来自真实的客户。",
+    "hero_lede": "看看我们实际完成的作品——更多项目上线后会陆续添加到这里。",
     "hero_h1_hascontent": "近期作品",
     "hero_lede_hascontent": "为真实客户打造的真实项目——详情见下方。",
-    "empty_h2": "我们是一家新公司 — 项目案例库仍在不断充实中。",
-    "empty_desc": "我们成立时间尚短,目前还没有过往客户项目案例库可供展示。您现在可以了解的是:这个网站本身,由我们亲自建设与维护;以及我们<a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">服务页面</a>上展示网站设计理念的交互式前后对比演示。随着真实客户项目上线,我们会在征得同意后逐步添加到这里。",
+    "empty_h2": "更多项目即将上线。",
+    "empty_desc": "我们是一家规模较小、刚刚起步的新公司,因此我们的项目库仍在逐步壮大。您现在就可以查看的内容:这个网站本身,由我们自己构建和维护,以及我们<a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">服务页面</a>上展示网站设计方法的交互式前后对比演示。随着更多客户项目上线,我们会在获得许可后将其添加到这里。",
     "empty_cta": "申请服务",
     "meantime_eyebrow": "与此同时",
     "meantime_h2": "您现在就可以查看的作品",
     "card1_title": "这个网站本身",
     "card1_desc": "由我们亲自建设、版本管理与维护 — 建设历史详见<a href=\"patch-notes.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\" data-i18n=\"footer.patch_notes\">更新日志</a>。",
     "card2_title": "博客",
-    "card2_desc": "我们的<a href=\"blog.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">博客文章</a>很好地展示了我们如何用通俗语言讲解技术工作。"
+    "card2_desc": "我们的<a href=\"blog.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">博客文章</a>很好地展示了我们如何用通俗语言讲解技术工作。",
+    "featured_eyebrow": "精选项目",
+    "featured_title": "Armour Wireless Solutions",
+    "featured_desc": "定制网站设计与开发,从头到尾一站式完成。",
+    "featured_cta": "访问上线网站 ↗"
   },
   "gallery": {
     "hero_eyebrow": "图库",

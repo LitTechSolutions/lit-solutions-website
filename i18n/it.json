@@ -1345,19 +1345,23 @@
   },
   "portfolio": {
     "hero_eyebrow": "Il Nostro Lavoro",
-    "hero_h1": "Portfolio — lo stiamo costruendo per davvero.",
-    "hero_lede": "Preferiamo mostrarLe un onesto \"non ancora\" piuttosto che inventare lavori per clienti che non abbiamo svolto.",
+    "hero_h1": "Un lavoro vero, per un cliente vero.",
+    "hero_lede": "Uno sguardo a ciò che abbiamo realmente realizzato — altri progetti verranno aggiunti qui non appena saranno lanciati.",
     "hero_h1_hascontent": "Lavori recenti",
     "hero_lede_hascontent": "Progetti veri realizzati per clienti veri -- i dettagli qui sotto.",
-    "empty_h2": "Siamo un'attività nuova — la libreria dei progetti è ancora in crescita.",
-    "empty_desc": "Little Technical Solutions LLC è abbastanza nuova da non avere ancora una libreria di progetti di clienti passati da mostrare. Ciò che può vedere subito: questo stesso sito web, costruito e mantenuto da noi, e la demo interattiva prima/dopo sulla nostra <a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">pagina Servizi</a> che mostra il nostro approccio alla progettazione di siti web. Man mano che i progetti di clienti reali verranno lanciati, saranno aggiunti qui con il loro permesso.",
+    "empty_h2": "Altri progetti sono in arrivo.",
+    "empty_desc": "Siamo un'azienda piccola e appena nata, quindi la nostra libreria di progetti sta ancora crescendo, un cliente alla volta. Quello che puoi vedere adesso: questo stesso sito, costruito e mantenuto da noi, e la demo interattiva prima/dopo nella nostra <a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">pagina Servizi</a> che mostra il nostro approccio al design dei siti web. Man mano che verranno lanciati altri progetti per i clienti, saranno aggiunti qui con il loro permesso.",
     "empty_cta": "Richiedi Servizio",
     "meantime_eyebrow": "Nel frattempo",
     "meantime_h2": "Lavori che può vedere oggi",
     "card1_title": "Questo sito web",
     "card1_desc": "Costruito, versionato e mantenuto da noi — consulti la cronologia delle build nelle <a href=\"patch-notes.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\" data-i18n=\"footer.patch_notes\">Note di Aggiornamento</a>.",
     "card2_title": "Il blog",
-    "card2_desc": "I nostri <a href=\"blog.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">articoli</a> sono un buon esempio di come spieghiamo il lavoro tecnico in linguaggio semplice."
+    "card2_desc": "I nostri <a href=\"blog.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">articoli</a> sono un buon esempio di come spieghiamo il lavoro tecnico in linguaggio semplice.",
+    "featured_eyebrow": "Progetto in evidenza",
+    "featured_title": "Armour Wireless Solutions",
+    "featured_desc": "Design e sviluppo di siti web su misura, realizzati dall'inizio alla fine.",
+    "featured_cta": "Visita il sito online ↗"
   },
   "gallery": {
     "hero_eyebrow": "Galleria",

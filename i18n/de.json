@@ -1345,19 +1345,23 @@
   },
   "portfolio": {
     "hero_eyebrow": "Unsere Arbeit",
-    "hero_h1": "Portfolio — im echten Aufbau.",
-    "hero_lede": "Wir zeigen Ihnen lieber ein ehrliches \"noch nicht\", als Kundenarbeiten zu erfinden, die wir nicht gemacht haben.",
+    "hero_h1": "Echte Arbeit, von einem echten Kunden.",
+    "hero_lede": "Ein Blick auf das, was wir tatsächlich gebaut haben — weitere Projekte werden hier ergänzt, sobald sie live gehen.",
     "hero_h1_hascontent": "Aktuelle Arbeiten",
     "hero_lede_hascontent": "Echte Projekte, die wir für echte Kunden umgesetzt haben -- Details weiter unten.",
-    "empty_h2": "Wir sind ein neues Unternehmen — die Projektsammlung wächst noch.",
-    "empty_desc": "Little Technical Solutions LLC ist neu genug, dass wir noch keine Sammlung vergangener Kundenprojekte zeigen können. Was Sie sich jetzt schon ansehen können: diese Website selbst, von uns erstellt und gepflegt, sowie die interaktive Vorher/Nachher-Demo auf unserer <a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">Seite Dienstleistungen</a>, die unseren Ansatz beim Website-Design zeigt. Sobald echte Kundenprojekte live gehen, werden sie mit Erlaubnis hier ergänzt.",
+    "empty_h2": "Weitere Projekte sind unterwegs.",
+    "empty_desc": "Wir sind ein kleines, brandneues Unternehmen, daher wächst unsere Projektbibliothek noch, ein Kunde nach dem anderen. Was Sie sich jetzt schon ansehen können: diese Website selbst, von uns gebaut und gepflegt, sowie die interaktive Vorher/Nachher-Demo auf unserer <a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">Leistungsseite</a>, die unseren Webdesign-Ansatz zeigt. Sobald weitere Kundenprojekte starten, werden sie hier mit Erlaubnis ergänzt.",
     "empty_cta": "Service anfragen",
     "meantime_eyebrow": "In der Zwischenzeit",
     "meantime_h2": "Arbeiten, die Sie sich schon jetzt ansehen können",
     "card1_title": "Diese Website",
     "card1_desc": "Von uns erstellt, versioniert und gepflegt — die Entwicklungsgeschichte finden Sie unter <a href=\"patch-notes.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\" data-i18n=\"footer.patch_notes\">Patch Notes</a>.",
     "card2_title": "Der Blog",
-    "card2_desc": "Unsere <a href=\"blog.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">Beiträge</a> zeigen gut, wie wir technische Arbeit in verständlicher Sprache erklären."
+    "card2_desc": "Unsere <a href=\"blog.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">Beiträge</a> zeigen gut, wie wir technische Arbeit in verständlicher Sprache erklären.",
+    "featured_eyebrow": "Vorgestelltes Projekt",
+    "featured_title": "Armour Wireless Solutions",
+    "featured_desc": "Individuelles Webdesign und individuelle Webentwicklung, von Anfang bis Ende umgesetzt.",
+    "featured_cta": "Live-Website besuchen ↗"
   },
   "gallery": {
     "hero_eyebrow": "Galerie",

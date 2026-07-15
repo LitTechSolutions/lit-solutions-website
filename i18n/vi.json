@@ -1345,19 +1345,23 @@
   },
   "portfolio": {
     "hero_eyebrow": "Công việc của chúng tôi",
-    "hero_h1": "Dự án tiêu biểu — đang xây dựng một cách thực chất.",
-    "hero_lede": "Chúng tôi thà cho bạn thấy một câu trả lời trung thực \"chưa có\" còn hơn bịa đặt những dự án khách hàng mà chúng tôi chưa từng thực hiện.",
+    "hero_h1": "Công việc thực tế, từ một khách hàng thực tế.",
+    "hero_lede": "Xem những gì chúng tôi thực sự đã xây dựng — nhiều dự án khác sẽ được thêm vào đây khi ra mắt.",
     "hero_h1_hascontent": "Dự án gần đây",
     "hero_lede_hascontent": "Những dự án thực chúng tôi đã thực hiện cho khách hàng thực -- xem chi tiết bên dưới.",
-    "empty_h2": "Chúng tôi là một doanh nghiệp mới — thư viện dự án vẫn đang được xây dựng.",
-    "empty_desc": "Little Technical Solutions LLC còn khá mới nên chúng tôi chưa có thư viện các dự án khách hàng trước đây để trưng bày. Những gì bạn có thể xem ngay bây giờ: chính website này, được chúng tôi xây dựng và bảo trì, và bản demo tương tác trước/sau trên <a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">trang Dịch vụ</a> của chúng tôi, thể hiện cách tiếp cận thiết kế website của chúng tôi. Khi các dự án khách hàng thực tế ra mắt, chúng sẽ được thêm vào đây nếu được sự cho phép.",
+    "empty_h2": "Nhiều dự án khác đang được thực hiện.",
+    "empty_desc": "Chúng tôi là một doanh nghiệp nhỏ, hoàn toàn mới, vì vậy thư viện dự án của chúng tôi vẫn đang phát triển từng khách hàng một. Những gì bạn có thể xem ngay bây giờ: chính trang web này, do chúng tôi xây dựng và duy trì, và bản demo so sánh trước/sau tương tác trên <a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">trang Dịch vụ</a> của chúng tôi, thể hiện cách tiếp cận thiết kế website của chúng tôi. Khi có thêm các dự án của khách hàng ra mắt, chúng sẽ được thêm vào đây khi có sự cho phép.",
     "empty_cta": "Yêu cầu dịch vụ",
     "meantime_eyebrow": "Trong lúc này",
     "meantime_h2": "Những gì bạn có thể xem ngay hôm nay",
     "card1_title": "Website này",
     "card1_desc": "Được chúng tôi xây dựng, quản lý phiên bản, và bảo trì — xem lịch sử xây dựng tại <a href=\"patch-notes.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\" data-i18n=\"footer.patch_notes\">Nhật ký cập nhật</a>.",
     "card2_title": "Blog",
-    "card2_desc": "<a href=\"blog.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">Các bài viết</a> của chúng tôi là ví dụ điển hình về cách chúng tôi giải thích công việc kỹ thuật bằng ngôn ngữ dễ hiểu."
+    "card2_desc": "<a href=\"blog.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">Các bài viết</a> của chúng tôi là ví dụ điển hình về cách chúng tôi giải thích công việc kỹ thuật bằng ngôn ngữ dễ hiểu.",
+    "featured_eyebrow": "Dự án nổi bật",
+    "featured_title": "Armour Wireless Solutions",
+    "featured_desc": "Thiết kế và phát triển website theo yêu cầu, thực hiện trọn gói từ đầu đến cuối.",
+    "featured_cta": "Truy cập trang web trực tiếp ↗"
   },
   "gallery": {
     "hero_eyebrow": "Thư viện ảnh",

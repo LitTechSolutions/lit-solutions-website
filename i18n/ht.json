@@ -1345,19 +1345,23 @@
   },
   "portfolio": {
     "hero_eyebrow": "Travay Nou",
-    "hero_h1": "Pòtfolyo — n ap bati l vre.",
-    "hero_lede": "Nou pito montre ou yon \"poko\" onèt pase nou envante travay kliyan nou pa t janm fè.",
+    "hero_h1": "Vrè travay, ki soti nan yon vrè kliyan.",
+    "hero_lede": "Yon ti gade sou sa nou reyèlman bati — nou pral ajoute plis pwojè isit la kòm yo lanse.",
     "hero_h1_hascontent": "Travay resan",
     "hero_lede_hascontent": "Vrè pwojè nou konstwi pou vrè kliyan -- gade detay yo pi ba.",
-    "empty_h2": "Nou se yon biznis nouvo — bibliyotèk pwojè a ap grandi toujou.",
-    "empty_desc": "Little Technical Solutions LLC toujou tou nèf ase pou nou pa gen yon bibliyotèk pwojè kliyan pase pou montre poko. Sa ou ka gade kounye a: sit wèb sa a limenm, konstwi e antreteni pa nou, ak demonstrasyon entèraktif anvan/apre a sou <a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">paj Sèvis</a> nou an ki montre apwòch konsepsyon sit wèb nou. Pandan vrè pwojè kliyan ap lanse, y ap ajoute isit la ak pèmisyon.",
+    "empty_h2": "Gen plis pwojè k ap vini.",
+    "empty_desc": "Nou se yon ti biznis tou nèf, kidonk bibliyotèk pwojè nou an ap toujou grandi, yon kliyan alafwa. Sa w ka gade kounye a se: sit wèb sa a menm, ki bati e antreteni pa nou, ak demo entèraktif anvan/apre a sou <a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">paj Sèvis</a> nou an ki montre apwòch nou nan konsepsyon sit wèb. Kòm plis pwojè kliyan lanse, y ap ajoute isit la avèk pèmisyon.",
     "empty_cta": "Mande Sèvis",
     "meantime_eyebrow": "Pou kounye a",
     "meantime_h2": "Travay ou ka gade jodi a",
     "card1_title": "Sit wèb sa a",
     "card1_desc": "Konstwi, vèsyone, e antreteni pa nou — gade istwa konstriksyon an sou <a href=\"patch-notes.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\" data-i18n=\"footer.patch_notes\">Nòt Mizajou</a>.",
     "card2_title": "Blog la",
-    "card2_desc": "<a href=\"blog.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">Atik</a> nou yo se yon bon egzanp kijan nou eksplike travay teknik nan yon langaj senp."
+    "card2_desc": "<a href=\"blog.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">Atik</a> nou yo se yon bon egzanp kijan nou eksplike travay teknik nan yon langaj senp.",
+    "featured_eyebrow": "Pwojè an Vedèt",
+    "featured_title": "Armour Wireless Solutions",
+    "featured_desc": "Konsepsyon ak devlopman sit wèb sou mezi, livre soti nan kòmansman rive nan fen.",
+    "featured_cta": "Vizite sit ki anliy la ↗"
   },
   "gallery": {
     "hero_eyebrow": "Galri",

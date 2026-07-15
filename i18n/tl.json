@@ -1345,19 +1345,23 @@
   },
   "portfolio": {
     "hero_eyebrow": "Ang Aming Trabaho",
-    "hero_h1": "Portfolio — talagang binubuo pa.",
-    "hero_lede": "Mas gugustuhin naming magsabi ng tapat na \"wala pa\" kaysa gumawa-gawa ng trabaho ng kliyenteng hindi pa namin nagagawa.",
+    "hero_h1": "Tunay na gawa, mula sa tunay na kliyente.",
+    "hero_lede": "Isang tingin sa aming talagang naitayo — magdaragdag pa kami ng mga proyekto rito habang inilulunsad ang mga ito.",
     "hero_h1_hascontent": "Kamakailang trabaho",
     "hero_lede_hascontent": "Tunay na proyektong ginawa namin para sa tunay na kliyente -- tingnan ang detalye sa ibaba.",
-    "empty_h2": "Bagong negosyo pa lang kami — lumalaki pa ang library ng proyekto.",
-    "empty_desc": "Sapat na kabaguhan ang Little Technical Solutions LLC kaya wala pa kaming library ng nakaraang proyekto ng kliyenteng maipapakita. Ang pwede mong tingnan ngayon: ang website na ito mismo, ginawa at pinapanatili namin, at ang interactive na before/after demo sa aming <a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">pahina ng Serbisyo</a> na nagpapakita ng aming pamamaraan sa disenyo ng website. Habang naglu-launch ang mga tunay na proyekto ng kliyente, idadagdag ang mga ito rito nang may pahintulot.",
+    "empty_h2": "May mga darating pang proyekto.",
+    "empty_desc": "Isa kaming maliit, bagong-bagong negosyo, kaya patuloy pa ring lumalago ang aming portfolio ng proyekto, isang kliyente nang paisa-isa. Ang puwede mong tingnan ngayon: ang website na ito mismo, na itinayo at pinapanatili namin, at ang interactive na before/after demo sa aming <a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">Services page</a> na nagpapakita ng aming pamamaraan sa disenyo ng website. Habang naglulunsad ng mas maraming proyekto ng kliyente, idadagdag ang mga ito rito nang may pahintulot.",
     "empty_cta": "Humiling ng Serbisyo",
     "meantime_eyebrow": "Samantala",
     "meantime_h2": "Trabahong pwede mong tingnan ngayon",
     "card1_title": "Ang website na ito",
     "card1_desc": "Ginawa, may version, at pinapanatili namin — tingnan ang kasaysayan ng build sa <a href=\"patch-notes.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\" data-i18n=\"footer.patch_notes\">Patch Notes</a>.",
     "card2_title": "Ang blog",
-    "card2_desc": "Ang aming <a href=\"blog.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">mga sulatin</a> ay magandang sample kung paano namin ipinapaliwanag ang teknikal na trabaho sa simpleng wika."
+    "card2_desc": "Ang aming <a href=\"blog.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">mga sulatin</a> ay magandang sample kung paano namin ipinapaliwanag ang teknikal na trabaho sa simpleng wika.",
+    "featured_eyebrow": "Itinatampok na Proyekto",
+    "featured_title": "Armour Wireless Solutions",
+    "featured_desc": "Custom na disenyo at pag-develop ng website, naihatid mula umpisa hanggang katapusan.",
+    "featured_cta": "Bisitahin ang live na site ↗"
   },
   "gallery": {
     "hero_eyebrow": "Gallery",

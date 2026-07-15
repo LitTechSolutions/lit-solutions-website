@@ -1345,19 +1345,23 @@
   },
   "portfolio": {
     "hero_eyebrow": "私たちの実績",
-    "hero_h1": "ポートフォリオ — これから本格的に築いていきます。",
-    "hero_lede": "まだ実施していないクライアント案件を偽って紹介するより、正直に「まだこれから」とお伝えしたいと思います。",
+    "hero_h1": "実在のクライアントによる、実際の実績。",
+    "hero_lede": "私たちが実際に手がけた仕事をご覧ください——今後もプロジェクトが公開され次第、随時追加していきます。",
     "hero_h1_hascontent": "最近の実績",
     "hero_lede_hascontent": "実在するお客様のために手がけた、本物のプロジェクトです——詳細は下記をご覧ください。",
-    "empty_h2": "私たちは新しい会社であり、実績ライブラリはまだ成長中です。",
-    "empty_desc": "Little Technical Solutions LLCはまだ新しい会社のため、これまでのクライアント案件をまとめたライブラリはまだございません。現時点でご覧いただけるのは、私たち自身が制作・運用しているこのウェブサイト自体と、<a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">サービスページ</a>にあるインタラクティブなビフォー・アフターのデモです。実際のクライアント案件が公開され次第、許可をいただいたうえでこちらに追加していきます。",
+    "empty_h2": "さらなるプロジェクトが近日公開予定です。",
+    "empty_desc": "私たちは創業したばかりの小さな会社であるため、プロジェクトの実績は一件ずつ着実に増えている段階です。今すぐご覧いただけるのは、私たち自身が構築・運用しているこのウェブサイト、そして私たちのウェブデザインへの取り組み方を示す<a href=\"services.html#showcase\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">サービスページ</a>のインタラクティブなビフォー・アフターのデモです。今後クライアントのプロジェクトが公開され次第、許可を得たうえでここに追加していきます。",
     "empty_cta": "サービスを依頼する",
     "meantime_eyebrow": "それまでの間",
     "meantime_h2": "今すぐご覧いただける実績",
     "card1_title": "このウェブサイト",
     "card1_desc": "私たちが制作、バージョン管理、運用しています — 制作の履歴は<a href=\"patch-notes.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\" data-i18n=\"footer.patch_notes\">更新履歴</a>をご覧ください。",
     "card2_title": "ブログ",
-    "card2_desc": "<a href=\"blog.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">記事</a>では、専門的な作業を分かりやすい言葉でどのように説明するか、実際にご覧いただけます。"
+    "card2_desc": "<a href=\"blog.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">記事</a>では、専門的な作業を分かりやすい言葉でどのように説明するか、実際にご覧いただけます。",
+    "featured_eyebrow": "注目のプロジェクト",
+    "featured_title": "Armour Wireless Solutions",
+    "featured_desc": "オーダーメイドのウェブサイトデザインと開発を、最初から最後まで一貫して提供しました。",
+    "featured_cta": "公開中のサイトを見る ↗"
   },
   "gallery": {
     "hero_eyebrow": "ギャラリー",
