@@ -1,6 +1,6 @@
 # Owner Decisions Required
 
-Consolidated from `v23/docs/audit/AUDIT_STATE.json` (11 owner-decision findings), the Master Function Index's 8-item "Stop-and-Approve Owner Decisions" list, and engineering findings surfaced across Sessions 0–9. Status as of the post-Session-9 check-in: **item #1 is RESOLVED** (Dylan, 2026-07-14); the other 9 remain open. 27 functions across Sessions 1–7 were built as far as possible without any of these decided (see `REQUIREMENTS_TRACEABILITY.md` and each session's doc under `sessions/`) — item #1's resolution is what unblocks F001/F005 persistence and, by extension, real endpoints for most of that work.
+Consolidated from `v23/docs/audit/AUDIT_STATE.json` (11 owner-decision findings), the Master Function Index's 8-item "Stop-and-Approve Owner Decisions" list, and engineering findings surfaced across Sessions 0–9. Status as of 2026-07-14: **items #1, #2, and #3 are RESOLVED**; 7 remain open. Item #1's resolution unblocked F001/F005 persistence and, by extension, real endpoints for most previously-built work; items #2/#3's resolution unblocks the last five engine-complete functions (F026/F027/F028/F049/F050/F052) with real business values, not just engines.
 
 ## 1. Primary data store — ✅ RESOLVED (Dylan, 2026-07-14)
 
@@ -8,16 +8,36 @@ Consolidated from `v23/docs/audit/AUDIT_STATE.json` (11 owner-decision findings)
 - **Unblocks:** F001 (Organization Provisioning) and F005 (RBAC) persistence, and by extension real endpoints for every function whose logic was already built and tested against this decision (F008, F009, F010, F012–F017, F019–F029, F031, F036, F041–F045, F048, F049–F052).
 - **Still open as a follow-on:** provisioning the actual Neon project/database and setting `DATABASE_URL` (or equivalent) as a Netlify environment variable — an infrastructure step, not a decision, tracked in `DEPLOYMENT_PLAN.md`.
 
-## 2. Pricing, discounts, deposits, payment timing (audit F030, F031; Master Index item 1)
+## 2. Pricing, discounts, deposits, payment timing — ✅ RESOLVED (Dylan, 2026-07-14)
 
-- Heroes Discount document-verification method (audit F030, Medium, owner decision).
-- Full-payment-upfront vs. deposit/milestone policy (audit F031, Medium, owner decision).
-- **Blocks:** F026 (Scope/Estimate Generation), F027 (Change Order Approval), F028 (Payment Request/Reconciliation), F050 (Pricing/Discount Engine).
+- **Heroes Discount rate & verification:** already live and approved — 15% (`netlify/functions/website-designer.js`), per-category document verification already published on `heroes-pricing.html` (military ID/CAC, DD-214, employment letters, etc.). No new decision needed; confirmed as already-recorded per the requirements precedence order.
+- **Payment timing for Care Hub custom work / change orders (Dylan, verbatim):**
+  - Work priced **below $500**: full payment due upfront after the customer approves the quote.
+  - Work priced **at $500 or more**: 50% deposit before work begins, remaining 50% due upon completion and before publication/deployment/final handoff.
+  - Hardware, software licenses, paid integrations, subscriptions, and other third-party expenses: **always paid upfront**, regardless of total.
+  - No out-of-scope work begins without written customer approval (already structurally enforced by F016/F027's approval workflow).
+  - **Implemented:** `src/policy/paymentSchedule.js`.
+- **Blocks (now unblocked):** F026 (Scope/Estimate Generation), F027 (Change Order Approval), F028 (Payment Request/Reconciliation), F050 (Pricing/Discount Engine) — all now buildable/persistable with real values.
 
-## 3. Plan limits and included work (audit F032; Master Index item 2)
+## 3. Plan limits and included work — ✅ RESOLVED (Dylan, 2026-07-14)
 
-- Subscription plan scope: included edits, hours, carryover, overages, emergency handling — undefined today for both Website Care Plan and Small Business IT plan.
-- **Blocks:** F049 (Plan Entitlement/Usage Tracking), F021 (Priority/Impact/Urgency — entitlement affects priority calculation), F052 (Subscription/Billing Plan Management).
+**Website Care Plan — $39/month:**
+- Coverage for one website. Routine hosting/domain/SSL/availability/form/platform checks. Hosting-provider coordination when needed (hosting/domain charges themselves not included).
+- Up to 30 minutes of small content edits per billing month, across no more than 2 submitted requests. "Small edits" = replacing existing text/images, updating hours/contact info, correcting links, similarly minor changes.
+- Allowance resets monthly, **does not carry over**.
+- Overage: $85/hour, billed in 15-minute increments, customer approval required before charges incurred.
+- Out of plan scope entirely (needs a separate quote): new pages, redesigns, new functionality, custom coding, copywriting, SEO campaigns, malware recovery, substantial layout changes.
+
+**Small Business IT Support Plan — $79/month:**
+- Coverage for one business location, up to 5 named computers/devices.
+- Up to 60 minutes of remote IT support per billing month, across no more than 2 support sessions/tickets. Covers routine email/printer/software/account-access/peripheral/device-configuration/general troubleshooting.
+- Allowance resets monthly, **does not carry over**.
+- Overage: $95/hour remote (15-minute increments); on-site $125/hour with a 1-hour minimum, travel charges possible outside the normal service area.
+- Anything expected to exceed 2 hours, or involving network installation, server work, cybersecurity remediation, data recovery, business-wide migration, or hardware installation: **must** become a separately approved fixed-price quote, not plan-covered work.
+- Hardware, software, licenses, subscriptions, third-party services: not included, ever.
+
+- **Implemented:** `src/policy/overageBilling.js` (rate calculation), real rows seeded into the live `entitlement_limits` table (`src/db/entitlementStore.js`), wired to the existing `entitlementCheck.js` engine (Session 4).
+- **Blocks (now unblocked):** F049 (Plan Entitlement/Usage Tracking), F021's fifth scoring factor (entitlement-aware priority), F052 (Subscription/Billing Plan Management).
 
 ## 4. Customer account registration model (audit F033; Master Index item 3)
 
