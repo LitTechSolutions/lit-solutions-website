@@ -53,6 +53,16 @@
   color: var(--accent-orange-text);
 }
 
+.app-topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.app-topbar__user {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
 .app-sidebar {
   grid-area: sidebar;
   border-right: 1px solid var(--line);

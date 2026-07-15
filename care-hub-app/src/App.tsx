@@ -1,23 +1,41 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { AppShell } from "./components/AppShell";
+import { AuthProvider } from "./auth/AuthContext";
+import { RequireAuth } from "./auth/RequireAuth";
+import { Login } from "./routes/Login";
+import { MfaEnroll } from "./routes/MfaEnroll";
+import { MfaVerify } from "./routes/MfaVerify";
 import { Dashboard } from "./routes/Dashboard";
 import { ComingSoon } from "./routes/ComingSoon";
 import { NotFound } from "./routes/NotFound";
 import { strings } from "./strings/en";
-import { api } from "./api/client";
 
 export function App() {
   return (
     <BrowserRouter basename="/care-hub">
-      <AppShell onSignOut={() => api.auth.logout().finally(() => window.location.assign("/care-hub/"))}>
+      <AuthProvider>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/tickets" element={<ComingSoon title={strings.nav.tickets} />} />
-          <Route path="/checklists" element={<ComingSoon title={strings.nav.checklists} />} />
-          <Route path="/account" element={<ComingSoon title={strings.nav.account} />} />
-          <Route path="*" element={<NotFound />} />
+          {/* Unauthenticated / pre-auth routes -- no app shell chrome. */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/mfa/enroll" element={<MfaEnroll />} />
+          <Route path="/mfa/verify" element={<MfaVerify />} />
+
+          {/* Everything else requires a real signed-in session. */}
+          <Route
+            path="/*"
+            element={
+              <RequireAuth>
+                <Routes>
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/tickets" element={<ComingSoon title={strings.nav.tickets} />} />
+                  <Route path="/checklists" element={<ComingSoon title={strings.nav.checklists} />} />
+                  <Route path="/account" element={<ComingSoon title={strings.nav.account} />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </RequireAuth>
+            }
+          />
         </Routes>
-      </AppShell>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

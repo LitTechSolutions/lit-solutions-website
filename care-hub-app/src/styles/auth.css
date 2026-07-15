@@ -1,0 +1,73 @@
+/* Layout for the three unauthenticated/pre-auth screens (/login,
+   /mfa/enroll, /mfa/verify) -- centered card, no app shell chrome
+   (there's nothing to navigate to yet). */
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+  background: var(--paper);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.auth-card__brand {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1rem;
+  text-align: center;
+}
+.auth-card__brand strong {
+  color: var(--accent-orange-text);
+}
+
+.auth-card__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.auth-card__secret {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  word-break: break-all;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-3);
+  user-select: all;
+}
+
+.auth-card__recovery-codes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+}
+
+.auth-card__toggle {
+  background: none;
+  border: none;
+  color: var(--accent-orange-text);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
+}
+.auth-card__toggle:hover {
+  text-decoration: underline;
+}

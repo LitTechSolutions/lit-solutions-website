@@ -4,16 +4,19 @@ import { strings } from "../strings/en";
 
 export interface AppShellProps {
   children: ReactNode;
-  onSignOut?: () => void;
+  userName?: string;
+  onSignOut?: () => void | Promise<void>;
 }
 
 /**
  * Persistent topbar + sidebar frame around every authenticated route.
  * Landmarks (banner/navigation/main) and a skip link are set up here
  * once, so every route below just renders its content -- accessibility
- * structure isn't something each page has to remember to add.
+ * structure isn't something each page has to remember to add. Only
+ * rendered once RequireAuth confirms a real signed-in session -- /login,
+ * /mfa/enroll, and /mfa/verify never see this frame.
  */
-export function AppShell({ children, onSignOut }: AppShellProps) {
+export function AppShell({ children, userName, onSignOut }: AppShellProps) {
   return (
     <div className="app-shell">
       <a className="skip-link" href="#main">
@@ -23,11 +26,14 @@ export function AppShell({ children, onSignOut }: AppShellProps) {
         <span className="app-topbar__brand">
           {strings.app.brand} <strong>{strings.app.name}</strong>
         </span>
-        {onSignOut ? (
-          <button type="button" className="btn btn-ghost btn-small" onClick={onSignOut}>
-            {strings.nav.signOut}
-          </button>
-        ) : null}
+        <span className="app-topbar__actions">
+          {userName ? <span className="app-topbar__user">{userName}</span> : null}
+          {onSignOut ? (
+            <button type="button" className="btn btn-ghost btn-small" onClick={onSignOut}>
+              {strings.nav.signOut}
+            </button>
+          ) : null}
+        </span>
       </header>
       <nav className="app-sidebar" aria-label="Primary">
         <ul className="app-sidebar__nav">

@@ -199,6 +199,62 @@ step, exactly as before.
   couldn't be exercised against a real signed-in session this session --
   that's step 5.
 
+### Step 5 -- authentication and account shell
+
+Real login/MFA UI on top of step 4's scaffold, replacing the
+unconditional shell render with a genuine signed-in/signed-out gate.
+
+- **`src/auth/AuthContext.tsx`** (new): the one piece of state every
+  other screen depends on. On mount, calls `account.get()` (the one
+  endpoint every signed-in role can call) to determine `checking` ->
+  `signedIn` / `signedOut` -- there is no client-side way to read the
+  HttpOnly session cookie directly, so this is the only honest way to
+  ask "am I currently signed in." Documented scope limit: a page reload
+  mid-MFA-flow (after password, before a TOTP code) does NOT resume that
+  pending state -- `account.get()` correctly 401s since no real session
+  exists yet, so the user lands back on `/login`. The `lts_mfa_pending`
+  cookie itself is still valid server-side for its remaining TTL; this
+  app just doesn't currently probe for it before deciding what to show.
+- **`src/auth/RequireAuth.tsx`** (new): gates every real screen behind
+  `signedIn`, rendering the `AppShell` only once that's confirmed --
+  `/login`, `/mfa/enroll`, `/mfa/verify` render outside this and never
+  show the nav frame.
+- **`src/routes/Login.tsx`** (new): email/password form against the real
+  `auth-login.js`. Its response shape decides where the user goes next
+  -- a `LoginResult` (non-admin) signs straight in; an `MfaRequiredResult`
+  routes to `/mfa/enroll` or `/mfa/verify` per `enrollmentRequired`, per
+  the backend's actual trust boundary (this page never issues a session
+  for an admin account itself).
+- **`src/routes/MfaEnroll.tsx`** (new): calls `mfa-enroll.js`'s
+  `action: "start"` on mount, displays the secret as a manual-entry key
+  (no QR-code library added -- extra dependency for a scaffold pass;
+  `otpauthUri` is fetched but not yet rendered as a scannable code),
+  confirms a 6-digit code via `action: "confirm"`, then shows the 10
+  recovery codes once with an explicit "I've saved these" acknowledgment
+  before completing sign-in -- matching `mfa-enroll.js`'s actual
+  one-time-display guarantee.
+- **`src/routes/MfaVerify.tsx`** (new): TOTP code or recovery code
+  challenge against `mfa-verify.js`, with a toggle between the two
+  (recovery code takes precedence if both were somehow submitted,
+  matching the backend's own precedence).
+- **`AppShell.tsx`**: now shows the signed-in user's name and a real
+  sign-out button wired through `AuthContext.signOut()` (calls
+  `auth-logout.js`, then flips to `signedOut`) instead of the
+  fire-and-forget `window.location.assign` placeholder from step 4.
+- **`src/styles/auth.css`** (new): centered card layout shared by all
+  three pre-auth screens -- no shell chrome, since there's nothing to
+  navigate to yet.
+- **Verified in a real browser** (via `vite preview`, no backend
+  running): unauthenticated load correctly redirects `/` -> `/login`;
+  submitting the login form surfaces a real error state; `/mfa/enroll`
+  correctly shows `ErrorState` (no pending cookie in this environment)
+  with a working "Try again" -> `/login`; `/mfa/verify` renders and the
+  TOTP/recovery-code toggle switches correctly. The full sign-in ->
+  dashboard path against a real backend session was not exercised this
+  session (no local Blobs emulation available, per the project's
+  standing constraint) -- worth a live smoke test in a future session
+  once `netlify dev` is exercised end to end for this app.
+
 ## Test results
 
 - rbac.js: +2 cases (platform_admin has every technician ticket
@@ -270,31 +326,33 @@ step, exactly as before.
 
 ## What's still not done
 
-Steps 5-10 of Dylan's directive are **not started** -- each is
+Steps 6-10 of Dylan's directive are **not started** -- each is
 substantial enough to be its own session(s), and none was silently
-begun or partially built this session. Step 4 delivered a scaffold
-(config, tokens, typed client, shared states, app shell, one real
-demo route) -- deliberately not real feature screens:
+begun or partially built this session. Step 5 delivered real
+authentication/MFA UI on top of step 4's scaffold, but no QR-code
+rendering (manual-entry key only) and no live-backend verification of
+the full sign-in path:
 
-1. **Real authentication UI** -- a login form, the MFA enrollment flow
-   (QR/secret display, code confirmation, recovery-code display), the
-   MFA challenge screen (code or recovery code), and session-state
-   wiring (right now `App.tsx` renders the shell unconditionally; there
-   is no "am I signed in" gate yet).
-2. Tickets and checklists UI, including the customer/staff data split
+1. Tickets and checklists UI, including the customer/staff data split
    for readiness checklists (`customerEditable`/`audience` property,
    separate staff-only notes/verification/approval fields) -- not yet
    built at the persistence or endpoint layer either.
-3. Wiring the remaining ~20 endpoints into real screens -- the typed
+2. Wiring the remaining ~20 endpoints into real screens -- the typed
    client covers all of them, but only `Dashboard.tsx` (via
    `account.js`) actually calls one from a rendered route.
-4. Square Sandbox integration and fail-closed email configuration.
-5. The legal drafts (data-flow/processor inventory, draft Privacy
+3. Square Sandbox integration and fail-closed email configuration.
+4. The legal drafts (data-flow/processor inventory, draft Privacy
    Policy, draft Care Hub Terms of Service, launch-time legal review
    checklist) -- all explicitly DRAFT-only per Dylan's directive.
-6. Accessibility, security, responsive, and end-to-end testing at
+5. Accessibility, security, responsive, and end-to-end testing at
    real-feature scale (this session's browser verification covered the
-   scaffold's shell/states/routing/theming, not a full audit).
+   scaffold's and auth UI's shell/states/routing/theming/toggles, not a
+   full audit) -- and specifically, a live smoke test of the real
+   sign-in -> MFA -> dashboard path against `netlify dev`, which this
+   session did not attempt (no local Blobs emulation available).
+6. QR-code rendering for MFA enrollment (currently manual-entry key
+   only, to avoid adding a QR library during a scaffold/foundational
+   pass) -- worth adding once the enrollment screen sees real use.
 
 ## Files changed
 
@@ -347,3 +405,12 @@ demo route) -- deliberately not real feature screens:
   +`/care-hub/*` SPA-fallback redirect before the existing catch-all),
   `.gitignore` (+`/care-hub/`, the gitignored build output directory),
   `robots.txt` (+`Disallow: /care-hub/`).
+- New (step 5, auth/account shell): `care-hub-app/src/auth/
+  {AuthContext,RequireAuth}.tsx`, `care-hub-app/src/routes/
+  {Login,MfaEnroll,MfaVerify}.tsx`, `care-hub-app/src/styles/auth.css`.
+- Modified (step 5): `care-hub-app/src/App.tsx` (real routing +
+  `AuthProvider`/`RequireAuth` wiring, replacing the always-rendered
+  shell), `care-hub-app/src/components/AppShell.tsx` (`userName` prop,
+  real `onSignOut` via `AuthContext`), `care-hub-app/src/strings/en.ts`
+  (+auth/MFA UI strings), `care-hub-app/src/main.tsx` (+`auth.css`
+  import).
