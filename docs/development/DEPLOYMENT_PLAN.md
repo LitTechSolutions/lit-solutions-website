@@ -15,7 +15,17 @@ Production deploys today happen by pushing `main` from whichever `vN` folder und
 
 Not fully inventoried yet beyond what's implied by existing code (`LTS_SESSION_SECRET` for session HMAC signing, Netlify Blobs auto-detected credentials with a `NETLIFY_BLOBS_TOKEN`/`SITE_ID` fallback, an email-provider key for Resend).
 
-**New, added with the Postgres/Neon decision (2026-07-14):** `DATABASE_URL` (or `NEON_DATABASE_URL`) — Neon connection string, read by `src/db/pgClient.js`. **Not yet set anywhere** — no Neon project has been provisioned in this environment. Required before any of `organizationStore.js`, `membershipStore.js`, or `pgAuditSink.js` can run against a real database (they currently only run against fake injected `sql` functions in tests). This is a secret — never commit its value; set it only in Netlify's environment variable UI (or local `.env`, gitignored) once Dylan provisions the Neon project.
+**New, added with the Postgres/Neon decision (2026-07-14):** `DATABASE_URL` (or `NEON_DATABASE_URL`) — Neon connection string, read by `src/db/pgClient.js`. Now provisioned and live-verified against a real Neon database as of Session 13 (see `sessions/SESSION_13_LIVE_DATABASE_VERIFIED.md` and every subsequent session's live smoke test). Set in local `.env` (gitignored) for development; must also be set in Netlify's environment variable UI before any production deploy — never commit its value.
+
+**New, Session 20 (2026-07-15) — TOTP MFA (`src/security/mfaCrypto.js`, `netlify/functions/mfa-enroll.js`/`mfa-verify.js`/`mfa-manage.js`):**
+
+- `MFA_ENCRYPTION_KEY` — a 32-byte key, **hex-encoded (64 hex characters)**, used with AES-256-GCM to encrypt every platform_admin's TOTP secret at rest (`src/security/mfaCrypto.js`'s `encryptSecret`/`decryptSecret`). This is a secret — never commit its value, never place it in frontend code, never put it in `netlify.toml`. Generate one with:
+  ```
+  node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+  ```
+  Set it directly in Netlify's Site settings → Environment variables (production), and in local `.env` (gitignored) for development. **Rotation:** rotating this key invalidates every currently-encrypted TOTP secret at rest — anyone with `mfaEnabled: true` would need to go through `mfa-manage.js`'s reset flow (or a manual re-encryption migration, not yet built) after a rotation. Until that migration exists, treat rotation as a rare, deliberate, all-admins-re-enroll event, not routine hygiene.
+  - `mfa-enroll.js` and `mfa-verify.js` both fail closed (throw, surfaced as a 500) if this variable is unset when a platform_admin account needs it — there is no silent fallback to an unencrypted secret.
+  - Recovery codes are hashed with SHA-256 (not this key) — see `src/security/mfaCrypto.js`'s comment for why a fast hash is the correct choice there (high-entropy, server-generated, single-use values, not user-chosen passwords).
 
 ## Netlify Functions / Forms
 

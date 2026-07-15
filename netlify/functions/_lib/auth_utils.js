@@ -108,6 +108,25 @@ function clearSessionCookie() {
   return "lts_session=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0";
 }
 
+// MFA_PENDING_TTL_SECONDS: the short-lived pre-authentication window
+// between password verification and TOTP/recovery-code verification
+// (Session 20 directive requirement). Deliberately a SEPARATE cookie
+// from lts_session -- a pre-auth token must never be usable anywhere a
+// real session is accepted, so mfa-enroll.js/mfa-verify.js only ever
+// read lts_mfa_pending, and every other Care Hub endpoint only ever
+// reads lts_session. Distinct cookie names is the whole enforcement
+// mechanism; there is no third state a single cookie could ambiguously
+// represent.
+const MFA_PENDING_TTL_SECONDS = 300; // 5 minutes
+
+function mfaPendingCookie(token, maxAgeSeconds) {
+  return `lts_mfa_pending=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAgeSeconds}`;
+}
+
+function clearMfaPendingCookie() {
+  return "lts_mfa_pending=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0";
+}
+
 function readCookie(event, name) {
   const header = (event.headers && (event.headers.cookie || event.headers.Cookie)) || "";
   const match = header.split(";").map((c) => c.trim()).find((c) => c.startsWith(name + "="));
@@ -115,17 +134,34 @@ function readCookie(event, name) {
 }
 
 // ---- HTTP response helpers ----
+// extraHeaders.["Set-Cookie"] may be a single string (the common case) or
+// an array of strings when a response needs to set/clear more than one
+// cookie at once (Session 20: mfa-enroll.js/mfa-manage.js setting a real
+// session while clearing the pre-auth one). A single Set-Cookie header
+// cannot carry multiple cookies joined by a comma -- Set-Cookie's own
+// Expires attribute legally contains commas, making that ambiguous -- so
+// multiple values go in Netlify's multiValueHeaders instead, the
+// AWS-Lambda-proxy-compatible mechanism Netlify Functions actually reads
+// for repeated headers.
 function json(statusCode, body, extraHeaders) {
-  return {
-    statusCode,
-    headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": "no-store",
-      "X-Content-Type-Options": "nosniff",
-      ...(extraHeaders || {}),
-    },
-    body: JSON.stringify(body),
+  const headers = {
+    "Content-Type": "application/json",
+    "Cache-Control": "no-store",
+    "X-Content-Type-Options": "nosniff",
   };
+  const multiValueHeaders = {};
+
+  for (const [name, value] of Object.entries(extraHeaders || {})) {
+    if (Array.isArray(value)) {
+      multiValueHeaders[name] = value;
+    } else {
+      headers[name] = value;
+    }
+  }
+
+  const response = { statusCode, headers, body: JSON.stringify(body) };
+  if (Object.keys(multiValueHeaders).length > 0) response.multiValueHeaders = multiValueHeaders;
+  return response;
 }
 
 // ---- rate limiting ----
@@ -146,4 +182,5 @@ module.exports = {
   hashPassword, verifyPassword, createSession, getSession, revokeSession,
   revokeAllSessionsForUser, createSingleUseToken, verify, sessionCookie,
   clearSessionCookie, readCookie, json, rateLimited,
+  mfaPendingCookie, clearMfaPendingCookie, MFA_PENDING_TTL_SECONDS,
 };

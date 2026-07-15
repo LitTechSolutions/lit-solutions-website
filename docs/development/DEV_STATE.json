@@ -43,7 +43,7 @@
     "audit finding F033 (owner decision): registration model -- \u2705 RESOLVED Session 17, invite-only. See OWNER_DECISIONS.md #4."
   ],
   "buildStatus": "not-applicable",
-  "testStatus": "passing (637/637 unit tests, npm test / node --test full discovery, 2026-07-15; PLUS every prior session's live smoke test evidence file, plus this session's 11-check live smoke test of platform_admin ticket access + ticket audit logging + the new audit-log endpoint -- evidence/migrations/session-20-rbac-audit-endpoint-live-smoke-test.txt, all PASS)",
+  "testStatus": "passing (702/702 unit tests, npm test / node --test full discovery, 2026-07-15; PLUS every prior session's live smoke test evidence file, plus this session's 11-check live smoke test of platform_admin ticket access + ticket audit logging + the audit-log endpoint -- evidence/migrations/session-20-rbac-audit-endpoint-live-smoke-test.txt, plus a 15-check live smoke test of the full TOTP MFA flow (enrollment, challenge success/failure, recovery-code redemption, disable) writing real audit_events rows -- evidence/migrations/session-20-mfa-live-smoke-test.txt, all PASS)",
   "lintStatus": "not-run",
   "typeCheckStatus": "not-run",
   "migrationStatus": "EXECUTED against the live Neon database. 38 tables (001 + 002), plus migration 003 (003_fix_triage_rule_id_type.sql) this session -- fixed a real bug (matched_rule_id was UUID with a dead FK to an unused triage_rules table; changed to TEXT). All three migrations applied and verified live.",
@@ -66,7 +66,7 @@
     "F060 (AI gate, unchanged -- not attempted yet)"
   ],
   "notStartedThisSessionByDesign": [
-    "F003, F004, F006, F059, F011, F018, F024, F030, F045, F034, F009, F012, F015 -- see prior session entries, unchanged. MFA for administrator accounts, the full retention/deletion/legal-hold system, remote-support/automation boundary enforcement, F060 AI implementation, F001-F060 workbook regeneration, and a UI remain not started."
+    "F003, F004, F006, F059, F011, F018, F024, F030, F045, F034, F009, F012, F015 -- see prior session entries, unchanged. The full retention/deletion/legal-hold system, remote-support/automation boundary enforcement, F060 AI implementation, F001-F060 workbook regeneration, and a UI (including MFA enrollment/challenge screens for the backend built this session) remain not started."
   ],
   "ownerDecisionsRequired": [
     "Primary data store -- \u2705 RESOLVED 2026-07-14 (Session 10).",
@@ -111,6 +111,6 @@
     "CSV export (src/export/csvExport.js, F053) has no formula-injection guard for spreadsheet software -- open finding from Session 9's security review",
     "No dedicated audit-log-viewing endpoint was built (pgAuditSink.listByOrganization exists but isn't exposed over HTTP) -- a small, easy follow-up if wanted"
   ],
-  "releaseRecommendation": "NOT READY. 24 endpoints now exist (was 23) -- the new audit-log.js viewer -- and two real gaps found this session are now fixed: platform_admin previously could not list or work tickets outside a technician-only 'assigned' check (RBAC bug), and ticketStore.js/ticketWorkflowStore.js had ZERO audit-trail integration despite F008 existing since Session 1 (now every ticket create/transition/triage/prioritize/assign is audited). What remains before this could ship: a UI (nothing exists), TOTP MFA for platform_admin, the retention/deletion/legal-hold system, real attorney-reviewed Privacy Policy/Terms content (draft-only per Session 20's directive), remote-support/automation boundary enforcement, Square Sandbox integration, F060 AI, F001-F060 workbook regeneration, and full accessibility/security/e2e testing -- all itemized in Dylan's Session 20 directive as steps 3-10, none started yet.",
+  "releaseRecommendation": "NOT READY. 24 endpoints now exist (was 23) -- the new audit-log.js viewer -- and two real gaps found this session are now fixed: platform_admin previously could not list or work tickets outside a technician-only 'assigned' check (RBAC bug), and ticketStore.js/ticketWorkflowStore.js had ZERO audit-trail integration despite F008 existing since Session 1 (now every ticket create/transition/triage/prioritize/assign is audited). TOTP MFA for platform_admin is also now built and live-verified (mfa-enroll.js/mfa-verify.js/mfa-manage.js, otpauth + AES-256-GCM secret encryption + hashed recovery codes + a separate short-lived pre-auth cookie) -- MFA_ENCRYPTION_KEY must be set in Netlify before this can be deployed. What remains before this could ship: a UI (nothing exists, including no MFA enrollment/challenge screens), the retention/deletion/legal-hold system, real attorney-reviewed Privacy Policy/Terms content (draft-only per Session 20's directive), remote-support/automation boundary enforcement, Square Sandbox integration, F060 AI, F001-F060 workbook regeneration, and full accessibility/security/e2e testing -- all itemized in Dylan's Session 20 directive as steps 4-10, none started yet.",
   "lastUpdated": "2026-07-15"
 }

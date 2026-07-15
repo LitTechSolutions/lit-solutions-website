@@ -1,4 +1,4 @@
-# Session 20 -- platform_admin Ticket RBAC + Audit-Log Endpoint
+# Session 20 -- platform_admin Ticket RBAC + Audit-Log Endpoint + TOTP MFA
 
 ## Context
 
@@ -75,6 +75,58 @@ and recording `usedCursor: boolean` instead of the raw opaque cursor
 value (which encodes a real row's `occurred_at`/`id` and has no reason
 to be persisted in a log entry about the fact a query happened).
 
+### Step 3 -- TOTP MFA for platform_admin
+
+- **`src/security/totp.js`** (new): thin wrapper around `otpauth`
+  (RFC 6238), the well-maintained third-party library the directive
+  required in place of a hand-rolled implementation --
+  `generateTotpSecret()`, `buildOtpauthUri()`, `verifyTotpCode()` (a
+  deterministic `timestamp` option makes this fully unit-testable
+  without mocking the global clock). Only dependency: `@noble/hashes`, a
+  widely-audited, zero-dependency crypto-primitives library.
+- **`src/security/mfaCrypto.js`** (new): AES-256-GCM encryption/
+  decryption for TOTP secrets at rest (`MFA_ENCRYPTION_KEY`), plus
+  one-time recovery code generation (10 codes,
+  `XXXXX-XXXXX` shape, no ambiguous characters) and SHA-256 hashing/
+  verification for them (deliberately fast, not `scrypt` -- these are
+  high-entropy server-generated values, not user-chosen passwords).
+- **`netlify/functions/_lib/auth_utils.js`**: added
+  `mfaPendingCookie()`/`clearMfaPendingCookie()` (a separate,
+  short-lived, 5-minute `lts_mfa_pending` cookie -- never the real
+  `lts_session` cookie with a "pending" flag inside it, so every other
+  Care Hub endpoint needed zero changes to enforce "no access without
+  completing MFA"). `json()` gained `multiValueHeaders` support so a
+  response can set the real session cookie and clear the pre-auth
+  cookie in the same response, without illegally comma-joining two
+  `Set-Cookie` values into one header string.
+- **`netlify/functions/auth-login.js`**: a correct password for an
+  `"admin"`-role (platform_admin) account no longer issues a real
+  session directly -- it issues the pre-auth cookie and reports
+  `enrollmentRequired: true/false` depending on `user.mfaEnabled`.
+  Customer/staff accounts are completely unaffected (MFA is
+  platform_admin-only in this release, per the directive).
+- **`netlify/functions/mfa-enroll.js`** (new): `action: "start"`
+  generates and stores an encrypted *pending* secret and returns the
+  `otpauth://` URI + base32 secret once; `action: "confirm"` validates a
+  real 6-digit code against it, and on success activates MFA, generates
+  and returns 10 recovery codes once (stored hashed), and upgrades the
+  pre-auth cookie to a real session.
+- **`netlify/functions/mfa-verify.js`** (new): the challenge step for
+  accounts that already have MFA enabled -- accepts either a TOTP code
+  or a recovery code (consumed on use, single-use), rate-limited per
+  account, issues a real session on success.
+- **`netlify/functions/mfa-manage.js`** (new): `action: "disable"` or
+  `"reset"`, both requiring a real session AND password
+  reauthentication. Both have identical effects on state (clear the
+  secret/recovery codes, forcing re-enrollment at the next login, since
+  MFA is mandatory) but are audited under distinct action names so the
+  log preserves intent. Revokes all other sessions on success, matching
+  `account.js`'s existing "rotate on privilege change" rule.
+- Every step is audited: `mfa.enroll.start`, `mfa.enroll.confirm`
+  (success and failure), `mfa.challenge.success`,
+  `mfa.challenge.failure`, `mfa.recovery_code.used`, `mfa.disable`,
+  `mfa.reset`. Secrets and recovery codes are never logged anywhere.
+
 ## Test results
 
 - rbac.js: +2 cases (platform_admin has every technician ticket
@@ -94,41 +146,77 @@ to be persisted in a log entry about the fact a query happened).
   clamping).
 - audit-log.js: 8 new cases (auth denial, successful query, filter
   forwarding, input validation, self-audit, method-not-allowed).
-- Full suite: **637/637 passing**, up from 618 at the end of Session 19.
+- Full suite (steps 1-2): 637/637 passing, up from 618 at the end of
+  Session 19.
+- mfaCrypto.js: 11 cases (encrypt/decrypt round-trip, random IV per
+  call, wrong-key rejection, tampered-ciphertext rejection, malformed
+  key rejection, recovery code shape/alphabet, deterministic generation
+  with injected randomness, hash/verify round-trip incl.
+  case/whitespace tolerance, wrong-code rejection, malformed-hash
+  tolerance).
+- totp.js: 9 cases (secret generation/uniqueness, otpauth URI shape,
+  correct/incorrect code, clock-skew window tolerance, malformed-input
+  tolerance, wrong-secret rejection).
+- auth_utils.js (`json()`): 4 cases for the new `multiValueHeaders`
+  support.
+- auth-login.js: 8 new cases (non-admin unaffected, admin with/without
+  prior enrollment, wrong password never reaches the MFA branch,
+  unverified account still blocked first, rate limiting, method
+  guard).
+- mfa-enroll.js: 12 cases (missing/invalid pending token, already-
+  enrolled guard, start generates+stores an encrypted pending secret and
+  audits it, rate limiting on both actions, confirm rejects/accepts a
+  code with correct audit outcome, confirm activates MFA + issues
+  recovery codes + upgrades to a real session, a full real-otpauth
+  round-trip, unknown action, method guard).
+- mfa-verify.js: 12 cases (missing/invalid pending token, no-code-or-
+  recovery-code guard, not-yet-enrolled guard, rate limiting, correct/
+  incorrect TOTP code with correct audit outcome and cookie behavior,
+  valid recovery code consumed exactly once, reuse of a consumed code
+  denied, unknown recovery code denied, recovery code takes precedence
+  over a simultaneously-supplied TOTP code, a full real-otpauth
+  round-trip, method guard).
+- mfa-manage.js: 9 cases (missing session, non-admin role denied,
+  unknown action, missing password short-circuits before rate limiting,
+  rate limiting, wrong password denied+audited+state unchanged, disable
+  clears state+audits+revokes sessions, reset has the same effect under
+  a distinct audit action, method guard).
+- Full suite (all of Session 20): **702/702 passing**.
 - `docs/development/evidence/migrations/session-20-rbac-audit-endpoint-live-smoke-test.txt`
-  -- 11 checks against the real Neon database, reusing Session 19's
-  live organization: platform_admin creates a ticket, lists it (the
-  previously-broken path), transitions it with no assignment fact,
-  prioritizes it via `ticket-workflow.js`, then queries the real
-  `audit-log.js` endpoint and confirms `ticket.create`/`ticket.transition`/
-  `ticket.prioritize` are all present, that a second query surfaces the
-  first query's own `audit.query` self-audit event, and that a non-admin
-  is denied. **11/11 PASS** (10/11 on the first pass, before the
-  metadata-shape fix above).
+  -- 11 checks against the real Neon database (steps 1-2, unchanged from
+  the first pass of this session).
+- `docs/development/evidence/migrations/session-20-mfa-live-smoke-test.txt`
+  -- 15 checks against the real Neon database (audit trail only --
+  Blobs, where the actual user records live, has no working local
+  emulator, so the user store was faked and only the Postgres audit
+  writes were verified live, matching this project's established hybrid
+  smoke-test pattern): a real enrollment start, a real enrollment
+  confirm using an actual otpauth-generated code, a real successful
+  challenge, a real failed challenge, a real recovery-code redemption,
+  a real disable, then a fresh `audit-log.js` query confirming all six
+  `mfa.*` actions landed as real rows. **15/15 PASS**.
 
 ## What's still not done
 
-Steps 3-10 of Dylan's directive are **not started** -- each is
+Steps 4-10 of Dylan's directive are **not started** -- each is
 substantial enough to be its own session(s), and none was silently
 begun or partially built this session:
 
-1. **TOTP MFA** for platform_admin (RFC 6238 library, encrypted secret
-   at rest, hashed one-time recovery codes, pre-auth session, rate
-   limiting, full audit coverage).
-2. **The React/Vite/TypeScript Care Hub itself** -- no UI exists
-   anywhere for any Care Hub feature. This is the single largest
-   remaining body of work.
-3. Authentication and account shell inside that UI.
-4. Tickets and checklists UI, including the customer/staff data split
+1. **The React/Vite/TypeScript Care Hub itself** -- no UI exists
+   anywhere for any Care Hub feature, including no MFA enrollment/
+   challenge screens for the backend built this session. This is the
+   single largest remaining body of work.
+2. Authentication and account shell inside that UI.
+3. Tickets and checklists UI, including the customer/staff data split
    for readiness checklists (`customerEditable`/`audience` property,
    separate staff-only notes/verification/approval fields) -- not yet
    built at the persistence or endpoint layer either.
-5. Wiring the remaining 22 endpoints into the UI.
-6. Square Sandbox integration and fail-closed email configuration.
-7. The legal drafts (data-flow/processor inventory, draft Privacy
+4. Wiring the remaining 22 endpoints into the UI.
+5. Square Sandbox integration and fail-closed email configuration.
+6. The legal drafts (data-flow/processor inventory, draft Privacy
    Policy, draft Care Hub Terms of Service, launch-time legal review
    checklist) -- all explicitly DRAFT-only per Dylan's directive.
-8. Accessibility, security, responsive, and end-to-end testing.
+7. Accessibility, security, responsive, and end-to-end testing.
 
 ## Files changed
 
@@ -145,7 +233,25 @@ begun or partially built this session:
   `src/db/pgAuditSink.test.js` (+7 cases).
 - New: `netlify/functions/audit-log.js`,
   `netlify/functions/audit-log.test.js`.
+- New (step 3, MFA): `src/security/totp.js`, `src/security/totp.test.js`,
+  `src/security/mfaCrypto.js`, `src/security/mfaCrypto.test.js`,
+  `netlify/functions/mfa-enroll.js`,
+  `netlify/functions/mfa-enroll.test.js`,
+  `netlify/functions/mfa-verify.js`,
+  `netlify/functions/mfa-verify.test.js`,
+  `netlify/functions/mfa-manage.js`,
+  `netlify/functions/mfa-manage.test.js`,
+  `netlify/functions/_lib/auth_utils.test.js`,
+  `netlify/functions/auth-login.test.js`.
+- Modified (step 3, MFA): `netlify/functions/_lib/auth_utils.js`
+  (`mfaPendingCookie`/`clearMfaPendingCookie`, `multiValueHeaders`
+  support in `json()`), `netlify/functions/auth-login.js` (platform_admin
+  MFA branching), `package.json`/`package-lock.json` (+`otpauth`
+  dependency, which pulls in `@noble/hashes`).
 - New evidence:
-  `docs/development/evidence/migrations/session-20-rbac-audit-endpoint-live-smoke-test.txt`.
+  `docs/development/evidence/migrations/session-20-rbac-audit-endpoint-live-smoke-test.txt`,
+  `docs/development/evidence/migrations/session-20-mfa-live-smoke-test.txt`.
 - Modified: `docs/development/DEV_STATE.json`,
-  `docs/development/DEV_INDEX.md`.
+  `docs/development/DEV_INDEX.md`, `docs/development/DECISION_LOG.md`
+  (+4 entries for step 3), `docs/development/DEPLOYMENT_PLAN.md`
+  (`MFA_ENCRYPTION_KEY` documented).
