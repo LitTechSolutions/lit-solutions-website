@@ -54,14 +54,35 @@ function buildOtpauthUri(secretBase32, accountLabel) {
  * @returns {boolean}
  */
 function verifyTotpCode(secretBase32, token, options = {}) {
-  if (typeof token !== "string" || !/^\d{6}$/.test(token.trim())) return false;
+  return validateTotpToken(secretBase32, token, options).valid;
+}
+
+/**
+ * Same validation as verifyTotpCode, but also returns the absolute
+ * 30-second period counter that matched (current period +/- the window
+ * offset otpauth reports as `delta`). Callers that need anti-replay
+ * protection (a code must never be accepted twice, even a second time
+ * within its own clock-skew window) persist this counter per user and
+ * reject any future code whose counter isn't strictly greater -- see
+ * mfa-verify.js/mfa-enroll.js's `mfaLastUsedCounter` bookkeeping.
+ *
+ * @param {string} secretBase32
+ * @param {string} token
+ * @param {{ window?: number, timestamp?: number }} [options]
+ * @returns {{ valid: boolean, counter: number | null }}
+ */
+function validateTotpToken(secretBase32, token, options = {}) {
+  if (typeof token !== "string" || !/^\d{6}$/.test(token.trim())) return { valid: false, counter: null };
   const totp = buildTotp(secretBase32, "verify");
+  const timestamp = options.timestamp ?? Date.now();
   const delta = totp.validate({
     token: token.trim(),
     window: options.window ?? DEFAULT_VALIDATION_WINDOW,
-    ...(options.timestamp !== undefined ? { timestamp: options.timestamp } : {}),
+    timestamp,
   });
-  return delta !== null;
+  if (delta === null) return { valid: false, counter: null };
+  const counter = Math.floor(timestamp / 1000 / PERIOD) + delta;
+  return { valid: true, counter };
 }
 
-module.exports = { generateTotpSecret, buildOtpauthUri, verifyTotpCode, DIGITS, PERIOD };
+module.exports = { generateTotpSecret, buildOtpauthUri, verifyTotpCode, validateTotpToken, DIGITS, PERIOD };

@@ -12,12 +12,18 @@ const crypto = require("node:crypto");
 const { getSql } = require("./pgClient");
 const { assertValidChangeOrder } = require("../domain/changeOrder");
 const { createApprovalRequest } = require("./approvalStore");
+const { createAuditRecorder } = require("../audit/auditLog");
+const { createPgAuditSink } = require("./pgAuditSink");
 
 const DEFAULT_APPROVAL_WINDOW_DAYS = 14; // engineering default, not owner-approved -- matches ticketLifecycle.js's reopen-window precedent.
 
+function resolveAuditRecorder(deps) {
+  return deps.auditRecorder || createAuditRecorder(createPgAuditSink({ sql: deps.sql }));
+}
+
 /**
  * @param {{ organizationId: string, originalScopeId: string, description: string, addedLineItems: import("../domain/scopeOfWork").ScopeLineItem[], createdBy: string }} input
- * @param {{ sql?: Function, now?: () => Date, idGenerator?: () => string, approvalWindowDays?: number }} [deps]
+ * @param {{ sql?: Function, now?: () => Date, idGenerator?: () => string, approvalWindowDays?: number, actorId?: string, auditRecorder?: object }} [deps]
  * @returns {Promise<{ changeOrder: import("../domain/changeOrder").ChangeOrder, approval: import("../domain/approval").ApprovalRequest }>}
  */
 async function createChangeOrder(input, deps = {}) {
@@ -25,6 +31,7 @@ async function createChangeOrder(input, deps = {}) {
   const now = deps.now || (() => new Date());
   const idGenerator = deps.idGenerator || (() => crypto.randomUUID());
   const approvalWindowDays = deps.approvalWindowDays ?? DEFAULT_APPROVAL_WINDOW_DAYS;
+  const auditRecorder = resolveAuditRecorder(deps);
 
   const changeOrder = {
     id: idGenerator(),
@@ -45,7 +52,22 @@ async function createChangeOrder(input, deps = {}) {
   const expiresAt = new Date(now().getTime() + approvalWindowDays * 24 * 60 * 60 * 1000).toISOString();
   const approval = await createApprovalRequest(
     { organizationId: input.organizationId, subjectType: "change_order", subjectId: changeOrder.id, requestedBy: input.createdBy, expiresAt },
-    { sql, now, idGenerator }
+    { sql, now, idGenerator, auditRecorder, actorId: deps.actorId }
+  );
+
+  await auditRecorder.record(
+    {
+      correlationId: changeOrder.id,
+      actorType: "user",
+      actorId: deps.actorId || "system",
+      organizationId: changeOrder.organizationId,
+      action: "change_order.create",
+      targetType: "change_order",
+      targetId: changeOrder.id,
+      outcome: "success",
+      metadata: { approvalId: approval.id, originalScopeId: changeOrder.originalScopeId },
+    },
+    deps
   );
 
   return { changeOrder, approval };

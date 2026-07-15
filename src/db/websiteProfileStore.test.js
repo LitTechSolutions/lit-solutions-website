@@ -15,11 +15,28 @@ function fakeSql(cannedRows = []) {
   return tag;
 }
 
+function fakeAuditRecorder() {
+  const events = [];
+  return { record: async (input) => { events.push(input); return input; }, events };
+}
+
 test("createWebsiteProfile validates and inserts", async () => {
   const sql = fakeSql();
-  const profile = await createWebsiteProfile({ organizationId: "org-a", primaryUrl: "https://example.com" }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID });
+  const auditRecorder = fakeAuditRecorder();
+  const profile = await createWebsiteProfile({ organizationId: "org-a", primaryUrl: "https://example.com" }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID, auditRecorder });
   assert.equal(profile.primaryUrl, "https://example.com");
   assert.match(sql.calls[0].text, /INSERT INTO website_profiles/);
+  assert.equal(auditRecorder.events.length, 1);
+  assert.equal(auditRecorder.events[0].action, "website_profile.create");
+  assert.equal(auditRecorder.events[0].actorId, "system");
+  assert.equal(auditRecorder.events[0].organizationId, "org-a");
+});
+
+test("createWebsiteProfile audits with the given actorId", async () => {
+  const sql = fakeSql();
+  const auditRecorder = fakeAuditRecorder();
+  await createWebsiteProfile({ organizationId: "org-a", primaryUrl: "https://example.com" }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID, auditRecorder, actorId: "admin-1" });
+  assert.equal(auditRecorder.events[0].actorId, "admin-1");
 });
 
 test("createWebsiteProfile rejects an invalid URL before querying", async () => {

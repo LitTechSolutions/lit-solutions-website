@@ -29,7 +29,7 @@ const {
   rateLimited,
 } = require("./_lib/auth_utils");
 const { getJSON, setJSON, store } = require("./_lib/blob_store");
-const { generateTotpSecret, buildOtpauthUri, verifyTotpCode } = require("../../src/security/totp");
+const { generateTotpSecret, buildOtpauthUri, validateTotpToken } = require("../../src/security/totp");
 const { encryptSecret, decryptSecret, generateRecoveryCodes, hashRecoveryCode } = require("../../src/security/mfaCrypto");
 const { createAuditRecorder } = require("../../src/audit/auditLog");
 const { createPgAuditSink } = require("../../src/db/pgAuditSink");
@@ -119,10 +119,10 @@ exports.handler = async (event, context, deps = {}) => {
 
     const mfaKey = resolveMfaKey(deps);
     const secretBase32 = decryptSecret(user.mfaPendingSecretEncrypted, mfaKey);
-    const verifyTotpCodeFn = deps.verifyTotpCode || verifyTotpCode;
-    const ok = verifyTotpCodeFn(secretBase32, String(body.code || ""));
+    const validateTotpTokenFn = deps.validateTotpToken || validateTotpToken;
+    const { valid, counter } = validateTotpTokenFn(secretBase32, String(body.code || ""));
 
-    if (!ok) {
+    if (!valid) {
       await auditRecorder.record(
         { correlationId: user.id, actorType: "user", actorId: user.id, organizationId: null, action: "mfa.enroll.confirm", targetType: "user", targetId: user.id, outcome: "failure" },
         deps
@@ -138,6 +138,7 @@ exports.handler = async (event, context, deps = {}) => {
     delete user.mfaPendingSecretEncrypted;
     user.mfaRecoveryCodeHashes = recoveryCodes.map(hashRecoveryCode);
     user.mfaEnrolledAt = new Date().toISOString();
+    user.mfaLastUsedCounter = counter; // seeds anti-replay tracking so this same confirm code can't also be replayed against mfa-verify.js
     await setJSONFn("users", userKey, user);
 
     await auditRecorder.record(

@@ -37,7 +37,7 @@ async function handleCreate(event, deps) {
   if (deny) return deny;
 
   try {
-    const subscription = await createSubscription({ organizationId, planKey }, deps);
+    const subscription = await createSubscription({ organizationId, planKey }, { ...deps, actorId: auth.session.userId });
     return json(201, { subscription });
   } catch (err) {
     return json(400, { error: err.message });
@@ -75,7 +75,7 @@ async function handleTransition(event, deps) {
   if (deny) return deny;
 
   try {
-    const subscription = await applySubscriptionStatusTransition(subscriptionId, nextStatus, deps);
+    const subscription = await applySubscriptionStatusTransition(subscriptionId, nextStatus, { ...deps, actorId: auth.session.userId });
     return json(200, { subscription });
   } catch (err) {
     return json(400, { error: err.message });

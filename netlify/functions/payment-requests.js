@@ -52,7 +52,7 @@ async function handleCreate(event, deps) {
   if (deny) return deny;
 
   try {
-    const result = await createPaymentRequestsForSchedule({ organizationId, subjectType, subjectId, amountRefPrefix, totalAmount, isThirdPartyExpense }, deps);
+    const result = await createPaymentRequestsForSchedule({ organizationId, subjectType, subjectId, amountRefPrefix, totalAmount, isThirdPartyExpense }, { ...deps, actorId: auth.session.userId });
     return json(201, result);
   } catch (err) {
     return json(400, { error: err.message });
@@ -96,7 +96,7 @@ async function handleTransition(event, deps) {
   if (deny) return deny;
 
   try {
-    const paymentRequest = await applyPaymentStatusTransition(paymentRequestId, nextStatus, { ...deps, providerReference });
+    const paymentRequest = await applyPaymentStatusTransition(paymentRequestId, nextStatus, { ...deps, providerReference, actorId: auth.session.userId });
     return json(200, { paymentRequest });
   } catch (err) {
     return json(400, { error: err.message });

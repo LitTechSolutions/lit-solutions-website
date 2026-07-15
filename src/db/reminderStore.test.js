@@ -15,21 +15,39 @@ function fakeSql(cannedRows = []) {
   return tag;
 }
 
+function fakeAuditRecorder() {
+  const events = [];
+  return { record: async (input) => { events.push(input); return input; }, events };
+}
+
 function reminderRow(overrides = {}) {
   return { id: "r1", organization_id: "org-a", subject_id: "asset-1", subject_type: "warranty", expires_at: "2026-07-20T00:00:00.000Z", sent: false, ...overrides };
 }
 
-test("createReminder validates and inserts as not sent", async () => {
+test("createReminder validates and inserts as not sent, and audits the actor", async () => {
   const sql = fakeSql();
-  const reminder = await createReminder({ organizationId: "org-a", subjectId: "asset-1", subjectType: "warranty", expiresAt: "2026-08-01T00:00:00.000Z" }, { sql, idGenerator: FIXED_ID });
+  const auditRecorder = fakeAuditRecorder();
+  const reminder = await createReminder({ organizationId: "org-a", subjectId: "asset-1", subjectType: "warranty", expiresAt: "2026-08-01T00:00:00.000Z" }, { sql, idGenerator: FIXED_ID, auditRecorder, actorId: "user-1" });
   assert.equal(reminder.sent, false);
   assert.match(sql.calls[0].text, /INSERT INTO lifecycle_reminders/);
+  assert.equal(auditRecorder.events.length, 1);
+  assert.equal(auditRecorder.events[0].action, "reminder.create");
+  assert.equal(auditRecorder.events[0].actorId, "user-1");
+  assert.deepEqual(auditRecorder.events[0].metadata, { subjectType: "warranty", subjectId: "asset-1" });
+});
+
+test("createReminder defaults the audited actor to system when none is supplied", async () => {
+  const sql = fakeSql();
+  const auditRecorder = fakeAuditRecorder();
+  await createReminder({ organizationId: "org-a", subjectId: "asset-1", subjectType: "warranty", expiresAt: "2026-08-01T00:00:00.000Z" }, { sql, idGenerator: FIXED_ID, auditRecorder });
+  assert.equal(auditRecorder.events[0].actorId, "system");
 });
 
 // Integration: F037 reuse -- an ssl_certificate subject type works identically.
 test("createReminder accepts F037's ssl_certificate subject type (engine reuse)", async () => {
   const sql = fakeSql();
-  const reminder = await createReminder({ organizationId: "org-a", subjectId: "profile-1", subjectType: "ssl_certificate", expiresAt: "2026-08-01T00:00:00.000Z" }, { sql, idGenerator: FIXED_ID });
+  const auditRecorder = fakeAuditRecorder();
+  const reminder = await createReminder({ organizationId: "org-a", subjectId: "profile-1", subjectType: "ssl_certificate", expiresAt: "2026-08-01T00:00:00.000Z" }, { sql, idGenerator: FIXED_ID, auditRecorder });
   assert.equal(reminder.subjectType, "ssl_certificate");
 });
 
@@ -50,10 +68,23 @@ test("integration: listDueReminders excludes already-sent reminders at the query
   assert.match(sql.calls[0].text, /sent = false/);
 });
 
-test("markReminderSent issues an UPDATE", async () => {
-  const sql = fakeSql();
-  await markReminderSent("r1", { sql });
-  assert.match(sql.calls[0].text, /UPDATE lifecycle_reminders/);
+test("markReminderSent fetches the reminder, issues an UPDATE, and audits the actor", async () => {
+  const sql = fakeSql([reminderRow()]);
+  const auditRecorder = fakeAuditRecorder();
+  await markReminderSent("r1", { sql, auditRecorder, actorId: "tech-1" });
+  assert.match(sql.calls[0].text, /SELECT \* FROM lifecycle_reminders/);
+  assert.match(sql.calls[1].text, /UPDATE lifecycle_reminders/);
+  assert.equal(auditRecorder.events.length, 1);
+  assert.equal(auditRecorder.events[0].action, "reminder.sent");
+  assert.equal(auditRecorder.events[0].actorId, "tech-1");
+  assert.equal(auditRecorder.events[0].organizationId, "org-a");
+});
+
+test("markReminderSent throws for a nonexistent reminder without auditing", async () => {
+  const sql = fakeSql([]);
+  const auditRecorder = fakeAuditRecorder();
+  await assert.rejects(() => markReminderSent("nope", { sql, auditRecorder }), /no lifecycle reminder/);
+  assert.equal(auditRecorder.events.length, 0);
 });
 
 test("listRemindersForOrganization orders by expires_at", async () => {

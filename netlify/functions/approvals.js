@@ -65,7 +65,7 @@ async function handleDecision(event, deps) {
   if (deny) return deny;
 
   try {
-    const approval = await applyApprovalDecision(approvalId, decisionAction, { decidedBy: auth.session.userId, decisionNote }, deps);
+    const approval = await applyApprovalDecision(approvalId, decisionAction, { decidedBy: auth.session.userId, decisionNote }, { ...deps, actorId: auth.session.userId });
     return json(200, { approval });
   } catch (err) {
     return json(400, { error: err.message });

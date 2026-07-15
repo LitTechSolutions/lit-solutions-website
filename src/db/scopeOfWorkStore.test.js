@@ -15,6 +15,11 @@ function fakeSql(cannedRows = []) {
   return tag;
 }
 
+function fakeAuditRecorder() {
+  const events = [];
+  return { record: async (input) => { events.push(input); return input; }, events };
+}
+
 function scopeRow(overrides = {}) {
   return {
     id: "scope-1",
@@ -33,21 +38,30 @@ function scopeRow(overrides = {}) {
 
 test("createInitialScope validates and inserts version 1, status draft", async () => {
   const sql = fakeSql();
+  const auditRecorder = fakeAuditRecorder();
   const scope = await createInitialScope(
     { organizationId: "org-a", ticketId: "ticket-1", assumptions: [], exclusions: [], lineItems: [{ description: "x", quantity: 1, priceRef: "ref-1" }], createdBy: "user-tech-1" },
-    { sql, now: FIXED_NOW, idGenerator: FIXED_ID }
+    { sql, now: FIXED_NOW, idGenerator: FIXED_ID, actorId: "user-tech-1", auditRecorder }
   );
   assert.equal(scope.version, 1);
   assert.equal(scope.status, "draft");
   assert.match(sql.calls[0].text, /INSERT INTO scope_of_work/);
+  assert.equal(auditRecorder.events.length, 1);
+  assert.equal(auditRecorder.events[0].action, "scope.create");
+  assert.equal(auditRecorder.events[0].actorId, "user-tech-1");
 });
 
 test("createInitialScope rejects a line item without a priceRef (no raw dollar amounts)", async () => {
   const sql = fakeSql();
+  const auditRecorder = fakeAuditRecorder();
   await assert.rejects(() =>
-    createInitialScope({ organizationId: "org-a", ticketId: "ticket-1", lineItems: [{ description: "x", quantity: 1, priceRef: "" }], createdBy: "u" }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID })
+    createInitialScope(
+      { organizationId: "org-a", ticketId: "ticket-1", lineItems: [{ description: "x", quantity: 1, priceRef: "" }], createdBy: "u" },
+      { sql, now: FIXED_NOW, idGenerator: FIXED_ID, auditRecorder }
+    )
   );
   assert.equal(sql.calls.length, 0);
+  assert.equal(auditRecorder.events.length, 0);
 });
 
 test("getScopeById returns null for no match", async () => {
@@ -58,8 +72,9 @@ test("getScopeById returns null for no match", async () => {
 // Integration: fetch-then-version through the pure scopeVersioning.js engine.
 test("integration: createNextScopeVersion fetches, versions via scopeVersioning.js, and persists both rows", async () => {
   const sql = fakeSql([scopeRow({ status: "sent" })]);
+  const auditRecorder = fakeAuditRecorder();
   const newLineItems = [{ description: "Extra page", quantity: 1, priceRef: "priceRef-2" }];
-  const next = await createNextScopeVersion("scope-1", { lineItems: newLineItems }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID });
+  const next = await createNextScopeVersion("scope-1", { lineItems: newLineItems }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID, actorId: "user-tech-1", auditRecorder });
 
   assert.equal(next.version, 2);
   assert.equal(next.status, "draft");
@@ -67,16 +82,24 @@ test("integration: createNextScopeVersion fetches, versions via scopeVersioning.
   assert.equal(sql.calls.length, 3, "1 SELECT + 1 UPDATE (supersede old) + 1 INSERT (new version)");
   assert.match(sql.calls[1].text, /UPDATE scope_of_work/);
   assert.match(sql.calls[2].text, /INSERT INTO scope_of_work/);
+  assert.equal(auditRecorder.events.length, 1);
+  assert.equal(auditRecorder.events[0].action, "scope.new_version");
+  assert.equal(auditRecorder.events[0].actorId, "user-tech-1");
+  assert.deepEqual(auditRecorder.events[0].metadata, { scopeId: "scope-1", version: 2 });
 });
 
 test("integration: cannot version an already-superseded scope", async () => {
   const sql = fakeSql([scopeRow({ status: "superseded" })]);
-  await assert.rejects(() => createNextScopeVersion("scope-1", {}, { sql, now: FIXED_NOW, idGenerator: FIXED_ID }), /already superseded/);
+  const auditRecorder = fakeAuditRecorder();
+  await assert.rejects(() => createNextScopeVersion("scope-1", {}, { sql, now: FIXED_NOW, idGenerator: FIXED_ID, auditRecorder }), /already superseded/);
+  assert.equal(auditRecorder.events.length, 0);
 });
 
 test("createNextScopeVersion throws for a nonexistent scope", async () => {
   const sql = fakeSql([]);
-  await assert.rejects(() => createNextScopeVersion("nope", {}, { sql, now: FIXED_NOW }), /no scope/);
+  const auditRecorder = fakeAuditRecorder();
+  await assert.rejects(() => createNextScopeVersion("nope", {}, { sql, now: FIXED_NOW, auditRecorder }), /no scope/);
+  assert.equal(auditRecorder.events.length, 0);
 });
 
 test("listScopeVersionsForTicket orders by version", async () => {

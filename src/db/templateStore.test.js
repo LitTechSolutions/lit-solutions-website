@@ -14,27 +14,39 @@ function fakeSql(cannedRows = []) {
   return tag;
 }
 
+function fakeAuditRecorder() {
+  const events = [];
+  return { record: async (input) => { events.push(input); return input; }, events };
+}
+
 test("createTemplateDefinition rejects a template referencing an undeclared variable, before querying", async () => {
   const sql = fakeSql();
+  const auditRecorder = fakeAuditRecorder();
   await assert.rejects(
     () =>
       createTemplateDefinition(
         { key: "ticket_created", subject: "Hi {{customerName}}", body: "Internal note: {{secretField}}", allowedVariables: ["customerName"] },
-        { sql, idGenerator: FIXED_ID }
+        { sql, idGenerator: FIXED_ID, auditRecorder }
       ),
     /undeclared variable/
   );
   assert.equal(sql.calls.length, 0);
+  assert.equal(auditRecorder.events.length, 0);
 });
 
 test("createTemplateDefinition inserts a valid template", async () => {
   const sql = fakeSql();
+  const auditRecorder = fakeAuditRecorder();
   const definition = await createTemplateDefinition(
     { key: "ticket_created", subject: "Hi {{customerName}}", body: "We received your request.", allowedVariables: ["customerName"] },
-    { sql, idGenerator: FIXED_ID }
+    { sql, idGenerator: FIXED_ID, actorId: "user-admin-1", auditRecorder }
   );
   assert.equal(definition.key, "ticket_created");
   assert.match(sql.calls[0].text, /INSERT INTO template_definitions/);
+  assert.equal(auditRecorder.events.length, 1);
+  assert.equal(auditRecorder.events[0].action, "template.create");
+  assert.equal(auditRecorder.events[0].actorId, "user-admin-1");
+  assert.equal(auditRecorder.events[0].organizationId, null);
 });
 
 // Integration: fetch-then-render through the pure templateRenderer.js,

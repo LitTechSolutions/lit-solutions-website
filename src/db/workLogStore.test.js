@@ -15,24 +15,39 @@ function fakeSql(cannedRows = []) {
   return tag;
 }
 
+function fakeAuditRecorder() {
+  const events = [];
+  return { record: async (input) => { events.push(input); return input; }, events };
+}
+
 test("recordTimeEntry validates and inserts", async () => {
   const sql = fakeSql();
-  const entry = await recordTimeEntry({ ticketId: "t1", technicianUserId: "tech-1", minutes: 30 }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID });
+  const auditRecorder = fakeAuditRecorder();
+  const entry = await recordTimeEntry({ ticketId: "t1", technicianUserId: "tech-1", minutes: 30 }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID, auditRecorder, actorId: "tech-1" });
   assert.equal(entry.minutes, 30);
   assert.match(sql.calls[0].text, /INSERT INTO time_entries/);
+  assert.equal(auditRecorder.events.length, 1);
+  assert.equal(auditRecorder.events[0].action, "work_log.time_entry");
+  assert.equal(auditRecorder.events[0].actorId, "tech-1");
 });
 
 test("recordTimeEntry rejects non-positive minutes before querying", async () => {
   const sql = fakeSql();
-  await assert.rejects(() => recordTimeEntry({ ticketId: "t1", technicianUserId: "tech-1", minutes: 0 }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID }));
+  const auditRecorder = fakeAuditRecorder();
+  await assert.rejects(() => recordTimeEntry({ ticketId: "t1", technicianUserId: "tech-1", minutes: 0 }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID, auditRecorder }));
   assert.equal(sql.calls.length, 0);
+  assert.equal(auditRecorder.events.length, 0);
 });
 
 test("recordInternalNote always persists customerVisible: false", async () => {
   const sql = fakeSql();
-  const note = await recordInternalNote({ ticketId: "t1", authorUserId: "tech-1", body: "Diagnosed the issue" }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID });
+  const auditRecorder = fakeAuditRecorder();
+  const note = await recordInternalNote({ ticketId: "t1", authorUserId: "tech-1", body: "Diagnosed the issue" }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID, auditRecorder, actorId: "tech-1" });
   assert.equal(note.customerVisible, false);
   assert.ok(sql.calls[0].values.includes(false));
+  assert.equal(auditRecorder.events.length, 1);
+  assert.equal(auditRecorder.events[0].action, "work_log.internal_note");
+  assert.equal(auditRecorder.events[0].actorId, "tech-1");
 });
 
 // Integration: fetched rows feed into the pure timeTracking.js aggregator.

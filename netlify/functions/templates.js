@@ -43,7 +43,7 @@ async function handleCreate(event, deps) {
   if (deny) return deny;
 
   try {
-    const definition = await createTemplateDefinition({ key, subject, body: templateBody, allowedVariables }, deps);
+    const definition = await createTemplateDefinition({ key, subject, body: templateBody, allowedVariables }, { ...deps, actorId: auth.session.userId });
     return json(201, { definition });
   } catch (err) {
     return json(400, { error: err.message });

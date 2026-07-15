@@ -553,12 +553,78 @@ attorney-approved legal wording:
   re-verified after this step purely to confirm the doc-only nature of
   the change, not because anything here could plausibly break them.
 
+### Step 10 -- application security review (RBAC/IDOR, MFA, SQL/XSS/input, audit trail)
+
+Dylan chose "security review pass" over an accessibility pass or e2e
+test scaffolding for this step (step 8, Square/email, stays blocked on
+real credentials). Ran three parallel research passes over the real
+codebase -- RBAC/org-scoping/IDOR across every one of the ~28 endpoints,
+the MFA/auth-flow implementation, and SQL injection/XSS/input
+validation -- then fixed what was cleanly fixable and documented the
+rest with severities and remediation notes. Full findings, evidence,
+and the fix/document-only rationale live in `SECURITY_REVIEW.md`'s new
+"Session 20 step 10" section; summary here:
+
+- **RBAC/org-scoping/IDOR: clean.** Every endpoint calls the shared auth
+  bridge; org-membership is independently verified server-side against
+  Postgres, not trusted from client input (specifically traced
+  `tickets.js`/`checklists.js`, the two endpoints step 7's staff UI lets
+  platform_admin type an arbitrary `organizationId` into). Staff-only
+  actions are independently re-checked server-side, not just UI-hidden.
+- **SQL injection/XSS: clean.** All of `src/db/` uses parameterized
+  queries; `care-hub-app` has zero `dangerouslySetInnerHTML`/raw-HTML
+  usage.
+- **Fixed: missing audit trail on 12 stores** (`scopeOfWorkStore.js`,
+  `changeOrderStore.js`, `paymentRequestStore.js`, `subscriptionStore.js`,
+  `assetStore.js`, `reminderStore.js`, `serviceRecordStore.js`,
+  `websiteProfileStore.js`, `itSupportStore.js`, `workLogStore.js`,
+  `approvalStore.js`, `entitlementStore.js`, `templateStore.js`) --
+  the same class of bug already fixed for `ticketStore.js` in step 1,
+  recurring because these files predate the `resolveAuditRecorder`
+  convention. Roughly a third of all Care Hub endpoints could previously
+  mutate data with zero audit trail. All ~20 mutating functions across
+  these files now audit, `actorId` threaded from each endpoint's
+  `auth.session.userId`. Built via 6 parallel agents (one per store
+  group), each independently verified with `node --test`; one
+  cross-agent conflict surfaced by the full suite (`changeOrderStore.js`
+  calling `approvalStore.createApprovalRequest()` without threading
+  `auditRecorder`/`actorId` through, causing a real fallback audit sink
+  to fire against a test's fake `sql` mock) and was fixed directly,
+  documented in `DECISION_LOG.md`.
+- **Fixed: TOTP replay** (`src/security/totp.js`) -- a valid 6-digit
+  code had no anti-replay tracking and stayed usable for its full ~90s
+  clock-skew window even after being used once, letting an intercepted
+  code be replayed. New `validateTotpToken()` returns the matched
+  absolute period counter; `mfa-verify.js`/`mfa-enroll.js` now persist
+  `user.mfaLastUsedCounter` and reject any code whose counter isn't
+  strictly greater than the last accepted one.
+- **Documented, not fixed -- Critical:** MFA enrollment has no defense
+  against a password-only compromise hijacking the *first* enrollment
+  (`mfa-enroll.js`'s only precondition is the pre-auth cookie, issued to
+  anyone with the correct password). The standard fix (email
+  notification/confirmation on enrollment) needs step 8's email
+  integration, which is blocked on Dylan's credentials -- flagged
+  prominently as a P0 alongside step 8, not deferred silently.
+- **Documented, not fixed -- Medium/Low:** no server-side length cap on
+  ticket/checklist/organization free-text fields (a product decision,
+  not an engineering one to invent); the pre-existing CSV
+  formula-injection gap is still unguarded but confirmed dormant (no
+  endpoint currently calls `csvExport.js`); a generic error-catch
+  pattern that doesn't yet leak anything but isn't structurally safe
+  long-term; a narrow rate-limit TOCTOU race; no account-recovery path
+  if an admin loses their device and exhausts all 10 recovery codes.
+- `npm test`: **777/777 passing** (up from 763 -- new audit-trail
+  assertions across 12 store test files, 5 new TOTP anti-replay cases).
+  `care-hub-app`'s `npm run build`: unaffected (no frontend changes this
+  step). `npm audit --omit=dev`: 0 vulnerabilities in both workspaces.
+
 ## What's still not done
 
 Step 7 closed the two staff-side gaps called out at the end of step 6
 (staff checklist review, staff ticket work queue/transition). Step 9
-delivered the legal drafts. Steps 8 and 10 of Dylan's directive are
-**not started** -- each is substantial enough to be its own session(s):
+delivered the legal drafts. Step 10 delivered a security review, fixing
+what was cleanly fixable and documenting the rest. Step 8 of Dylan's
+directive is **not started**, blocked on external credentials:
 
 1. Wiring the remaining endpoints into real screens beyond tickets and
    checklists -- the typed client covers all of them, but only
@@ -568,8 +634,9 @@ delivered the legal drafts. Steps 8 and 10 of Dylan's directive are
    blocked on Dylan supplying real Square/Resend credentials via
    Netlify environment variables (cannot be pasted into chat or
    committed).
-3. Accessibility, security, responsive, and end-to-end testing at
-   real-feature scale.
+3. Accessibility and end-to-end testing at real-feature scale (the
+   security portion of step 10's original scope is now done -- see
+   `SECURITY_REVIEW.md`'s "Session 20 step 10" section).
 4. QR-code rendering for MFA enrollment (currently manual-entry key
    only).
 5. A live smoke test of the real sign-in -> MFA -> dashboard ->
@@ -598,6 +665,22 @@ delivered the legal drafts. Steps 8 and 10 of Dylan's directive are
    `privacy.html`, filling in the Terms of Service's placeholder
    liability/governing-law sections, and the several pricing/
    object-storage owner decisions those drafts depend on.
+10. The Critical finding from step 10's security review -- MFA
+    enrollment has no defense against a password-only compromise
+    hijacking the first enrollment -- needs step 8's email integration
+    to fix properly (notify/confirm on enrollment); treat as a P0
+    alongside step 8, not a general backlog item. See
+    `SECURITY_REVIEW.md` for the full writeup and interim risk
+    assessment.
+11. Medium/Low findings from step 10, all documented with remediation
+    notes rather than fixed this pass: no server-side length cap on
+    ticket/checklist/organization free-text fields; the still-unguarded
+    (but currently dormant/unused) CSV formula-injection gap in
+    `csvExport.js`; a generic error-catch pattern in several endpoints
+    that doesn't structurally distinguish safe-to-relay domain errors
+    from infrastructure errors; a narrow rate-limit TOCTOU race; no
+    account-recovery path if an admin loses their device and exhausts
+    all 10 MFA recovery codes.
 
 ## Files changed
 
@@ -721,3 +804,42 @@ delivered the legal drafts. Steps 8 and 10 of Dylan's directive are
 - Modified (step 9): `docs/development/DECISION_LOG.md` (+1 entry on
   keeping the Care Hub legal drafts separate from the public site's
   `privacy.html`/`terms.html`).
+- Modified (step 10, TOTP anti-replay): `src/security/totp.js`
+  (+`validateTotpToken()`, `verifyTotpCode()` now implemented in terms
+  of it), `src/security/totp.test.js` (+5 cases),
+  `netlify/functions/mfa-verify.js` (anti-replay counter check +
+  `user.mfaLastUsedCounter` persistence), `netlify/functions/mfa-verify.test.js`
+  (+3 replay/counter cases, existing mocks migrated to
+  `validateTotpToken`), `netlify/functions/mfa-enroll.js` (seeds
+  `mfaLastUsedCounter` on confirm), `netlify/functions/mfa-enroll.test.js`
+  (mocks migrated, +counter assertion).
+- Modified (step 10, audit-trail gap -- 12 stores + endpoints + tests,
+  same pattern as `ticketStore.js`): `src/db/scopeOfWorkStore.js`,
+  `src/db/changeOrderStore.js`, `src/db/paymentRequestStore.js`,
+  `src/db/subscriptionStore.js`, `src/db/assetStore.js`,
+  `src/db/reminderStore.js`, `src/db/serviceRecordStore.js`,
+  `src/db/websiteProfileStore.js`, `src/db/itSupportStore.js`,
+  `src/db/workLogStore.js`, `src/db/approvalStore.js`,
+  `src/db/entitlementStore.js`, `src/db/templateStore.js` (each +
+  `resolveAuditRecorder`/audit calls on every mutating function; the
+  matching `.test.js` for each was updated with `fakeAuditRecorder()`
+  and per-action assertions), `netlify/functions/scope-of-work.js`,
+  `netlify/functions/change-orders.js`, `netlify/functions/payment-requests.js`,
+  `netlify/functions/subscriptions.js`, `netlify/functions/technology-assets.js`,
+  `netlify/functions/reminders.js`, `netlify/functions/service-records.js`,
+  `netlify/functions/website-profiles.js`, `netlify/functions/it-support.js`,
+  `netlify/functions/work-log.js`, `netlify/functions/approvals.js`,
+  `netlify/functions/entitlements.js`, `netlify/functions/templates.js`
+  (each now passes `actorId: auth.session.userId` into the relevant
+  store call's deps); `netlify/functions/service-records.test.js`,
+  `netlify/functions/technology-assets.test.js` (updated for the new
+  fetch-before-update SELECT in `updateServiceRecordStatus`/
+  `markBackupRestoreVerified`).
+- Modified (step 10, `SECURITY_REVIEW.md`): new "Session 20 step 10"
+  section documenting the full review (RBAC/IDOR clean, SQL/XSS clean,
+  the two fixes above, and 6 documented-not-fixed findings including
+  one Critical -- MFA enrollment hijack).
+- Modified (step 10, `docs/development/DECISION_LOG.md`): +2 entries
+  (TOTP counter-based anti-replay design; the systemic audit-trail fix
+  and the cross-agent `changeOrderStore`/`approvalStore` threading
+  issue it surfaced).

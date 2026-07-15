@@ -67,7 +67,9 @@ test("GET as org_owner lists assets", async () => {
 });
 
 test("PATCH as admin marks a backup restore-verified", async () => {
-  const sql = routingFakeSql({});
+  const sql = routingFakeSql({
+    backups: [{ id: "backup-1", organization_id: "org-a", website_profile_id: "wp-1", category: "database", location: "Offsite S3", taken_at: "2026-07-01T00:00:00.000Z", restore_verified: false }],
+  });
   const res = await handler(
     { httpMethod: "PATCH", headers: { cookie: "lts_session=fake-token" }, body: JSON.stringify({ backupId: "backup-1" }) },
     {},

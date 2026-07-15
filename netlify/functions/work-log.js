@@ -52,7 +52,7 @@ async function handleCreate(event, deps) {
     const deny = denyResponseFor(auth.authContext, organizationId, "worklog.write", { assigned });
     if (deny) return deny;
     try {
-      const entry = await recordTimeEntry({ ticketId, technicianUserId: auth.session.userId, minutes, note }, deps);
+      const entry = await recordTimeEntry({ ticketId, technicianUserId: auth.session.userId, minutes, note }, { ...deps, actorId: auth.session.userId });
       return json(201, { entry });
     } catch (err) {
       return json(400, { error: err.message });
@@ -64,7 +64,7 @@ async function handleCreate(event, deps) {
   const deny = denyResponseFor(auth.authContext, organizationId, "note.internal.write", { assigned });
   if (deny) return deny;
   try {
-    const note = await recordInternalNote({ ticketId, authorUserId: auth.session.userId, body: noteBody }, deps);
+    const note = await recordInternalNote({ ticketId, authorUserId: auth.session.userId, body: noteBody }, { ...deps, actorId: auth.session.userId });
     return json(201, { note });
   } catch (err) {
     return json(400, { error: err.message });

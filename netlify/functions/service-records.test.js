@@ -61,11 +61,14 @@ test("GET as org_member lists service records for their org", async () => {
 });
 
 test("PATCH as admin updates status", async () => {
-  const sql = routingFakeSql({});
+  const sql = routingFakeSql({
+    records: [{ id: "svc-1", organization_id: "org-a", category: "website", title: "x", status: "active", created_at: "2026-07-01T00:00:00.000Z", updated_at: "2026-07-01T00:00:00.000Z", created_by: "admin-1", version: 1 }],
+  });
+  const auditRecorder = { record: async (input) => input, events: [] };
   const res = await handler(
     { httpMethod: "PATCH", headers: { cookie: "lts_session=fake-token" }, body: JSON.stringify({ recordId: "svc-1", status: "completed" }) },
     {},
-    { ...fakeDeps("admin"), sql, now: FIXED_NOW }
+    { ...fakeDeps("admin"), sql, now: FIXED_NOW, auditRecorder }
   );
   assert.equal(res.statusCode, 200);
 });

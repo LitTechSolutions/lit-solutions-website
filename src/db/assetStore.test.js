@@ -15,17 +15,48 @@ function fakeSql(cannedRows = []) {
   return tag;
 }
 
+function fakeAuditRecorder() {
+  const events = [];
+  return { record: async (input) => { events.push(input); return input; }, events };
+}
+
+function backupRow(overrides = {}) {
+  return {
+    id: "backup-1",
+    organization_id: "org-a",
+    website_profile_id: "profile-1",
+    category: "source",
+    location: "Netlify deploy history",
+    taken_at: "2026-07-01T00:00:00.000Z",
+    restore_verified: false,
+    ...overrides,
+  };
+}
+
 test("createTechnologyAsset validates and inserts, no credential fields possible", async () => {
   const sql = fakeSql();
-  const asset = await createTechnologyAsset({ organizationId: "org-a", type: "computer", label: "Front desk PC" }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID });
+  const auditRecorder = fakeAuditRecorder();
+  const asset = await createTechnologyAsset({ organizationId: "org-a", type: "computer", label: "Front desk PC" }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID, auditRecorder });
   assert.equal(asset.label, "Front desk PC");
   assert.match(sql.calls[0].text, /INSERT INTO technology_assets/);
+  assert.equal(auditRecorder.events.length, 1);
+  assert.equal(auditRecorder.events[0].action, "asset.create");
+  assert.equal(auditRecorder.events[0].actorId, "system");
+});
+
+test("createTechnologyAsset records the actor when deps.actorId is supplied", async () => {
+  const sql = fakeSql();
+  const auditRecorder = fakeAuditRecorder();
+  await createTechnologyAsset({ organizationId: "org-a", type: "computer", label: "Front desk PC" }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID, auditRecorder, actorId: "user-1" });
+  assert.equal(auditRecorder.events[0].actorId, "user-1");
 });
 
 test("createTechnologyAsset rejects an invalid type before querying", async () => {
   const sql = fakeSql();
-  await assert.rejects(() => createTechnologyAsset({ organizationId: "org-a", type: "bogus", label: "x" }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID }));
+  const auditRecorder = fakeAuditRecorder();
+  await assert.rejects(() => createTechnologyAsset({ organizationId: "org-a", type: "bogus", label: "x" }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID, auditRecorder }));
   assert.equal(sql.calls.length, 0);
+  assert.equal(auditRecorder.events.length, 0);
 });
 
 test("listTechnologyAssets scopes by organization", async () => {
@@ -36,20 +67,39 @@ test("listTechnologyAssets scopes by organization", async () => {
 
 test("recordBackup validates and inserts as not-yet-verified", async () => {
   const sql = fakeSql();
-  const backup = await recordBackup({ organizationId: "org-a", websiteProfileId: "profile-1", category: "source", location: "Netlify deploy history" }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID });
+  const auditRecorder = fakeAuditRecorder();
+  const backup = await recordBackup({ organizationId: "org-a", websiteProfileId: "profile-1", category: "source", location: "Netlify deploy history" }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID, auditRecorder });
   assert.equal(backup.restoreVerified, false);
   assert.match(sql.calls[0].text, /INSERT INTO backup_records/);
+  assert.equal(auditRecorder.events.length, 1);
+  assert.equal(auditRecorder.events[0].action, "asset.backup_recorded");
+  assert.deepEqual(auditRecorder.events[0].metadata, { category: "source" });
 });
 
 test("recordBackup rejects an invalid category before querying", async () => {
   const sql = fakeSql();
-  await assert.rejects(() => recordBackup({ organizationId: "org-a", websiteProfileId: "profile-1", category: "bogus", location: "x" }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID }));
+  const auditRecorder = fakeAuditRecorder();
+  await assert.rejects(() => recordBackup({ organizationId: "org-a", websiteProfileId: "profile-1", category: "bogus", location: "x" }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID, auditRecorder }));
   assert.equal(sql.calls.length, 0);
+  assert.equal(auditRecorder.events.length, 0);
 });
 
-test("markBackupRestoreVerified issues an UPDATE", async () => {
-  const sql = fakeSql();
-  await markBackupRestoreVerified("backup-1", { sql, now: FIXED_NOW });
-  assert.match(sql.calls[0].text, /UPDATE backup_records/);
-  assert.ok(sql.calls[0].values.includes(true));
+test("markBackupRestoreVerified fetches the record, issues an UPDATE, and audits the actor", async () => {
+  const sql = fakeSql([backupRow()]);
+  const auditRecorder = fakeAuditRecorder();
+  await markBackupRestoreVerified("backup-1", { sql, now: FIXED_NOW, auditRecorder, actorId: "tech-1" });
+  assert.match(sql.calls[0].text, /SELECT \* FROM backup_records/);
+  assert.match(sql.calls[1].text, /UPDATE backup_records/);
+  assert.ok(sql.calls[1].values.includes(true));
+  assert.equal(auditRecorder.events.length, 1);
+  assert.equal(auditRecorder.events[0].action, "asset.backup_verified");
+  assert.equal(auditRecorder.events[0].actorId, "tech-1");
+  assert.equal(auditRecorder.events[0].organizationId, "org-a");
+});
+
+test("markBackupRestoreVerified throws for a nonexistent backup record without auditing", async () => {
+  const sql = fakeSql([]);
+  const auditRecorder = fakeAuditRecorder();
+  await assert.rejects(() => markBackupRestoreVerified("nope", { sql, now: FIXED_NOW, auditRecorder }), /no backup record/);
+  assert.equal(auditRecorder.events.length, 0);
 });

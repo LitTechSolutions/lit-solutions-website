@@ -39,7 +39,7 @@ async function handleCreate(event, deps) {
   if (deny) return deny;
 
   try {
-    const reminder = await createReminder({ organizationId, subjectId, subjectType, expiresAt }, deps);
+    const reminder = await createReminder({ organizationId, subjectId, subjectType, expiresAt }, { ...deps, actorId: auth.session.userId });
     return json(201, { reminder });
   } catch (err) {
     return json(400, { error: err.message });

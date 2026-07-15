@@ -44,14 +44,14 @@ async function handleCreate(event, deps) {
     if (kind === "asset") {
       const { type, label, warrantyExpiresAt, licenseExpiresAt } = body;
       if (!type || !label) return json(400, { error: "type and label are required for an asset." });
-      const asset = await createTechnologyAsset({ organizationId, type, label, warrantyExpiresAt, licenseExpiresAt }, deps);
+      const asset = await createTechnologyAsset({ organizationId, type, label, warrantyExpiresAt, licenseExpiresAt }, { ...deps, actorId: auth.session.userId });
       return json(201, { asset });
     }
     const { websiteProfileId, category, location } = body;
     if (!websiteProfileId || !category || !location) {
       return json(400, { error: "websiteProfileId, category, and location are required for a backup." });
     }
-    const backup = await recordBackup({ organizationId, websiteProfileId, category, location }, deps);
+    const backup = await recordBackup({ organizationId, websiteProfileId, category, location }, { ...deps, actorId: auth.session.userId });
     return json(201, { backup });
   } catch (err) {
     return json(400, { error: err.message });
@@ -88,6 +88,6 @@ async function handleVerifyBackup(event, deps) {
   const deny = denyResponseFor(auth.authContext, null, "customer.administer");
   if (deny) return deny;
 
-  await markBackupRestoreVerified(backupId, deps);
+  await markBackupRestoreVerified(backupId, { ...deps, actorId: auth.session.userId });
   return json(200, { message: "Backup marked restore-verified." });
 }

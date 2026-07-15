@@ -41,7 +41,7 @@ async function handleRecordUsage(event, deps) {
   if (deny) return deny;
 
   try {
-    const result = await recordUsage({ organizationId, planKey, usageKey, amount }, deps);
+    const result = await recordUsage({ organizationId, planKey, usageKey, amount }, { ...deps, actorId: auth.session.userId });
     return json(result.recorded ? 201 : 409, result);
   } catch (err) {
     return json(400, { error: err.message });

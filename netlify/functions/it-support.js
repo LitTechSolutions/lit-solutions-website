@@ -38,7 +38,7 @@ exports.handler = async (event, context, deps = {}) => {
   if (deny) return deny;
 
   try {
-    const result = await recordItSupportClassification(ticketId, { requiresPhysicalAccess, safetyRisk }, deps);
+    const result = await recordItSupportClassification(ticketId, { requiresPhysicalAccess, safetyRisk }, { ...deps, actorId: auth.session.userId });
     return json(201, { classification: result });
   } catch (err) {
     return json(400, { error: err.message });

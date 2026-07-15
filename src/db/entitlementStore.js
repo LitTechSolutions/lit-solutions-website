@@ -11,6 +11,12 @@ const crypto = require("node:crypto");
 const { getSql } = require("./pgClient");
 const { assertValidEntitlementLimit } = require("../domain/entitlement");
 const { checkEntitlement } = require("../policy/entitlementCheck");
+const { createAuditRecorder } = require("../audit/auditLog");
+const { createPgAuditSink } = require("./pgAuditSink");
+
+function resolveAuditRecorder(deps) {
+  return deps.auditRecorder || createAuditRecorder(createPgAuditSink({ sql: deps.sql }));
+}
 
 // "total"-reset usage has no natural period boundary, so it accumulates
 // into a single fixed period bucket rather than one row per organization
@@ -35,11 +41,12 @@ function resolvePeriodStart(resetPeriod, now) {
  * (plan_key, usage_key).
  *
  * @param {import("../domain/entitlement").EntitlementLimit} limit
- * @param {{ sql?: Function }} [deps]
+ * @param {{ sql?: Function, actorId?: string, auditRecorder?: object }} [deps]
  * @returns {Promise<import("../domain/entitlement").EntitlementLimit>}
  */
 async function upsertEntitlementLimit(limit, deps = {}) {
   const sql = deps.sql || getSql();
+  const auditRecorder = resolveAuditRecorder(deps);
   assertValidEntitlementLimit(limit);
 
   const limitValue = limit.resetPeriod === "unlimited" ? null : limit.limit;
@@ -48,6 +55,23 @@ async function upsertEntitlementLimit(limit, deps = {}) {
     VALUES (${limit.planKey}, ${limit.usageKey}, ${limitValue}, ${limit.resetPeriod})
     ON CONFLICT (plan_key, usage_key) DO UPDATE SET limit_value = ${limitValue}, reset_period = ${limit.resetPeriod}
   `;
+
+  const targetId = `${limit.planKey}:${limit.usageKey}`;
+  await auditRecorder.record(
+    {
+      correlationId: targetId,
+      actorType: "user",
+      actorId: deps.actorId || "system",
+      organizationId: null,
+      action: "entitlement.limit_set",
+      targetType: "entitlement_limit",
+      targetId,
+      outcome: "success",
+      metadata: { planKey: limit.planKey, usageKey: limit.usageKey },
+    },
+    deps
+  );
+
   return limit;
 }
 
@@ -87,13 +111,14 @@ async function getConsumedForPeriod(organizationId, planKey, usageKey, periodSta
  * usage that checkEntitlement() would reject.
  *
  * @param {{ organizationId: string, planKey: string, usageKey: string, amount: number }} input
- * @param {{ sql?: Function, now?: () => Date, idGenerator?: () => string }} [deps]
+ * @param {{ sql?: Function, now?: () => Date, idGenerator?: () => string, actorId?: string, auditRecorder?: object }} [deps]
  * @returns {Promise<{ recorded: boolean, withinLimit: boolean, remaining: number | null, reason: string }>}
  */
 async function recordUsage(input, deps = {}) {
   const sql = deps.sql || getSql();
   const now = deps.now || (() => new Date());
   const idGenerator = deps.idGenerator || (() => crypto.randomUUID());
+  const auditRecorder = resolveAuditRecorder(deps);
 
   if (typeof input.amount !== "number" || input.amount <= 0) {
     throw new Error("recordUsage: amount must be a positive number");
@@ -128,14 +153,32 @@ async function recordUsage(input, deps = {}) {
     SELECT id FROM usage_records
     WHERE organization_id = ${input.organizationId} AND plan_key = ${input.planKey} AND usage_key = ${input.usageKey} AND period_start = ${periodStart}
   `;
+  let usageRecordId;
   if (existing.length > 0) {
+    usageRecordId = existing[0].id;
     await sql`UPDATE usage_records SET consumed = ${newConsumed} WHERE id = ${existing[0].id}`;
   } else {
+    usageRecordId = idGenerator();
     await sql`
       INSERT INTO usage_records (id, organization_id, plan_key, usage_key, consumed, period_start)
-      VALUES (${idGenerator()}, ${input.organizationId}, ${input.planKey}, ${input.usageKey}, ${newConsumed}, ${periodStart})
+      VALUES (${usageRecordId}, ${input.organizationId}, ${input.planKey}, ${input.usageKey}, ${newConsumed}, ${periodStart})
     `;
   }
+
+  await auditRecorder.record(
+    {
+      correlationId: usageRecordId,
+      actorType: "user",
+      actorId: deps.actorId || "system",
+      organizationId: input.organizationId,
+      action: "entitlement.usage_recorded",
+      targetType: "usage_record",
+      targetId: usageRecordId,
+      outcome: "success",
+      metadata: { usageKey: input.usageKey, amount: input.amount },
+    },
+    deps
+  );
 
   const afterCheck = checkEntitlement(limit, newConsumed);
   return { recorded: true, ...afterCheck };

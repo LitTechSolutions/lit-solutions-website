@@ -9,16 +9,23 @@ const crypto = require("node:crypto");
 const { getSql } = require("./pgClient");
 const { assertValidApprovalRequest } = require("../domain/approval");
 const { transitionApproval } = require("../policy/approvalWorkflow");
+const { createAuditRecorder } = require("../audit/auditLog");
+const { createPgAuditSink } = require("./pgAuditSink");
+
+function resolveAuditRecorder(deps) {
+  return deps.auditRecorder || createAuditRecorder(createPgAuditSink({ sql: deps.sql }));
+}
 
 /**
  * @param {{ organizationId: string, subjectType: string, subjectId: string, requestedBy: string, expiresAt: string }} input
- * @param {{ sql?: Function, now?: () => Date, idGenerator?: () => string }} [deps]
+ * @param {{ sql?: Function, now?: () => Date, idGenerator?: () => string, actorId?: string, auditRecorder?: object }} [deps]
  * @returns {Promise<import("../domain/approval").ApprovalRequest>}
  */
 async function createApprovalRequest(input, deps = {}) {
   const sql = deps.sql || getSql();
   const now = deps.now || (() => new Date());
   const idGenerator = deps.idGenerator || (() => crypto.randomUUID());
+  const auditRecorder = resolveAuditRecorder(deps);
 
   const approval = {
     id: idGenerator(),
@@ -36,6 +43,22 @@ async function createApprovalRequest(input, deps = {}) {
     INSERT INTO approval_requests (id, organization_id, subject_type, subject_id, status, requested_at, requested_by, expires_at)
     VALUES (${approval.id}, ${approval.organizationId}, ${approval.subjectType}, ${approval.subjectId}, ${approval.status}, ${approval.requestedAt}, ${approval.requestedBy}, ${approval.expiresAt})
   `;
+
+  await auditRecorder.record(
+    {
+      correlationId: approval.id,
+      actorType: "user",
+      actorId: deps.actorId || "system",
+      organizationId: approval.organizationId,
+      action: "approval.create",
+      targetType: "approval_request",
+      targetId: approval.id,
+      outcome: "success",
+      metadata: { subjectType: approval.subjectType, subjectId: approval.subjectId },
+    },
+    deps
+  );
+
   return approval;
 }
 
@@ -60,12 +83,13 @@ async function listPendingApprovals(organizationId, deps = {}) {
  * @param {string} id
  * @param {import("../policy/approvalWorkflow").ApprovalAction} action
  * @param {{ decidedBy?: string, decisionNote?: string }} decision
- * @param {{ sql?: Function, now?: () => Date }} [deps]
+ * @param {{ sql?: Function, now?: () => Date, actorId?: string, auditRecorder?: object }} [deps]
  * @returns {Promise<import("../domain/approval").ApprovalRequest>}
  */
 async function applyApprovalDecision(id, action, decision, deps = {}) {
   const sql = deps.sql || getSql();
   const now = deps.now || (() => new Date());
+  const auditRecorder = resolveAuditRecorder(deps);
 
   const rows = await sql`SELECT * FROM approval_requests WHERE id = ${id}`;
   if (rows.length === 0) {
@@ -83,6 +107,21 @@ async function applyApprovalDecision(id, action, decision, deps = {}) {
     SET status = ${result.nextStatus}, decided_at = ${nowIso}, decided_by = ${decision.decidedBy || null}, decision_note = ${decision.decisionNote || null}
     WHERE id = ${id}
   `;
+
+  await auditRecorder.record(
+    {
+      correlationId: id,
+      actorType: "user",
+      actorId: deps.actorId || "system",
+      organizationId: current.organizationId,
+      action: "approval.decision",
+      targetType: "approval_request",
+      targetId: id,
+      outcome: "success",
+      metadata: { decision: action },
+    },
+    deps
+  );
 
   return { ...current, status: result.nextStatus, decidedAt: nowIso, ...(decision.decidedBy ? { decidedBy: decision.decidedBy } : {}), ...(decision.decisionNote ? { decisionNote: decision.decisionNote } : {}) };
 }

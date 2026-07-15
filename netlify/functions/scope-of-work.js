@@ -51,7 +51,7 @@ async function handleCreate(event, deps) {
   if (deny) return deny;
 
   try {
-    const scope = await createInitialScope({ organizationId, ticketId, assumptions, exclusions, lineItems, createdBy: auth.session.userId }, deps);
+    const scope = await createInitialScope({ organizationId, ticketId, assumptions, exclusions, lineItems, createdBy: auth.session.userId }, { ...deps, actorId: auth.session.userId });
     return json(201, { scope });
   } catch (err) {
     return json(400, { error: err.message });
@@ -97,7 +97,7 @@ async function handleNextVersion(event, deps) {
   if (deny) return deny;
 
   try {
-    const next = await createNextScopeVersion(scopeId, { assumptions: body.assumptions, exclusions: body.exclusions, lineItems: body.lineItems }, deps);
+    const next = await createNextScopeVersion(scopeId, { assumptions: body.assumptions, exclusions: body.exclusions, lineItems: body.lineItems }, { ...deps, actorId: auth.session.userId });
     return json(200, { scope: next });
   } catch (err) {
     return json(400, { error: err.message });

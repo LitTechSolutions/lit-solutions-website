@@ -40,7 +40,7 @@ async function handleCreate(event, deps) {
   if (deny) return deny;
 
   try {
-    const record = await createServiceRecord({ organizationId, category, title, createdBy: auth.session.userId }, deps);
+    const record = await createServiceRecord({ organizationId, category, title, createdBy: auth.session.userId }, { ...deps, actorId: auth.session.userId });
     return json(201, { record });
   } catch (err) {
     return json(400, { error: err.message });
@@ -78,7 +78,7 @@ async function handleStatusChange(event, deps) {
   if (deny) return deny;
 
   try {
-    await updateServiceRecordStatus(recordId, status, deps);
+    await updateServiceRecordStatus(recordId, status, { ...deps, actorId: auth.session.userId });
     return json(200, { message: "Status updated." });
   } catch (err) {
     return json(400, { error: err.message });

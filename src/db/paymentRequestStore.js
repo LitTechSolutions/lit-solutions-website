@@ -15,6 +15,12 @@ const { getSql } = require("./pgClient");
 const { assertValidPaymentRequest } = require("../domain/paymentRequest");
 const { determinePaymentSchedule } = require("../policy/paymentSchedule");
 const { transitionPaymentStatus } = require("../policy/paymentReconciliation");
+const { createAuditRecorder } = require("../audit/auditLog");
+const { createPgAuditSink } = require("./pgAuditSink");
+
+function resolveAuditRecorder(deps) {
+  return deps.auditRecorder || createAuditRecorder(createPgAuditSink({ sql: deps.sql }));
+}
 
 /**
  * Computes the payment schedule for a priced piece of work and persists
@@ -22,13 +28,14 @@ const { transitionPaymentStatus } = require("../policy/paymentReconciliation");
  * full_upfront, two for deposit_balance).
  *
  * @param {{ organizationId: string, subjectType: string, subjectId: string, amountRefPrefix: string, totalAmount: number, isThirdPartyExpense?: boolean }} input
- * @param {{ sql?: Function, now?: () => Date, idGenerator?: () => string }} [deps]
+ * @param {{ sql?: Function, now?: () => Date, idGenerator?: () => string, actorId?: string, auditRecorder?: object }} [deps]
  * @returns {Promise<{ scheduleType: string, reason: string, paymentRequests: Array<import("../domain/paymentRequest").PaymentRequest & { amount: number, dueWhen: string }> }>}
  */
 async function createPaymentRequestsForSchedule(input, deps = {}) {
   const sql = deps.sql || getSql();
   const now = deps.now || (() => new Date());
   const idGenerator = deps.idGenerator || (() => crypto.randomUUID());
+  const auditRecorder = resolveAuditRecorder(deps);
 
   const schedule = determinePaymentSchedule(input.totalAmount, { isThirdPartyExpense: input.isThirdPartyExpense });
 
@@ -49,6 +56,22 @@ async function createPaymentRequestsForSchedule(input, deps = {}) {
       INSERT INTO payment_requests (id, organization_id, subject_type, subject_id, amount_ref, status, created_at)
       VALUES (${paymentRequest.id}, ${paymentRequest.organizationId}, ${paymentRequest.subjectType}, ${paymentRequest.subjectId}, ${paymentRequest.amountRef}, ${paymentRequest.status}, ${paymentRequest.createdAt})
     `;
+
+    await auditRecorder.record(
+      {
+        correlationId: paymentRequest.id,
+        actorType: "user",
+        actorId: deps.actorId || "system",
+        organizationId: paymentRequest.organizationId,
+        action: "payment_request.create",
+        targetType: "payment_request",
+        targetId: paymentRequest.id,
+        outcome: "success",
+        metadata: { subjectType: paymentRequest.subjectType, subjectId: paymentRequest.subjectId, scheduleType: schedule.scheduleType },
+      },
+      deps
+    );
+
     paymentRequests.push({ ...paymentRequest, amount: payment.amount, dueWhen: payment.dueWhen });
   }
 
@@ -72,11 +95,12 @@ async function getPaymentRequestById(id, deps = {}) {
  *
  * @param {string} id
  * @param {import("../domain/paymentRequest").PaymentRequestStatus} nextStatus
- * @param {{ sql?: Function, providerReference?: string }} [deps]
+ * @param {{ sql?: Function, providerReference?: string, actorId?: string, auditRecorder?: object }} [deps]
  * @returns {Promise<import("../domain/paymentRequest").PaymentRequest>}
  */
 async function applyPaymentStatusTransition(id, nextStatus, deps = {}) {
   const sql = deps.sql || getSql();
+  const auditRecorder = resolveAuditRecorder(deps);
   const current = await getPaymentRequestById(id, { sql });
   if (!current) {
     throw new Error(`applyPaymentStatusTransition: no payment request "${id}"`);
@@ -88,6 +112,22 @@ async function applyPaymentStatusTransition(id, nextStatus, deps = {}) {
   const providerReference = deps.providerReference ?? current.providerReference ?? null;
 
   await sql`UPDATE payment_requests SET status = ${nextStatus}, provider_reference = ${providerReference} WHERE id = ${id}`;
+
+  await auditRecorder.record(
+    {
+      correlationId: id,
+      actorType: "user",
+      actorId: deps.actorId || "system",
+      organizationId: current.organizationId,
+      action: "payment_request.transition",
+      targetType: "payment_request",
+      targetId: id,
+      outcome: "success",
+      metadata: { fromStatus: current.status, toStatus: nextStatus },
+    },
+    deps
+  );
+
   return { ...current, status: nextStatus, providerReference: providerReference || undefined };
 }
 

@@ -20,6 +20,11 @@ function fakeSql(cannedRows = []) {
   return tag;
 }
 
+function fakeAuditRecorder() {
+  const events = [];
+  return { record: async (input) => { events.push(input); return input; }, events };
+}
+
 function subscriptionRow(overrides = {}) {
   return {
     id: "sub-1",
@@ -36,16 +41,23 @@ function subscriptionRow(overrides = {}) {
 
 test("createSubscription validates and inserts as active", async () => {
   const sql = fakeSql();
-  const sub = await createSubscription({ organizationId: "org-a", planKey: "website_care" }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID });
+  const auditRecorder = fakeAuditRecorder();
+  const sub = await createSubscription({ organizationId: "org-a", planKey: "website_care" }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID, auditRecorder, actorId: "user-1" });
   assert.equal(sub.status, "active");
   assert.equal(sub.planKey, "website_care");
   assert.match(sql.calls[0].text, /INSERT INTO subscriptions/);
+  assert.equal(auditRecorder.events.length, 1);
+  assert.equal(auditRecorder.events[0].action, "subscription.create");
+  assert.equal(auditRecorder.events[0].actorId, "user-1");
+  assert.deepEqual(auditRecorder.events[0].metadata, { planKey: "website_care" });
 });
 
 test("createSubscription rejects a subscription without an organizationId", async () => {
   const sql = fakeSql();
-  await assert.rejects(() => createSubscription({ organizationId: "", planKey: "website_care" }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID }));
+  const auditRecorder = fakeAuditRecorder();
+  await assert.rejects(() => createSubscription({ organizationId: "", planKey: "website_care" }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID, auditRecorder }));
   assert.equal(sql.calls.length, 0);
+  assert.equal(auditRecorder.events.length, 0);
 });
 
 test("getSubscriptionById returns null for no match", async () => {
@@ -55,23 +67,32 @@ test("getSubscriptionById returns null for no match", async () => {
 
 test("applySubscriptionStatusTransition allows active -> paused and stamps paused_at", async () => {
   const sql = fakeSql([subscriptionRow({ status: "active" })]);
-  const updated = await applySubscriptionStatusTransition("sub-1", "paused", { sql, now: FIXED_NOW });
+  const auditRecorder = fakeAuditRecorder();
+  const updated = await applySubscriptionStatusTransition("sub-1", "paused", { sql, now: FIXED_NOW, auditRecorder, actorId: "user-1" });
   assert.equal(updated.status, "paused");
   assert.equal(updated.pausedAt, "2026-07-14T12:00:00.000Z");
   assert.equal(sql.calls.length, 2, "1 SELECT + 1 UPDATE");
   assert.match(sql.calls[1].text, /UPDATE subscriptions/);
+  assert.equal(auditRecorder.events.length, 1);
+  assert.equal(auditRecorder.events[0].action, "subscription.transition");
+  assert.equal(auditRecorder.events[0].actorId, "user-1");
+  assert.deepEqual(auditRecorder.events[0].metadata, { fromStatus: "active", toStatus: "paused" });
 });
 
 test("applySubscriptionStatusTransition allows paused -> active (resume) without re-creating the record", async () => {
   const sql = fakeSql([subscriptionRow({ status: "paused", paused_at: "2026-07-10T00:00:00.000Z" })]);
-  const updated = await applySubscriptionStatusTransition("sub-1", "active", { sql, now: FIXED_NOW });
+  const auditRecorder = fakeAuditRecorder();
+  const updated = await applySubscriptionStatusTransition("sub-1", "active", { sql, now: FIXED_NOW, auditRecorder });
   assert.equal(updated.status, "active");
+  assert.equal(auditRecorder.events.length, 1);
 });
 
 test("applySubscriptionStatusTransition rejects reactivating a cancelled subscription (terminal state)", async () => {
   const sql = fakeSql([subscriptionRow({ status: "cancelled", cancelled_at: "2026-07-05T00:00:00.000Z" })]);
-  await assert.rejects(() => applySubscriptionStatusTransition("sub-1", "active", { sql, now: FIXED_NOW }));
+  const auditRecorder = fakeAuditRecorder();
+  await assert.rejects(() => applySubscriptionStatusTransition("sub-1", "active", { sql, now: FIXED_NOW, auditRecorder }));
   assert.equal(sql.calls.length, 1, "no UPDATE happens on an illegal transition");
+  assert.equal(auditRecorder.events.length, 0);
 });
 
 test("applySubscriptionStatusTransition throws for a nonexistent subscription", async () => {

@@ -20,7 +20,7 @@ const {
   rateLimited,
 } = require("./_lib/auth_utils");
 const { setJSON, store } = require("./_lib/blob_store");
-const { verifyTotpCode } = require("../../src/security/totp");
+const { validateTotpToken } = require("../../src/security/totp");
 const { decryptSecret, verifyRecoveryCode } = require("../../src/security/mfaCrypto");
 const { createAuditRecorder } = require("../../src/audit/auditLog");
 const { createPgAuditSink } = require("../../src/db/pgAuditSink");
@@ -126,9 +126,19 @@ exports.handler = async (event, context, deps = {}) => {
 
   const mfaKey = resolveMfaKey(deps);
   const secretBase32 = decryptSecret(user.mfaSecretEncrypted, mfaKey);
-  const verifyTotpCodeFn = deps.verifyTotpCode || verifyTotpCode;
-  const ok = verifyTotpCodeFn(secretBase32, String(body.code || ""));
-  if (!ok) return recordFailureAndDeny();
+  const validateTotpTokenFn = deps.validateTotpToken || validateTotpToken;
+  const { valid, counter } = validateTotpTokenFn(secretBase32, String(body.code || ""));
+  if (!valid) return recordFailureAndDeny();
+
+  // Anti-replay: a code is only valid the FIRST time it's presented, even
+  // within its own +/-1 period clock-skew window -- otherwise an
+  // intercepted code (shoulder-surfed, proxied, exfiltrated) stays usable
+  // for up to ~90s after the legitimate holder already used it.
+  if (typeof user.mfaLastUsedCounter === "number" && counter <= user.mfaLastUsedCounter) {
+    return recordFailureAndDeny();
+  }
+  user.mfaLastUsedCounter = counter;
+  await setJSONFn("users", userKey, user);
 
   await auditRecorder.record(
     { correlationId: user.id, actorType: "user", actorId: user.id, organizationId: null, action: "mfa.challenge.success", targetType: "user", targetId: user.id, outcome: "success" },

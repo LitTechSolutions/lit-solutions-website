@@ -1,7 +1,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const { handler } = require("./mfa-enroll");
-const { generateTotpSecret, buildOtpauthUri, verifyTotpCode } = require("../../src/security/totp");
+const { generateTotpSecret, buildOtpauthUri, validateTotpToken } = require("../../src/security/totp");
 const { encryptSecret, decryptSecret } = require("../../src/security/mfaCrypto");
 
 const MFA_KEY = "a".repeat(64);
@@ -95,7 +95,7 @@ test("action: confirm with no enrollment in progress returns 400", async () => {
 test("action: confirm with the wrong code is denied, audited as a failure, and MFA is NOT activated", async () => {
   const secret = generateTotpSecret();
   const users = { "dylan@lit-solutions.tech": adminUser({ mfaPendingSecretEncrypted: encryptSecret(secret, MFA_KEY) }) };
-  const deps = baseDeps(users, { verifyTotpCode: () => false });
+  const deps = baseDeps(users, { validateTotpToken: () => ({ valid: false, counter: null }) });
   const res = await handler(baseEvent({ body: JSON.stringify({ action: "confirm", code: "000000" }) }), {}, deps);
   assert.equal(res.statusCode, 401);
   assert.equal(deps.auditRecorder.events[0].action, "mfa.enroll.confirm");
@@ -105,7 +105,7 @@ test("action: confirm with the wrong code is denied, audited as a failure, and M
 test("action: confirm with the correct code activates MFA, issues recovery codes once, and upgrades to a real session", async () => {
   const secret = generateTotpSecret();
   const users = { "dylan@lit-solutions.tech": adminUser({ mfaPendingSecretEncrypted: encryptSecret(secret, MFA_KEY) }) };
-  const deps = baseDeps(users, { verifyTotpCode: () => true });
+  const deps = baseDeps(users, { validateTotpToken: () => ({ valid: true, counter: 1000 }) });
   const res = await handler(baseEvent({ body: JSON.stringify({ action: "confirm", code: "123456" }) }), {}, deps);
 
   assert.equal(res.statusCode, 200);
@@ -119,6 +119,7 @@ test("action: confirm with the correct code activates MFA, issues recovery codes
   assert.ok(saved.mfaSecretEncrypted);
   assert.equal(saved.mfaRecoveryCodeHashes.length, 10);
   assert.notEqual(saved.mfaRecoveryCodeHashes[0], body.recoveryCodes[0], "stored hashed, not plaintext");
+  assert.equal(saved.mfaLastUsedCounter, 1000, "seeds anti-replay tracking with the confirm code's own counter");
 
   assert.equal(deps.auditRecorder.events.length, 1);
   assert.equal(deps.auditRecorder.events[0].outcome, "success");
@@ -154,7 +155,7 @@ test("real TOTP round-trip end to end: generate a code from the returned secret 
   const confirmRes = await handler(
     baseEvent({ body: JSON.stringify({ action: "confirm", code }) }),
     {},
-    { ...deps, verifyTotpCode: (s, t) => verifyTotpCode(s, t, { timestamp: FIXED_TS }) }
+    { ...deps, validateTotpToken: (s, t) => validateTotpToken(s, t, { timestamp: FIXED_TS }) }
   );
   assert.equal(confirmRes.statusCode, 200);
 });

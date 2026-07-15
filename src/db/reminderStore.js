@@ -7,15 +7,22 @@ const crypto = require("node:crypto");
 const { getSql } = require("./pgClient");
 const { assertValidLifecycleReminder } = require("../domain/lifecycleReminder");
 const { evaluateReminder } = require("../reminders/lifecycleReminders");
+const { createAuditRecorder } = require("../audit/auditLog");
+const { createPgAuditSink } = require("./pgAuditSink");
+
+function resolveAuditRecorder(deps) {
+  return deps.auditRecorder || createAuditRecorder(createPgAuditSink({ sql: deps.sql }));
+}
 
 /**
  * @param {{ organizationId: string, subjectId: string, subjectType: string, expiresAt: string }} input
- * @param {{ sql?: Function, idGenerator?: () => string }} [deps]
+ * @param {{ sql?: Function, idGenerator?: () => string, actorId?: string, auditRecorder?: object }} [deps]
  * @returns {Promise<import("../domain/lifecycleReminder").LifecycleReminder>}
  */
 async function createReminder(input, deps = {}) {
   const sql = deps.sql || getSql();
   const idGenerator = deps.idGenerator || (() => crypto.randomUUID());
+  const auditRecorder = resolveAuditRecorder(deps);
 
   const reminder = { id: idGenerator(), ...input, sent: false };
   assertValidLifecycleReminder(reminder);
@@ -24,6 +31,22 @@ async function createReminder(input, deps = {}) {
     INSERT INTO lifecycle_reminders (id, organization_id, subject_id, subject_type, expires_at, sent)
     VALUES (${reminder.id}, ${reminder.organizationId}, ${reminder.subjectId}, ${reminder.subjectType}, ${reminder.expiresAt}, ${reminder.sent})
   `;
+
+  await auditRecorder.record(
+    {
+      correlationId: reminder.id,
+      actorType: "user",
+      actorId: deps.actorId || "system",
+      organizationId: reminder.organizationId,
+      action: "reminder.create",
+      targetType: "lifecycle_reminder",
+      targetId: reminder.id,
+      outcome: "success",
+      metadata: { subjectType: reminder.subjectType, subjectId: reminder.subjectId },
+    },
+    deps
+  );
+
   return reminder;
 }
 
@@ -47,12 +70,35 @@ async function listDueReminders(deps = {}) {
 
 /**
  * @param {string} id
- * @param {{ sql?: Function }} [deps]
+ * @param {{ sql?: Function, actorId?: string, auditRecorder?: object }} [deps]
  * @returns {Promise<void>}
  */
 async function markReminderSent(id, deps = {}) {
   const sql = deps.sql || getSql();
+  const auditRecorder = resolveAuditRecorder(deps);
+
+  const rows = await sql`SELECT * FROM lifecycle_reminders WHERE id = ${id}`;
+  if (rows.length === 0) {
+    throw new Error(`markReminderSent: no lifecycle reminder "${id}"`);
+  }
+  const organizationId = rows[0].organization_id;
+
   await sql`UPDATE lifecycle_reminders SET sent = true WHERE id = ${id}`;
+
+  await auditRecorder.record(
+    {
+      correlationId: id,
+      actorType: "user",
+      actorId: deps.actorId || "system",
+      organizationId,
+      action: "reminder.sent",
+      targetType: "lifecycle_reminder",
+      targetId: id,
+      outcome: "success",
+      metadata: {},
+    },
+    deps
+  );
 }
 
 /**

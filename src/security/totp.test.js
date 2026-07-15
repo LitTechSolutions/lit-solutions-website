@@ -1,7 +1,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const { TOTP, Secret } = require("otpauth");
-const { generateTotpSecret, buildOtpauthUri, verifyTotpCode } = require("./totp");
+const { generateTotpSecret, buildOtpauthUri, verifyTotpCode, validateTotpToken } = require("./totp");
 
 const FIXED_TS = 1752580800000; // 2026-07-15T12:00:00.000Z
 
@@ -64,4 +64,33 @@ test("a wrong secret never validates the right code", () => {
   const secretB = generateTotpSecret();
   const code = codeFor(secretA, FIXED_TS);
   assert.equal(verifyTotpCode(secretB, code, { timestamp: FIXED_TS }), false);
+});
+
+test("validateTotpToken returns the matched counter for the current period (delta 0)", () => {
+  const secret = generateTotpSecret();
+  const code = codeFor(secret, FIXED_TS);
+  const result = validateTotpToken(secret, code, { timestamp: FIXED_TS });
+  assert.equal(result.valid, true);
+  assert.equal(result.counter, Math.floor(FIXED_TS / 1000 / 30));
+});
+
+test("validateTotpToken's counter reflects which period in the window actually matched, not just wall-clock time", () => {
+  const secret = generateTotpSecret();
+  const codeOnePeriodAgo = codeFor(secret, FIXED_TS - 30_000);
+  const result = validateTotpToken(secret, codeOnePeriodAgo, { timestamp: FIXED_TS, window: 1 });
+  assert.equal(result.valid, true);
+  assert.equal(result.counter, Math.floor(FIXED_TS / 1000 / 30) - 1);
+});
+
+test("validateTotpToken returns counter: null for an invalid code", () => {
+  const secret = generateTotpSecret();
+  assert.deepEqual(validateTotpToken(secret, "000000", { timestamp: FIXED_TS }), { valid: false, counter: null });
+  assert.deepEqual(validateTotpToken(secret, "abc", { timestamp: FIXED_TS }), { valid: false, counter: null });
+});
+
+test("validateTotpToken's counter increases across consecutive periods, so a caller can reject non-increasing counters as replays", () => {
+  const secret = generateTotpSecret();
+  const first = validateTotpToken(secret, codeFor(secret, FIXED_TS), { timestamp: FIXED_TS });
+  const second = validateTotpToken(secret, codeFor(secret, FIXED_TS + 30_000), { timestamp: FIXED_TS + 30_000 });
+  assert.ok(second.counter > first.counter);
 });

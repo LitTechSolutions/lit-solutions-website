@@ -37,7 +37,7 @@ async function handleCreate(event, deps) {
   if (deny) return deny;
 
   try {
-    const profile = await createWebsiteProfile({ organizationId, primaryUrl, domainRegistrar, hostingProvider }, deps);
+    const profile = await createWebsiteProfile({ organizationId, primaryUrl, domainRegistrar, hostingProvider }, { ...deps, actorId: auth.session.userId });
     return json(201, { profile });
   } catch (err) {
     return json(400, { error: err.message });

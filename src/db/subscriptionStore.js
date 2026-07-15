@@ -9,16 +9,23 @@ const crypto = require("node:crypto");
 const { getSql } = require("./pgClient");
 const { assertValidSubscription } = require("../domain/subscription");
 const { transitionSubscriptionStatus } = require("../policy/subscriptionLifecycle");
+const { createAuditRecorder } = require("../audit/auditLog");
+const { createPgAuditSink } = require("./pgAuditSink");
+
+function resolveAuditRecorder(deps) {
+  return deps.auditRecorder || createAuditRecorder(createPgAuditSink({ sql: deps.sql }));
+}
 
 /**
  * @param {{ organizationId: string, planKey: string }} input
- * @param {{ sql?: Function, now?: () => Date, idGenerator?: () => string }} [deps]
+ * @param {{ sql?: Function, now?: () => Date, idGenerator?: () => string, actorId?: string, auditRecorder?: object }} [deps]
  * @returns {Promise<import("../domain/subscription").Subscription>}
  */
 async function createSubscription(input, deps = {}) {
   const sql = deps.sql || getSql();
   const now = deps.now || (() => new Date());
   const idGenerator = deps.idGenerator || (() => crypto.randomUUID());
+  const auditRecorder = resolveAuditRecorder(deps);
 
   const subscription = {
     id: idGenerator(),
@@ -33,6 +40,22 @@ async function createSubscription(input, deps = {}) {
     INSERT INTO subscriptions (id, organization_id, plan_key, status, started_at)
     VALUES (${subscription.id}, ${subscription.organizationId}, ${subscription.planKey}, ${subscription.status}, ${subscription.startedAt})
   `;
+
+  await auditRecorder.record(
+    {
+      correlationId: subscription.id,
+      actorType: "user",
+      actorId: deps.actorId || "system",
+      organizationId: subscription.organizationId,
+      action: "subscription.create",
+      targetType: "subscription",
+      targetId: subscription.id,
+      outcome: "success",
+      metadata: { planKey: subscription.planKey },
+    },
+    deps
+  );
+
   return subscription;
 }
 
@@ -53,12 +76,13 @@ async function getSubscriptionById(id, deps = {}) {
  *
  * @param {string} id
  * @param {import("../domain/subscription").SubscriptionStatus} nextStatus
- * @param {{ sql?: Function, now?: () => Date }} [deps]
+ * @param {{ sql?: Function, now?: () => Date, actorId?: string, auditRecorder?: object }} [deps]
  * @returns {Promise<import("../domain/subscription").Subscription>}
  */
 async function applySubscriptionStatusTransition(id, nextStatus, deps = {}) {
   const sql = deps.sql || getSql();
   const now = deps.now || (() => new Date());
+  const auditRecorder = resolveAuditRecorder(deps);
 
   const current = await getSubscriptionById(id, { sql });
   if (!current) {
@@ -77,6 +101,22 @@ async function applySubscriptionStatusTransition(id, nextStatus, deps = {}) {
     UPDATE subscriptions SET status = ${nextStatus}, paused_at = ${pausedAt}, cancelled_at = ${cancelledAt}
     WHERE id = ${id}
   `;
+
+  await auditRecorder.record(
+    {
+      correlationId: id,
+      actorType: "user",
+      actorId: deps.actorId || "system",
+      organizationId: current.organizationId,
+      action: "subscription.transition",
+      targetType: "subscription",
+      targetId: id,
+      outcome: "success",
+      metadata: { fromStatus: current.status, toStatus: nextStatus },
+    },
+    deps
+  );
+
   return { ...current, status: nextStatus, pausedAt: pausedAt || undefined, cancelledAt: cancelledAt || undefined };
 }
 

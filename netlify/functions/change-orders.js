@@ -52,7 +52,7 @@ async function handleCreate(event, deps) {
   if (deny) return deny;
 
   try {
-    const { changeOrder, approval } = await createChangeOrder({ organizationId, originalScopeId, description, addedLineItems, createdBy: auth.session.userId }, deps);
+    const { changeOrder, approval } = await createChangeOrder({ organizationId, originalScopeId, description, addedLineItems, createdBy: auth.session.userId }, { ...deps, actorId: auth.session.userId });
     return json(201, { changeOrder, approval });
   } catch (err) {
     return json(400, { error: err.message });

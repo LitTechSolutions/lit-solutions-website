@@ -79,23 +79,47 @@ test("POST is rate-limited per account", async () => {
 
 test("a correct TOTP code issues a real session, clears the pending cookie, and audits success", async () => {
   const users = { "dylan@lit-solutions.tech": enrolledAdminUser() };
-  const deps = baseDeps(users, { verifyTotpCode: () => true });
+  const deps = baseDeps(users, { validateTotpToken: () => ({ valid: true, counter: 1000 }) });
   const res = await handler(baseEvent(), {}, deps);
   assert.equal(res.statusCode, 200);
   assert.equal(res.multiValueHeaders["Set-Cookie"].length, 2);
   assert.match(res.multiValueHeaders["Set-Cookie"][0], /^lts_session=real-session-token/);
   assert.match(res.multiValueHeaders["Set-Cookie"][1], /^lts_mfa_pending=;.*Max-Age=0/);
   assert.equal(deps.auditRecorder.events[0].action, "mfa.challenge.success");
+  assert.equal(deps._saved["dylan@lit-solutions.tech"].mfaLastUsedCounter, 1000);
 });
 
 test("an incorrect TOTP code is denied and audited as a failure, no session issued", async () => {
   const users = { "dylan@lit-solutions.tech": enrolledAdminUser() };
-  const deps = baseDeps(users, { verifyTotpCode: () => false });
+  const deps = baseDeps(users, { validateTotpToken: () => ({ valid: false, counter: null }) });
   const res = await handler(baseEvent(), {}, deps);
   assert.equal(res.statusCode, 401);
   assert.equal(res.headers["Set-Cookie"], undefined);
   assert.equal(res.multiValueHeaders, undefined);
   assert.equal(deps.auditRecorder.events[0].action, "mfa.challenge.failure");
+});
+
+test("replaying an already-used TOTP counter is denied even though the code itself validates (anti-replay)", async () => {
+  const users = { "dylan@lit-solutions.tech": enrolledAdminUser({ mfaLastUsedCounter: 1000 }) };
+  const deps = baseDeps(users, { validateTotpToken: () => ({ valid: true, counter: 1000 }) });
+  const res = await handler(baseEvent(), {}, deps);
+  assert.equal(res.statusCode, 401);
+  assert.equal(deps.auditRecorder.events[0].action, "mfa.challenge.failure");
+});
+
+test("a code from an earlier counter than the last-used one is denied (stale/replayed code)", async () => {
+  const users = { "dylan@lit-solutions.tech": enrolledAdminUser({ mfaLastUsedCounter: 1000 }) };
+  const deps = baseDeps(users, { validateTotpToken: () => ({ valid: true, counter: 999 }) });
+  const res = await handler(baseEvent(), {}, deps);
+  assert.equal(res.statusCode, 401);
+});
+
+test("a genuinely new counter after a previous successful verification is accepted", async () => {
+  const users = { "dylan@lit-solutions.tech": enrolledAdminUser({ mfaLastUsedCounter: 1000 }) };
+  const deps = baseDeps(users, { validateTotpToken: () => ({ valid: true, counter: 1001 }) });
+  const res = await handler(baseEvent(), {}, deps);
+  assert.equal(res.statusCode, 200);
+  assert.equal(deps._saved["dylan@lit-solutions.tech"].mfaLastUsedCounter, 1001);
 });
 
 test("a valid, unused recovery code issues a real session and is consumed (single-use)", async () => {
@@ -130,7 +154,7 @@ test("an unknown recovery code is denied and audited as a failure", async () => 
 test("recovery code takes precedence when both code and recoveryCode are supplied", async () => {
   const codes = generateRecoveryCodes(1);
   const users = { "dylan@lit-solutions.tech": enrolledAdminUser({ mfaRecoveryCodeHashes: codes.map(hashRecoveryCode) }) };
-  const deps = baseDeps(users, { verifyTotpCode: () => false }); // TOTP would fail, recovery should still work
+  const deps = baseDeps(users, { validateTotpToken: () => ({ valid: false, counter: null }) }); // TOTP would fail, recovery should still work
   const res = await handler(baseEvent({ body: JSON.stringify({ code: "000000", recoveryCode: codes[0] }) }), {}, deps);
   assert.equal(res.statusCode, 200);
 });

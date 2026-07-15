@@ -8,15 +8,22 @@
 const crypto = require("node:crypto");
 const { getSql } = require("./pgClient");
 const { assertValidTemplateDefinition, renderTemplate } = require("../templates/templateRenderer");
+const { createAuditRecorder } = require("../audit/auditLog");
+const { createPgAuditSink } = require("./pgAuditSink");
+
+function resolveAuditRecorder(deps) {
+  return deps.auditRecorder || createAuditRecorder(createPgAuditSink({ sql: deps.sql }));
+}
 
 /**
  * @param {{ key: string, subject: string, body: string, allowedVariables: string[] }} input
- * @param {{ sql?: Function, idGenerator?: () => string }} [deps]
+ * @param {{ sql?: Function, idGenerator?: () => string, actorId?: string, auditRecorder?: object }} [deps]
  * @returns {Promise<import("../templates/templateRenderer").TemplateDefinition>}
  */
 async function createTemplateDefinition(input, deps = {}) {
   const sql = deps.sql || getSql();
   const idGenerator = deps.idGenerator || (() => crypto.randomUUID());
+  const auditRecorder = resolveAuditRecorder(deps);
 
   const definition = { id: idGenerator(), ...input };
   assertValidTemplateDefinition(definition); // rejects undeclared-variable references in body/subject
@@ -25,6 +32,22 @@ async function createTemplateDefinition(input, deps = {}) {
     INSERT INTO template_definitions (id, key, subject, body, allowed_variables)
     VALUES (${definition.id}, ${definition.key}, ${definition.subject}, ${definition.body}, ${JSON.stringify(definition.allowedVariables)})
   `;
+
+  await auditRecorder.record(
+    {
+      correlationId: definition.id,
+      actorType: "user",
+      actorId: deps.actorId || "system",
+      organizationId: null,
+      action: "template.create",
+      targetType: "template_definition",
+      targetId: definition.id,
+      outcome: "success",
+      metadata: { key: definition.key },
+    },
+    deps
+  );
+
   return definition;
 }
 
