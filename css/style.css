@@ -1728,14 +1728,15 @@ textarea{ resize: vertical; }
 }
 .wd-start-over:hover{ color: var(--accent-orange); }
 
-/* ---- Studio workspace: persistent two-column configurator. Left column
-   is the live preview (visual focal point, ~64% width); right column is
-   a sticky sidebar (~36%) whose header/footer stay put while only the
-   feature list scrolls. Below 900px this collapses to a single stacked
-   column in normal document flow (see the max-width:899px block near the
-   end of this section) with a fixed mobile estimate bar instead. ---- */
+/* ---- Studio workspace: persistent two-column configurator, preview on
+   the left / options on the right, at every viewport width from 320px up
+   -- it never collapses to a single stacked column. Only the relative
+   share of the two columns changes with viewport width (see the
+   max-width:1199px/899px/599px overrides below); minmax(0, Nfr) is what
+   lets either column actually shrink that far without forcing a wider
+   intrinsic content size back onto the row and overflowing the page. */
 .wd-studio{
-  display:grid; grid-template-columns: 64fr 36fr; gap:1.75rem; align-items:start;
+  display:grid; grid-template-columns: minmax(0, 62fr) minmax(0, 38fr); gap:1.75rem; align-items:start;
   margin-bottom: 2rem;
 }
 .wd-studio-preview{ min-width:0; }
@@ -1753,7 +1754,7 @@ textarea{ resize: vertical; }
    available, so mobile browser chrome showing/hiding doesn't change how
    tall this box thinks it is. */
 .wd-sidebar{
-  display:grid; grid-template-rows: auto minmax(0, 1fr) auto; min-width:0;
+  display:grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; min-width:0;
   background: var(--paper); border:1px solid var(--line); border-radius: calc(var(--radius) + 4px);
   box-shadow: 0 14px 34px rgba(20,33,61,0.10);
   position: sticky; top: 1.5rem;
@@ -1895,14 +1896,28 @@ textarea{ resize: vertical; }
 
 .wd-panel-actions{ display:flex; justify-content:space-between; gap:1rem; margin-top:2rem; padding-top:1.5rem; border-top:1px dashed var(--line); }
 
-/* feature checkbox pills: label + live price tag */
-.wd-feature-pill{ justify-content:space-between; gap:.6rem; }
-.wd-feature-pill-label{ flex:1; }
-.wd-price-tag{
-  font-family: var(--font-display); font-size:.72rem; font-weight:700; color: var(--accent-teal-text);
-  background: var(--select-bg); border-radius:999px; padding:.15rem .55rem; flex-shrink:0;
+/* Feature checkbox pills, scoped to the Website Designer sidebar: a grid
+   (checkbox / label / price) rather than the site-wide .checkbox-pill's
+   flex row, so a long translated feature name can wrap onto a second line
+   without ever pushing the price tag out past the row's own width or
+   letting the row escape its category's border. .checkbox-grid is shared
+   with other pages (e.g. intake.html), so it's overridden here scoped to
+   the sidebar only -- forced to a single column at every width, never the
+   site-wide default's 2-/3-column layout. */
+.wd-sidebar .checkbox-grid{
+  display:grid; grid-template-columns: minmax(0, 1fr); width:100%; min-width:0;
 }
-.wd-price-tag--quote{ color: var(--accent-orange-text); background:var(--notice-bg-strong); }
+.wd-sidebar .wd-feature-pill{
+  display:grid; grid-template-columns: auto minmax(0, 1fr) max-content; gap:.6rem;
+  align-items:center; width:100%; min-width:0; max-width:100%; box-sizing:border-box;
+}
+.wd-sidebar .wd-feature-pill-label{ min-width:0; overflow-wrap:anywhere; }
+.wd-sidebar .wd-price-tag{
+  font-family: var(--font-display); font-size:.72rem; font-weight:700; color: var(--accent-teal-text);
+  background: var(--select-bg); border-radius:999px; padding:.15rem .55rem;
+  white-space:nowrap; justify-self:end;
+}
+.wd-sidebar .wd-price-tag--quote{ color: var(--accent-orange-text); background:var(--notice-bg-strong); }
 
 .wd-bizname-field{ display:flex; flex-direction:column; gap:.25rem; min-width:0; }
 .wd-bizname-field .wd-note{ margin:0; }
@@ -2140,37 +2155,6 @@ textarea{ resize: vertical; }
   }
   .wd-step{ flex-shrink:0; padding:.85rem .35rem; }
 
-  .wd-browser-viewport{ min-height:0; height:38vh; max-height:280px; }
-
-  /* Below the desktop studio breakpoint: stack the preview above the
-     sidebar and let the page scroll normally -- no nested nested-scroll
-     traps. The sidebar's own header/scroll/footer structure collapses
-     back into plain document flow. */
-  .wd-studio{ display:flex; flex-direction:column; align-items:stretch; gap:1.5rem; }
-  .wd-sidebar{
-    display:block; position:static; height:auto; min-height:0; max-height:none; overflow:visible;
-  }
-  .wd-sidebar-scroll{ overflow-y:visible; }
-
-  /* Fixed mobile estimate bar -- shown once a package is chosen (JS adds
-     .is-visible); padding-bottom on the body (via .has-mobile-bar, JS-set
-     alongside it) keeps the real site footer and cookie notice from being
-     covered by the fixed bar at the very bottom of the page. Both this and
-     the cookie-banner's own clearance below use the exact same formula --
-     real bar height (kept in sync with the bar's actual rendered size by
-     a ResizeObserver in js/website-designer.js) plus the safe-area inset
-     the bar floats above, plus a deliberate minimum 16px breathing room --
-     so a translated label that wraps to two lines, or 125% browser zoom,
-     grows the reserved space right along with it instead of leaving a
-     too-tight or negative gap. */
-  .wd-mobile-bar.is-visible{ display:flex; }
-  body.has-mobile-bar{
-    padding-bottom: calc(var(--wd-mobile-bar-height) + env(safe-area-inset-bottom, 0px) + var(--wd-mobile-bar-gap));
-  }
-  body.has-mobile-bar .cookie-banner{
-    margin-bottom: calc(var(--wd-mobile-bar-height) + env(safe-area-inset-bottom, 0px) + var(--wd-mobile-bar-gap));
-  }
-
   /* Comfortable tap targets for the tool's checkboxes on touch devices. */
   .wd-tool .checkbox-pill input,
   .wd-heroes-toggle input,
@@ -2179,6 +2163,75 @@ textarea{ resize: vertical; }
   /* 44px minimum interactive targets on touch devices. */
   .wd-feature-tab{ min-height:44px; }
   .wd-category-chip{ min-height:44px; padding-top:0; padding-bottom:0; display:inline-flex; align-items:center; }
+}
+
+/* ---- Studio responsive column proportions ----------------------------
+   Preview stays on the left and options stay on the right at every one of
+   these widths -- only the share each column gets changes. Each rule below
+   overrides just the previous tier's grid-template-columns (cascade order,
+   not specificity), so narrower viewports pick up all of the compaction
+   from the wider tiers above them as well. */
+@media (max-width:1199px){
+  .wd-studio{ grid-template-columns: minmax(0, 52fr) minmax(0, 48fr); }
+}
+
+@media (max-width:899px){
+  .wd-studio{ grid-template-columns: minmax(0, 40fr) minmax(0, 60fr); gap:1rem; }
+
+  /* The preview column is noticeably narrower here, so it's simplified to
+     stay legible in less width: the browser frame, business name, a
+     compact hero, and the selected-feature cards (the actual functional
+     "selected-section indicators") all stay -- the purely decorative
+     filler (a row of 3 fake service cards, a fake about blurb) is hidden
+     rather than squeezed down to illegible sizes. */
+  .wd-browser-viewport{ padding:.8rem; }
+  .wd-preview-services-mock, .wd-preview-about-mock{ display:none; }
+  .wd-preview-hero-mock{ padding:1.1rem .7rem; }
+  .wd-preview-hero-mock-headline{ font-size:1rem; margin-bottom:.7rem; }
+
+  /* Right panel: tighter padding throughout so more of the narrower column
+     is actual content instead of whitespace, without dropping below 44px
+     on anything tappable. */
+  .wd-sidebar-header{ padding:.6rem .8rem .5rem; }
+  .wd-sidebar-scroll{ padding:.8rem .9rem; }
+  .wd-sidebar-footer{ padding:.6rem .7rem; }
+  .wd-category-header{ padding:.75rem .85rem; min-height:44px; }
+  .wd-category-panel{ padding:.8rem .85rem .9rem; }
+  .wd-feature-search{ padding:.4rem .7rem; }
+  .wd-bundle-box{ padding:.65rem .85rem; }
+}
+
+@media (max-width:599px){
+  .wd-studio{ grid-template-columns: minmax(0, 30fr) minmax(0, 70fr); gap:.75rem; }
+
+  /* Narrower still: drop the last piece of decorative preview chrome (a
+     one-line fake footer) and tighten the hero/CTA a bit more -- font
+     sizes stay in the "still comfortably readable" range (.7rem/13px+),
+     nothing shrinks to illegible. */
+  .wd-preview-footer-mock{ display:none; }
+  .wd-browser-viewport{ padding:.6rem; }
+  .wd-preview-hero-mock{ padding:.9rem .6rem; }
+  .wd-preview-hero-mock-cta{ padding:.5rem 1.1rem; font-size:.74rem; }
+
+  .wd-sidebar-header{ padding:.55rem .7rem .45rem; }
+  .wd-sidebar-scroll{ padding:.7rem .75rem; }
+}
+
+/* Below ~400px there generally isn't room for checkbox + label + price
+   all on one row without crushing the label -- drop the price to its own
+   line under the label instead of shrinking any text. The checkbox column
+   spans both rows (grid-row via the "checkbox" area appearing in both
+   template rows) so it stays put beside the label, not centered across
+   the taller combined block. */
+@media (max-width:400px){
+  .wd-sidebar .wd-feature-pill{
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas: "checkbox label" "checkbox price";
+    row-gap:.15rem;
+  }
+  .wd-sidebar .wd-feature-pill input{ grid-area: checkbox; align-self:start; margin-top:.15rem; }
+  .wd-sidebar .wd-feature-pill-label{ grid-area: label; }
+  .wd-sidebar .wd-price-tag{ grid-area: price; justify-self:start; }
 }
 
 @media (prefers-reduced-motion: reduce){
