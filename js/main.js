@@ -459,6 +459,109 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Booking request form (booking.html) — same AJAX-to-Netlify-Forms
+  // pattern as the contact form, plus a custom check requiring at least
+  // one of email/phone (neither is natively `required` on its own).
+  const bookingRequestForm = document.getElementById('bookingRequestForm');
+  if (bookingRequestForm) {
+    const dateInput = document.getElementById('booking-date');
+    if (dateInput) dateInput.min = new Date().toISOString().slice(0, 10);
+
+    const statusEl = bookingRequestForm.querySelector('.form-note[role="status"]');
+    const missingNote = document.getElementById('bookingMissingNote');
+    bookingRequestForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const missing = [];
+      let firstBadEl = null;
+
+      const markInvalid = (field, labelText) => {
+        field.classList.add('field-error');
+        field.setAttribute('aria-invalid', 'true');
+        if (missingNote && missingNote.id) field.setAttribute('aria-describedby', missingNote.id);
+        missing.push(labelText);
+        if (!firstBadEl) firstBadEl = field;
+      };
+      const markValid = (field) => {
+        field.classList.remove('field-error');
+        field.removeAttribute('aria-invalid');
+        field.removeAttribute('aria-describedby');
+      };
+
+      bookingRequestForm.querySelectorAll('input[required], select[required]').forEach(field => {
+        if (field.type === 'radio') return; // handled separately below (radio group)
+        const ok = field.value.trim().length > 0;
+        if (ok) markValid(field);
+        else {
+          const label = bookingRequestForm.querySelector(`label[for="${field.id}"]`);
+          markInvalid(field, label ? label.textContent.trim() : tt('forms.missing_field_fallback', 'A required field'));
+        }
+      });
+
+      const markFieldOnly = (field) => {
+        field.classList.add('field-error');
+        field.setAttribute('aria-invalid', 'true');
+        if (missingNote && missingNote.id) field.setAttribute('aria-describedby', missingNote.id);
+        if (!firstBadEl) firstBadEl = field;
+      };
+
+      const email = document.getElementById('booking-email');
+      const phone = document.getElementById('booking-phone');
+      const hasEmail = email.value.trim().length > 0;
+      const hasPhone = phone.value.trim().length > 0;
+      const emailValid = !hasEmail || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value);
+      if (!hasEmail && !hasPhone) {
+        markFieldOnly(email);
+        markFieldOnly(phone);
+        missing.push(tt('booking.form_contact_hint', 'Enter at least one — email or phone.'));
+      } else if (!emailValid) {
+        markInvalid(email, tt('booking.form_email_label', 'Email'));
+        markValid(phone);
+      } else {
+        markValid(email);
+        markValid(phone);
+      }
+
+      const timeChecked = bookingRequestForm.querySelector('input[name="preferred_time"]:checked');
+      if (!timeChecked) {
+        missing.push(tt('booking.form_time_label', 'Preferred time'));
+        if (!firstBadEl) firstBadEl = bookingRequestForm.querySelector('input[name="preferred_time"]');
+      }
+
+      const honeypot = bookingRequestForm.querySelector('input[name="bot-field"]');
+      if (honeypot && honeypot.value) return;
+
+      if (missing.length) {
+        if (missingNote) {
+          const intro = tt('contact.missing_fields_intro', 'Please fill in the following:');
+          missingNote.innerHTML = `<strong>${intro}</strong><ul>${missing.map(m => `<li>${m}</li>`).join('')}</ul>`;
+          missingNote.classList.add('is-visible');
+        }
+        if (firstBadEl) firstBadEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      if (missingNote) missingNote.classList.remove('is-visible');
+
+      const formData = new FormData(bookingRequestForm);
+      if (statusEl) { statusEl.textContent = tt('contact.status_sending', 'Sending…'); statusEl.classList.remove('form-note--error'); }
+      fetch('/', { method: 'POST', body: formData })
+        .then(res => {
+          if (statusEl) {
+            statusEl.textContent = res.ok
+              ? tt('booking.status_success', "Thanks — we'll confirm your requested time within one business day.")
+              : tt('contact.status_error', 'Something went wrong. Please call or email us directly.');
+            statusEl.classList.toggle('form-note--error', !res.ok);
+          }
+          if (res.ok) bookingRequestForm.reset();
+        })
+        .catch(() => {
+          if (statusEl) {
+            statusEl.textContent = tt('contact.status_error', 'Something went wrong. Please call or email us directly.');
+            statusEl.classList.add('form-note--error');
+          }
+        });
+    });
+  }
+
   // Newsletter signup — lightweight AJAX submit to Netlify Forms with an
   // inline status message, consistent with the rest of the site's forms.
   document.querySelectorAll('.newsletter-form').forEach(form => {
