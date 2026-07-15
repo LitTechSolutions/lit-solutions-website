@@ -206,7 +206,7 @@ test("accepting the post-quote prompt opens the worksheet in a new tab via a URL
   let openedUrl = null;
   let openedTarget = null;
   let openedFeatures = null;
-  const fakePopup = {};
+  const fakePopup = { closed: false };
   window.open = (url, target, features) => {
     openedUrl = url;
     openedTarget = target;
@@ -256,5 +256,36 @@ test("if the worksheet popup is blocked, a direct fallback link appears with the
   const fallback = window.document.getElementById("wdWorksheetFallback");
   const fallbackLink = window.document.getElementById("wdWorksheetFallbackLink");
   assert.equal(fallback.hidden, false);
+  assert.match(fallbackLink.getAttribute("href"), /^website-project-brief\.html#resume=/);
+});
+
+// Real-Safari-observed case: window.open() hands back a truthy Window
+// reference even though the popup was actually blocked (Chromium reliably
+// returns null instead, which the previous test covers) -- the reference's
+// `.closed` reads back true immediately since nothing really opened. A
+// plain `if (!win)` check misses this and would wrongly claim success,
+// leaving the customer on the "worksheet opened" panel with no worksheet
+// anywhere -- the bug this test guards against.
+test("if window.open returns a truthy but already-closed reference (Safari), the fallback link still appears", async () => {
+  const { window } = await loadDesignerPage();
+  selectStarterPackage(window);
+  await flush();
+
+  window.document.getElementById("wdBusinessName").value = "Riverside Plumbing";
+  window.document.getElementById("wdName").value = "Jane Doe";
+  window.document.getElementById("wdEmail").value = "jane@example.com";
+  window.document.getElementById("wdPhone").value = "555-0100";
+  window.document.getElementById("wdPreferredContact").value = "email";
+  window.document.getElementById("wdConsent").checked = true;
+  window.document.getElementById("wdQuickForm").dispatchEvent(new window.Event("submit", { bubbles: true, cancelable: true }));
+  await flush();
+
+  window.open = () => ({ closed: true }); // simulates Safari's truthy-but-blocked case
+
+  window.document.getElementById("wdPromptYesBtn").dispatchEvent(new window.Event("click", { bubbles: true }));
+
+  const fallback = window.document.getElementById("wdWorksheetFallback");
+  const fallbackLink = window.document.getElementById("wdWorksheetFallbackLink");
+  assert.equal(fallback.hidden, false, "expected the fallback link to appear instead of the 'worksheet opened' panel");
   assert.match(fallbackLink.getAttribute("href"), /^website-project-brief\.html#resume=/);
 });

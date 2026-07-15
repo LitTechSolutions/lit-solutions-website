@@ -1184,7 +1184,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const url = worksheetUrl();
     if (!url) return;
     const win = window.open(url, '_blank');
-    if (!win) {
+    // A plain truthiness check on `win` isn't enough: Safari on macOS has
+    // been observed handing back a real (non-null) Window reference even
+    // when the popup was actually blocked, unlike Chromium which reliably
+    // returns null in that case. On a genuinely-opened tab, `win.closed`
+    // reads false at this point (it was just created); on Safari's blocked-
+    // but-truthy case it reads back true immediately, so checking it closes
+    // the gap the null check alone misses.
+    if (!win || win.closed || typeof win.closed === 'undefined') {
       if (wdWorksheetFallbackLink) wdWorksheetFallbackLink.href = url;
       if (wdWorksheetFallback) wdWorksheetFallback.hidden = false;
       return;
