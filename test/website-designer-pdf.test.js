@@ -174,7 +174,7 @@ test("PDF button click produces a real, non-empty premium PDF document", async (
 // The complete content brief no longer lives inline on this page at all --
 // confirms it stays that way, and that accepting the post-quote prompt
 // opens the standalone worksheet in a new tab (carrying the resume token
-// only in a URL fragment, with noopener) instead.
+// only in a URL fragment, with window.opener manually severed) instead.
 test("the full project-brief form/panel no longer exists inline on website-designer.html", async () => {
   const { window } = await loadDesignerPage();
   assert.equal(window.document.getElementById("wdBriefForm"), null);
@@ -206,11 +206,12 @@ test("accepting the post-quote prompt opens the worksheet in a new tab via a URL
   let openedUrl = null;
   let openedTarget = null;
   let openedFeatures = null;
+  const fakePopup = {};
   window.open = (url, target, features) => {
     openedUrl = url;
     openedTarget = target;
     openedFeatures = features;
-    return {}; // truthy -- simulates the popup NOT being blocked
+    return fakePopup; // truthy -- simulates the popup NOT being blocked
   };
 
   const yesBtn = window.document.getElementById("wdPromptYesBtn");
@@ -219,7 +220,13 @@ test("accepting the post-quote prompt opens the worksheet in a new tab via a URL
 
   assert.ok(openedUrl, "expected window.open to have been called");
   assert.equal(openedTarget, "_blank");
-  assert.match(String(openedFeatures || ""), /noopener/);
+  // Deliberately NOT passing the literal 'noopener' feature string -- per
+  // spec, a browser that honors it (confirmed in real Safari) returns null
+  // from window.open() even on success, which would make every popup look
+  // "blocked" to this code. Reverse-tabnabbing protection is instead
+  // applied manually on the returned reference (see the assertion below).
+  assert.equal(openedFeatures, undefined);
+  assert.equal(fakePopup.opener, null, "the new tab's window.opener must be severed manually since 'noopener' isn't passed");
   assert.match(openedUrl, /^website-project-brief\.html#resume=/, "resume token must travel in a URL fragment, not a query string");
   assert.doesNotMatch(openedUrl, /\?/, "no query string at all on the worksheet URL");
 

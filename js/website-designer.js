@@ -1166,19 +1166,30 @@ document.addEventListener('DOMContentLoaded', () => {
     return 'website-project-brief.html#resume=' + encodeURIComponent(state.quickLeadId + '.' + state.resumeToken);
   }
 
-  // noopener prevents the new tab from ever reaching back into this one
-  // (standard reverse-tabnabbing protection). If the popup is blocked, the
-  // customer's place is never lost -- a direct fallback link using the
-  // exact same URL appears instead of silently doing nothing.
+  // Deliberately does NOT pass the literal 'noopener' feature string to
+  // window.open() -- per spec (and confirmed in Safari on macOS/iOS), a
+  // browser that honors 'noopener' returns null from window.open() even
+  // when the popup opened successfully, since the whole point of noopener
+  // is that the caller gets no reference back. That makes `win` useless
+  // for detecting an actually-blocked popup: in Safari this made every
+  // single click look "blocked" and show the fallback link, even though
+  // the new tab opened and worked fine (Chromium browsers, which don't
+  // null the return value out, never surfaced this in testing). Instead,
+  // get a real reference back and manually sever win.opener on it --
+  // functionally identical reverse-tabnabbing protection (the new tab
+  // can't navigate this one via window.opener), while keeping the return
+  // value meaningful so a genuinely blocked popup still falls back to the
+  // direct link instead of silently doing nothing.
   function openWorksheet() {
     const url = worksheetUrl();
     if (!url) return;
-    const win = window.open(url, '_blank', 'noopener');
+    const win = window.open(url, '_blank');
     if (!win) {
       if (wdWorksheetFallbackLink) wdWorksheetFallbackLink.href = url;
       if (wdWorksheetFallback) wdWorksheetFallback.hidden = false;
       return;
     }
+    try { win.opener = null; } catch (e) { /* best-effort hardening only */ }
     if (wdWorksheetFallback) wdWorksheetFallback.hidden = true;
     showPanel('worksheet-opened');
   }
