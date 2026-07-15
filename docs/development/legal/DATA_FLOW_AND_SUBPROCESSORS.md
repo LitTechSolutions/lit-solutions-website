@@ -41,7 +41,7 @@ Hub existed.
 
 | Data | Where |
 |---|---|
-| Uploaded documents (as base64 data URIs) | Blobs `documents` store; Postgres `care_hub_documents`/`file_assets` reference metadata | Object-storage provider for the underlying files is still undecided (`OWNER_DECISIONS.md`) |
+| Uploaded documents (as base64 data URIs) | Blobs `documents` store; Postgres `care_hub_documents`/`file_assets` reference metadata | Object-storage provider decided (Cloudinary, `OWNER_DECISIONS.md` #11) but not yet integrated — still base64-in-Blobs today |
 | Messages between customer and staff | Blobs `messages` store; Postgres `message_thread_refs` | |
 | Favorites, notification preferences | Blobs `favorites`; Postgres `notification_preferences` | |
 
@@ -75,17 +75,31 @@ Hub existed.
   budget) but no integration exists. No data currently flows to an AI
   provider.
 - **Square live integration** — schema and webhook plumbing exist;
-  no live Sandbox or production API calls are made yet.
+  no live Sandbox or production API calls are made yet. A static Square
+  Payment Link is used as a manual, non-integrated development stopgap
+  in `care-hub-app` (see `SECURITY_REVIEW.md`/session docs) — this does
+  not touch `payment_requests` at all and is not a live integration.
+- **Cloudinary** — decided as the object-storage provider (owner
+  decision #11) but not yet integrated; uploaded files are still
+  base64-in-Blobs. Do not disclose as an active processor until the
+  actual migration code exists.
 
 ## 2. Sub-processors (third parties that touch this data)
 
-| Sub-processor | What it processes | Disclosed on the existing public site? | Disclosed for Care Hub? |
-|---|---|---|---|
-| **Netlify** | Hosting, Netlify Functions (serverless compute), Netlify Blobs (legacy data store), Netlify Analytics | Yes (`privacy.html` §3) | Yes — this draft |
-| **Neon** (managed PostgreSQL) | All new Care Hub relational data (see §1 above) | No — didn't exist when public site was written | **New disclosure needed** — this draft |
-| **Resend** | Transactional email (account notifications, invitations, ticket updates) via `RESEND_API_KEY` → `api.resend.com` | **No — this is open audit finding F007** | **New disclosure needed** — this draft |
-| **Square** | Payment processing (planned; not live yet) | Yes (`privacy.html` §1, §3) | Should be disclosed as planned/not-yet-active |
-| OpenAI (F060, not started) | Would process AI Assistance queries if/when built | N/A | Not disclosed — not active, nothing to disclose yet |
+**Update (Session 20 step 8): `privacy.html` and `terms.html` were
+merged with these disclosures directly** — audit findings F006/F007 are
+resolved (`docs/audit/AUDIT_STATE.json`). The "disclosed?" columns below
+are now historical context for how that merge happened, not an open
+gap.
+
+| Sub-processor | What it processes | Disclosed on the public site? |
+|---|---|---|
+| **Netlify** | Hosting, Netlify Functions (serverless compute), Netlify Blobs (legacy data store + some Care Hub storage), Netlify Analytics | Yes (`privacy.html` §1, §3) |
+| **Neon** (managed PostgreSQL) | All new Care Hub relational data (see §1 above) | Yes (`privacy.html` §1, §3, merged Session 20 step 8) |
+| **Resend** | Transactional email (account notifications, invitations, ticket updates, MFA security notifications) via `RESEND_API_KEY` → `api.resend.com` | Yes (`privacy.html` §3, merged Session 20 step 8 — closes F007) |
+| **Square** | Payment processing (planned; not live yet; a static dev Payment Link is used as a manual stopgap, not integrated with `payment_requests`) | Yes (`privacy.html` §1, §3) |
+| OpenAI (F060, not started) | Would process AI Assistance queries if/when built | Not disclosed — not active, nothing to disclose yet |
+| Cloudinary (decided, not integrated) | Would process uploaded file storage if/when built | Not disclosed — not active, nothing to disclose yet |
 
 ## 3. Data NOT collected
 

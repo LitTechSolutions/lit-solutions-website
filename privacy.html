@@ -149,28 +149,42 @@
       <div class="legal-doc">
 
         <h2 data-i18n="privacy.section1_heading">1. What we collect</h2>
-        <p data-i18n="privacy.section1_intro">Little Technical Solutions LLC collects only what you give us directly:</p>
+        <p data-i18n="privacy.section1_intro">What we collect depends on how you interact with us: browsing this public website, or holding an active Care Hub account as an ongoing customer or staff member.</p>
+        <p><strong data-i18n="privacy.section1_public_heading">From this public website (all visitors):</strong></p>
         <ul>
           <li data-i18n-html="privacy.section1_item1"><strong>Contact &amp; project forms.</strong> When you use the quick contact form, the project intake form, or the newsletter signup, we receive the name, email, and message/project details you submit.</li>
           <li data-i18n-html="privacy.section1_item2"><strong>Site analytics.</strong> We use Netlify Analytics, which is server-side and cookie-free — it reports aggregate traffic (pages visited, referring sites, rough location by country/region) without tracking individual visitors across sites or building an ad profile.</li>
           <li data-i18n-html="privacy.section1_item3"><strong>Local storage, not cookies.</strong> Your dark/light mode choice and whether you've dismissed the cookie notice are saved in your browser's local storage, not a cookie. Nothing here is used to track you across other websites.</li>
+          <li data-i18n-html="privacy.section1_item4"><strong>Website Designer quote tool.</strong> If you use our quote-builder tool, the project details, preferences, and budget range you enter are saved as a lead so we can follow up with a quote.</li>
         </ul>
-        <p data-i18n="privacy.section1_outro">We do not collect or store payment card information. Payments are processed directly by Square; see their own privacy policy for how they handle payment data.</p>
+        <p><strong data-i18n="privacy.section1_carehub_heading">From the Care Hub (customers and staff with an account):</strong></p>
+        <p data-i18n="privacy.section1_carehub_intro">The Care Hub is our customer/staff portal for supporting an ongoing service relationship — accounts are created by invitation, not open self-signup. If you have a Care Hub account, we also collect and store:</p>
+        <ul>
+          <li data-i18n-html="privacy.section1_item5"><strong>Account information.</strong> Your name, email, a securely hashed password (never stored in plain text), your organization, and your role.</li>
+          <li data-i18n-html="privacy.section1_item6"><strong>Sign-in records.</strong> Session and login activity, and — for staff/administrator accounts only — a two-factor authentication secret (encrypted at rest) and one-time recovery codes (stored as irreversible hashes).</li>
+          <li data-i18n-html="privacy.section1_item7"><strong>Service records.</strong> Support tickets, readiness checklists, service history, approvals, and change orders related to the work we do for your organization.</li>
+          <li data-i18n-html="privacy.section1_item8"><strong>Files and messages</strong> you exchange with us through the portal, and technology/website records we maintain on your behalf (device inventory, renewal reminders, website uptime and backup status).</li>
+          <li data-i18n-html="privacy.section1_item9"><strong>Billing status.</strong> Which invoices are pending or paid, and a reference ID from our payment processor — never your card number.</li>
+          <li data-i18n-html="privacy.section1_item10"><strong>Internal audit log.</strong> A record of who did what and when within your account, used for security and accountability, not shared outside Little Technical Solutions LLC except where required by law.</li>
+        </ul>
+        <p data-i18n="privacy.section1_outro">We do not collect or store payment card information, on this website or in the Care Hub. Payments are processed directly by Square; see their own privacy policy for how they handle payment data.</p>
 
         <h2 data-i18n="privacy.section2_heading">2. How we use it</h2>
-        <p data-i18n="privacy.section2_body">Information you submit is used to respond to your inquiry, scope and deliver the service you requested, and — only if you opted in — send the occasional blog update. We do not use your information for anything else, and we do not build advertising profiles.</p>
+        <p data-i18n="privacy.section2_body">Information you submit through this website is used to respond to your inquiry, scope and deliver the service you requested, and — only if you opted in — send the occasional blog update. Care Hub information is used solely to authenticate you, deliver the services your organization is a customer for, bill you, keep the platform secure, and meet our own recordkeeping obligations. We do not use your information for advertising, and we do not build advertising profiles.</p>
 
         <h2 data-i18n="privacy.section3_heading">3. How it's shared</h2>
-        <p data-i18n="privacy.section3_body">We do not sell your personal information. Form submissions and site hosting are processed through Netlify (our hosting and forms provider) and payments through Square (our payment processor) solely to deliver the service you requested. We do not share your information with anyone else except where required by law.</p>
+        <p data-i18n="privacy.section3_body">We do not sell your personal information. We use a small number of service providers to run this website and the Care Hub, none of whom are permitted to use your information for their own purposes: Netlify (our hosting, forms, and traffic-analytics provider, and — for the Care Hub — some account/session/document storage); Neon (our database provider, storing Care Hub account, ticket, and service records); Resend (sends transactional emails on our behalf, such as account invitations and notifications — Resend sees only the content of an email we ask it to send); and Square (our payment processor, which we never see or store card details from). We do not share your information with anyone else except where required by law.</p>
 
         <h2 data-i18n="privacy.section4_heading">4. Cookies &amp; tracking</h2>
         <p data-i18n="privacy.section4_body">This site does not set third-party advertising or tracking cookies. The cookie notice you may see on your first visit is a transparency notice, not a tracking opt-in — there's nothing nonessential to opt into beyond the analytics described above, which collects no personal data.</p>
 
         <h2 data-i18n="privacy.section5_heading">5. Data retention &amp; your rights</h2>
         <p data-i18n-html="privacy.section5_body">We retain form submissions and project records for as long as reasonably necessary to deliver the service, maintain business records, and meet legal obligations. You can request access to, correction of, or deletion of your information at any time by contacting us at <strong>636-426-0289</strong> or <strong>dylan@lit-solutions.tech</strong>.</p>
+        <p data-i18n="privacy.section5_carehub_body">For Care Hub accounts specifically, our retention targets are: files and records for a closed account, 30 days; abandoned leads, 12 months; closed support tickets, 24 months; financial and payment records, 7 years (a standard recordkeeping requirement); and backups, a rolling 90-day window.</p>
 
         <h2 data-i18n="privacy.section6_heading">6. Security</h2>
         <p data-i18n="privacy.section6_body">This site is served entirely over HTTPS. We do not store payment card data. Form data is transmitted and stored through Netlify's infrastructure with reasonable technical safeguards.</p>
+        <p data-i18n="privacy.section6_carehub_body">Care Hub accounts add further safeguards: passwords are hashed, never stored in plain text; administrator accounts require two-factor authentication; two-factor secrets are encrypted at rest; and every change to your account or records is logged for accountability.</p>
 
         <h2 data-i18n="privacy.section7_heading">7. Children's privacy</h2>
         <p data-i18n="privacy.section7_body">This site is intended for business owners and adults and is not directed at children under 13. We do not knowingly collect information from children.</p>

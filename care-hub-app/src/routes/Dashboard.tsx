@@ -6,6 +6,9 @@ import { ErrorState } from "../components/states/ErrorState";
 import { UnauthorizedState } from "../components/states/UnauthorizedState";
 import { SessionExpiredState } from "../components/states/SessionExpiredState";
 import { useApi } from "../hooks/useApi";
+import { useAuth } from "../auth/AuthContext";
+import { strings } from "../strings/en";
+import { SQUARE_DEV_PAYMENT_LINK_URL } from "../config/payments";
 
 /**
  * Placeholder landing route -- demonstrates the full loading/empty/
@@ -19,6 +22,8 @@ import { useApi } from "../hooks/useApi";
 export function Dashboard() {
   const fetchAccount = useCallback(() => api.account.get(), []);
   const state = useApi(fetchAccount, []);
+  const { state: authState } = useAuth();
+  const isStaff = authState.status === "signedIn" && authState.user.role === "admin";
 
   switch (state.status) {
     case "loading":
@@ -33,9 +38,26 @@ export function Dashboard() {
       return <EmptyState />;
     case "success":
       return (
-        <div className="card">
-          <h1>Welcome, {state.data.user.name}</h1>
-          <p>Signed in as {state.data.user.email}.</p>
+        <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-5)" }}>
+          <div className="card">
+            <h1>Welcome, {state.data.user.name}</h1>
+            <p>Signed in as {state.data.user.email}.</p>
+          </div>
+          {!isStaff ? (
+            <div className="card">
+              <h2 style={{ fontSize: "1rem" }}>{strings.payments.cardTitle}</h2>
+              <p style={{ color: "var(--ink-soft)" }}>{strings.payments.cardBody}</p>
+              <a
+                className="btn btn-primary btn-small"
+                href={SQUARE_DEV_PAYMENT_LINK_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ display: "inline-block", marginTop: "var(--space-3)" }}
+              >
+                {strings.payments.payButton}
+              </a>
+            </div>
+          ) : null}
         </div>
       );
   }

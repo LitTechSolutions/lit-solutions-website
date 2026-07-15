@@ -118,13 +118,24 @@ async function createNextScopeVersion(scopeId, updates, deps = {}) {
 }
 
 /**
+ * SECURITY: `organizationId` is required and constrains the query directly
+ * -- found via independent review (Session 20 post-step-8): the original
+ * version queried by `ticketId` alone, so an authenticated org_owner of
+ * Org A supplying Org B's `ticketId` (with `organizationId: "org-a"` to
+ * pass authentication) would get Org B's scope-of-work versions back. A
+ * `ticketId` from another organization now simply matches no rows (empty
+ * array), consistent with how every other list endpoint in this codebase
+ * behaves for a caller with no visible data, rather than a distinct
+ * not-found/error response that would confirm the ticket exists elsewhere.
+ *
  * @param {string} ticketId
+ * @param {string} organizationId
  * @param {{ sql?: Function }} [deps]
  * @returns {Promise<import("../domain/scopeOfWork").ScopeOfWork[]>}
  */
-async function listScopeVersionsForTicket(ticketId, deps = {}) {
+async function listScopeVersionsForTicket(ticketId, organizationId, deps = {}) {
   const sql = deps.sql || getSql();
-  const rows = await sql`SELECT * FROM scope_of_work WHERE ticket_id = ${ticketId} ORDER BY version`;
+  const rows = await sql`SELECT * FROM scope_of_work WHERE ticket_id = ${ticketId} AND organization_id = ${organizationId} ORDER BY version`;
   return rows.map(mapRowToScope);
 }
 

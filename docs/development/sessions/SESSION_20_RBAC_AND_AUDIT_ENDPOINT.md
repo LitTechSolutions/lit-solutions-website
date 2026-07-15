@@ -667,20 +667,24 @@ Critical finding, so it was done now rather than waiting.
 
 Step 7 closed the two staff-side gaps called out at the end of step 6
 (staff checklist review, staff ticket work queue/transition). Step 9
-delivered the legal drafts. Step 10 delivered a security review, fixing
-what was cleanly fixable and documenting the rest. Step 8's email half
-is done (MFA security notifications); its Square half remains
-**not started**, blocked on external credentials:
+delivered the legal drafts, since merged into the real public pages
+(post-step-8 follow-up, above). Step 10 delivered a security review,
+fixing what was cleanly fixable and documenting the rest -- its one
+Critical finding now has a real preventive fix (post-step-8 follow-up).
+Step 8's email half and MFA-hijack preventive fix are done; its Square
+integration remains **not started**, blocked on Dylan's checkout-flow
+input (a static dev Payment Link is wired as a manual stopgap, not a
+real integration):
 
 1. Wiring the remaining endpoints into real screens beyond tickets and
    checklists -- the typed client covers all of them, but only
    `Dashboard.tsx`, `Tickets.tsx`, and `Checklists.tsx` actually call one
    from a rendered route.
-2. Square Sandbox integration -- blocked on Dylan supplying real Square
-   credentials via Netlify environment variables (cannot be pasted into
-   chat or committed). Also needs Dylan's input on checkout-flow details
-   (Payment Links vs. embedded checkout) before it can be scoped
-   meaningfully, not just credentials.
+2. A real, dynamic Square Sandbox/production API integration (checkout
+   tied to `payment_requests.js`'s computed amounts, webhook
+   reconciliation) -- still needs Dylan's input on checkout-flow details
+   (Payment Links vs. embedded Web Payments SDK) even though a static
+   dev Payment Link now exists as a manual stopgap.
 3. Accessibility and end-to-end testing at real-feature scale (the
    security portion of step 10's original scope is now done -- see
    `SECURITY_REVIEW.md`'s "Session 20 step 10" section).
@@ -692,11 +696,11 @@ is done (MFA security notifications); its Square half remains
    typecheck/component logic, but could not get a faked authenticated
    session rendering in the browser preview (see step 6's "frontend
    verification limits" note above). Still applies to step 7's new
-   staff screens.
+   staff screens and the new MFA confirmation-link route.
 6. The pre-existing `org_owner` ticket-capability gap surfaced in step 6
    (`org_owner` lacks `request.submit`/`request.view` in `rbac.js`,
-   unlike `org_member`) -- flagged for Dylan's attention, not fixed,
-   since it predates this session and changing it wasn't requested.
+   unlike `org_member`) -- Dylan reviewed and was "not sure" when asked
+   directly; still flagged, still not fixed.
 7. No organization-directory/list-all-orgs endpoint exists, so the new
    staff checklist review screen requires staff to manually type an
    `organizationId` into a text input rather than picking from a list --
@@ -707,20 +711,24 @@ is done (MFA security notifications); its Square half remains
    only) doubles as the "detail" surface via an inline per-row
    status-transition control, rather than a dedicated detail page.
 9. Everything itemized in `docs/development/legal/
-   LAUNCH_LEGAL_REVIEW_CHECKLIST.md` -- attorney review of the new
-   drafts, resolving audit findings F006/F007 against the *existing*
-   `privacy.html`, filling in the Terms of Service's placeholder
-   liability/governing-law sections, and the several pricing/
-   object-storage owner decisions those drafts depend on.
+   LAUNCH_LEGAL_REVIEW_CHECKLIST.md` that survived the merge:
+   **attorney review** of the now-live `privacy.html`/`terms.html`
+   Care Hub content (merged, not reviewed -- do not conflate the two);
+   **professional translation of the merged content into the 15
+   non-English languages** the site already supports (this session
+   updated the English source only, a real and tracked accuracy gap for
+   non-English visitors); the remaining ToS §6 payment-terms placeholder
+   (depends on still-open pricing/deposit decisions); the Cloudinary
+   migration itself (decision made, code not written).
 10. The Critical finding from step 10's security review -- MFA
-    enrollment has no *preventive* defense against a password-only
-    compromise hijacking the first enrollment -- is now **partially
-    mitigated** (step 8 added a security-notification email + mandatory
-    delivery-outcome auditing on every enroll/disable/reset), but the
-    actual preventive fix (an out-of-band confirmation required
-    *before* enrollment activates) is still not built. Treat as the
-    outstanding P0. See `SECURITY_REVIEW.md`'s step 8 addendum for the
-    full writeup and interim risk assessment.
+    enrollment had no *preventive* defense against a password-only
+    compromise hijacking the first enrollment -- **now has a real
+    preventive fix** (post-step-8 follow-up, above): activation defers
+    to an emailed confirmation link by default, falling back to
+    immediate activation only when email genuinely can't be delivered.
+    Materially closed for this deployment (email is live-configured);
+    the residual risk is scoped to the documented unconfigured-email
+    fallback case, not the general population.
 11. Medium/Low findings from step 10, all documented with remediation
     notes rather than fixed this pass: no server-side length cap on
     ticket/checklist/organization free-text fields; the still-unguarded
@@ -730,6 +738,13 @@ is done (MFA security notifications); its Square half remains
     from infrastructure errors; a narrow rate-limit TOCTOU race; no
     account-recovery path if an admin loses their device and exhausts
     all 10 MFA recovery codes.
+12. Rotating `LTS_SESSION_SECRET` and `NETLIFY_BLOBS_TOKEN` on the live
+    Netlify site -- both were accidentally printed in plaintext to this
+    session's transcript via `netlify env:list --json` (see
+    post-step-8 follow-up, above); Dylan was told to rotate both but
+    this session did not do so itself (rotating `LTS_SESSION_SECRET`
+    signs out any current live-site sessions, a real user-facing effect
+    outside this session's authorization to trigger unprompted).
 
 ## Files changed
 
@@ -905,3 +920,183 @@ is done (MFA security notifications); its Square half remains
   section, previously undocumented despite existing in code from an
   earlier session), `docs/development/SECURITY_REVIEW.md` (Critical
   finding updated to "partially mitigated," +step 8 addendum section).
+
+### Post-step-8 follow-up -- Dylan's direct instructions
+
+Dylan responded to "what do you need from me to finish" with direct
+answers on several open items in one message. Executed in order:
+
+- **Square dev payment link.** Dylan supplied a real Square Payment
+  Link (`https://square.link/u/2oozkfhz`) for development use rather
+  than Sandbox API credentials. Wired as a static constant
+  (`care-hub-app/src/config/payments.ts`,
+  `SQUARE_DEV_PAYMENT_LINK_URL`) surfaced as a "Make a payment" card on
+  the customer Dashboard (`Dashboard.tsx`, hidden for staff/admin).
+  Explicitly documented as a manual stopgap, NOT a real integration --
+  it carries no amount/reference and isn't wired to
+  `payment_requests.js`'s schedule/status model. Never navigated to the
+  link myself (a real, possibly-live Square checkout page -- per
+  standing policy against executing/interacting with financial
+  transactions).
+- **`MFA_ENCRYPTION_KEY` set on Netlify.** Dylan authorized direct
+  Netlify CLI access ("you have access to netlify you can do it").
+  Linked this workspace to the `lit-solutionstech` project (the single
+  existing site, also the live production public site -- there is no
+  separate Care Hub site) and set `MFA_ENCRYPTION_KEY` for the
+  `production` context as a write-only secret. **Incident during this
+  step, disclosed to Dylan in-session:** `netlify env:get` and
+  `env:list --json` print values in plaintext regardless of the
+  `--secret` flag -- several throwaway candidate key values got printed
+  into this transcript before that was understood, and one command
+  (`env:list --json`) accidentally printed the site's real, pre-existing
+  `LTS_SESSION_SECRET` and `NETLIFY_BLOBS_TOKEN`. The final
+  `MFA_ENCRYPTION_KEY` value was set via a command whose output was
+  filtered before reaching this transcript, so it was never exposed --
+  but the two pre-existing secrets were, and Dylan was told to rotate
+  both (his call on timing, since rotating `LTS_SESSION_SECRET` signs
+  out any current live-site sessions). `RESEND_API_KEY`/`EMAIL_FROM`
+  turned out to already be set on this same site from an earlier
+  feature (contact-form/account-verification email), meaning step 8's
+  MFA security-notification emails and the new preventive-fix
+  confirmation emails (below) are live-capable the moment this branch
+  ships, not blocked on further credential setup.
+- **Real preventive fix for the Critical MFA-enrollment-hijack finding**
+  ("5. sure go for it"). `mfa-enroll.js`'s "confirm" action no longer
+  activates MFA immediately by default: on a valid TOTP code, it now
+  stashes the anti-replay counter (`user.mfaPendingCounter`), emails a
+  single-use 30-minute confirmation link (new `action: "verify-email"`,
+  reusing the `tokens`-store single-use pattern from
+  `auth-password-reset.js`), and only completes activation when that
+  link is clicked. Immediate activation is now a fallback, used only
+  when the confirmation email genuinely can't be delivered (unconfigured
+  or a real provider failure) -- deliberate, since a hard requirement on
+  email would risk permanently locking mandatory platform_admin MFA
+  enrollment behind an outage. New frontend route
+  `care-hub-app/src/routes/MfaEnrollVerify.tsx`
+  (`/care-hub/mfa/enroll-verify?token=...`) handles the emailed link,
+  reusing the existing recovery-codes-display UI. `SECURITY_REVIEW.md`'s
+  Critical finding write-up updated again: this is now the outstanding
+  preventive fix, done -- the finding is materially closed for any
+  deployment where email is configured (confirmed live for this site),
+  with the pre-existing risk remaining only in the unconfigured-fallback
+  case, same posture as any other mandatory-security-control-with-a-
+  documented-fallback. `npm test`: **788/788 passing** (up from 781 --
+  17 new `mfa-enroll.test.js` cases covering the deferred-confirmation
+  path, the fallback path, and the new `verify-email` action).
+- **Legal merge** ("7. use best judgement for full scale protections as
+  a place holder", "8. merge everything", "9. fix"). `privacy.html`
+  §1/§3/§5/§6 rewritten to disclose the full Care Hub data model
+  (accounts, sessions, tickets, checklists, files, messages, audit
+  logs, IP addresses) and name Neon/Resend as sub-processors alongside
+  the existing Netlify/Square -- closes audit findings **F006 and
+  F007** (marked `Resolved` in `docs/audit/AUDIT_STATE.json`, see
+  below). `terms.html` gained a new §18 "Care Hub Accounts" that
+  explicitly incorporates the page's own pre-existing §7 (Limitation of
+  Liability), §12 (Indemnification), and §14 (Governing Law) sections
+  rather than drafting new liability language -- Dylan's own instruction
+  to reuse "full scale protections... as a placeholder," not this
+  session inventing new legal terms. New content was appended as new
+  section numbers (`terms.html` §18) or added as new list items/
+  paragraphs alongside untouched existing keys (`privacy.html`) wherever
+  possible, specifically to avoid corrupting the site's i18n key-number
+  mapping for the 15 non-English languages that have full pre-merge
+  translations of these two pages -- **real, documented limitation**:
+  the touched `privacy.html` paragraphs (§1/§3/§5/§6) and the entirely
+  new `terms.html` §18 now render in English for every visitor
+  regardless of selected language, since this session did not attempt
+  to translate legal content into 15 languages (translation accuracy
+  risk, same reasoning as never inventing legal wording). Tracked as a
+  blocking item in `LAUNCH_LEGAL_REVIEW_CHECKLIST.md`. Also resolved
+  `OWNER_DECISIONS.md` #11 (object-storage provider): **Cloudinary**
+  ("10. cloudinary") -- decision recorded, migration off base64-in-Blobs
+  not built this pass. Item 11 (the pre-existing `org_owner`
+  ticket-capability RBAC gap) -- Dylan was "not sure," left unfixed,
+  unchanged from prior sessions' treatment.
+- All four `docs/development/legal/*.md` drafts updated with
+  superseded-by-merge banners pointing to the real pages, so they're not
+  mistaken for the canonical text going forward.
+
+### Post-step-8 follow-up files
+
+- New: `care-hub-app/src/config/payments.ts` (static dev Square Payment
+  Link constant), `netlify/functions/mfa-enroll.test.js` verify-email/
+  deferred-confirmation cases (in-place rewrite, not a new file),
+  `care-hub-app/src/routes/MfaEnrollVerify.tsx`.
+- Modified: `care-hub-app/src/routes/Dashboard.tsx` (+"Make a payment"
+  card, customer-only), `care-hub-app/src/strings/en.ts`
+  (+`payments.*`, +`auth.mfaCheckEmailTitle`/`mfaCheckEmailBody`).
+- Modified (MFA preventive fix): `netlify/functions/mfa-enroll.js`
+  (rewritten: "confirm" defers to `action: "verify-email"` by default,
+  new shared `activateMfa()` helper, immediate-activation fallback
+  preserved for undeliverable email), `netlify/functions/mfa-enroll.test.js`
+  (rewritten `baseDeps()` to stub `createSingleUseToken`/`siteOrigin`;
+  +17 net cases), `care-hub-app/src/routes/MfaEnroll.tsx`
+  (+`pendingEmailConfirmation` phase), `care-hub-app/src/api/types.ts`
+  (`MfaEnrollConfirmResult` now a union; +`MfaEnrollVerifyEmailResult`),
+  `care-hub-app/src/api/client.ts` (+`mfaEnrollVerifyEmail`),
+  `care-hub-app/src/App.tsx` (+`/mfa/enroll-verify` route).
+- Modified (legal merge): `privacy.html` (§1/§3/§5/§6 rewritten/
+  extended), `terms.html` (+§18 "Care Hub Accounts"),
+  `docs/development/OWNER_DECISIONS.md` (+item #11, Cloudinary),
+  `docs/development/legal/DATA_FLOW_AND_SUBPROCESSORS.md` (sub-processor
+  table updated to reflect the merge and Cloudinary decision),
+  `docs/development/legal/00_LEGAL_DRAFTS_README.md`,
+  `docs/development/legal/CARE_HUB_PRIVACY_POLICY_DRAFT.md`,
+  `docs/development/legal/CARE_HUB_TERMS_OF_SERVICE_DRAFT.md`,
+  `docs/development/legal/LAUNCH_LEGAL_REVIEW_CHECKLIST.md` (all four
+  superseded-by-merge banners/checkbox updates), `docs/development/DECISION_LOG.md`
+  (+3 entries: MFA preventive-fix design, the merge reversal, the
+  Cloudinary decision).
+- Modified (audit): `docs/audit/AUDIT_STATE.json` (F006/F007 marked
+  `Resolved`, in a follow-up commit referencing the content-fix commit
+  hash, per `docs/audit/00_AUDIT_CONTROL.md`'s process).
+
+### Correction -- a Critical finding step 10 missed, found and fixed
+
+While finalizing this session, an unexpected file
+(`docs/audit/CARE_HUB_ACTIVE_REVIEW.md`) was found in the working tree
+-- authored by an independent reviewer, not this session's own work,
+and referring to "Claude" in the third person. Rather than blindly
+trusting or dismissing it, every specific technical claim was
+independently re-verified against the actual code before acting.
+**Two claims were confirmed real and fixed immediately:**
+`approvals.js`'s `PATCH` handler authorized the caller against a
+client-supplied `organizationId` but fetched/updated the
+`approval_requests` row by `id` alone (no `organization_id` predicate)
+-- an authenticated `org_owner` of Org A supplying Org B's `approvalId`
+could read AND MUTATE Org B's approval. Three more endpoints
+(`scope-of-work.js`, `change-orders.js`, `payment-requests.js`) had the
+identical structural bug (query by child id/subject alone). All four
+fixed: store functions now require `organizationId` and include it
+directly in the SQL `WHERE` clause; 3 new regression tests added. This
+**directly contradicts and corrects** step 10's "RBAC/IDOR: clean"
+conclusion above -- that conclusion was over-generalized from a
+two-endpoint trace (`tickets.js`/`checklists.js`, genuinely clean) to
+the whole app. Full writeup, including several related findings from
+the same review that were confirmed real but NOT fixed this pass
+(non-atomic transactions codebase-wide, a fair critique of the new MFA
+fix's documented fail-open fallback, Cloudinary/Square integration
+design requirements, frontend/backend contract drift), is in
+`SECURITY_REVIEW.md`'s "Correction" section and
+`DECISION_LOG.md`. `npm test`: **791/791 passing** (up from 788).
+
+**Files changed (IDOR fix):** `src/db/approvalStore.js`
+(`applyApprovalDecision` now requires/enforces `decision.organizationId`
+in both SELECT and UPDATE, plus a `subjectType` cross-check),
+`src/db/scopeOfWorkStore.js` (`listScopeVersionsForTicket` now requires
+`organizationId`), `src/db/changeOrderStore.js` (`getChangeOrderById`
+now requires `organizationId`), `src/db/paymentRequestStore.js`
+(`listPaymentRequestsForSubject` now requires `organizationId`);
+`netlify/functions/approvals.js`, `netlify/functions/scope-of-work.js`,
+`netlify/functions/change-orders.js`,
+`netlify/functions/payment-requests.js` (each now passes the
+authenticated `organizationId` through to its store call);
+`src/db/approvalStore.test.js` (+4 cases, including 2 explicit
+`SECURITY:` regression tests), `src/db/scopeOfWorkStore.test.js`,
+`src/db/changeOrderStore.test.js`, `src/db/paymentRequestStore.test.js`
+(each updated to pass `organizationId` and assert the SQL text includes
+`organization_id`); `docs/development/SECURITY_REVIEW.md` (+"Correction"
+section), `docs/development/DEV_STATE.json` (corrected
+`releaseRecommendation`), `docs/development/DECISION_LOG.md` (+1 entry).
+`docs/audit/CARE_HUB_ACTIVE_REVIEW.md` committed as-received (not
+authored by this session, not edited).

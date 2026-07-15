@@ -80,9 +80,31 @@ async function listPendingApprovals(organizationId, deps = {}) {
  * (attempting an illegal transition) surfaces immediately rather than
  * disappearing into a no-op write.
  *
+ * SECURITY: `decision.organizationId` is required and MUST be the caller's
+ * already-authorized organization (never trust a bare `id` alone) -- if the
+ * stored row belongs to a different organization, this throws the exact
+ * same "no approval request" error as a genuinely missing id, so a caller
+ * cannot distinguish "wrong org" from "doesn't exist" (avoids confirming
+ * another organization's approval IDs exist). Found via independent review
+ * (Session 20 post-step-8): the original version fetched/updated by `id`
+ * alone, so an authenticated org_owner of Org A supplying Org B's
+ * `approvalId` (with `organizationId: "org-a"` to pass authentication)
+ * could read AND mutate Org B's approval -- a real cross-tenant IDOR, not
+ * just a theoretical one; the caller-supplied `organizationId` was
+ * previously only used to authenticate the CALLER, never to constrain
+ * which row could be read/written.
+ *
+ * `decision.subjectType`, if supplied, is also verified against the
+ * stored row's real `subjectType` (throws the same not-found-shaped error
+ * on mismatch) -- the HTTP layer derives the required RBAC capability
+ * (`scope.approve` vs `change_order.approve`) from a caller-supplied
+ * `subjectType`, so a caller claiming the wrong `subjectType` for a real
+ * `approvalId` could otherwise use a capability check meant for one
+ * subject type to approve/reject the other.
+ *
  * @param {string} id
  * @param {import("../policy/approvalWorkflow").ApprovalAction} action
- * @param {{ decidedBy?: string, decisionNote?: string }} decision
+ * @param {{ decidedBy?: string, decisionNote?: string, organizationId: string, subjectType?: string }} decision
  * @param {{ sql?: Function, now?: () => Date, actorId?: string, auditRecorder?: object }} [deps]
  * @returns {Promise<import("../domain/approval").ApprovalRequest>}
  */
@@ -91,11 +113,18 @@ async function applyApprovalDecision(id, action, decision, deps = {}) {
   const now = deps.now || (() => new Date());
   const auditRecorder = resolveAuditRecorder(deps);
 
-  const rows = await sql`SELECT * FROM approval_requests WHERE id = ${id}`;
+  if (!decision || !decision.organizationId) {
+    throw new Error("applyApprovalDecision: decision.organizationId is required");
+  }
+
+  const rows = await sql`SELECT * FROM approval_requests WHERE id = ${id} AND organization_id = ${decision.organizationId}`;
   if (rows.length === 0) {
     throw new Error(`applyApprovalDecision: no approval request "${id}"`);
   }
   const current = mapRowToApproval(rows[0]);
+  if (decision.subjectType && current.subjectType !== decision.subjectType) {
+    throw new Error(`applyApprovalDecision: no approval request "${id}"`);
+  }
   const result = transitionApproval(current, action, { now });
   if (!result.allowed) {
     throw new Error(`applyApprovalDecision: ${result.reason}`);
@@ -105,7 +134,7 @@ async function applyApprovalDecision(id, action, decision, deps = {}) {
   await sql`
     UPDATE approval_requests
     SET status = ${result.nextStatus}, decided_at = ${nowIso}, decided_by = ${decision.decidedBy || null}, decision_note = ${decision.decisionNote || null}
-    WHERE id = ${id}
+    WHERE id = ${id} AND organization_id = ${decision.organizationId}
   `;
 
   await auditRecorder.record(

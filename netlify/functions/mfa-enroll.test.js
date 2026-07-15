@@ -30,6 +30,7 @@ function baseEvent(overrides = {}) {
 
 function baseDeps(users, extra = {}) {
   const saved = {};
+  let tokenCounter = 0;
   return {
     readCookie: () => "fake-pending-token",
     verify: (token) => (token === "fake-pending-token" ? { type: "mfa_pending", uid: "admin-1" } : null),
@@ -40,6 +41,11 @@ function baseDeps(users, extra = {}) {
     mfaEncryptionKey: MFA_KEY,
     auditRecorder: fakeAuditRecorder(),
     createSession: async () => ({ token: "real-session-token", expiresAt: Date.now() + 1000 }),
+    // Avoid the real auth_utils.js sign()/createSingleUseToken(), which
+    // requires LTS_SESSION_SECRET -- deliberately not set in this test
+    // environment, same reasoning as createSession above.
+    createSingleUseToken: () => `fake-confirm-token-${++tokenCounter}`,
+    siteOrigin: () => "https://lit-solutions.tech",
     _saved: saved,
     ...extra,
   };
@@ -102,7 +108,38 @@ test("action: confirm with the wrong code is denied, audited as a failure, and M
   assert.equal(deps.auditRecorder.events[0].outcome, "failure");
 });
 
-test("action: confirm with the correct code activates MFA, issues recovery codes once, and upgrades to a real session", async () => {
+test("action: confirm defers activation and emails a confirmation link when delivery succeeds (the real preventive fix for the enrollment-hijack finding)", async () => {
+  const secret = generateTotpSecret();
+  const users = { "dylan@lit-solutions.tech": adminUser({ mfaPendingSecretEncrypted: encryptSecret(secret, MFA_KEY) }) };
+  const sentEmails = [];
+  const deps = baseDeps(users, {
+    validateTotpToken: () => ({ valid: true, counter: 1000 }),
+    sendEmail: async (opts) => { sentEmails.push(opts); return { sent: true }; },
+  });
+  const res = await handler(baseEvent({ body: JSON.stringify({ action: "confirm", code: "123456" }) }), {}, deps);
+
+  assert.equal(res.statusCode, 200);
+  const body = JSON.parse(res.body);
+  assert.equal(body.pendingEmailConfirmation, true);
+  assert.equal(body.recoveryCodes, undefined, "recovery codes aren't issued until the link is clicked");
+  assert.equal(res.multiValueHeaders, undefined, "no session is issued yet -- possessing the pre-auth cookie and the code alone is no longer enough");
+
+  const saved = deps._saved["dylan@lit-solutions.tech"];
+  assert.equal(saved.mfaEnabled, undefined, "not active until the emailed link is confirmed");
+  assert.ok(saved.mfaPendingSecretEncrypted, "still pending");
+  assert.equal(saved.mfaPendingCounter, 1000, "stashed for verify-email to seed anti-replay with");
+
+  assert.equal(sentEmails.length, 1);
+  assert.equal(sentEmails[0].to, "dylan@lit-solutions.tech");
+  assert.match(sentEmails[0].subject, /confirm/i);
+  assert.match(sentEmails[0].html, /https:\/\/lit-solutions\.tech\/care-hub\/mfa\/enroll-verify\?token=/);
+
+  assert.equal(deps.auditRecorder.events.length, 1, "only the link-sent event -- mfa.enroll.confirm doesn't fire until verify-email succeeds");
+  assert.equal(deps.auditRecorder.events[0].action, "mfa.enroll.link_sent");
+  assert.equal(deps.auditRecorder.events[0].outcome, "success");
+});
+
+test("action: confirm falls back to immediate activation when the confirmation email can't be delivered (default deps: not configured)", async () => {
   const secret = generateTotpSecret();
   const users = { "dylan@lit-solutions.tech": adminUser({ mfaPendingSecretEncrypted: encryptSecret(secret, MFA_KEY) }) };
   const deps = baseDeps(users, { validateTotpToken: () => ({ valid: true, counter: 1000 }) });
@@ -116,39 +153,26 @@ test("action: confirm with the correct code activates MFA, issues recovery codes
   const saved = deps._saved["dylan@lit-solutions.tech"];
   assert.equal(saved.mfaEnabled, true);
   assert.equal(saved.mfaPendingSecretEncrypted, undefined, "pending secret cleared once promoted");
+  assert.equal(saved.mfaPendingCounter, undefined, "pending counter cleared once promoted");
   assert.ok(saved.mfaSecretEncrypted);
   assert.equal(saved.mfaRecoveryCodeHashes.length, 10);
   assert.notEqual(saved.mfaRecoveryCodeHashes[0], body.recoveryCodes[0], "stored hashed, not plaintext");
   assert.equal(saved.mfaLastUsedCounter, 1000, "seeds anti-replay tracking with the confirm code's own counter");
 
-  assert.equal(deps.auditRecorder.events.length, 2, "mfa.enroll.confirm plus a delivery-outcome event for the security notification email");
-  assert.equal(deps.auditRecorder.events[0].action, "mfa.enroll.confirm");
-  assert.equal(deps.auditRecorder.events[0].outcome, "success");
-  assert.equal(deps.auditRecorder.events[1].action, "mfa.enroll.notification");
+  assert.equal(deps.auditRecorder.events.length, 3, "link_sent failure, confirm success (immediate fallback), notification failure");
+  assert.equal(deps.auditRecorder.events[0].action, "mfa.enroll.link_sent");
+  assert.equal(deps.auditRecorder.events[0].outcome, "failure");
+  assert.equal(deps.auditRecorder.events[1].action, "mfa.enroll.confirm");
+  assert.equal(deps.auditRecorder.events[1].outcome, "success");
+  assert.equal(deps.auditRecorder.events[1].metadata.immediateFallback, true);
+  assert.equal(deps.auditRecorder.events[2].action, "mfa.enroll.notification");
 
   assert.equal(res.multiValueHeaders["Set-Cookie"].length, 2);
   assert.match(res.multiValueHeaders["Set-Cookie"][0], /^lts_session=real-session-token/);
   assert.match(res.multiValueHeaders["Set-Cookie"][1], /^lts_mfa_pending=;.*Max-Age=0/);
 });
 
-test("action: confirm sends a security notification email and audits successful delivery", async () => {
-  const secret = generateTotpSecret();
-  const users = { "dylan@lit-solutions.tech": adminUser({ mfaPendingSecretEncrypted: encryptSecret(secret, MFA_KEY) }) };
-  const sentEmails = [];
-  const deps = baseDeps(users, {
-    validateTotpToken: () => ({ valid: true, counter: 1000 }),
-    sendEmail: async (opts) => { sentEmails.push(opts); return { sent: true }; },
-  });
-  await handler(baseEvent({ body: JSON.stringify({ action: "confirm", code: "123456" }) }), {}, deps);
-
-  assert.equal(sentEmails.length, 1);
-  assert.equal(sentEmails[0].to, "dylan@lit-solutions.tech");
-  assert.match(sentEmails[0].subject, /enabled/i);
-  assert.equal(deps.auditRecorder.events[1].action, "mfa.enroll.notification");
-  assert.equal(deps.auditRecorder.events[1].outcome, "success");
-});
-
-test("action: confirm audits a failed notification delivery without failing the enrollment itself", async () => {
+test("action: confirm's immediate-fallback path still audits a failed notification delivery without failing enrollment itself", async () => {
   const secret = generateTotpSecret();
   const users = { "dylan@lit-solutions.tech": adminUser({ mfaPendingSecretEncrypted: encryptSecret(secret, MFA_KEY) }) };
   const deps = baseDeps(users, {
@@ -157,10 +181,121 @@ test("action: confirm audits a failed notification delivery without failing the 
   });
   const res = await handler(baseEvent({ body: JSON.stringify({ action: "confirm", code: "123456" }) }), {}, deps);
 
-  assert.equal(res.statusCode, 200, "enrollment itself still succeeds even if the notification email couldn't be delivered");
-  assert.equal(deps.auditRecorder.events[1].action, "mfa.enroll.notification");
-  assert.equal(deps.auditRecorder.events[1].outcome, "failure");
-  assert.equal(deps.auditRecorder.events[1].metadata.reason, "not configured");
+  assert.equal(res.statusCode, 200, "enrollment itself still succeeds even if no confirmation/notification email could be delivered");
+  assert.equal(deps.auditRecorder.events[2].action, "mfa.enroll.notification");
+  assert.equal(deps.auditRecorder.events[2].outcome, "failure");
+  assert.equal(deps.auditRecorder.events[2].metadata.reason, "not configured");
+});
+
+test("action: verify-email activates MFA and issues recovery codes/session for a valid, unused confirmation link", async () => {
+  const secret = generateTotpSecret();
+  const users = {
+    "dylan@lit-solutions.tech": adminUser({ mfaPendingSecretEncrypted: encryptSecret(secret, MFA_KEY), mfaPendingCounter: 1000 }),
+  };
+  const tokenRecords = { "confirm-token": { type: "mfa_enroll_verify", userId: "admin-1", used: false } };
+  const deps = baseDeps(users, {
+    verify: (token) => (token === "confirm-token" ? { type: "mfa_enroll_verify", uid: "admin-1" } : null),
+    getJSON: async (storeName, key) => (storeName === "tokens" ? tokenRecords[key] || null : null),
+  });
+  const res = await handler(
+    { httpMethod: "POST", headers: {}, body: JSON.stringify({ action: "verify-email", token: "confirm-token" }) },
+    {},
+    deps
+  );
+
+  assert.equal(res.statusCode, 200);
+  const body = JSON.parse(res.body);
+  assert.equal(body.recoveryCodes.length, 10);
+
+  const saved = deps._saved["dylan@lit-solutions.tech"];
+  assert.equal(saved.mfaEnabled, true);
+  assert.equal(saved.mfaLastUsedCounter, 1000);
+  assert.equal(saved.mfaPendingSecretEncrypted, undefined);
+  assert.equal(saved.mfaPendingCounter, undefined);
+
+  assert.equal(tokenRecords["confirm-token"].used, true, "single-use: consumed");
+
+  assert.equal(deps.auditRecorder.events.length, 1);
+  assert.equal(deps.auditRecorder.events[0].action, "mfa.enroll.confirm");
+  assert.equal(deps.auditRecorder.events[0].outcome, "success");
+  assert.equal(deps.auditRecorder.events[0].metadata.viaEmailConfirmation, true);
+
+  assert.equal(res.multiValueHeaders["Set-Cookie"].length, 2);
+  assert.match(res.multiValueHeaders["Set-Cookie"][0], /^lts_session=real-session-token/);
+});
+
+test("action: verify-email does not require the lts_mfa_pending cookie (the emailed link is its own credential)", async () => {
+  const secret = generateTotpSecret();
+  const users = {
+    "dylan@lit-solutions.tech": adminUser({ mfaPendingSecretEncrypted: encryptSecret(secret, MFA_KEY), mfaPendingCounter: 1000 }),
+  };
+  const tokenRecords = { "confirm-token": { type: "mfa_enroll_verify", userId: "admin-1", used: false } };
+  const deps = baseDeps(users, {
+    readCookie: () => null,
+    verify: () => ({ type: "mfa_enroll_verify", uid: "admin-1" }),
+    getJSON: async (storeName, key) => (storeName === "tokens" ? tokenRecords[key] || null : null),
+  });
+  const res = await handler(
+    { httpMethod: "POST", headers: {}, body: JSON.stringify({ action: "verify-email", token: "confirm-token" }) },
+    {},
+    deps
+  );
+  assert.equal(res.statusCode, 200);
+});
+
+test("action: verify-email rejects a missing token", async () => {
+  const res = await handler({ httpMethod: "POST", headers: {}, body: JSON.stringify({ action: "verify-email" }) }, {}, baseDeps({}));
+  assert.equal(res.statusCode, 400);
+});
+
+test("action: verify-email rejects an invalid or unsigned token", async () => {
+  const deps = baseDeps({}, { verify: () => null });
+  const res = await handler(
+    { httpMethod: "POST", headers: {}, body: JSON.stringify({ action: "verify-email", token: "garbage" }) },
+    {},
+    deps
+  );
+  assert.equal(res.statusCode, 400);
+});
+
+test("action: verify-email rejects an already-used confirmation link", async () => {
+  const users = { "dylan@lit-solutions.tech": adminUser({ mfaPendingSecretEncrypted: "x", mfaPendingCounter: 1000 }) };
+  const tokenRecords = { "confirm-token": { type: "mfa_enroll_verify", userId: "admin-1", used: true } };
+  const deps = baseDeps(users, {
+    verify: () => ({ type: "mfa_enroll_verify", uid: "admin-1" }),
+    getJSON: async (storeName, key) => (storeName === "tokens" ? tokenRecords[key] || null : null),
+  });
+  const res = await handler(
+    { httpMethod: "POST", headers: {}, body: JSON.stringify({ action: "verify-email", token: "confirm-token" }) },
+    {},
+    deps
+  );
+  assert.equal(res.statusCode, 400);
+});
+
+test("action: verify-email rejects a link for an account that already has MFA enabled", async () => {
+  const users = { "dylan@lit-solutions.tech": adminUser({ mfaEnabled: true }) };
+  const tokenRecords = { "confirm-token": { type: "mfa_enroll_verify", userId: "admin-1", used: false } };
+  const deps = baseDeps(users, {
+    verify: () => ({ type: "mfa_enroll_verify", uid: "admin-1" }),
+    getJSON: async (storeName, key) => (storeName === "tokens" ? tokenRecords[key] || null : null),
+  });
+  const res = await handler(
+    { httpMethod: "POST", headers: {}, body: JSON.stringify({ action: "verify-email", token: "confirm-token" }) },
+    {},
+    deps
+  );
+  assert.equal(res.statusCode, 400);
+});
+
+test("action: verify-email is rate-limited", async () => {
+  const deps = baseDeps({}, { rateLimited: async () => true });
+  const res = await handler(
+    { httpMethod: "POST", headers: {}, body: JSON.stringify({ action: "verify-email", token: "x" }) },
+    {},
+    deps
+  );
+  assert.equal(res.statusCode, 429);
 });
 
 test("action: confirm rate-limits repeated attempts", async () => {

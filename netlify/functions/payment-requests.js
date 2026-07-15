@@ -73,7 +73,7 @@ async function handleList(event, deps) {
   const deny = denyResponseFor(auth.authContext, organizationId, "payment.view");
   if (deny) return deny;
 
-  const paymentRequests = await listPaymentRequestsForSubject(subjectType, subjectId, deps);
+  const paymentRequests = await listPaymentRequestsForSubject(subjectType, subjectId, organizationId, deps);
   return json(200, { paymentRequests });
 }
 

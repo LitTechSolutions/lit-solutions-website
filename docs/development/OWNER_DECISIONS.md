@@ -83,4 +83,10 @@ Consolidated from `v23/docs/audit/AUDIT_STATE.json` (11 owner-decision findings)
 
 - **Issue:** The Master Function Index references 60 individual workbooks (`F001_....xlsx` … `F060_....xlsx`) by filename. None were attached and none exist anywhere on disk in this repository or the `Requirements`/`Functions` folders searched during this session (only the two roll-up workbooks — Global Requirements, Master Function Index — were provided).
 - **Options:** (a) Dylan provides the 60 individual workbooks before Session 1 begins; (b) Dylan confirms the Global Requirements + Master Function Index summaries (objective, dependencies, priority, complexity per function — already captured in `REQUIREMENTS_CATALOG.json`) are sufficient to proceed without them, at least for early Wave 1 functions.
+
+## 11. Object-storage provider for uploaded files — ✅ RESOLVED (Dylan, 2026-07-15)
+
+- **Decision:** **Cloudinary** for the underlying storage of uploaded documents/files (currently base64 data URIs inside Netlify Blobs' `documents` store, tracked as a stopgap since `DATA_FLOW_AND_SUBPROCESSORS.md` was first written).
+- **Still open, an implementation task not a decision:** the actual migration — swapping the upload/serve path in `netlify/functions/documents.js` and the Care Hub's document endpoints from base64-in-Blobs to real Cloudinary uploads, plus a Netlify env var for the Cloudinary API credentials — has not been built yet. Until that code exists, Cloudinary must not be described as an active sub-processor in any Privacy Policy content (see `docs/development/legal/DATA_FLOW_AND_SUBPROCESSORS.md`, updated to reflect this as decided-but-not-integrated, same discipline already applied to Square).
+- **Unblocks:** finalizing the "object storage provider" line item that `CARE_HUB_PRIVACY_POLICY_DRAFT.md` and the merged `privacy.html` both left open.
 - **Blocks:** Detailed acceptance-test and business-rule design for any function beyond what the two roll-up workbooks already specify. Does not block Session 0 itself.

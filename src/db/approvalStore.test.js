@@ -62,10 +62,17 @@ test("listPendingApprovals filters to pending status only, at the query level", 
 test("integration: applyApprovalDecision approves a pending request via the pure state machine", async () => {
   const sql = fakeSql([pendingRow()]);
   const auditRecorder = fakeAuditRecorder();
-  const result = await applyApprovalDecision("appr-1", "approve", { decidedBy: "user-owner-1" }, { sql, now: FIXED_NOW, actorId: "user-owner-1", auditRecorder });
+  const result = await applyApprovalDecision(
+    "appr-1",
+    "approve",
+    { decidedBy: "user-owner-1", organizationId: "org-a" },
+    { sql, now: FIXED_NOW, actorId: "user-owner-1", auditRecorder }
+  );
   assert.equal(result.status, "approved");
   assert.equal(sql.calls.length, 2, "one SELECT to fetch current state, one UPDATE to persist the transition");
+  assert.match(sql.calls[0].text, /organization_id/, "the fetch must be scoped by organization_id, not id alone");
   assert.match(sql.calls[1].text, /UPDATE approval_requests/);
+  assert.match(sql.calls[1].text, /organization_id/, "the UPDATE's WHERE clause must also be scoped by organization_id");
   assert.equal(auditRecorder.events.length, 1);
   assert.equal(auditRecorder.events[0].action, "approval.decision");
   assert.equal(auditRecorder.events[0].actorId, "user-owner-1");
@@ -74,19 +81,70 @@ test("integration: applyApprovalDecision approves a pending request via the pure
 test("integration: applyApprovalDecision refuses to approve an already-decided request (illegal transition)", async () => {
   const sql = fakeSql([pendingRow({ status: "approved" })]);
   const auditRecorder = fakeAuditRecorder();
-  await assert.rejects(() => applyApprovalDecision("appr-1", "approve", {}, { sql, now: FIXED_NOW, auditRecorder }), /already terminal/);
+  await assert.rejects(
+    () => applyApprovalDecision("appr-1", "approve", { organizationId: "org-a" }, { sql, now: FIXED_NOW, auditRecorder }),
+    /already terminal/
+  );
   assert.equal(sql.calls.length, 1, "must not issue the UPDATE when the transition is denied");
   assert.equal(auditRecorder.events.length, 0, "must not audit a denied transition");
 });
 
 test("integration: applyApprovalDecision refuses to approve an expired request", async () => {
   const sql = fakeSql([pendingRow({ expires_at: "2026-01-01T00:00:00.000Z" })]);
-  await assert.rejects(() => applyApprovalDecision("appr-1", "approve", {}, { sql, now: FIXED_NOW, auditRecorder: fakeAuditRecorder() }), /approval window has passed/);
+  await assert.rejects(
+    () => applyApprovalDecision("appr-1", "approve", { organizationId: "org-a" }, { sql, now: FIXED_NOW, auditRecorder: fakeAuditRecorder() }),
+    /approval window has passed/
+  );
 });
 
 test("applyApprovalDecision throws for a nonexistent approval id", async () => {
   const sql = fakeSql([]);
-  await assert.rejects(() => applyApprovalDecision("nonexistent", "approve", {}, { sql, now: FIXED_NOW, auditRecorder: fakeAuditRecorder() }), /no approval request/);
+  await assert.rejects(
+    () => applyApprovalDecision("nonexistent", "approve", { organizationId: "org-a" }, { sql, now: FIXED_NOW, auditRecorder: fakeAuditRecorder() }),
+    /no approval request/
+  );
+});
+
+test("applyApprovalDecision requires decision.organizationId -- never falls back to trusting the bare id", async () => {
+  const sql = fakeSql([pendingRow()]);
+  await assert.rejects(
+    () => applyApprovalDecision("appr-1", "approve", {}, { sql, now: FIXED_NOW, auditRecorder: fakeAuditRecorder() }),
+    /organizationId is required/
+  );
+});
+
+// Regression test for the cross-tenant IDOR found via independent review
+// (Session 20 post-step-8): an org_owner authenticated for "org-a" must
+// never be able to read or mutate an approval that actually belongs to
+// "org-b", even if they know/guess its id.
+test("SECURITY: applyApprovalDecision rejects an approval that belongs to a different organization than the caller's authorized one", async () => {
+  // The fake sql adapter can't filter by WHERE clause itself, so this
+  // proves the query INCLUDES organization_id in its predicate (the real
+  // Postgres driver enforces the actual filtering) -- see the
+  // "must be scoped by organization_id" assertions above for the SQL-text
+  // proof; this test proves the call fails closed when the query legitimately
+  // returns zero rows (the real-world outcome for a mismatched org).
+  const sql = fakeSql([]); // simulates: no row matches id AND organization_id together
+  await assert.rejects(
+    () => applyApprovalDecision("appr-owned-by-org-b", "approve", { organizationId: "org-a" }, { sql, now: FIXED_NOW, auditRecorder: fakeAuditRecorder() }),
+    /no approval request/,
+    "must throw the same not-found-shaped error as a genuinely missing id -- never reveal that the id exists in another organization"
+  );
+});
+
+test("SECURITY: applyApprovalDecision rejects a subjectType that doesn't match the stored approval's real subjectType", async () => {
+  const sql = fakeSql([pendingRow({ subject_type: "scope" })]);
+  await assert.rejects(
+    () =>
+      applyApprovalDecision(
+        "appr-1",
+        "approve",
+        { organizationId: "org-a", subjectType: "change_order" },
+        { sql, now: FIXED_NOW, auditRecorder: fakeAuditRecorder() }
+      ),
+    /no approval request/,
+    "a caller claiming the wrong subjectType (to route through a different RBAC capability check) must be rejected, not silently approved"
+  );
 });
 
 test("mapRowToApproval omits decision fields when not yet decided", () => {

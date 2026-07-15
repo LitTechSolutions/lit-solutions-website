@@ -1,5 +1,14 @@
 # Care Hub Terms of Service — DRAFT
 
+> **SUPERSEDED as of Session 20 step 8: Dylan directed a merge — see
+> `00_LEGAL_DRAFTS_README.md`.** The real, live `terms.html` now has a
+> §18 "Care Hub Accounts" section that covers this ground and explicitly
+> incorporates that page's own existing Limitation of Liability (§7),
+> Indemnification (§12), and Governing Law (§14) sections — reusing
+> already-established language rather than the blank placeholders this
+> draft originally left in §9/§10 below. This document is kept as a
+> fuller, Care-Hub-specific working note, not the canonical text.
+>
 > **This is a draft for attorney and owner review. It is not published
 > anywhere, not linked from the app, and not binding. Do not treat any
 > sentence below as final legal wording.** Standard limitation-of-liability,

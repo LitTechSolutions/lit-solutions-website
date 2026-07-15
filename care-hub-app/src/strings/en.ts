@@ -58,6 +58,8 @@ export const strings = {
     mfaRecoveryCodesBody: "Store these somewhere safe. Each code works once, and they will not be shown again. Use one if you ever lose access to your authenticator app.",
     mfaRecoveryCodesContinue: "I've saved these, continue",
     noPendingSignIn: "Your sign-in session expired before you finished. Please sign in again.",
+    mfaCheckEmailTitle: "Check your email to finish setup",
+    mfaCheckEmailBody: "We sent a confirmation link to your email. Click it within 30 minutes to finish enabling two-factor authentication. If you don't see it, check your spam folder or contact us.",
   },
   tickets: {
     title: "Tickets",
@@ -123,6 +125,11 @@ export const strings = {
     reviewing: "Working…",
     scoreLabel: "Score",
     audienceLabels: { customer: "Customer", staff: "Staff" },
+  },
+  payments: {
+    cardTitle: "Make a payment",
+    cardBody: "Pay an invoice or deposit online.",
+    payButton: "Pay now",
   },
 } as const;
 

@@ -79,9 +79,14 @@ test("no change order can exist approved without going through the shared approv
   assert.equal("status" in changeOrder, false, "ChangeOrder has no status field of its own -- approval state lives only on the paired ApprovalRequest");
 });
 
-test("getChangeOrderById returns null for no match", async () => {
+test("getChangeOrderById returns null for no match, and scopes the query by organizationId", async () => {
   const sql = fakeSql([]);
-  assert.equal(await getChangeOrderById("nope", { sql }), null);
+  assert.equal(await getChangeOrderById("nope", "org-a", { sql }), null);
+  assert.match(
+    sql.calls[0].text,
+    /organization_id/,
+    "SECURITY regression (Session 20 post-step-8): must be scoped by organizationId, not id alone -- otherwise a caller authenticated for one org could read another org's change order for a guessed id"
+  );
 });
 
 test("listChangeOrdersForOrganization orders by created_at DESC", async () => {

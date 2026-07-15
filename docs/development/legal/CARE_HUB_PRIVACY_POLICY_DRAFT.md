@@ -1,5 +1,14 @@
 # Care Hub Privacy Policy — DRAFT
 
+> **SUPERSEDED as of Session 20 step 8: Dylan directed a merge — see
+> `00_LEGAL_DRAFTS_README.md`.** The real, live `privacy.html` now
+> discloses the Care Hub data model directly in its §1 ("From the Care
+> Hub" subsection), names Neon and Resend as sub-processors in §3
+> (closing audit finding F007), and covers retention/security in §5/§6
+> — closing audit finding F006. This document is kept as the fuller,
+> Care-Hub-specific working note this session drafted from, not the
+> canonical text.
+>
 > **This is a draft for attorney and owner review. It is not published
 > anywhere, not linked from the app, and not binding. Do not treat any
 > sentence below as final legal wording.** It is built directly from

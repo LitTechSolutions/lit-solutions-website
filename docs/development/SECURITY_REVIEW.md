@@ -302,3 +302,133 @@ Verification: `npm test` — **781/781 passing** (up from 777; +4 new
 cases across `mfa-enroll.test.js`/`mfa-manage.test.js` covering
 successful-delivery and failed-delivery audit paths for both flows).
 `npm audit --omit=dev`: unaffected (no new dependencies).
+
+---
+
+## Correction — Session 20 post-step-8: step 10's "RBAC/IDOR: clean" was WRONG
+
+**This correction supersedes step 10's RBAC/org-scoping/IDOR conclusion
+above.** A file (`docs/audit/CARE_HUB_ACTIVE_REVIEW.md`) authored by an
+independent reviewer -- not this session's own work, discovered
+unexpectedly in the working tree while finalizing this session -- found
+a real, confirmed **Critical cross-tenant IDOR** that step 10's review
+missed. Verified directly against the actual code (not taken on faith)
+before acting:
+
+### CH-P0-01 (their ID) — confirmed and fixed
+
+`netlify/functions/approvals.js`'s `PATCH` handler authorized the
+*caller* against a client-supplied `organizationId`, then called
+`applyApprovalDecision(approvalId, ...)` -- which fetched and updated
+`approval_requests` **by `id` alone**, with no `organization_id`
+predicate anywhere in the query. An authenticated `org_owner` of Org A,
+supplying their own `organizationId` (to pass authentication) alongside
+an `approvalId` belonging to Org B, could read **and mutate** Org B's
+approval. This is a real cross-tenant data breach + unauthorized write,
+not a theoretical gap -- confirmed by reading `src/db/approvalStore.js`
+directly. **Fixed**: `applyApprovalDecision` now requires
+`decision.organizationId` and includes it in both the `SELECT` and
+`UPDATE` WHERE clauses; a mismatched org now produces the same
+not-found-shaped error as a genuinely missing id (no existence leak).
+Also added a `subjectType` cross-check the same reviewer flagged (a
+caller could otherwise claim the wrong `subjectType` to route through
+the wrong RBAC capability).
+
+### CH-H-01 (their ID) — confirmed and fixed, same pattern
+
+Three more read paths had the identical structural bug -- authorize the
+caller against `organizationId`, then query the actual resource by a
+child foreign key alone:
+
+- `scopeOfWorkStore.listScopeVersionsForTicket(ticketId, ...)` — queried
+  by `ticket_id` alone.
+- `changeOrderStore.getChangeOrderById(id, ...)` — queried by `id` alone.
+- `paymentRequestStore.listPaymentRequestsForSubject(subjectType, subjectId, ...)`
+  — queried by subject alone.
+
+All three now require and apply `organizationId` in their query
+predicate (verified by reading each store file directly, same as
+CH-P0-01). A ticket/change-order/subject belonging to another
+organization now returns empty/null, same as genuinely not existing.
+**Root cause, systemic:** this codebase's convention is
+"`authenticateForOrg()` proves the caller belongs to the *stated* org,"
+which several endpoints incorrectly treated as sufficient — it does
+NOT prove the *specific resource being fetched* belongs to that org
+when the resource is looked up by a child ID the caller also controls.
+Every endpoint written after this fix should double-check: does the
+store query actually filter by `organization_id`, or only by a
+child/foreign key that a caller can supply arbitrarily?
+
+### Findings from the same review NOT acted on this pass (tracked, not dismissed)
+
+- **CH-H-02 — non-atomic multi-write workflows.** Nearly every store in
+  this codebase does select→decide→unconditional-UPDATE without a SQL
+  transaction, including the ones just fixed above. A concurrent
+  duplicate decision could theoretically race. This is a pre-existing,
+  codebase-wide pattern (not introduced this session) and a real
+  architectural gap — fixing it properly means introducing transactions
+  across every relational workflow, a larger undertaking than this
+  correction pass. Tracked for a dedicated session.
+- **CH-P0-02 critique of the MFA preventive fix.** The reviewer
+  correctly points out that this session's MFA-enrollment fix (deferred
+  activation behind an emailed confirmation link) still falls back to
+  immediate activation when email is unconfigured, which remains
+  fail-open for the exact password-only-compromise attack in that case.
+  This is accurate and was already disclosed, not missed — see
+  `DECISION_LOG.md`'s entry on this design tradeoff (a hard requirement
+  on email risks permanently locking out mandatory platform_admin MFA
+  if email breaks). The reviewer's position is that a mandatory control
+  must fail closed, with break-glass recovery handled as a separate,
+  strongly-authenticated procedure — a reasonable alternative design,
+  not built this pass. Also flagged: the pre-auth `lts_mfa_pending`
+  cookie's `jti` (single-use claim) is never actually stored/consumed
+  server-side (stateless, relies only on its 5-minute TTL), and the new
+  email-confirmation token's Blobs read/check/write is not atomic
+  (same non-transactional pattern as CH-H-02). Both real, both
+  low-severity given short TTLs and narrow attack windows, neither
+  fixed this pass.
+- **CH-H-03/CH-H-04 — Square/Cloudinary integration design
+  requirements.** Detailed, well-reasoned specs for what a *real*
+  Square webhook integration and a *real* Cloudinary private-asset
+  pipeline need (signature verification, idempotency, private delivery,
+  scanning/quarantine, etc.). Both integrations remain unbuilt this
+  session (Square: a static dev Payment Link only; Cloudinary: decision
+  recorded, no code) — these requirements should inform whoever builds
+  them, not something to retrofit onto code that doesn't exist yet.
+- **CH-M-01 — frontend/backend contract drift.** `care-hub-app/src/api/types.ts`
+  has hand-maintained interfaces that have drifted from real backend
+  domain values in several places (e.g. approval `subjectType` naming,
+  payment status enum values). Confirmed real, not fixed this pass —
+  needs a proper contract-testing or schema-generation approach, not a
+  point patch.
+- **CH-M-02 — Dashboard.tsx's staff check.** Confirmed: `isStaff` only
+  checks `role === "admin"`, so a `role: "staff"` account (if any exist)
+  would see the customer payment card. No `staff` role currently exists
+  in the live user base per this session's own work, but the check
+  should use the same role list `rbac.js` treats as staff-equivalent.
+  Not fixed this pass.
+- **CH-M-03 — no browser/component/accessibility test suite for
+  `care-hub-app`.** Confirmed, unchanged from this session's own
+  repeated disclosure that step 10 (a11y/e2e testing) was never
+  started.
+
+### Why this correction matters more than any other finding in this document
+
+Step 10's own review process (three parallel research agents) explicitly
+checked for exactly this class of bug and reported "No IDOR found in
+tickets.js or checklists.js" — true for those two files, but the
+conclusion was over-generalized in this document's summary to "RBAC/IDOR:
+clean" across the whole app, which was not warranted from a two-endpoint
+sample. The actual bug was in `approvals.js`/`scope-of-work.js`/
+`change-orders.js`/`payment-requests.js` — not reviewed as carefully in
+that pass. Lesson for future review passes in this codebase: verify the
+*specific store query*, not just that an org-scoped auth check runs
+somewhere in the call path; and don't generalize a review's conclusion
+beyond the files actually traced.
+
+Verification: `npm test` — **791/791 passing** (up from 788; +3 new
+regression tests: `applyApprovalDecision requires decision.organizationId`,
+the cross-tenant-rejection test, and the subjectType-mismatch test, plus
+updated assertions on the three list/get functions proving their SQL
+text includes `organization_id`). `care-hub-app npm run build`:
+unaffected (backend-only fix).

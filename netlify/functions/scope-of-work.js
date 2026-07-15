@@ -70,7 +70,7 @@ async function handleList(event, deps) {
   const deny = denyResponseFor(auth.authContext, organizationId, "scope.view", { assigned });
   if (deny) return deny;
 
-  const versions = await listScopeVersionsForTicket(ticketId, deps);
+  const versions = await listScopeVersionsForTicket(ticketId, organizationId, deps);
   return json(200, { versions });
 }
 

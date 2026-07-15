@@ -76,7 +76,7 @@ async function handleGet(event, deps) {
   if (deny) return deny;
 
   if (changeOrderId) {
-    const changeOrder = await getChangeOrderById(changeOrderId, deps);
+    const changeOrder = await getChangeOrderById(changeOrderId, organizationId, deps);
     if (!changeOrder) return json(404, { error: "Change order not found." });
     return json(200, { changeOrder });
   }

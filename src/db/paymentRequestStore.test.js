@@ -149,9 +149,14 @@ test("applyPaymentStatusTransition records a providerReference when supplied", a
   assert.equal(sql.calls[1].values.includes("square-txn-123"), true);
 });
 
-test("listPaymentRequestsForSubject orders by created_at", async () => {
+test("listPaymentRequestsForSubject orders by created_at and scopes the query by organizationId", async () => {
   const sql = fakeSql([paymentRequestRow({ id: "pr-1" }), paymentRequestRow({ id: "pr-2", amount_ref: "scope-1:balance" })]);
-  const list = await listPaymentRequestsForSubject("scope", "scope-1", { sql });
+  const list = await listPaymentRequestsForSubject("scope", "scope-1", "org-a", { sql });
   assert.equal(list.length, 2);
   assert.match(sql.calls[0].text, /ORDER BY created_at/);
+  assert.match(
+    sql.calls[0].text,
+    /organization_id/,
+    "SECURITY regression (Session 20 post-step-8): must be scoped by organizationId, not subjectType/subjectId alone -- otherwise a caller authenticated for one org could read another org's payment requests for a guessed subjectId"
+  );
 });

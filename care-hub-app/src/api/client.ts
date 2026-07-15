@@ -28,6 +28,7 @@ import type {
   MetricsSummary,
   MfaEnrollConfirmResult,
   MfaEnrollStartResult,
+  MfaEnrollVerifyEmailResult,
   MfaRequiredResult,
   Organization,
   PaymentRequest,
@@ -56,6 +57,8 @@ export const auth = {
   mfaEnrollStart: () => request<MfaEnrollStartResult>("/mfa-enroll", { method: "POST", body: { action: "start" } }),
   mfaEnrollConfirm: (code: string) =>
     request<MfaEnrollConfirmResult>("/mfa-enroll", { method: "POST", body: { action: "confirm", code } }),
+  mfaEnrollVerifyEmail: (token: string) =>
+    request<MfaEnrollVerifyEmailResult>("/mfa-enroll", { method: "POST", body: { action: "verify-email", token } }),
   mfaVerifyCode: (code: string) => request<LoginResult>("/mfa-verify", { method: "POST", body: { code } }),
   mfaVerifyRecoveryCode: (recoveryCode: string) =>
     request<LoginResult>("/mfa-verify", { method: "POST", body: { recoveryCode } }),

@@ -19,7 +19,7 @@ export function MfaEnroll() {
   const navigate = useNavigate();
   const { setSignedIn } = useAuth();
 
-  const [phase, setPhase] = useState<"loading" | "confirm" | "recoveryCodes" | "error">("loading");
+  const [phase, setPhase] = useState<"loading" | "confirm" | "recoveryCodes" | "pendingEmailConfirmation" | "error">("loading");
   const [secret, setSecret] = useState("");
   const [code, setCode] = useState("");
   const [confirming, setConfirming] = useState(false);
@@ -53,6 +53,10 @@ export function MfaEnroll() {
     setConfirmError(null);
     try {
       const result = await api.auth.mfaEnrollConfirm(code);
+      if ("pendingEmailConfirmation" in result) {
+        setPhase("pendingEmailConfirmation");
+        return;
+      }
       setRecoveryCodes(result.recoveryCodes);
       setPendingUser(result.user);
       setPhase("recoveryCodes");
@@ -73,6 +77,17 @@ export function MfaEnroll() {
     return (
       <div className="auth-page">
         <ErrorState body={startError ?? undefined} onRetry={() => navigate("/login")} />
+      </div>
+    );
+  }
+
+  if (phase === "pendingEmailConfirmation") {
+    return (
+      <div className="auth-page">
+        <div className="auth-card card">
+          <h1>{strings.auth.mfaCheckEmailTitle}</h1>
+          <p>{strings.auth.mfaCheckEmailBody}</p>
+        </div>
       </div>
     );
   }

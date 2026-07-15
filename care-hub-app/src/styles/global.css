@@ -16,6 +16,11 @@
 
 html {
   scroll-behavior: smooth;
+  color-scheme: light;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
 }
 
 body {
@@ -67,6 +72,12 @@ select,
 textarea {
   font-family: inherit;
   color: inherit;
+}
+
+select,
+select option {
+  background-color: var(--paper-alt);
+  color: var(--ink);
 }
 
 @media (prefers-reduced-motion: reduce) {

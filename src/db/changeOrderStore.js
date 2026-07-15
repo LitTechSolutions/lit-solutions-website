@@ -74,13 +74,22 @@ async function createChangeOrder(input, deps = {}) {
 }
 
 /**
+ * SECURITY: `organizationId` is required and constrains the query directly
+ * -- found via independent review (Session 20 post-step-8): the original
+ * version queried by `id` alone, so an authenticated org_owner of Org A
+ * supplying Org B's `changeOrderId` (with `organizationId: "org-a"` to pass
+ * authentication) would get Org B's change order back. A mismatched id now
+ * simply returns `null`, which `change-orders.js` already maps to a plain
+ * 404 -- indistinguishable from a genuinely nonexistent id.
+ *
  * @param {string} id
+ * @param {string} organizationId
  * @param {{ sql?: Function }} [deps]
  * @returns {Promise<import("../domain/changeOrder").ChangeOrder | null>}
  */
-async function getChangeOrderById(id, deps = {}) {
+async function getChangeOrderById(id, organizationId, deps = {}) {
   const sql = deps.sql || getSql();
-  const rows = await sql`SELECT * FROM change_orders WHERE id = ${id}`;
+  const rows = await sql`SELECT * FROM change_orders WHERE id = ${id} AND organization_id = ${organizationId}`;
   return rows.length > 0 ? mapRowToChangeOrder(rows[0]) : null;
 }
 

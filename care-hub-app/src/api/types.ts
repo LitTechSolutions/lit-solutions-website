@@ -391,8 +391,22 @@ export interface MfaEnrollStartResult {
   otpauthUri: string;
   message: string;
 }
-export interface MfaEnrollConfirmResult {
+// mfa-enroll.js's "confirm" action returns one of two shapes depending on
+// whether a confirmation email could be sent (Session 20 step 8's real
+// fix for the enrollment-hijack finding): if delivery succeeds,
+// activation is deferred until the emailed link is clicked
+// (MfaEnrollPendingConfirmation); only if email couldn't be delivered
+// does it fall back to the original immediate-activation shape.
+export interface MfaEnrollPendingConfirmation {
+  pendingEmailConfirmation: true;
+  message: string;
+}
+export interface MfaEnrollActivatedResult {
   message: string;
   recoveryCodes: string[];
   user: AuthenticatedUser;
 }
+export type MfaEnrollConfirmResult = MfaEnrollPendingConfirmation | MfaEnrollActivatedResult;
+// action: "verify-email" always returns the activated shape -- by the
+// time the link is valid and unused, activation always completes.
+export type MfaEnrollVerifyEmailResult = MfaEnrollActivatedResult;

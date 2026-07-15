@@ -102,11 +102,16 @@ test("createNextScopeVersion throws for a nonexistent scope", async () => {
   assert.equal(auditRecorder.events.length, 0);
 });
 
-test("listScopeVersionsForTicket orders by version", async () => {
+test("listScopeVersionsForTicket orders by version and scopes the query by organizationId", async () => {
   const sql = fakeSql([scopeRow({ version: 1, status: "superseded" }), scopeRow({ id: "scope-2", version: 2 })]);
-  const versions = await listScopeVersionsForTicket("ticket-1", { sql });
+  const versions = await listScopeVersionsForTicket("ticket-1", "org-a", { sql });
   assert.equal(versions.length, 2);
   assert.match(sql.calls[0].text, /ORDER BY version/);
+  assert.match(
+    sql.calls[0].text,
+    /organization_id/,
+    "SECURITY regression (Session 20 post-step-8): must be scoped by organizationId, not ticketId alone -- otherwise a caller authenticated for one org could read another org's scope-of-work versions for a guessed ticketId"
+  );
 });
 
 test("mapRowToScope defaults assumptions/exclusions to empty arrays", () => {

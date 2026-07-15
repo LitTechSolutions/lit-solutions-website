@@ -7,27 +7,40 @@ when actually resolved, not when "probably fine."
 
 ## Blocking — must resolve before any real customer account is created
 
-- [ ] **Attorney review and approval of `CARE_HUB_PRIVACY_POLICY_DRAFT.md`**
-      and `CARE_HUB_TERMS_OF_SERVICE_DRAFT.md`. Neither is legal text
-      yet — both are engineering-authored drafts grounded in the real
-      data model, explicitly not final wording.
-- [ ] **Resolve audit findings F006 and F007** (open Critical) against
-      the *existing* `privacy.html` — or explicitly decide to supersede
-      it with the Care Hub policy for all users, documented either way.
-      Publishing an accurate Care Hub policy while the public site's
-      policy remains known-inaccurate is a worse state than today's,
-      not a fix.
-- [ ] **Fill in Terms of Service §9 (liability/indemnification) and
-      §10 (governing law/disputes)** — currently placeholders,
-      deliberately not drafted by engineering.
+- [x] **Resolve audit findings F006 and F007** (Critical) against the
+      *existing* `privacy.html` — **DONE, Session 20 step 8.** Dylan
+      chose "merge everything" rather than keeping a separate Care Hub
+      policy — `privacy.html` §1/§3/§5/§6 now disclose the full Care Hub
+      data model, Neon, and Resend directly. Marked `Resolved` in
+      `docs/audit/AUDIT_STATE.json`.
+- [x] **Fill in Terms of Service liability/indemnification/governing-law
+      coverage for the Care Hub** — **DONE, Session 20 step 8**, per
+      Dylan's explicit direction to use "full-scale protections... as a
+      placeholder." `terms.html` §18 "Care Hub Accounts" incorporates the
+      site's existing §7 (Limitation of Liability), §12
+      (Indemnification), and §14 (Governing Law) sections rather than
+      leaving them blank. Still **not attorney-reviewed** — see below.
+- [ ] **Attorney review and approval of the now-live `privacy.html` §1/§3/§5/§6
+      and `terms.html` §18.** This is the one item that did NOT get
+      resolved by the merge — it made the content real and complete, not
+      attorney-approved. Do not treat "merged" as "reviewed."
+- [ ] **Translate the merged privacy.html/terms.html content into the
+      other 15 languages.** The site's i18n system (`i18n/{lang}.json`)
+      has full pre-merge translations of both pages for all 15
+      non-English languages; this session updated the English source
+      only. Non-English visitors currently see stale, pre-merge text for
+      the touched sections (privacy §1/§3/§5/§6; terms §18 renders in
+      English for everyone since it's a brand-new section with no
+      translation yet). This is a real accuracy gap for non-English
+      visitors, not a cosmetic one — the whole point of fixing F006/F007
+      was disclosure accuracy.
 - [ ] **Decide and document the payment/pricing terms** referenced as
       placeholder in ToS §6 — depends on the still-open pricing/deposit
       owner decisions in `OWNER_DECISIONS.md`.
-- [ ] **Confirm object-storage provider for uploaded files** — currently
-      base64 data URIs in Netlify Blobs, provider "still undecided" per
-      `OWNER_DECISIONS.md`. The Privacy Policy should name the actual
-      provider before launch, not describe an interim implementation
-      detail as permanent.
+- [x] **Object-storage provider for uploaded files** — **DECIDED,
+      Session 20 step 8: Cloudinary** (`OWNER_DECISIONS.md` #11). Not yet
+      integrated (still base64-in-Blobs) — do not describe Cloudinary as
+      active in any policy content until the migration code exists.
 
 ## Blocking — must resolve before Square goes live
 
@@ -60,8 +73,9 @@ when actually resolved, not when "probably fine."
 - [ ] Decide whether Care Hub accounts get a self-service data
       export/delete request flow, or whether "email us" (current draft
       §7) is acceptable at this scale.
-- [ ] Decide whether the Care Hub Privacy Policy/ToS are separate
-      documents from the public site's, or get merged into one.
+- [x] ~~Decide whether the Care Hub Privacy Policy/ToS are separate
+      documents from the public site's, or get merged into one.~~
+      **DECIDED, Session 20 step 8: merged.**
 - [ ] Legal-hold procedure: what happens to a record scheduled for
       deletion if it's needed for a dispute or investigation — not
       addressed anywhere yet.
@@ -81,9 +95,10 @@ when actually resolved, not when "probably fine."
 
 ## Explicitly out of scope for this checklist
 
-- General public-site legal fixes (F006/F007's fix on `privacy.html`
-  itself, cookie-banner correctness, etc.) — tracked in
-  `docs/audit/`, not duplicated here except where it blocks Care Hub
+- General public-site legal fixes not related to the Care Hub
+  (cookie-banner correctness, other open audit findings, etc.) —
+  tracked in `docs/audit/`, not duplicated here. (F006/F007
+  specifically WERE Care Hub-relevant and are now resolved — see above.)
   launch (see above).
 - Any employment, contractor, or business-formation legal matters —
   unrelated to the Care Hub product.

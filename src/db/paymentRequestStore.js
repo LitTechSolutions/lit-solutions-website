@@ -132,14 +132,23 @@ async function applyPaymentStatusTransition(id, nextStatus, deps = {}) {
 }
 
 /**
+ * SECURITY: `organizationId` is required and constrains the query directly
+ * -- found via independent review (Session 20 post-step-8): the original
+ * version queried by `subjectType`/`subjectId` alone, so an authenticated
+ * org_owner of Org A supplying Org B's `subjectId` (with
+ * `organizationId: "org-a"` to pass authentication) would get Org B's
+ * payment requests back. A subject belonging to another organization now
+ * simply matches no rows.
+ *
  * @param {string} subjectType
  * @param {string} subjectId
+ * @param {string} organizationId
  * @param {{ sql?: Function }} [deps]
  * @returns {Promise<import("../domain/paymentRequest").PaymentRequest[]>}
  */
-async function listPaymentRequestsForSubject(subjectType, subjectId, deps = {}) {
+async function listPaymentRequestsForSubject(subjectType, subjectId, organizationId, deps = {}) {
   const sql = deps.sql || getSql();
-  const rows = await sql`SELECT * FROM payment_requests WHERE subject_type = ${subjectType} AND subject_id = ${subjectId} ORDER BY created_at`;
+  const rows = await sql`SELECT * FROM payment_requests WHERE subject_type = ${subjectType} AND subject_id = ${subjectId} AND organization_id = ${organizationId} ORDER BY created_at`;
   return rows.map(mapRowToPaymentRequest);
 }
 
