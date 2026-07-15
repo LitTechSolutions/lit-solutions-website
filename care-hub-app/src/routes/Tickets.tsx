@@ -5,6 +5,7 @@ import type { Ticket } from "../api/types";
 import { strings } from "../strings/en";
 import { useApi } from "../hooks/useApi";
 import { useMemberships } from "../hooks/useMemberships";
+import { useAuth } from "../auth/AuthContext";
 import { Loading } from "../components/states/Loading";
 import { EmptyState } from "../components/states/EmptyState";
 import { ErrorState } from "../components/states/ErrorState";
@@ -13,23 +14,35 @@ import { SessionExpiredState } from "../components/states/SessionExpiredState";
 import { StateScreen } from "../components/states/StateScreen";
 
 const CATEGORIES: Array<Ticket["category"]> = ["website_change", "it_support", "question", "other"];
+const STATUSES: Ticket["status"][] = ["submitted", "triaged", "assigned", "in_progress", "waiting_on_customer", "resolved", "closed", "reopened"];
+const PRIORITY_LEVELS = ["critical", "high", "medium", "low"] as const;
 
 function categoryLabel(category: string): string {
   return (strings.tickets.categoryLabels as Record<string, string>)[category] ?? category;
 }
 
+function SignInAgain() {
+  return <SessionExpiredState onSignInAgain={() => window.location.assign("/care-hub/login")} />;
+}
+
 /**
- * Customer's own-organization ticket list + a create-ticket form,
- * against the real tickets.js endpoint. Requires knowing the caller's
- * organizationId first (my-memberships.js) -- platform_admin/technician
- * accounts have no membership row at all, so this screen honestly tells
- * them it isn't built for their role yet rather than silently failing.
+ * platform_admin accounts (legacy session role "admin") have no
+ * organization membership at all, so they get the cross-org work queue
+ * (StaffWorkQueue) instead of the membership-driven customer flow.
  */
 export function Tickets() {
+  const { state: authState } = useAuth();
+  const isStaff = authState.status === "signedIn" && authState.user.role === "admin";
+
+  if (isStaff) return <StaffWorkQueue />;
+  return <CustomerTickets />;
+}
+
+function CustomerTickets() {
   const membershipsState = useMemberships();
 
   if (membershipsState.status === "loading") return <Loading />;
-  if (membershipsState.status === "expired") return <SessionExpiredState onSignInAgain={() => window.location.assign("/care-hub/login")} />;
+  if (membershipsState.status === "expired") return <SignInAgain />;
   if (membershipsState.status === "unauthorized") return <UnauthorizedState />;
   if (membershipsState.status === "error") return <ErrorState body={membershipsState.message} onRetry={membershipsState.retry} />;
   if (membershipsState.status === "empty") {
@@ -41,6 +54,107 @@ export function Tickets() {
   // has more than one), tracked as a follow-up.
   const organizationId = membershipsState.data.memberships[0].organizationId;
   return <TicketsForOrg organizationId={organizationId} />;
+}
+
+/**
+ * Cross-organization work queue for platform_admin, backed by the
+ * existing work-queue.js (F051) -- the one legitimate cross-org query
+ * in this codebase, built in an earlier session. Only shows OPEN
+ * tickets (work-queue.js's own scope), grouped by priority, with an
+ * inline status-transition control per ticket -- there's no
+ * single-ticket-fetch route to build a separate detail page against,
+ * so this list IS the detail/transition surface. The frontend doesn't
+ * duplicate ticketLifecycle.js's legal-transition rules; it offers
+ * every status and lets tickets.js's real state machine accept or
+ * reject the choice, surfacing whatever error comes back.
+ */
+function StaffWorkQueue() {
+  const fetchQueue = useCallback(() => api.workQueue.fetch(), []);
+  const state = useApi(fetchQueue, [], (data) => data.workQueue.totalOpenTickets === 0);
+
+  if (state.status === "loading") return <Loading />;
+  if (state.status === "expired") return <SignInAgain />;
+  if (state.status === "unauthorized") return <UnauthorizedState />;
+  if (state.status === "error") return <ErrorState body={state.message} onRetry={state.retry} />;
+  if (state.status === "empty") return <EmptyState title={strings.tickets.workQueueEmptyTitle} body={strings.tickets.workQueueEmptyBody} />;
+
+  const { openTicketsByPriority } = state.data.workQueue;
+
+  return (
+    <div>
+      <h1>{strings.tickets.workQueueTitle}</h1>
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-5)", marginTop: "var(--space-5)" }}>
+        {PRIORITY_LEVELS.map((level) => {
+          const tickets = openTicketsByPriority[level] ?? [];
+          if (tickets.length === 0) return null;
+          return (
+            <section key={level}>
+              <h2 style={{ fontSize: "1rem", marginBottom: "var(--space-3)" }}>
+                {strings.tickets.priorityLabels[level]} ({tickets.length})
+              </h2>
+              <ul style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>
+                {tickets.map((ticket) => (
+                  <StaffTicketRow key={ticket.id} ticket={ticket} onUpdated={state.retry} />
+                ))}
+              </ul>
+            </section>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function StaffTicketRow({ ticket, onUpdated }: { ticket: Ticket; onUpdated: () => void }) {
+  const [nextStatus, setNextStatus] = useState<Ticket["status"]>(ticket.status);
+  const [transitioning, setTransitioning] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleTransition() {
+    setTransitioning(true);
+    setError(null);
+    try {
+      await api.tickets.transition({ ticketId: ticket.id, organizationId: ticket.organizationId, nextStatus });
+      onUpdated();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : strings.states.errorBody);
+    } finally {
+      setTransitioning(false);
+    }
+  }
+
+  return (
+    <li className="card">
+      <div style={{ display: "flex", justifyContent: "space-between", gap: "var(--space-3)" }}>
+        <strong>{ticket.subject}</strong>
+        <span>{ticket.status.replace(/_/g, " ")}</span>
+      </div>
+      <p style={{ color: "var(--ink-soft)", fontSize: "0.85rem", marginTop: "var(--space-2)" }}>
+        {strings.tickets.organizationLabel}: {ticket.organizationId} &middot; {categoryLabel(ticket.category)}
+      </p>
+      <p style={{ marginTop: "var(--space-2)" }}>{ticket.description}</p>
+      <div style={{ display: "flex", gap: "var(--space-3)", alignItems: "center", marginTop: "var(--space-3)" }}>
+        <label className="visually-hidden" htmlFor={`status-${ticket.id}`}>
+          {strings.tickets.statusLabel}
+        </label>
+        <select id={`status-${ticket.id}`} value={nextStatus} onChange={(e) => setNextStatus(e.target.value as Ticket["status"])}>
+          {STATUSES.map((s) => (
+            <option key={s} value={s}>
+              {s.replace(/_/g, " ")}
+            </option>
+          ))}
+        </select>
+        <button type="button" className="btn btn-ghost btn-small" disabled={transitioning || nextStatus === ticket.status} onClick={handleTransition}>
+          {transitioning ? strings.tickets.transitioning : strings.tickets.transitionButton}
+        </button>
+      </div>
+      {error ? (
+        <p className="field-error" role="alert">
+          {error}
+        </p>
+      ) : null}
+    </li>
+  );
 }
 
 function TicketsForOrg({ organizationId }: { organizationId: string }) {

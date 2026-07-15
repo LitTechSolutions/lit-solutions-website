@@ -381,6 +381,41 @@ correctness for everything these screens call is fully covered by the
 follow the exact same `useApi()`/state-switch pattern already verified
 end-to-end in `Dashboard.tsx` (step 4/5).
 
+### Step 7 -- finish the staff side of tickets and checklists
+
+Scoped explicitly by Dylan (offered three options: finish the staff
+side of what exists / customer read-only views / admin ops screens --
+"finish the staff side" chosen), rather than attempting all ~20
+remaining endpoints in one pass.
+
+- **Staff checklist review** (`Checklists.tsx` extended): `Checklists()`
+  now branches on `useAuth()`'s legacy session role -- `"admin"` gets
+  `StaffChecklists`, everyone else gets the existing customer flow.
+  Staff enter an organization id manually (no organization-directory
+  endpoint exists yet -- same gap as the work queue below, tracked as a
+  follow-up, not invented this pass) then get the full
+  `getForStaff()` view: every item (both audiences), a per-item
+  `staffAssess` control (verify checkbox, internal note, and a met
+  Yes/No for staff-audience items only -- customer-audience items show
+  the customer's own answer/comment read-only, never overridable here),
+  and submission-level "Mark verified" / "Return for changes" (which
+  requires a reason, matching `checklistStore.js`'s own requirement).
+- **Staff ticket work queue** (`Tickets.tsx` extended): same role
+  branch -- `"admin"` gets `StaffWorkQueue`, backed by the existing
+  `work-queue.js` (F051, built in an earlier session, the one
+  legitimate cross-org query in this codebase). Lists every open ticket
+  grouped by priority with an inline status-transition control per
+  ticket. There is still no single-ticket-fetch endpoint to build a
+  separate detail page against, so this list doubles as the detail/
+  transition surface, per the directive's actual constraint rather than
+  inventing a new backend route. The dropdown offers every ticket
+  status and lets `tickets.js`'s real `ticketLifecycle.js` state machine
+  accept or reject the choice -- the frontend does not duplicate the
+  legal-transition rules.
+- No backend changes this step -- pure frontend work reusing endpoints
+  already built and live-verified in earlier steps. `763/763` unit
+  tests unaffected; `care-hub-app` builds and type-checks cleanly.
+
 ## Test results
 
 - rbac.js: +2 cases (platform_admin has every technician ticket
@@ -472,38 +507,43 @@ end-to-end in `Dashboard.tsx` (step 4/5).
 
 ## What's still not done
 
-Steps 7-10 of Dylan's directive are **not started** -- each is
-substantial enough to be its own session(s):
+Step 7 closed the two staff-side gaps called out at the end of step 6
+(staff checklist review, staff ticket work queue/transition). Steps 8-10
+of Dylan's directive are **not started** -- each is substantial enough to
+be its own session(s):
 
-1. Staff-side checklist assessment/review UI (`staffAssess`/`review`
-   actions exist and are live-verified at the backend; no screen calls
-   them yet).
-2. A ticket detail/transition UI, and staff ticket management generally
-   -- `tickets.js` has no single-ticket-fetch route to build a detail
-   page against, and PATCH (status transition) is a staff/technician
-   action this pass didn't build UI for.
-3. Wiring the remaining ~18 endpoints into real screens -- the typed
-   client covers all of them, but only `Dashboard.tsx`, `Tickets.tsx`,
-   and `Checklists.tsx` actually call one from a rendered route.
-4. Square Sandbox integration and fail-closed email configuration.
-5. The legal drafts (data-flow/processor inventory, draft Privacy
+1. Wiring the remaining endpoints into real screens beyond tickets and
+   checklists -- the typed client covers all of them, but only
+   `Dashboard.tsx`, `Tickets.tsx`, and `Checklists.tsx` actually call one
+   from a rendered route.
+2. Square Sandbox integration and fail-closed email configuration.
+3. The legal drafts (data-flow/processor inventory, draft Privacy
    Policy, draft Care Hub Terms of Service, launch-time legal review
    checklist) -- all explicitly DRAFT-only per Dylan's directive.
-6. Accessibility, security, responsive, and end-to-end testing at
+4. Accessibility, security, responsive, and end-to-end testing at
    real-feature scale.
-7. QR-code rendering for MFA enrollment (currently manual-entry key
+5. QR-code rendering for MFA enrollment (currently manual-entry key
    only).
-8. A live smoke test of the real sign-in -> MFA -> dashboard ->
+6. A live smoke test of the real sign-in -> MFA -> dashboard ->
    tickets/checklists path against `netlify dev` -- this session
    verified the backend live (Postgres) and the frontend's build/
    typecheck/component logic, but could not get a faked authenticated
    session rendering in the browser preview (see step 6's "frontend
-   verification limits" note above).
-9. The pre-existing `org_owner` ticket-capability gap surfaced this
-   session (`org_owner` lacks `request.submit`/`request.view` in
-   `rbac.js`, unlike `org_member`) -- flagged for Dylan's attention, not
-   fixed, since it predates this session and changing it wasn't
-   requested.
+   verification limits" note above). Still applies to step 7's new
+   staff screens.
+7. The pre-existing `org_owner` ticket-capability gap surfaced in step 6
+   (`org_owner` lacks `request.submit`/`request.view` in `rbac.js`,
+   unlike `org_member`) -- flagged for Dylan's attention, not fixed,
+   since it predates this session and changing it wasn't requested.
+8. No organization-directory/list-all-orgs endpoint exists, so the new
+   staff checklist review screen requires staff to manually type an
+   `organizationId` into a text input rather than picking from a list --
+   documented as a stopgap in `staffOrgPickerHelp`, not built out this
+   pass since it was out of step 7's chosen scope.
+9. No single-ticket-fetch-by-id endpoint exists on `tickets.js` -- the
+   staff ticket work queue (`work-queue.js`, cross-org, open tickets
+   only) doubles as the "detail" surface via an inline per-row
+   status-transition control, rather than a dedicated detail page.
 
 ## Files changed
 
@@ -596,3 +636,25 @@ substantial enough to be its own session(s):
   `staffAssess`/`review`), `care-hub-app/src/App.tsx` (real `Tickets`/
   `Checklists` routes replacing `ComingSoon`), `care-hub-app/src/strings/en.ts`
   (+tickets/checklists sections).
+- Modified (step 7, frontend -- no backend changes this step): `care-hub-app/
+  src/routes/Tickets.tsx` (top-level `Tickets()` now branches on
+  `authState.user.role === "admin"`; new `StaffWorkQueue`/`StaffTicketRow`
+  components reusing `work-queue.js` (F051) for a cross-org open-tickets
+  view grouped by priority, with an inline status-transition dropdown per
+  ticket calling `api.tickets.transition()`; original customer components
+  renamed to `CustomerTickets` and preserved unchanged),
+  `care-hub-app/src/routes/Checklists.tsx` (same branching pattern; new
+  `StaffChecklists`/`StaffChecklistsForOrg`/`StaffChecklistDetail`/
+  `StaffChecklistItemRow` components for staff review -- per-item
+  `staffVerified`/`staffNote`/`met` (staff-audience items only) via
+  `api.checklists.staffAssess()`, plus submission-level Return-for-changes/
+  Mark-verified via `api.checklists.review()`; original customer
+  components renamed to `CustomerChecklists` and preserved unchanged),
+  `care-hub-app/src/strings/en.ts` (+`tickets.workQueueTitle`/
+  `workQueueEmptyTitle`/`workQueueEmptyBody`/`organizationLabel`/
+  `priorityLabels`/`statusLabel`/`transitionButton`/`transitioning`,
+  +`checklists.staffOrgPickerLabel`/`staffOrgPickerHelp`/`staffLoadButton`/
+  `staffVerifiedLabel`/`staffNoteLabel`/`staffAnswerLabel`/
+  `saveAssessment`/`savingAssessment`/`returnForChanges`/
+  `returnReasonLabel`/`returnButton`/`verifyButton`/`reviewing`/
+  `scoreLabel`/`audienceLabels`).
