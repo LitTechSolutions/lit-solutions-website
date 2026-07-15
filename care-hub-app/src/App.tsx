@@ -5,6 +5,8 @@ import { Login } from "./routes/Login";
 import { MfaEnroll } from "./routes/MfaEnroll";
 import { MfaVerify } from "./routes/MfaVerify";
 import { Dashboard } from "./routes/Dashboard";
+import { Tickets } from "./routes/Tickets";
+import { Checklists } from "./routes/Checklists";
 import { ComingSoon } from "./routes/ComingSoon";
 import { NotFound } from "./routes/NotFound";
 import { strings } from "./strings/en";
@@ -26,8 +28,8 @@ export function App() {
               <RequireAuth>
                 <Routes>
                   <Route path="/" element={<Dashboard />} />
-                  <Route path="/tickets" element={<ComingSoon title={strings.nav.tickets} />} />
-                  <Route path="/checklists" element={<ComingSoon title={strings.nav.checklists} />} />
+                  <Route path="/tickets" element={<Tickets />} />
+                  <Route path="/checklists" element={<Checklists />} />
                   <Route path="/account" element={<ComingSoon title={strings.nav.account} />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>

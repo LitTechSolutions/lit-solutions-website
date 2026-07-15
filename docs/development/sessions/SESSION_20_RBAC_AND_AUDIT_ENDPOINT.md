@@ -255,6 +255,132 @@ unconditional shell render with a genuine signed-in/signed-out gate.
   standing constraint) -- worth a live smoke test in a future session
   once `netlify dev` is exercised end to end for this app.
 
+### Step 6 -- tickets and checklists (backend redesign + UI)
+
+Scoped in full per Dylan's explicit choice among three options offered
+this session ("full scope": org-membership endpoint + full checklist
+backend redesign + both UIs, rather than deferring the backend work).
+
+**Prerequisite gap closed: `my-memberships.js`.** Before this, nothing
+let a signed-in customer discover their own `organizationId` -- every
+org-scoped endpoint (tickets, checklists, ...) requires the CALLER to
+already know it (`authenticateForOrg()` takes `organizationId` as a
+required parameter with no "figure out my org" path, by design --
+SYS-AUTH-003). `src/db/membershipStore.js`'s `listMembershipsForUser()`
+already existed but had zero call sites anywhere. New endpoint wraps it,
+joins organization names via `organizationStore.getOrganizationById()`,
+and returns `{ memberships: [{organizationId, organizationName, role,
+status}] }` -- platform_admin/technician correctly get an empty array
+(they aren't org members), not an error.
+
+**Checklist customer/staff split (owner decision #3) -- built from
+scratch, since none of it existed:**
+
+- **Domain** (`src/domain/readinessChecklist.js`): `ChecklistItem`
+  gained a required `audience: "customer" | "staff"` field (the
+  directive's explicit "customerEditable or audience" property). New
+  `ChecklistItemAnswer` (met/comment customer-editable,
+  staffNote/staffVerified staff-only) and `ChecklistSubmission`
+  (draft/submitted/returned/verified) types + asserts.
+- **Policy** (`src/policy/checklistSubmissionWorkflow.js`, new): a
+  `transitionChecklistSubmission()` state machine identical in shape to
+  `ticketLifecycle.js` -- draft→submitted, submitted→returned/verified,
+  returned→submitted (resubmit), verified is terminal. `canCustomerEdit()`
+  gates writes to draft/returned only.
+- **Migration 004** (`checklist_customer_staff_split.sql`, live-applied
+  and verified against Neon): `checklist_responses` gained
+  `comment`/`staff_note`/`staff_verified` columns; new
+  `checklist_submissions` table (one row per org+definition,
+  PK on both).
+- **Store** (`src/db/checklistStore.js`, rewritten): `recordCustomerAnswer()`
+  refuses staff-audience items and refuses writes outside draft/returned;
+  `recordStaffAssessment()` never lets `met` be overwritten for a
+  customer-audience item (only `staffNote`/`staffVerified` change on
+  those -- `met` is only staff-settable for staff-audience items);
+  `submitChecklistForReview()` / `reviewChecklistSubmission()` drive the
+  workflow (`reviewChecklistSubmission` requires a `reviewNote` when
+  returning, per "Staff can return it for changes"); `getChecklistForCustomer()`
+  returns customer-audience items only with met/comment (plus the
+  returned-review's `reviewNote`, since that message is addressed to the
+  customer) and NEVER staffNote/staffVerified; `getChecklistForStaff()`
+  returns everything plus the computed score. New `listChecklistDefinitions()`
+  (title-only) closes a second discovery gap -- nothing previously let
+  either role learn which checklist(s) exist to complete/assess at all.
+  Every write is audited (`checklist.answer`, `checklist.staff_assess`,
+  `checklist.submit`, `checklist.return`, `checklist.verify`).
+- **RBAC**: new `checklist.answer` capability, granted to `org_owner`/
+  `org_member` (NOT `read_only_customer` -- that role stays view-only,
+  per the directive's "Customers may... edit" implying the answer-
+  capable roles, not every customer role) and added to
+  `ORG_SCOPED_ACTIONS`.
+- **Endpoint** (`netlify/functions/checklists.js`, rewritten): `GET`
+  branches on caller role (platform_admin → full staff view via
+  `customer.administer`; customer roles → shielded view via
+  `checklist.view`) and on whether `checklistDefinitionId` was supplied
+  (omit it to list definitions instead). `PATCH` dispatches on
+  `body.action` (`customerAnswer`/`submit`/`staffAssess`/`review`), each
+  with its own capability check.
+- **A real bug, found by the live smoke test and fixed**: `reviewChecklistSubmission()`'s
+  return value was built by spreading the pre-transition `current`
+  submission object, which meant verifying a checklist that had
+  previously been returned-for-changes leaked the OLD `reviewNote` back
+  in the API response, even though the database write correctly cleared
+  it to `null`. Fixed by building the return value from scratch instead
+  of spreading stale state; regression test added
+  (`checklistStore.test.js`) alongside the live re-verification.
+- **Live smoke test**: 23/23 PASS against real Neon, the full lifecycle
+  end to end -- create definition → customer answers a customer item →
+  customer is refused on a staff item (400) → customer's shielded GET
+  shows exactly one item and no staff fields → submit ("Submitted for
+  review.") → customer is refused editing while under review (400) →
+  staff assesses the staff-only item and verifies the customer's item →
+  staff's full GET shows both items, the real staffNote, and a 1.0 score
+  → staff returns for changes without a note (400, rejected) → staff
+  returns WITH a note (200) → customer sees the review note and can edit
+  again → customer resubmits → staff verifies ("Verified.") → customer
+  can no longer edit (400) → `read_only_customer` can view but not
+  answer (403).
+
+**Tickets UI** (`care-hub-app/src/routes/Tickets.tsx`, new): org-scoped
+list (via the new membership discovery) + an inline create form against
+the existing, already-complete `tickets.js`. No detail/transition UI for
+individual tickets -- `tickets.js` has no "fetch one ticket by id" route
+to build a detail page against, and PATCH (status transition) is a
+staff/technician action outside this pass's customer-facing scope. A
+real pre-existing RBAC gap surfaced while building this, **not
+introduced or fixed this session**: `org_owner` has neither
+`request.submit` nor `request.view` in `rbac.js` (only `org_member` and
+`platform_admin` do), so an `org_owner`-role user will get a real 403
+from `tickets.js` today -- the UI surfaces this honestly via
+`UnauthorizedState` rather than hiding it, but it's worth Dylan's
+attention as a possible RBAC oversight from Session 1, not something
+this session should silently patch.
+
+**Checklist UI** (`care-hub-app/src/routes/Checklists.tsx`, new):
+definition picker (when more than one exists) → per-item Yes/No + an
+optional comment, disabled once submitted/verified → "Submit for
+review" → status banner reflecting draft/submitted/returned (with the
+staff feedback note)/verified. Staff-side assessment/review screens
+were NOT built this session (out of scope for "customers can complete
+this themselves" -- deferred to a future staff-tools session, tracked
+below).
+
+**Frontend verification limits, stated honestly**: `care-hub-app`
+builds and type-checks cleanly (`tsc --noEmit && vite build`) with both
+new routes wired into `App.tsx`. Unlike step 5's login/MFA screens
+(verified rendering via `vite preview` with no backend), the Tickets/
+Checklists screens require a signed-in session's `account.js` response
+to render past the loading state, and this session could not get a
+faked `fetch` response installed before `AuthProvider`'s mount-time
+effect fires in `vite preview` (the preview server's every navigation
+is a full page reload, which clears any in-page monkey-patch before
+the app's own script runs) -- a real limitation of this environment,
+not a claim that the components were visually verified. Backend
+correctness for everything these screens call is fully covered by the
+23-check live smoke test above; the frontend components themselves
+follow the exact same `useApi()`/state-switch pattern already verified
+end-to-end in `Dashboard.tsx` (step 4/5).
+
 ## Test results
 
 - rbac.js: +2 cases (platform_admin has every technician ticket
@@ -323,36 +449,61 @@ unconditional shell render with a genuine signed-in/signed-out gate.
   challenge, a real failed challenge, a real recovery-code redemption,
   a real disable, then a fresh `audit-log.js` query confirming all six
   `mfa.*` actions landed as real rows. **15/15 PASS**.
+- `docs/development/evidence/migrations/session-20-migration-004-checklist-split.txt`
+  -- live migration 004 run (a first successful pass, plus a second
+  invocation confirming it correctly rejects re-application rather than
+  silently no-op'ing).
+- `docs/development/evidence/migrations/session-20-checklist-customer-staff-split-live-smoke-test.txt`
+  -- the full checklist lifecycle above, **23/23 PASS** against real
+  Neon (22/23 on the first pass, before the `reviewChecklistSubmission()`
+  stale-`reviewNote` fix above).
+- checklistStore.js: rewritten, 24 cases (was 4) -- every function above
+  plus the stale-reviewNote regression test.
+- checklists.js: rewritten, 19 cases (was 6).
+- checklistSubmissionWorkflow.js (new): 11 cases.
+- readinessChecklist.js domain (new test file): 15 cases for the new
+  asserts/constants.
+- readinessChecklist.js policy: existing cases updated for the new
+  required `audience` field.
+- rbac.js: +1 case (`checklist.answer` granted to org_owner/org_member,
+  not read_only_customer).
+- my-memberships.js (new): 5 cases.
+- Full suite: **763/763 passing**, up from 702 at the end of step 5.
 
 ## What's still not done
 
-Steps 6-10 of Dylan's directive are **not started** -- each is
-substantial enough to be its own session(s), and none was silently
-begun or partially built this session. Step 5 delivered real
-authentication/MFA UI on top of step 4's scaffold, but no QR-code
-rendering (manual-entry key only) and no live-backend verification of
-the full sign-in path:
+Steps 7-10 of Dylan's directive are **not started** -- each is
+substantial enough to be its own session(s):
 
-1. Tickets and checklists UI, including the customer/staff data split
-   for readiness checklists (`customerEditable`/`audience` property,
-   separate staff-only notes/verification/approval fields) -- not yet
-   built at the persistence or endpoint layer either.
-2. Wiring the remaining ~20 endpoints into real screens -- the typed
-   client covers all of them, but only `Dashboard.tsx` (via
-   `account.js`) actually calls one from a rendered route.
-3. Square Sandbox integration and fail-closed email configuration.
-4. The legal drafts (data-flow/processor inventory, draft Privacy
+1. Staff-side checklist assessment/review UI (`staffAssess`/`review`
+   actions exist and are live-verified at the backend; no screen calls
+   them yet).
+2. A ticket detail/transition UI, and staff ticket management generally
+   -- `tickets.js` has no single-ticket-fetch route to build a detail
+   page against, and PATCH (status transition) is a staff/technician
+   action this pass didn't build UI for.
+3. Wiring the remaining ~18 endpoints into real screens -- the typed
+   client covers all of them, but only `Dashboard.tsx`, `Tickets.tsx`,
+   and `Checklists.tsx` actually call one from a rendered route.
+4. Square Sandbox integration and fail-closed email configuration.
+5. The legal drafts (data-flow/processor inventory, draft Privacy
    Policy, draft Care Hub Terms of Service, launch-time legal review
    checklist) -- all explicitly DRAFT-only per Dylan's directive.
-5. Accessibility, security, responsive, and end-to-end testing at
-   real-feature scale (this session's browser verification covered the
-   scaffold's and auth UI's shell/states/routing/theming/toggles, not a
-   full audit) -- and specifically, a live smoke test of the real
-   sign-in -> MFA -> dashboard path against `netlify dev`, which this
-   session did not attempt (no local Blobs emulation available).
-6. QR-code rendering for MFA enrollment (currently manual-entry key
-   only, to avoid adding a QR library during a scaffold/foundational
-   pass) -- worth adding once the enrollment screen sees real use.
+6. Accessibility, security, responsive, and end-to-end testing at
+   real-feature scale.
+7. QR-code rendering for MFA enrollment (currently manual-entry key
+   only).
+8. A live smoke test of the real sign-in -> MFA -> dashboard ->
+   tickets/checklists path against `netlify dev` -- this session
+   verified the backend live (Postgres) and the frontend's build/
+   typecheck/component logic, but could not get a faked authenticated
+   session rendering in the browser preview (see step 6's "frontend
+   verification limits" note above).
+9. The pre-existing `org_owner` ticket-capability gap surfaced this
+   session (`org_owner` lacks `request.submit`/`request.view` in
+   `rbac.js`, unlike `org_member`) -- flagged for Dylan's attention, not
+   fixed, since it predates this session and changing it wasn't
+   requested.
 
 ## Files changed
 
@@ -414,3 +565,34 @@ the full sign-in path:
   real `onSignOut` via `AuthContext`), `care-hub-app/src/strings/en.ts`
   (+auth/MFA UI strings), `care-hub-app/src/main.tsx` (+`auth.css`
   import).
+- New (step 6, backend): `netlify/functions/my-memberships.js` +
+  `.test.js`, `src/policy/checklistSubmissionWorkflow.js` + `.test.js`,
+  `src/domain/readinessChecklist.test.js`,
+  `migrations/004_checklist_customer_staff_split.sql`.
+- Modified (step 6, backend): `src/domain/readinessChecklist.js`
+  (audience field + new asserts), `src/policy/readinessChecklist.js`
+  test fixtures (audience added), `src/db/checklistStore.js` (full
+  rewrite: `recordCustomerAnswer`/`recordStaffAssessment`/
+  `submitChecklistForReview`/`reviewChecklistSubmission`/
+  `getChecklistForCustomer`/`getChecklistForStaff`/
+  `listChecklistDefinitions`, replacing `recordChecklistResponse`/
+  `getChecklistScore`), `src/db/checklistStore.test.js` (rewritten,
+  +stale-reviewNote regression case), `netlify/functions/checklists.js`
+  (rewritten: role-based GET shape, 4-action PATCH dispatch, list mode),
+  `netlify/functions/checklists.test.js` (rewritten), `src/policy/rbac.js`
+  (+`checklist.answer`), `src/policy/rbac.test.js` (+1 case).
+- New evidence: `docs/development/evidence/migrations/session-20-migration-004-checklist-split.txt`,
+  `docs/development/evidence/migrations/session-20-checklist-customer-staff-split-live-smoke-test.txt`.
+- New (step 6, frontend): `care-hub-app/src/api/memberships.ts`,
+  `care-hub-app/src/hooks/useMemberships.ts`,
+  `care-hub-app/src/routes/Tickets.tsx`,
+  `care-hub-app/src/routes/Checklists.tsx`.
+- Modified (step 6, frontend): `care-hub-app/src/api/types.ts` (checklist
+  types redesigned: `ChecklistItemAnswer`-shaped `CustomerChecklistAnswer`/
+  `StaffChecklistAnswer`, `ChecklistSubmission`, `CustomerChecklistView`,
+  `StaffChecklistView`, `ChecklistDefinitionSummary`),
+  `care-hub-app/src/api/client.ts` (`checklists` namespace rewritten to
+  match: `list`/`getForCustomer`/`getForStaff`/`answer`/`submit`/
+  `staffAssess`/`review`), `care-hub-app/src/App.tsx` (real `Tickets`/
+  `Checklists` routes replacing `ComingSoon`), `care-hub-app/src/strings/en.ts`
+  (+tickets/checklists sections).

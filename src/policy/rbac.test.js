@@ -285,6 +285,15 @@ test("platform_admin can view the cross-org operational metrics dashboard (metri
   assert.equal(ORG_SCOPED_ACTIONS.has("metrics.view"), false);
 });
 
+test("org_owner and org_member (but not read_only_customer) can answer/submit their own org's checklist", () => {
+  for (const role of ["org_owner", "org_member"]) {
+    const decision = authorize({ actorRole: role, action: "checklist.answer", actorOrgId: ORG_A, resourceOrgId: ORG_A, actorMembershipStatus: "active" });
+    assert.equal(decision.allowed, true, `${role} should be able to answer their own org's checklist`);
+  }
+  const readOnlyDecision = authorize({ actorRole: "read_only_customer", action: "checklist.answer", actorOrgId: ORG_A, resourceOrgId: ORG_A, actorMembershipStatus: "active" });
+  assert.equal(readOnlyDecision.allowed, false, "read_only_customer is view-only, not answer-capable");
+});
+
 test("all three customer roles can view their own org's service records, website profiles, assets, entitlements, subscriptions, and checklist scores", () => {
   const viewActions = ["service_record.view", "website_profile.view", "asset.view", "entitlement.view", "subscription.view", "checklist.view"];
   for (const role of ["org_owner", "org_member", "read_only_customer"]) {

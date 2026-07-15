@@ -1,0 +1,27 @@
+PASS -- POST /checklists creates a real definition :: status=201
+PASS -- PATCH customerAnswer as org_owner (200) :: status=200
+PASS -- PATCH customerAnswer on a staff-only item is rejected (400) :: status=400
+PASS -- GET as customer returns the shielded view (200) :: status=200
+PASS -- customer view has exactly 1 item (customer-audience only) :: [{"key":"mfa_enabled","label":"MFA enabled on critical accounts?","weight":2,"audience":"customer"}]
+PASS -- customer view never mentions staffVerified/staffNote
+PASS -- PATCH submit -- 'Submitted for review.' (200) :: status=200, body={"message":"Submitted for review.","submission":{"organizationId":"77c6d532-e3b7-4904-9ab3-554b30e7b75b","checklistDefinitionId":"8dd6b097-9708-48f3-a4a7-faf215f485ba","status":"submitted","submittedAt":"2026-07-15T17:08:07.179Z","submittedBy":"cust-1"}}
+PASS -- PATCH customerAnswer while submitted is rejected (400) :: status=400
+PASS -- PATCH staffAssess on the staff-only item (200) :: status=200
+PASS -- PATCH staffAssess verifying the customer's item (200) :: status=200
+PASS -- GET as admin returns the full staff view (200) :: status=200
+PASS -- staff view has both items :: [{"key":"mfa_enabled","label":"MFA enabled on critical accounts?","weight":2,"audience":"customer"},{"key":"onsite_review","label":"On-site review completed?","weight":1,"audience":"staff"}]
+PASS -- staff view shows the real staffNote :: [{"itemKey":"mfa_enabled","met":true,"comment":"enabled on all critical accounts","staffNote":"verified via screenshare","staffVerified":true},{"itemKey":"onsite_review","met":true,"staffNote":"confirmed in person","staffVerified":true}]
+PASS -- real score reflects both verified items (mfa_enabled met=true, onsite_review met=true) -> 1.0 :: {"score":1,"unmetItemKeys":[],"summary":"All 2 readiness items are in place."}
+PASS -- PATCH review return without reviewNote is rejected (400) :: status=400
+PASS -- PATCH review return with a reviewNote (200) :: status=200
+PASS -- customer sees the review note after being returned :: {"status":"returned","submittedAt":"2026-07-15T17:08:07.179Z","reviewedAt":"2026-07-15T17:08:07.820Z","reviewNote":"please double check backups too"}
+PASS -- customer can edit again after being returned (200) :: status=200
+PASS -- customer resubmits after fixing (200) :: status=200
+PASS -- PATCH review verify -- 'Verified.' (200) :: status=200, body={"message":"Verified.","submission":{"organizationId":"77c6d532-e3b7-4904-9ab3-554b30e7b75b","checklistDefinitionId":"8dd6b097-9708-48f3-a4a7-faf215f485ba","status":"verified","submittedAt":"2026-07-15T17:08:08.260Z","submittedBy":"cust-1","reviewedAt":"2026-07-15T17:08:08.399Z","reviewedBy":"admin-1"}}
+PASS -- customer cannot edit once verified (400) :: status=400
+PASS -- read_only_customer can GET (200) :: status=200
+PASS -- read_only_customer cannot PATCH customerAnswer (403) :: status=403
+
+--- summary ---
+23/23 PASS
+test data left in place: organizationId=77c6d532-e3b7-4904-9ab3-554b30e7b75b, checklistDefinitionId=8dd6b097-9708-48f3-a4a7-faf215f485ba

@@ -1,0 +1,54 @@
+First run (applied the migration successfully):
+
+Running: ALTER TABLE checklist_responses   ADD COLUMN comment TEXT,   ADD COLUMN staff_no ...
+Running: CREATE TABLE checklist_submissions (   organization_id UUID NOT NULL REFERENCES  ...
+checklist_responses columns: [
+  'checklist_definition_id',
+  'comment',
+  'id',
+  'item_key',
+  'met',
+  'organization_id',
+  'recorded_at',
+  'staff_note',
+  'staff_verified'
+]
+checklist_submissions columns: [
+  'checklist_definition_id',
+  'organization_id',
+  'review_note',
+  'reviewed_at',
+  'reviewed_by',
+  'status',
+  'submitted_at',
+  'submitted_by'
+]
+PASS: migration 004 applied and verified.
+
+Second run (re-invoked while writing this evidence file, to confirm the
+change is real and persisted, not a silent no-op -- correctly fails since
+the column already exists):
+
+Running: ALTER TABLE checklist_responses   ADD COLUMN comment TEXT,   ADD COLUMN staff_no ...
+MIGRATION FAILED: NeonDbError: column "comment" of relation "checklist_responses" already exists
+    at mr.execute (/Users/heavymm/Documents/Little Technical Solutions LLC/LTS Stand Alone Software/node_modules/@neondatabase/serverless/index.js:1300:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async main (/Users/heavymm/Documents/Little Technical Solutions LLC/LTS Stand Alone Software/run_migration_004_temp.js:23:5) {
+  severity: 'ERROR',
+  code: '42701',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'tablecmds.c',
+  line: '7686',
+  routine: 'check_for_column_name_collision',
+  sourceError: undefined
+}

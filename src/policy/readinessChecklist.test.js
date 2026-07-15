@@ -7,9 +7,9 @@ function definition(overrides = {}) {
     id: "security-readiness-v1",
     title: "Security Readiness",
     items: [
-      { key: "mfa_enabled", label: "MFA enabled on critical accounts?", weight: 2 },
-      { key: "backups_configured", label: "Backups configured?", weight: 1 },
-      { key: "recovery_contact_set", label: "Recovery contact set?", weight: 1 },
+      { key: "mfa_enabled", label: "MFA enabled on critical accounts?", weight: 2, audience: "customer" },
+      { key: "backups_configured", label: "Backups configured?", weight: 1, audience: "customer" },
+      { key: "recovery_contact_set", label: "Recovery contact set?", weight: 1, audience: "staff" },
     ],
     ...overrides,
   };
@@ -59,8 +59,8 @@ test("checklist content (items/labels) is caller-supplied, not hardcoded -- an M
     id: "mfa-checklist-v1",
     title: "Account Protection & MFA",
     items: [
-      { key: "email_mfa", label: "Primary email has MFA?", weight: 1 },
-      { key: "banking_mfa", label: "Banking has MFA?", weight: 1 },
+      { key: "email_mfa", label: "Primary email has MFA?", weight: 1, audience: "customer" },
+      { key: "banking_mfa", label: "Banking has MFA?", weight: 1, audience: "customer" },
     ],
   });
   const result = scoreChecklist(mfaChecklist, [{ itemKey: "email_mfa", met: true }]);

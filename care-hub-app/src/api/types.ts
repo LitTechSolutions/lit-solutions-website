@@ -230,20 +230,64 @@ export interface ItSupportClassification {
   reason: string;
 }
 
-// ---- F046/F047 Readiness Checklist ----
+// ---- F046/F047 Readiness Checklist (Session 20 customer/staff split) ----
+export type ChecklistAudience = "customer" | "staff";
 export interface ChecklistItem {
   key: string;
   label: string;
+  weight: number;
+  audience: ChecklistAudience;
+}
+export interface ChecklistDefinitionSummary {
+  id: string;
+  title: string;
 }
 export interface ChecklistDefinition {
   id: string;
   title: string;
   items: ChecklistItem[];
 }
+export type ChecklistSubmissionStatus = "draft" | "submitted" | "returned" | "verified";
+export interface ChecklistSubmission {
+  organizationId: string;
+  checklistDefinitionId: string;
+  status: ChecklistSubmissionStatus;
+  submittedAt?: string;
+  submittedBy?: string;
+  reviewedAt?: string;
+  reviewedBy?: string;
+  reviewNote?: string;
+}
 export interface ReadinessScore {
   score: number;
   unmetItemKeys: string[];
   summary: string;
+}
+// getChecklistForCustomer()'s shape -- customer-audience items only, no
+// staffNote/staffVerified anywhere (see checklistStore.js's module comment).
+export interface CustomerChecklistAnswer {
+  itemKey: string;
+  met: boolean;
+  comment: string | null;
+}
+export interface CustomerChecklistView {
+  definition: { id: string; title: string; items: ChecklistItem[] };
+  answers: CustomerChecklistAnswer[];
+  submission: { status: ChecklistSubmissionStatus; submittedAt: string | null; reviewedAt: string | null; reviewNote: string | null };
+}
+// getChecklistForStaff()'s shape -- every item, every field.
+export interface StaffChecklistAnswer {
+  itemKey: string;
+  met: boolean;
+  comment?: string;
+  staffNote?: string;
+  staffVerified: boolean;
+}
+export interface StaffChecklistView {
+  definition: ChecklistDefinition;
+  answers: StaffChecklistAnswer[];
+  submission: ChecklistSubmission;
+  score: ReadinessScore;
 }
 
 // ---- F025 Work log ----

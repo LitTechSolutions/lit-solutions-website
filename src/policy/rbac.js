@@ -98,6 +98,12 @@ const ROLE_CAPABILITIES = {
     "entitlement.view",
     "subscription.view",
     "checklist.view",
+    // Session 20 owner decision #3: customers may answer/comment on
+    // their own org's customer-facing checklist items and submit for
+    // review. Deliberately NOT granted to read_only_customer -- that
+    // role is view-only by design (see checklist.view above, which
+    // read_only_customer does have).
+    "checklist.answer",
     "reminder.view",
   ]),
   org_member: new Set([
@@ -118,6 +124,7 @@ const ROLE_CAPABILITIES = {
     "entitlement.view",
     "subscription.view",
     "checklist.view",
+    "checklist.answer",
     "reminder.view",
   ]),
   read_only_customer: new Set([
@@ -179,6 +186,7 @@ const ORG_SCOPED_ACTIONS = new Set([
   "entitlement.view",
   "subscription.view",
   "checklist.view",
+  "checklist.answer",
   "reminder.view",
 ]);
 

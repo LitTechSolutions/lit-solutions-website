@@ -16,6 +16,10 @@ import type {
   BackupRecord,
   ChangeOrder,
   ChecklistDefinition,
+  ChecklistDefinitionSummary,
+  ChecklistSubmission,
+  CustomerChecklistView,
+  StaffChecklistView,
   EntitlementUsageView,
   Invitation,
   ItSupportClassification,
@@ -28,7 +32,6 @@ import type {
   Organization,
   PaymentRequest,
   PriorityAssessment,
-  ReadinessScore,
   Reminder,
   RecordUsageResult,
   RenderedTemplate,
@@ -223,14 +226,23 @@ export const reminders = {
   list: (organizationId: string) => request<{ reminders: Reminder[] }>("/reminders", { query: { organizationId } }),
 };
 
-// ---- F046/F047 Readiness Checklists ----
+// ---- F046/F047 Readiness Checklists (Session 20 customer/staff split) ----
 export const checklists = {
   createDefinition: (title: string, items: ChecklistDefinition["items"]) =>
     request<{ definition: ChecklistDefinition }>("/checklists", { method: "POST", body: { title, items } }),
-  recordResponse: (organizationId: string, checklistDefinitionId: string, itemKey: string, met: boolean) =>
-    request<{ message: string }>("/checklists", { method: "PATCH", body: { organizationId, checklistDefinitionId, itemKey, met } }),
-  score: (organizationId: string, checklistDefinitionId: string) =>
-    request<{ score: ReadinessScore }>("/checklists", { query: { organizationId, checklistDefinitionId } }),
+  list: (organizationId: string) => request<{ definitions: ChecklistDefinitionSummary[] }>("/checklists", { query: { organizationId } }),
+  getForCustomer: (organizationId: string, checklistDefinitionId: string) =>
+    request<CustomerChecklistView>("/checklists", { query: { organizationId, checklistDefinitionId } }),
+  getForStaff: (organizationId: string, checklistDefinitionId: string) =>
+    request<StaffChecklistView>("/checklists", { query: { organizationId, checklistDefinitionId } }),
+  answer: (organizationId: string, checklistDefinitionId: string, itemKey: string, met: boolean, comment?: string) =>
+    request<{ message: string }>("/checklists", { method: "PATCH", body: { action: "customerAnswer", organizationId, checklistDefinitionId, itemKey, met, comment } }),
+  submit: (organizationId: string, checklistDefinitionId: string) =>
+    request<{ message: string; submission: ChecklistSubmission }>("/checklists", { method: "PATCH", body: { action: "submit", organizationId, checklistDefinitionId } }),
+  staffAssess: (organizationId: string, checklistDefinitionId: string, itemKey: string, staffVerified: boolean, options?: { met?: boolean; staffNote?: string }) =>
+    request<{ message: string }>("/checklists", { method: "PATCH", body: { action: "staffAssess", organizationId, checklistDefinitionId, itemKey, staffVerified, ...options } }),
+  review: (organizationId: string, checklistDefinitionId: string, reviewAction: "return" | "verify", reviewNote?: string) =>
+    request<{ message: string; submission: ChecklistSubmission }>("/checklists", { method: "PATCH", body: { action: "review", organizationId, checklistDefinitionId, reviewAction, reviewNote } }),
 };
 
 // ---- F054 Metrics (platform_admin, cross-org) ----
