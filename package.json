@@ -9,6 +9,7 @@
     "@netlify/blobs": "^8.1.0"
   },
   "devDependencies": {
-    "jsdom": "^29.1.1"
+    "jsdom": "^29.1.1",
+    "jspdf": "2.5.2"
   }
 }

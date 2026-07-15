@@ -185,6 +185,7 @@
 
             <div class="wd-cost-breakdown" id="wdCostBreakdown"></div>
             <button type="button" class="btn btn-ghost btn-block" id="wdDownloadPdf" hidden>Download summary (PDF)</button>
+            <p class="wd-pdf-error" id="wdPdfError" role="alert" hidden data-i18n="wd.pdf_init_error">The PDF summary tool didn't load correctly. You can still submit your project -- we'll follow up directly -- or refresh the page to try again.</p>
           </div>
         </div>
 
@@ -518,7 +519,7 @@
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="assets/vendor/jspdf/jspdf.umd.min.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/main.js"></script>
 <script src="js/site-version.js"></script>

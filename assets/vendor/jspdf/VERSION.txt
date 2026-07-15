@@ -1,0 +1,15 @@
+jsPDF 2.5.2 (UMD, minified build)
+Source: https://www.npmjs.com/package/jspdf/v/2.5.2
+Vendored locally because the site's Content-Security-Policy only permits
+script-src 'self' -- loading jsPDF from cdnjs (as this page previously did)
+is silently blocked in production, so "Download summary (PDF)" and the
+full-submission PDF attachment never actually worked.
+Only doc.text()/doc.setFontSize()/doc.splitTextToSize()/doc.addPage() are
+used by this site (see js/website-designer.js buildPdf()) -- the optional
+HTML-rendering plugin (which depends on a version of dompurify with known
+advisories) is never invoked, so those advisories are not reachable through
+this site's own code paths.
+To update: bump the "jspdf" devDependency in package.json, run
+`npm install`, then copy node_modules/jspdf/dist/jspdf.umd.min.js and
+node_modules/jspdf/LICENSE over the files in this directory and update this
+note.

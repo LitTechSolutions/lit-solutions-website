@@ -1832,6 +1832,8 @@ textarea{ resize: vertical; }
 .wd-heroes-toggle input{ accent-color: var(--select-border); width:15px; height:15px; flex-shrink:0; margin-top:.15rem; }
 .wd-heroes-toggle a{ color: var(--accent-teal-text); text-decoration:underline; }
 
+.wd-pdf-error{ color: var(--accent-orange-text); font-size:.8rem; font-weight:600; margin-top:.6rem; }
+
 .wd-browser{ background: var(--paper-alt); border:1px solid var(--line); border-radius: var(--radius); overflow:hidden; box-shadow: 0 10px 26px rgba(20,33,61,0.08); }
 .wd-browser-chrome{ display:flex; align-items:center; gap:.4rem; padding:.6rem .8rem; background: var(--paper); border-bottom:1px solid var(--line); }
 .wd-browser-dot{ width:8px; height:8px; border-radius:50%; background: var(--line-strong); display:inline-block; }

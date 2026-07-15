@@ -424,7 +424,8 @@
     "step4_note": "这些信息才是真正能让我们开始动工的关键 -- 它们会生成一份项目摘要PDF,直接发送给我们。",
     "step4_back": "暂时不用",
     "step4_submit": "提交项目详情",
-    "start_over": "重新开始"
+    "start_over": "重新开始",
+    "pdf_init_error": "PDF摘要工具未能正确加载。您仍然可以提交您的项目——我们会直接跟进——或刷新页面重试。"
   },
   "pricing": {
     "hero_eyebrow": "价格",
@@ -617,7 +618,8 @@
     "preview_form_submit": "提交",
     "preview_default_business_name": "您的企业",
     "status_sending_quote": "正在发送您的报价请求...",
-    "done_message_quick_only": "收到 -- 我们会通过您选择的联系方式与您联系。如果您想现在就补充项目详情,也可以随时重新发起一次网站设计工具申请。"
+    "done_message_quick_only": "收到 -- 我们会通过您选择的联系方式与您联系。如果您想现在就补充项目详情,也可以随时重新发起一次网站设计工具申请。",
+    "error_pdf_unavailable": "我们无法生成您的PDF摘要,因此未发送您的提交内容。请刷新页面重试,或直接致电 636-426-0289 / 发送邮件至 dylan@lit-solutions.tech。"
   },
   "catalog_categories": {
     "Accessibility": "无障碍功能",

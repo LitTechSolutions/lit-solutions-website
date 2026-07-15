@@ -424,7 +424,8 @@
     "step4_note": "C'est ce qui nous permet réellement de commencer à créer votre site -- cela sera transformé en résumé de projet PDF et nous sera envoyé directement.",
     "step4_back": "Pas maintenant",
     "step4_submit": "Soumettre les détails du projet",
-    "start_over": "Recommencer"
+    "start_over": "Recommencer",
+    "pdf_init_error": "L'outil de résumé PDF ne s'est pas chargé correctement. Vous pouvez tout de même soumettre votre projet -- nous vous recontacterons directement -- ou actualiser la page pour réessayer."
   },
   "pricing": {
     "hero_eyebrow": "Tarifs",
@@ -617,7 +618,8 @@
     "preview_form_submit": "Soumettre",
     "preview_default_business_name": "votre entreprise",
     "status_sending_quote": "Envoi de votre demande d'estimation...",
-    "done_message_quick_only": "Bien reçu -- nous vous contacterons selon le moyen de contact que vous avez choisi. Si vous préférez ajouter les détails de votre projet dès maintenant, vous pouvez toujours entamer une nouvelle demande de Concepteur de site Web."
+    "done_message_quick_only": "Bien reçu -- nous vous contacterons selon le moyen de contact que vous avez choisi. Si vous préférez ajouter les détails de votre projet dès maintenant, vous pouvez toujours entamer une nouvelle demande de Concepteur de site Web.",
+    "error_pdf_unavailable": "Nous n'avons pas pu générer votre résumé PDF, donc votre demande n'a pas été envoyée. Actualisez la page et réessayez, ou appelez le 636-426-0289 / écrivez à dylan@lit-solutions.tech directement."
   },
   "catalog_categories": {
     "Accessibility": "Accessibilité",

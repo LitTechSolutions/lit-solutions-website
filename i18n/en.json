@@ -1390,7 +1390,8 @@
     "done_reference_label": "Submission reference:",
     "done_back_home": "Back to home",
     "step3_bizname_note": "Your business name is set above, next to your live preview -- update it there anytime.",
-    "start_over": "Start over"
+    "start_over": "Start over",
+    "pdf_init_error": "The PDF summary tool didn't load correctly. You can still submit your project -- we'll follow up directly -- or refresh the page to try again."
   },
   "blog_password_manager": {
     "breadcrumb_home": "Home",
@@ -1614,7 +1615,8 @@
     "savings_part_heroes": "Heroes Discount",
     "status_building_pdf": "Building your PDF and sending it over...",
     "status_reading_files": "Reading your files...",
-    "status_sending_quote": "Sending your quote request..."
+    "status_sending_quote": "Sending your quote request...",
+    "error_pdf_unavailable": "We couldn't generate your PDF summary, so we didn't send your submission. Please refresh the page and try again, or call 636-426-0289 / email dylan@lit-solutions.tech directly."
   },
   "forms": {
     "not_connected_yet": "This isn't connected yet. Please call 636-426-0289 or email dylan@lit-solutions.tech.",

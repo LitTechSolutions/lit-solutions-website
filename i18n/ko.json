@@ -424,7 +424,8 @@
     "step4_note": "이 정보가 있어야 실제로 제작을 시작할 수 있습니다 -- 입력하신 내용은 프로젝트 요약 PDF로 만들어져 저희에게 바로 전달됩니다.",
     "step4_back": "나중에 할게요",
     "step4_submit": "프로젝트 세부 정보 제출하기",
-    "start_over": "처음부터 다시 시작"
+    "start_over": "처음부터 다시 시작",
+    "pdf_init_error": "PDF 요약 도구가 올바르게 로드되지 않았습니다. 프로젝트는 계속 제출하실 수 있습니다 -- 저희가 직접 연락드리겠습니다 -- 또는 페이지를 새로고침하여 다시 시도해 보세요."
   },
   "pricing": {
     "hero_eyebrow": "요금",
@@ -617,7 +618,8 @@
     "preview_form_submit": "제출",
     "preview_default_business_name": "고객님의 비즈니스",
     "status_sending_quote": "견적 요청을 전송하는 중입니다...",
-    "done_message_quick_only": "확인했습니다 -- 고객님이 선택하신 연락 방법으로 연락드리겠습니다. 지금 프로젝트 세부 정보를 추가하고 싶으시다면, 언제든 새로운 웹사이트 디자이너 요청을 시작하실 수 있습니다."
+    "done_message_quick_only": "확인했습니다 -- 고객님이 선택하신 연락 방법으로 연락드리겠습니다. 지금 프로젝트 세부 정보를 추가하고 싶으시다면, 언제든 새로운 웹사이트 디자이너 요청을 시작하실 수 있습니다.",
+    "error_pdf_unavailable": "PDF 요약을 생성할 수 없어 제출 내용을 보내지 않았습니다. 페이지를 새로고침하여 다시 시도하시거나, 636-426-0289로 전화하시거나 dylan@lit-solutions.tech로 직접 이메일을 보내주세요."
   },
   "catalog_categories": {
     "Accessibility": "접근성",

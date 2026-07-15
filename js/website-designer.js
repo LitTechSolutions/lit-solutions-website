@@ -46,6 +46,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const previewBadgesEl = document.getElementById('wdPreviewBadges');
   const costBreakdownEl = document.getElementById('wdCostBreakdown');
   const downloadBtn = document.getElementById('wdDownloadPdf');
+  const pdfErrorEl = document.getElementById('wdPdfError');
+  // jsPDF is loaded via a blocking <script src> (vendored locally, see
+  // assets/vendor/jspdf/) before this file, so by the time this line runs
+  // window.jspdf is either fully present or the load genuinely failed --
+  // there's no async "still loading" state to account for here.
+  const JSPDF_READY = !!(window.jspdf && typeof window.jspdf.jsPDF === 'function');
   const heroesCheckbox = document.getElementById('wdHeroesDiscount');
   const startOverBtn = document.getElementById('wdStartOver');
   const HEROES_DISCOUNT_RATE = 0.15; // 15% off one-time work -- matches heroes-pricing.html
@@ -639,6 +645,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     costBreakdownEl.innerHTML = html;
     downloadBtn.hidden = false;
+    downloadBtn.disabled = !JSPDF_READY;
+    downloadBtn.setAttribute('aria-disabled', String(!JSPDF_READY));
+    if (pdfErrorEl) pdfErrorEl.hidden = JSPDF_READY;
   }
 
   function slugForPreview(title) {
@@ -1103,7 +1112,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   downloadBtn.addEventListener('click', () => {
     const doc = buildPdf();
-    if (!doc) return;
+    if (!doc) {
+      if (pdfErrorEl) pdfErrorEl.hidden = false;
+      return;
+    }
     doc.save('website-designer-summary.pdf');
   });
 
@@ -1195,7 +1207,19 @@ document.addEventListener('DOMContentLoaded', () => {
       formStatus.textContent = tDyn('status_building_pdf', 'Building your PDF and sending it over...');
 
       const doc = buildPdf();
-      const pdfBase64 = doc ? doc.output('datauristring').split(',')[1] : null;
+      if (!doc) {
+        // The UI promises every full submission includes a PDF summary --
+        // don't silently send one without it (that would look successful
+        // to the visitor while Dylan's inbox quietly gets no attachment).
+        formStatus.textContent = tDyn(
+          'error_pdf_unavailable',
+          "We couldn't generate your PDF summary, so we didn't send your submission. Please refresh the page and try again, or call 636-426-0289 / email dylan@lit-solutions.tech directly."
+        );
+        if (pdfErrorEl) pdfErrorEl.hidden = false;
+        submitBtn.disabled = false;
+        return;
+      }
+      const pdfBase64 = doc.output('datauristring').split(',')[1];
       const { optionalSelected, premiumSelected, heroesDiscount, bundledCategories: bundled, bundleSavings } = selectionPayload();
 
       const payload = {

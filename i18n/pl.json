@@ -424,7 +424,8 @@
     "step4_note": "To właśnie dzięki temu możemy faktycznie zacząć budowanie -- zamienia się to w podsumowanie projektu w PDF, które trafia bezpośrednio do nas.",
     "step4_back": "Nie teraz",
     "step4_submit": "Wyślij szczegóły projektu",
-    "start_over": "Zacznij od nowa"
+    "start_over": "Zacznij od nowa",
+    "pdf_init_error": "Narzędzie do generowania podsumowania PDF nie wczytało się poprawnie. Nadal możesz wysłać swój projekt -- skontaktujemy się z Tobą bezpośrednio -- lub odśwież stronę, aby spróbować ponownie."
   },
   "pricing": {
     "hero_eyebrow": "Cennik",
@@ -617,7 +618,8 @@
     "preview_form_submit": "Wyślij",
     "preview_default_business_name": "Twoja firma",
     "status_sending_quote": "Wysyłanie Twojego zapytania o wycenę...",
-    "done_message_quick_only": "Dobrze -- skontaktujemy się z Tobą, korzystając z wybranej metody kontaktu. Jeśli wolisz teraz dodać szczegóły swojego projektu, zawsze możesz rozpocząć kolejne zgłoszenie w Kreatorze stron internetowych."
+    "done_message_quick_only": "Dobrze -- skontaktujemy się z Tobą, korzystając z wybranej metody kontaktu. Jeśli wolisz teraz dodać szczegóły swojego projektu, zawsze możesz rozpocząć kolejne zgłoszenie w Kreatorze stron internetowych.",
+    "error_pdf_unavailable": "Nie udało się wygenerować podsumowania PDF, więc zgłoszenie nie zostało wysłane. Odśwież stronę i spróbuj ponownie albo zadzwoń pod 636-426-0289 / napisz bezpośrednio na dylan@lit-solutions.tech."
   },
   "catalog_categories": {
     "Accessibility": "Dostępność",

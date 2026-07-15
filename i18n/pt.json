@@ -424,7 +424,8 @@
     "step4_note": "É isso que realmente nos permite começar a construir -- isso é transformado em um PDF de resumo do projeto e enviado diretamente para nós.",
     "step4_back": "Agora não",
     "step4_submit": "Enviar detalhes do projeto",
-    "start_over": "Começar de novo"
+    "start_over": "Começar de novo",
+    "pdf_init_error": "A ferramenta de resumo em PDF não carregou corretamente. Você ainda pode enviar seu projeto -- entraremos em contato diretamente -- ou atualizar a página para tentar novamente."
   },
   "pricing": {
     "hero_eyebrow": "Preços",
@@ -617,7 +618,8 @@
     "preview_form_submit": "Enviar",
     "preview_default_business_name": "sua empresa",
     "status_sending_quote": "Enviando sua solicitação de orçamento...",
-    "done_message_quick_only": "Entendido -- entraremos em contato usando o método de contato que você escolheu. Se preferir adicionar os detalhes do seu projeto agora, você pode sempre iniciar outra solicitação do Criador de Sites."
+    "done_message_quick_only": "Entendido -- entraremos em contato usando o método de contato que você escolheu. Se preferir adicionar os detalhes do seu projeto agora, você pode sempre iniciar outra solicitação do Criador de Sites.",
+    "error_pdf_unavailable": "Não conseguimos gerar seu resumo em PDF, então não enviamos sua solicitação. Atualize a página e tente novamente, ou ligue para 636-426-0289 / envie um e-mail diretamente para dylan@lit-solutions.tech."
   },
   "catalog_categories": {
     "Accessibility": "Acessibilidade",

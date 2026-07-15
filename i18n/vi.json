@@ -424,7 +424,8 @@
     "step4_note": "Đây chính là thông tin giúp chúng tôi thực sự bắt đầu xây dựng -- thông tin này sẽ được chuyển thành bản tóm tắt dự án dạng PDF và gửi thẳng đến chúng tôi.",
     "step4_back": "Để sau",
     "step4_submit": "Gửi thông tin dự án",
-    "start_over": "Bắt đầu lại"
+    "start_over": "Bắt đầu lại",
+    "pdf_init_error": "Công cụ tóm tắt PDF không tải đúng cách. Bạn vẫn có thể gửi dự án của mình -- chúng tôi sẽ liên hệ trực tiếp -- hoặc làm mới trang để thử lại."
   },
   "pricing": {
     "hero_eyebrow": "Bảng giá",
@@ -617,7 +618,8 @@
     "preview_form_submit": "Gửi",
     "preview_default_business_name": "doanh nghiệp của bạn",
     "status_sending_quote": "Đang gửi yêu cầu báo giá của bạn...",
-    "done_message_quick_only": "Đã nhận được -- chúng tôi sẽ liên hệ lại bằng phương thức liên hệ bạn đã chọn. Nếu bạn muốn bổ sung thông tin dự án ngay bây giờ, bạn luôn có thể bắt đầu một yêu cầu Công cụ thiết kế website khác."
+    "done_message_quick_only": "Đã nhận được -- chúng tôi sẽ liên hệ lại bằng phương thức liên hệ bạn đã chọn. Nếu bạn muốn bổ sung thông tin dự án ngay bây giờ, bạn luôn có thể bắt đầu một yêu cầu Công cụ thiết kế website khác.",
+    "error_pdf_unavailable": "Chúng tôi không thể tạo bản tóm tắt PDF của bạn, vì vậy chúng tôi chưa gửi yêu cầu của bạn. Vui lòng làm mới trang và thử lại, hoặc gọi 636-426-0289 / gửi email trực tiếp đến dylan@lit-solutions.tech."
   },
   "catalog_categories": {
     "Accessibility": "Khả năng truy cập",

@@ -424,7 +424,8 @@
     "step4_note": "Questo è ciò che ci permette davvero di iniziare a costruire -- viene trasformato in un PDF riepilogativo del progetto e inviato direttamente a noi.",
     "step4_back": "Non ora",
     "step4_submit": "Invia i dettagli del progetto",
-    "start_over": "Ricomincia"
+    "start_over": "Ricomincia",
+    "pdf_init_error": "Lo strumento di riepilogo PDF non si è caricato correttamente. Puoi comunque inviare il tuo progetto -- ti ricontatteremo direttamente -- oppure aggiorna la pagina per riprovare."
   },
   "pricing": {
     "hero_eyebrow": "Prezzi",
@@ -617,7 +618,8 @@
     "preview_form_submit": "Invia",
     "preview_default_business_name": "la Sua attività",
     "status_sending_quote": "Invio della Sua richiesta di preventivo in corso...",
-    "done_message_quick_only": "Ricevuto -- La ricontatteremo utilizzando il metodo di contatto che ha scelto. Se preferisce aggiungere subito i dettagli del Suo progetto, può sempre avviare una nuova richiesta tramite il Configuratore Sito Web."
+    "done_message_quick_only": "Ricevuto -- La ricontatteremo utilizzando il metodo di contatto che ha scelto. Se preferisce aggiungere subito i dettagli del Suo progetto, può sempre avviare una nuova richiesta tramite il Configuratore Sito Web.",
+    "error_pdf_unavailable": "Non siamo riusciti a generare il tuo riepilogo PDF, quindi non abbiamo inviato la tua richiesta. Aggiorna la pagina e riprova, oppure chiama il 636-426-0289 / scrivi direttamente a dylan@lit-solutions.tech."
   },
   "catalog_categories": {
     "Accessibility": "Accessibilità",

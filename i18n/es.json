@@ -424,7 +424,8 @@
     "step4_note": "Esto es lo que realmente nos permite empezar a construir -- se convierte en un PDF de resumen del proyecto que se nos envía directamente.",
     "step4_back": "Ahora no",
     "step4_submit": "Enviar detalles del proyecto",
-    "start_over": "Empezar de nuevo"
+    "start_over": "Empezar de nuevo",
+    "pdf_init_error": "La herramienta de resumen en PDF no se cargó correctamente. Aún puedes enviar tu proyecto -- te contactaremos directamente -- o actualizar la página para intentarlo de nuevo."
   },
   "pricing": {
     "hero_eyebrow": "Precios",
@@ -617,7 +618,8 @@
     "preview_form_submit": "Enviar",
     "preview_default_business_name": "tu empresa",
     "status_sending_quote": "Enviando tu solicitud de cotización...",
-    "done_message_quick_only": "Entendido -- nos pondremos en contacto contigo usando el método que elegiste. Si prefieres añadir los detalles de tu proyecto ahora, siempre puedes iniciar otra solicitud del Diseñador de Sitios Web."
+    "done_message_quick_only": "Entendido -- nos pondremos en contacto contigo usando el método que elegiste. Si prefieres añadir los detalles de tu proyecto ahora, siempre puedes iniciar otra solicitud del Diseñador de Sitios Web.",
+    "error_pdf_unavailable": "No pudimos generar tu resumen en PDF, así que no enviamos tu solicitud. Actualiza la página e inténtalo de nuevo, o llama al 636-426-0289 / escribe a dylan@lit-solutions.tech directamente."
   },
   "catalog_categories": {
     "Accessibility": "Accesibilidad",

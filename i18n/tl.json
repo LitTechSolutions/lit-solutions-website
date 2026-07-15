@@ -424,7 +424,8 @@
     "step4_note": "Ito talaga ang nagbibigay-daan sa amin para magsimulang gumawa -- ito ang gagawing project summary PDF at ipapadala nang direkta sa amin.",
     "step4_back": "Sa ibang pagkakataon na lang",
     "step4_submit": "I-submit ang detalye ng proyekto",
-    "start_over": "Magsimula ulit"
+    "start_over": "Magsimula ulit",
+    "pdf_init_error": "Hindi maayos na nag-load ang PDF summary tool. Puwede mo pa ring isumite ang iyong proyekto -- susundan namin ito nang direkta -- o i-refresh ang page para subukan muli."
   },
   "pricing": {
     "hero_eyebrow": "Presyo",
@@ -617,7 +618,8 @@
     "preview_form_submit": "I-submit",
     "preview_default_business_name": "iyong negosyo",
     "status_sending_quote": "Ipinapadala ang iyong kahilingan sa quote...",
-    "done_message_quick_only": "Nakuha namin -- makikipag-ugnayan kami sa iyo gamit ang paraan ng pakikipag-ugnayan na pinili mo. Kung gusto mo nang idagdag ang detalye ng iyong proyekto ngayon, pwede kang palaging magsimula ng isa pang Website Designer request."
+    "done_message_quick_only": "Nakuha namin -- makikipag-ugnayan kami sa iyo gamit ang paraan ng pakikipag-ugnayan na pinili mo. Kung gusto mo nang idagdag ang detalye ng iyong proyekto ngayon, pwede kang palaging magsimula ng isa pang Website Designer request.",
+    "error_pdf_unavailable": "Hindi namin nabuo ang iyong PDF summary, kaya hindi namin naipadala ang iyong isinumite. Paki-refresh ang page at subukan muli, o tumawag sa 636-426-0289 / mag-email direkta sa dylan@lit-solutions.tech."
   },
   "catalog_categories": {
     "Accessibility": "Accessibility",

@@ -424,7 +424,8 @@
     "step4_note": "Sa a se sa k ap kite nou kòmanse konstwi tout bon -- li tounen yon rezime pwojè an PDF e voye dirèkteman ban nou.",
     "step4_back": "Pa kounye a",
     "step4_submit": "Soumèt detay pwojè a",
-    "start_over": "Rekòmanse"
+    "start_over": "Rekòmanse",
+    "pdf_init_error": "Zouti rezime PDF la pa t chaje kòrèkteman. Ou ka toujou soumèt pwojè w la -- n ap kontakte w dirèkteman -- oswa rafrechi paj la pou eseye ankò."
   },
   "pricing": {
     "hero_eyebrow": "Pri",
@@ -617,7 +618,8 @@
     "preview_form_submit": "Soumèt",
     "preview_default_business_name": "biznis ou",
     "status_sending_quote": "N ap voye demann estimasyon ou a...",
-    "done_message_quick_only": "Nou resevwa l -- n ap swiv avèk ou lè n sèvi ak metòd kontak ou te chwazi a. Si ou ta pito ajoute detay pwojè ou kounye a, ou ka toujou kòmanse yon lòt demann Desiyatè Sit Wèb."
+    "done_message_quick_only": "Nou resevwa l -- n ap swiv avèk ou lè n sèvi ak metòd kontak ou te chwazi a. Si ou ta pito ajoute detay pwojè ou kounye a, ou ka toujou kòmanse yon lòt demann Desiyatè Sit Wèb.",
+    "error_pdf_unavailable": "Nou pa t kapab jenere rezime PDF ou a, kidonk nou pa t voye soumisyon ou an. Tanpri rafrechi paj la epi eseye ankò, oswa rele 636-426-0289 / voye imèl dirèkteman bay dylan@lit-solutions.tech."
   },
   "catalog_categories": {
     "Accessibility": "Aksesibilite",

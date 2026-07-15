@@ -424,7 +424,8 @@
     "step4_note": "Das ist es, was uns überhaupt erst mit dem Bau beginnen lässt -- daraus wird eine Projektzusammenfassung als PDF erstellt und direkt an uns gesendet.",
     "step4_back": "Nicht jetzt",
     "step4_submit": "Projektangaben absenden",
-    "start_over": "Von vorn beginnen"
+    "start_over": "Von vorn beginnen",
+    "pdf_init_error": "Das PDF-Zusammenfassungstool konnte nicht korrekt geladen werden. Sie können Ihr Projekt trotzdem übermitteln -- wir melden uns direkt bei Ihnen -- oder die Seite neu laden und es erneut versuchen."
   },
   "pricing": {
     "hero_eyebrow": "Preise",
@@ -617,7 +618,8 @@
     "preview_form_submit": "Absenden",
     "preview_default_business_name": "Ihr Unternehmen",
     "status_sending_quote": "Ihre Angebotsanfrage wird gesendet ...",
-    "done_message_quick_only": "Alles klar -- wir melden uns über die von Ihnen gewählte Kontaktmethode. Falls Sie Ihre Projektangaben doch lieber jetzt ergänzen möchten, können Sie jederzeit eine neue Website-Designer-Anfrage starten."
+    "done_message_quick_only": "Alles klar -- wir melden uns über die von Ihnen gewählte Kontaktmethode. Falls Sie Ihre Projektangaben doch lieber jetzt ergänzen möchten, können Sie jederzeit eine neue Website-Designer-Anfrage starten.",
+    "error_pdf_unavailable": "Wir konnten Ihre PDF-Zusammenfassung nicht erstellen, daher wurde Ihre Anfrage nicht gesendet. Bitte laden Sie die Seite neu und versuchen Sie es erneut, oder rufen Sie 636-426-0289 an / schreiben Sie direkt an dylan@lit-solutions.tech."
   },
   "catalog_categories": {
     "Accessibility": "Barrierefreiheit",
