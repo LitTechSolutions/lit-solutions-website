@@ -30,43 +30,260 @@ document.addEventListener('DOMContentLoaded', () => {
   const premiumContainer = document.getElementById('wdPremiumCategories');
   const quickForm = document.getElementById('wdQuickForm');
   const quickFormStatus = document.getElementById('wdQuickFormStatus');
-  const briefForm = document.getElementById('wdBriefForm');
-  const formStatus = document.getElementById('wdFormStatus');
   const doneMessageEl = document.getElementById('wdDoneMessage');
+  const wdPromptYesBtn = document.getElementById('wdPromptYesBtn');
+  const wdFinishLaterBtn = document.getElementById('wdFinishLaterBtn');
+  const wdOpenWorksheetAgainBtn = document.getElementById('wdOpenWorksheetAgainBtn');
+  const wdWorksheetFallback = document.getElementById('wdWorksheetFallback');
+  const wdWorksheetFallbackLink = document.getElementById('wdWorksheetFallbackLink');
 
   const priceAmountEl = document.getElementById('wdPriceAmount');
   const priceSavingsEl = document.getElementById('wdPriceSavings');
   const priceNoteEl = document.getElementById('wdPriceNote');
+  const featureCountEl = document.getElementById('wdFeatureCount');
   const quoteRecapAmountEl = document.getElementById('wdQuoteRecapAmount');
   const businessNameEl = document.getElementById('wdBusinessName');
   const browserUrlEl = document.getElementById('wdBrowserUrl');
   const browserEmptyEl = document.getElementById('wdBrowserEmpty');
+  const previewBaseEl = document.getElementById('wdPreviewBase');
+  const previewHeroNameEl = document.getElementById('wdPreviewHeroName');
+  const previewFooterNameEl = document.getElementById('wdPreviewFooterName');
   const previewNavEl = document.getElementById('wdPreviewNav');
   const previewSectionsEl = document.getElementById('wdPreviewSections');
   const previewBadgesEl = document.getElementById('wdPreviewBadges');
-  const costBreakdownEl = document.getElementById('wdCostBreakdown');
+  const quoteRecapBreakdownEl = document.getElementById('wdQuoteRecapBreakdown');
   const downloadBtn = document.getElementById('wdDownloadPdf');
+  const pdfErrorEl = document.getElementById('wdPdfError');
+  const reviewSubmitBtn = document.getElementById('wdReviewSubmitBtn');
+  const featureTabsEl = document.getElementById('wdFeatureTabs');
+  const featureToolbarEl = document.getElementById('wdFeatureToolbar');
+  const featureSearchEl = document.getElementById('wdFeatureSearch');
+  const categoryChipsEl = document.getElementById('wdCategoryChips');
+  const featureEmptyNoteEl = document.getElementById('wdFeatureEmptyNote');
+  const optionalPanelEl = document.getElementById('wdOptionalCategoriesPanel');
+  const premiumPanelEl = document.getElementById('wdPremiumCategoriesPanel');
+  const includedPanelEl = document.getElementById('wdIncludedPanel');
+  const mobileBarEl = document.getElementById('wdMobileBar');
+  const mobileBarAmountEl = document.getElementById('wdMobileBarAmount');
+  const mobileBarCountEl = document.getElementById('wdMobileBarCount');
+  const mobileReviewBtn = document.getElementById('wdMobileReviewBtn');
+  const wdStudioEl = document.getElementById('wdStudio');
+  const studioPreviewEl = document.getElementById('wdStudioPreview');
+  const sidebarEl = document.getElementById('wdSidebar');
+  const modeTabCustomizeEl = document.getElementById('wdModeTabCustomize');
+  const modeTabPreviewEl = document.getElementById('wdModeTabPreview');
+  const previewUpdatedBadgeEl = document.getElementById('wdPreviewUpdatedBadge');
+  const previewBackBtnEl = document.getElementById('wdPreviewBackBtn');
+  const launchBannerEl = document.getElementById('wdLaunchBanner');
+  // Keeps --wd-mobile-bar-height (css/style.css) equal to the bar's real
+  // rendered height at all times, so the page/footer bottom padding and
+  // the open cookie banner's clearance above the bar (both computed from
+  // that variable) stay correct as its content changes size -- a longer
+  // translated "Review & submit" label wrapping to two lines, or the page
+  // being zoomed, grows the reserved space right along with it instead of
+  // leaving a gap that's too tight or actually overlapping. Called directly
+  // at every point the bar's size could change, rather than relying only on
+  // ResizeObserver's own initial-fire timing.
+  function syncMobileBarHeight() {
+    if (mobileBarEl) document.documentElement.style.setProperty('--wd-mobile-bar-height', `${mobileBarEl.offsetHeight}px`);
+  }
+  if (mobileBarEl && 'ResizeObserver' in window) {
+    new ResizeObserver(syncMobileBarHeight).observe(mobileBarEl);
+  }
+  window.addEventListener('resize', syncMobileBarHeight);
+
+  // ---- Mobile Customize / Live Preview mode switch (900px and below) ----
+  // Above 900px both .wd-studio-preview and #wdSidebar are always visible
+  // side by side and this whole section is inert (the mode-switch tablist
+  // is display:none, the matchMedia below never fires "isMobile"). At or
+  // below 900px, css/style.css shows exactly one of them at a time based
+  // on #wdStudio's data-mobile-mode attribute -- this just keeps that
+  // attribute, the tab buttons' aria-selected/tabindex, and focus in sync.
+  // Scroll position: .wd-sidebar-scroll's scrollTop is a normal DOM
+  // property that browsers preserve on a display:none'd element, so
+  // hiding/showing #wdSidebar via CSS alone already preserves the
+  // customer's place in the feature list across a mode switch -- no extra
+  // bookkeeping needed here.
+  const mobileModeQuery = window.matchMedia('(max-width: 900px)');
+
+  function setMobileMode(mode, opts) {
+    opts = opts || {};
+    if (wdStudioEl) wdStudioEl.dataset.mobileMode = mode;
+    [modeTabCustomizeEl, modeTabPreviewEl].forEach(tab => {
+      if (!tab) return;
+      const active = tab.dataset.mobileMode === mode;
+      tab.classList.toggle('is-active', active);
+      tab.setAttribute('aria-selected', String(active));
+      tab.tabIndex = active ? 0 : -1;
+    });
+    if (mode === 'preview' && previewUpdatedBadgeEl) previewUpdatedBadgeEl.hidden = true;
+    if (!opts.skipFocus) {
+      const activeTab = mode === 'preview' ? modeTabPreviewEl : modeTabCustomizeEl;
+      if (activeTab) activeTab.focus();
+    }
+  }
+
+  function markPreviewUpdated() {
+    if (!previewUpdatedBadgeEl || !wdStudioEl) return;
+    if (wdStudioEl.dataset.mobileMode === 'preview') return; // already looking at it
+    previewUpdatedBadgeEl.hidden = false;
+  }
+
+  if (modeTabCustomizeEl) modeTabCustomizeEl.addEventListener('click', () => setMobileMode('customize'));
+  if (modeTabPreviewEl) modeTabPreviewEl.addEventListener('click', () => setMobileMode('preview'));
+  if (previewBackBtnEl) previewBackBtnEl.addEventListener('click', () => setMobileMode('customize'));
+
+  // Standard tabs keyboard pattern: Left/Right/Home/End move focus AND
+  // activate (only two tabs here, so automatic activation is simpler than
+  // requiring a separate Enter/Space press).
+  if (modeTabCustomizeEl && modeTabPreviewEl) {
+    const modeTabs = [modeTabCustomizeEl, modeTabPreviewEl];
+    modeTabs.forEach((tab, i) => {
+      tab.addEventListener('keydown', (e) => {
+        let target = null;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') target = modeTabs[(i + 1) % modeTabs.length];
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') target = modeTabs[(i - 1 + modeTabs.length) % modeTabs.length];
+        else if (e.key === 'Home') target = modeTabs[0];
+        else if (e.key === 'End') target = modeTabs[modeTabs.length - 1];
+        if (!target) return;
+        e.preventDefault();
+        setMobileMode(target.dataset.mobileMode);
+      });
+    });
+  }
+
+  // role="tablist"/"tab"/"tabpanel" only make sense while the mode switch
+  // is actually the active UI (<=900px) -- above that, both panels are
+  // simultaneously visible (not really "tabs" at all), so the roles are
+  // added/removed as the viewport crosses the breakpoint rather than left
+  // on permanently, which would mislabel the desktop layout for anyone
+  // using a screen reader at a wide-but-not-huge window size.
+  function applyMobileModeA11y(isMobile) {
+    [sidebarEl, studioPreviewEl].forEach(panel => {
+      if (!panel) return;
+      if (isMobile) {
+        panel.setAttribute('role', 'tabpanel');
+        panel.setAttribute('tabindex', '0');
+      } else {
+        panel.removeAttribute('role');
+        panel.removeAttribute('tabindex');
+      }
+    });
+    if (sidebarEl) { if (isMobile) sidebarEl.setAttribute('aria-labelledby', 'wdModeTabCustomize'); else sidebarEl.removeAttribute('aria-labelledby'); }
+    if (studioPreviewEl) { if (isMobile) studioPreviewEl.setAttribute('aria-labelledby', 'wdModeTabPreview'); else studioPreviewEl.removeAttribute('aria-labelledby'); }
+  }
+  applyMobileModeA11y(mobileModeQuery.matches);
+  mobileModeQuery.addEventListener('change', (e) => applyMobileModeA11y(e.matches));
+
+  // Launch banner: a <details> disclosure (see website-designer.html) --
+  // collapsed by default at or below 600px so it doesn't push the actual
+  // configurator out of the first viewport, expanded by default above
+  // that. Only forced open/closed when the breakpoint is actually crossed
+  // (matchMedia's "change" event), never on every resize tick, so a
+  // customer who's manually toggled it isn't fought on an unrelated
+  // resize that doesn't cross 600px.
+  const collapseLaunchBannerQuery = window.matchMedia('(max-width: 600px)');
+  function applyLaunchBannerCollapse(isNarrow) {
+    if (!launchBannerEl) return;
+    if (isNarrow) launchBannerEl.removeAttribute('open');
+    else launchBannerEl.setAttribute('open', '');
+  }
+  applyLaunchBannerCollapse(collapseLaunchBannerQuery.matches);
+  collapseLaunchBannerQuery.addEventListener('change', (e) => applyLaunchBannerCollapse(e.matches));
+
+  // jsPDF is loaded via a blocking <script src> (vendored locally, see
+  // assets/vendor/jspdf/) before this file, so by the time this line runs
+  // window.jspdf is either fully present or the load genuinely failed --
+  // there's no async "still loading" state to account for here.
+  const JSPDF_READY = !!(window.jspdf && typeof window.jspdf.jsPDF === 'function');
   const heroesCheckbox = document.getElementById('wdHeroesDiscount');
+  const startOverBtn = document.getElementById('wdStartOver');
   const HEROES_DISCOUNT_RATE = 0.15; // 15% off one-time work -- matches heroes-pricing.html
   const BUNDLE_DISCOUNT_RATE = 0.10; // 10% off a category when every optional item in it is selected
   const BUNDLE_MIN_ITEMS = 2; // a "bundle" of one item isn't a bundle
-  const MAX_IMAGE_BYTES = 4 * 1024 * 1024; // 4MB per logo/photo, raw file size
-  const MAX_PHOTOS = 4;
 
   const state = {
     package: null,
     basePrice: 0,
     displayedTotal: 0,
     catalog: null,
-    // Set once the quick-quote form (step 3) is sent successfully, so the
-    // optional full brief (step 4) doesn't have to re-collect or re-validate
-    // contact info that's already been captured and emailed.
+    // Set once the quick-quote form (step 3) is sent successfully -- the
+    // resume token authorizes the standalone worksheet (opened in a new
+    // tab) to fetch this lead's data back and later complete the full
+    // submission. Never put in a URL query string, only a URL fragment,
+    // and never logged (see netlify/functions/website-designer.js).
     quickLeadId: null,
+    resumeToken: null,
     customerName: '',
     customerEmail: '',
     customerPhone: '',
     preferredContact: '',
+    featureTab: 'addons', // 'addons' | 'premium' | 'included'
+    categoryFilter: null, // null = all categories
+    searchQuery: '',
   };
+
+  // ---- Draft persistence (survive an accidental refresh/navigation) --
+  // Session-only (not localStorage): this brief can carry real business
+  // details, so it shouldn't outlive the tab. Logo/photo files are never
+  // persisted -- browsers won't let JS repopulate a file input anyway, and
+  // base64-encoding them into sessionStorage risked hitting its ~5-10MB
+  // quota. Bumping WD_DRAFT_VERSION invalidates any old saved shape rather
+  // than risk restoring into a catalog/form structure that's since changed.
+  const WD_DRAFT_KEY = 'lts-wd-draft';
+  const WD_DRAFT_VERSION = 2; // bumped: the full brief's fields moved to website-project-brief.js's own draft
+  const QUICK_FORM_FIELD_IDS = ['wdBusinessName', 'wdName', 'wdEmail', 'wdPhone', 'wdPreferredContact'];
+  let saveDraftTimer = null;
+
+  function collectFieldValues(ids) {
+    const out = {};
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) out[id] = el.value;
+    });
+    return out;
+  }
+
+  function saveDraftNow() {
+    if (!state.package) { clearDraft(); return; }
+    const draft = {
+      v: WD_DRAFT_VERSION,
+      package: state.package,
+      checkedTitles: Array.from(document.querySelectorAll('input[data-priority]:checked')).map(el => el.dataset.title),
+      heroesDiscount: heroesEligible(),
+      quickLeadId: state.quickLeadId,
+      resumeToken: state.resumeToken,
+      customerName: state.customerName,
+      customerEmail: state.customerEmail,
+      customerPhone: state.customerPhone,
+      preferredContact: state.preferredContact,
+      fields: collectFieldValues(QUICK_FORM_FIELD_IDS),
+      savedAt: Date.now(),
+    };
+    try { sessionStorage.setItem(WD_DRAFT_KEY, JSON.stringify(draft)); } catch (e) { /* private browsing / quota -- draft just won't survive, not fatal */ }
+  }
+
+  function saveDraft() {
+    clearTimeout(saveDraftTimer);
+    saveDraftTimer = setTimeout(saveDraftNow, 400);
+  }
+
+  function clearDraft() {
+    try { sessionStorage.removeItem(WD_DRAFT_KEY); } catch (e) { /* ignore */ }
+    if (startOverBtn) startOverBtn.hidden = true;
+  }
+
+  function loadDraft() {
+    try {
+      const raw = sessionStorage.getItem(WD_DRAFT_KEY);
+      if (!raw) return null;
+      const draft = JSON.parse(raw);
+      if (!draft || draft.v !== WD_DRAFT_VERSION || !draft.package) return null;
+      return draft;
+    } catch (e) {
+      return null;
+    }
+  }
 
   const INCLUDED_SUMMARY_EN = {
     starter: [
@@ -219,41 +436,9 @@ document.addEventListener('DOMContentLoaded', () => {
     'Content Management': '🗂️', 'Booking & Scheduling': '📅', 'Reviews & Ratings': '⭐',
     'User Accounts': '👤', 'Account Management': '👤', 'Personalization': '🧩' };
 
-  // ---- Content-brief conditional sections -----------------------------
-  // Business tier includes these content pages standard (no checkbox), so
-  // their brief sections must always show for that package regardless of
-  // selection state. Starter only builds them if the matching optional
-  // feature is checked, so there the brief section follows the checkbox.
-  const CONTENT_BRIEF_ALWAYS_INCLUDED = {
-    business: ['staff', 'testimonials', 'faq', 'blog', 'gallery', 'newsletter'],
-    starter: [],
-  };
-  const CONTENT_BRIEF_TRIGGER_TITLES = {
-    staff: ['Team / Staff page'],
-    testimonials: ['Testimonials / Reviews'],
-    faq: ['FAQ page'],
-    blog: ['Blog / News section'],
-    gallery: ['Portfolio / Gallery page', 'Image gallery'],
-    pricing: ['Pricing page'],
-    booking: ['Online Booking Request Form'],
-    newsletter: ['Newsletter signup'],
-    sms: ['SMS / text notifications'],
-  };
-
-  function isBriefKeyActive(key) {
-    if ((CONTENT_BRIEF_ALWAYS_INCLUDED[state.package] || []).includes(key)) return true;
-    const titles = CONTENT_BRIEF_TRIGGER_TITLES[key] || [];
-    const checked = selectedInputs('C').concat(selectedInputs('S'));
-    return checked.some(el => titles.includes(el.dataset.title));
-  }
-
-  function updateBriefVisibility() {
-    Object.keys(CONTENT_BRIEF_TRIGGER_TITLES).forEach(key => {
-      const group = document.getElementById(`wdBriefGroup_${key}`);
-      if (!group) return;
-      group.hidden = !isBriefKeyActive(key);
-    });
-  }
+  // Content-brief conditional-section logic (which brief fields to show
+  // based on package/selections) now lives entirely in
+  // js/website-project-brief.js, alongside the brief form itself.
 
   function fmtMoney(n) {
     return '$' + Math.round(n).toLocaleString();
@@ -271,6 +456,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // would have left the ticker stuck at a stale number).
     priceAmountEl.textContent = fmtMoney(newTotal);
     if (quoteRecapAmountEl) quoteRecapAmountEl.textContent = fmtMoney(newTotal);
+    if (mobileBarAmountEl) mobileBarAmountEl.textContent = fmtMoney(newTotal);
     state.displayedTotal = newTotal;
     if (delta === 0 || prefersReducedMotion) return;
     const duration = 400;
@@ -294,9 +480,24 @@ document.addEventListener('DOMContentLoaded', () => {
     steps.forEach(s => {
       const stepNum = s.dataset.step;
       s.classList.toggle('is-active', stepNum === name);
-      if (name === '2' || name === '3' || name === 'prompt' || name === '4' || name === 'done') s.disabled = false;
+      if (name === '2' || name === '3' || name === 'prompt' || name === 'worksheet-opened' || name === 'done') s.disabled = false;
     });
-    if (name === 'prompt' || name === '4' || name === 'done') window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+    if (name === 'prompt' || name === 'worksheet-opened' || name === 'done') window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+    // Move focus to the new panel's heading so screen-reader/keyboard users
+    // land on the new content instead of a now-hidden or stale element.
+    const activePanel = document.querySelector(`.wd-panel[data-panel="${name}"]`);
+    const heading = activePanel && activePanel.querySelector('h2[tabindex="-1"]');
+    if (heading) heading.focus();
+    // The feature tabs/search/toolbar and "Review & submit" button only
+    // make sense while actually browsing add-ons (panel 2) -- hide them
+    // the rest of the time rather than leaving inert controls visible
+    // above whatever panel (package picker, quote form, done screen) is
+    // actually showing.
+    if (featureTabsEl) featureTabsEl.hidden = name !== '2';
+    if (featureToolbarEl) featureToolbarEl.hidden = name !== '2' || state.featureTab === 'included';
+    if (reviewSubmitBtn) reviewSubmitBtn.hidden = name !== '2' || !state.package;
+    const sidebarScrollEl = document.getElementById('wdSidebarScroll');
+    if (sidebarScrollEl) sidebarScrollEl.scrollTop = 0;
   }
 
   function renderIncludedSummary() {
@@ -399,7 +600,6 @@ document.addEventListener('DOMContentLoaded', () => {
     renderBadges();
     updateCategoryBundleUI(category);
     updatePriceAndBreakdown();
-    updateBriefVisibility();
   }
 
   function renderCategoryGroup(container, categories, priority) {
@@ -464,7 +664,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const itemFull = { ...i, category: cat.category };
         const label = document.createElement('label');
         label.className = 'checkbox-pill wd-feature-pill';
-        const priceTag = i.price != null ? `<span class="wd-price-tag">+$${i.price}</span>` : `<span class="wd-price-tag wd-price-tag--quote">${escHtml(tDyn('cost_row_quote', 'quote'))}</span>`;
+        const priceTag = i.price != null ? `<span class="wd-price-tag">+$${i.price}</span>` : `<span class="wd-price-tag wd-price-tag--quote">${escHtml(tDyn('cost_row_quote', 'Custom quote'))}</span>`;
         label.innerHTML = `<input type="checkbox" data-priority="${priority}" data-title="${escHtml(i.title)}" data-price="${i.price != null ? i.price : ''}" data-category="${escHtml(cat.category)}" value="${escHtml(i.pdf_label)}"> <span class="wd-feature-pill-label">${escHtml(tCatItem(i.title))}</span>${priceTag}`;
         label.querySelector('input').addEventListener('change', (e) => onFeatureToggle(e.target, itemFull));
         grid.appendChild(label);
@@ -474,6 +674,127 @@ document.addEventListener('DOMContentLoaded', () => {
 
       container.appendChild(block);
     });
+  }
+
+  // ---- Feature tabs (Add-ons / Premium / Included) + search + category
+  // chips. Purely a display filter over the category blocks/pills that
+  // renderCategoryGroup() already built -- selection state, pricing, and
+  // the preview are completely untouched by any of this.
+  function currentFeaturePriority() {
+    return state.featureTab === 'premium' ? 'S' : 'C';
+  }
+
+  function renderCategoryChips() {
+    if (!categoryChipsEl || !state.catalog) return;
+    categoryChipsEl.innerHTML = '';
+    if (state.featureTab === 'included') return;
+    const priority = currentFeaturePriority();
+    const categories = state.catalog.categories.filter(c => c.items.some(i => i.priority === priority));
+    if (categories.length < 2) return; // nothing meaningful to filter with only one category
+    const allChip = document.createElement('button');
+    allChip.type = 'button';
+    allChip.className = 'wd-category-chip' + (state.categoryFilter === null ? ' is-active' : '');
+    allChip.setAttribute('aria-pressed', String(state.categoryFilter === null));
+    allChip.textContent = tDyn('chip_all_categories', 'All');
+    allChip.addEventListener('click', () => {
+      state.categoryFilter = null;
+      renderCategoryChips();
+      applyFeatureFilters();
+    });
+    categoryChipsEl.appendChild(allChip);
+    categories.forEach(cat => {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      const active = state.categoryFilter === cat.category;
+      chip.className = 'wd-category-chip' + (active ? ' is-active' : '');
+      chip.setAttribute('aria-pressed', String(active));
+      chip.textContent = tCatCategory(cat.category);
+      chip.addEventListener('click', () => {
+        state.categoryFilter = active ? null : cat.category;
+        renderCategoryChips();
+        applyFeatureFilters();
+      });
+      categoryChipsEl.appendChild(chip);
+    });
+  }
+
+  function applyFeatureFilters() {
+    if (!state.catalog) return;
+    const priority = currentFeaturePriority();
+    const container = priority === 'S' ? premiumContainer : optionalContainer;
+    const query = state.searchQuery.trim().toLowerCase();
+    let anyVisible = false;
+    Array.from(container.querySelectorAll('.wd-category')).forEach(block => {
+      const categoryMatches = !state.categoryFilter || block.dataset.category === state.categoryFilter;
+      let categoryHasMatch = false;
+      Array.from(block.querySelectorAll('.wd-feature-pill')).forEach(pill => {
+        const label = pill.querySelector('.wd-feature-pill-label');
+        const text = label ? label.textContent.toLowerCase() : '';
+        const matchesQuery = !query || text.includes(query);
+        const visible = categoryMatches && matchesQuery;
+        pill.hidden = !visible;
+        if (visible) categoryHasMatch = true;
+      });
+      const blockVisible = categoryMatches && (!query || categoryHasMatch);
+      block.hidden = !blockVisible;
+      if (blockVisible) {
+        anyVisible = true;
+        // Auto-expand a category with a live search match so results
+        // aren't hidden behind its collapsed accordion header.
+        if (query && categoryHasMatch) {
+          const header = block.querySelector('.wd-category-header');
+          const panel = block.querySelector('.wd-category-panel');
+          if (header && panel && header.getAttribute('aria-expanded') !== 'true') {
+            header.setAttribute('aria-expanded', 'true');
+            panel.hidden = false;
+            block.classList.add('is-open');
+          }
+        }
+      }
+    });
+    if (featureEmptyNoteEl) featureEmptyNoteEl.hidden = anyVisible || state.featureTab === 'included';
+  }
+
+  function switchFeatureTab(tab) {
+    state.featureTab = tab;
+    state.categoryFilter = null;
+    if (featureSearchEl) featureSearchEl.value = '';
+    state.searchQuery = '';
+    if (featureTabsEl) {
+      Array.from(featureTabsEl.querySelectorAll('.wd-feature-tab')).forEach(btn => {
+        const active = btn.dataset.featureTab === tab;
+        btn.classList.toggle('is-active', active);
+        btn.setAttribute('aria-selected', String(active));
+      });
+    }
+    if (optionalPanelEl) optionalPanelEl.hidden = tab !== 'addons';
+    if (premiumPanelEl) premiumPanelEl.hidden = tab !== 'premium';
+    if (includedPanelEl) includedPanelEl.hidden = tab !== 'included';
+    if (featureToolbarEl) featureToolbarEl.hidden = tab === 'included';
+    renderCategoryChips();
+    applyFeatureFilters();
+    if (tab === 'addons') openFirstCategoryIfNoneOpen(optionalContainer);
+    if (tab === 'premium') openFirstCategoryIfNoneOpen(premiumContainer);
+  }
+
+  // A customer landing on the feature list for the first time saw every
+  // category collapsed -- no visible checkboxes, no obvious way to tell
+  // "here's what I can actually add." Opens the first visible category so
+  // real, selectable options are on screen immediately, without touching
+  // any category a customer already opened or closed themselves (that's
+  // what the "none already open" check guards against).
+  function openFirstCategoryIfNoneOpen(container) {
+    if (!container) return;
+    const blocks = Array.from(container.querySelectorAll('.wd-category'));
+    if (blocks.some(b => b.classList.contains('is-open'))) return;
+    const first = blocks.find(b => !b.hidden);
+    if (!first) return;
+    const header = first.querySelector('.wd-category-header');
+    const panel = first.querySelector('.wd-category-panel');
+    if (!header || !panel) return;
+    header.setAttribute('aria-expanded', 'true');
+    panel.hidden = false;
+    first.classList.add('is-open');
   }
 
   function selectedInputs(priority) {
@@ -509,6 +830,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const heroes = heroesEligible();
     animatePrice(total);
 
+    const selectedCount = optionalSel.length + premiumSel.length;
+    const countText = selectedCount === 1
+      ? tDyn('feature_count_one', '1 feature selected')
+      : fillTemplate(tDyn('feature_count_many', '{{count}} features selected'), { count: selectedCount });
+    if (featureCountEl) {
+      featureCountEl.hidden = selectedCount === 0;
+      featureCountEl.textContent = countText;
+    }
+    if (mobileBarCountEl) {
+      mobileBarCountEl.hidden = selectedCount === 0;
+      mobileBarCountEl.textContent = countText;
+    }
+
     // What they'd have paid with no discounts at all, vs. what they're
     // actually paying -- shown as a concrete dollar figure under the price,
     // not just "a discount was applied."
@@ -536,7 +870,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ? tDyn('note_bundle_one_applied', '1 bundle discount applied')
         : fillTemplate(tDyn('note_bundle_many_applied', '{{count}} bundle discounts applied'), { count: bundled.length }));
     }
-    if (heroes) notes.push(tDyn('note_heroes_applied', 'Heroes Discount applied'));
+    if (heroes) notes.push(tDyn('note_heroes_applied', 'Heroes Discount applied (pending confirmation)'));
     let note = notes.length
       ? fillTemplate(tDyn('note_starting_price_with', 'Starting price -- {{notes}}'), { notes: notes.join(', ') })
       : tDyn('note_starting_price', 'Starting price');
@@ -558,19 +892,22 @@ document.addEventListener('DOMContentLoaded', () => {
       html += `<div class="wd-cost-row wd-cost-row--discount"><span>${escHtml(bundleLabel)}</span><strong>-${fmtMoney(savings)}</strong></div>`;
     });
     if (heroes) {
-      const heroesLabel = tDyn('cost_row_heroes', 'American Heroes Discount (15%)');
+      const heroesLabel = tDyn('cost_row_heroes', 'American Heroes Discount (15%, pending confirmation)');
       html += `<div class="wd-cost-row wd-cost-row--discount"><span>${escHtml(heroesLabel)}</span><strong>-${fmtMoney(subtotal - total)}</strong></div>`;
     }
     if (premiumSel.length) {
       const quoteDividerLabel = tDyn('cost_row_quote_divider', 'Custom-quote add-ons');
-      const quoteLabel = tDyn('cost_row_quote', 'quote');
+      const quoteLabel = tDyn('cost_row_quote', 'Custom quote');
       html += `<div class="wd-cost-row wd-cost-row--divider"><span>${escHtml(quoteDividerLabel)}</span></div>`;
       premiumSel.forEach(el => {
         html += `<div class="wd-cost-row wd-cost-row--quote"><span>${escHtml(tCatItem(el.dataset.title))}</span><strong>${escHtml(quoteLabel)}</strong></div>`;
       });
     }
-    costBreakdownEl.innerHTML = html;
+    if (quoteRecapBreakdownEl) quoteRecapBreakdownEl.innerHTML = html;
     downloadBtn.hidden = false;
+    downloadBtn.disabled = !JSPDF_READY;
+    downloadBtn.setAttribute('aria-disabled', String(!JSPDF_READY));
+    if (pdfErrorEl) pdfErrorEl.hidden = JSPDF_READY;
   }
 
   function slugForPreview(title) {
@@ -580,12 +917,13 @@ document.addEventListener('DOMContentLoaded', () => {
   function onFeatureToggle(input, item) {
     const checked = input.checked;
     const priority = item.priority;
+    markPreviewUpdated();
 
     if (priority === 'S') {
       // Premium items never get visually "built" -- they show as a locked badge only.
       renderBadges();
       updatePriceAndBreakdown();
-      updateBriefVisibility();
+      saveDraft();
       return;
     }
 
@@ -603,7 +941,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     updateCategoryBundleUI(item.category);
     updatePriceAndBreakdown();
-    updateBriefVisibility();
+    saveDraft();
   }
 
   function cardBodyHtml(item) {
@@ -644,7 +982,6 @@ document.addEventListener('DOMContentLoaded', () => {
       clearTimeout(existingCard._removeTimeout);
       existingCard.classList.remove('wd-leaving');
       if (!document.getElementById(`wd-nav-${slug}`)) {
-        previewNavEl.hidden = false;
         const navPill = document.createElement('span');
         navPill.className = 'wd-preview-nav-pill';
         navPill.id = `wd-nav-${slug}`;
@@ -654,8 +991,8 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // nav pill
-    previewNavEl.hidden = false;
+    // nav pill -- appended after the always-visible base nav items
+    // (Home/Services/About/Contact), never replacing them.
     const navPill = document.createElement('span');
     navPill.className = 'wd-preview-nav-pill';
     navPill.id = `wd-nav-${slug}`;
@@ -681,9 +1018,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (card.classList.contains('wd-leaving')) card.remove();
       }, 220);
     }
-    if (!previewSectionsEl.children.length) {
-      setTimeout(() => { if (!previewSectionsEl.children.length) previewNavEl.hidden = true; }, 230);
-    }
   }
 
   // Re-renders the text/graphics of every preview card already on screen --
@@ -692,6 +1026,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function refreshPreviewContent() {
     const name = businessNameEl && businessNameEl.value.trim();
     browserUrlEl.textContent = name ? name.toLowerCase().replace(/[^a-z0-9]+/g, '') + '.com' : 'yourbusiness.com';
+    const displayName = name || tDyn('preview_default_business_name', 'Your business');
+    if (previewHeroNameEl) previewHeroNameEl.textContent = displayName;
+    if (previewFooterNameEl) previewFooterNameEl.textContent = displayName;
     if (!state.catalog) return;
     document.querySelectorAll('.wd-preview-card').forEach(card => {
       const slug = card.id.replace('wd-preview-', '');
@@ -731,27 +1068,36 @@ document.addEventListener('DOMContentLoaded', () => {
     return null;
   }
 
-  function loadCatalog(pkg) {
+  function loadCatalog(pkg, draft) {
     state.package = pkg;
-    state.basePrice = pkg === 'business' ? 1299 : 699;
     state.displayedTotal = 0;
     const file = pkg === 'business' ? 'business-catalog.json' : 'starter-catalog.json';
     fetch(file)
       .then(r => r.json())
       .then(data => {
         state.catalog = data;
+        state.basePrice = data.base_price;
         renderIncludedSummary();
         renderCategoryGroup(optionalContainer, data.categories, 'C');
         renderCategoryGroup(premiumContainer, data.categories, 'S');
-        previewNavEl.innerHTML = '';
-        previewNavEl.hidden = true;
+        // Clear only the dynamically-added nav pills -- the base nav's own
+        // Home/Services/About/Contact pills stay put, since the preview
+        // now always looks like a real (if starter) site rather than
+        // starting empty.
+        Array.from(previewNavEl.querySelectorAll('.wd-preview-nav-pill:not(.wd-preview-nav-pill--base)')).forEach(el => el.remove());
         previewSectionsEl.innerHTML = '';
         previewBadgesEl.innerHTML = '';
-        browserEmptyEl.hidden = false;
+        browserEmptyEl.hidden = true;
+        previewBaseEl.hidden = false;
         refreshPreviewContent();
+        switchFeatureTab('addons');
+        if (draft) applyDraft(draft);
         updatePriceAndBreakdown();
-        updateBriefVisibility();
-        showPanel('2');
+        if (!draft) saveDraft();
+        if (mobileBarEl) mobileBarEl.classList.add('is-visible');
+        document.body.classList.add('has-mobile-bar');
+        syncMobileBarHeight();
+        showPanel(draft && draft.quickLeadId ? 'prompt' : '2');
       })
       .catch(err => {
         console.error('Could not load feature catalog', err);
@@ -761,8 +1107,41 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   }
 
+  // Re-applies a restored draft's selections/fields once the catalog has
+  // rendered its checkboxes -- mirrors the exact pattern the lts:langchange
+  // handler below already uses to restore checked state after a re-render.
+  function applyDraft(draft) {
+    Array.from(document.querySelectorAll('input[data-priority]')).forEach(el => {
+      if (draft.checkedTitles.includes(el.dataset.title)) {
+        el.checked = true;
+        if (el.dataset.priority === 'C') {
+          const item = findItem(el.dataset.title);
+          if (item && item.kind === 'content') addPreviewSection(item);
+        }
+      }
+    });
+    renderBadges();
+    state.catalog.categories.forEach(cat => updateCategoryBundleUI(cat.category));
+    if (heroesCheckbox) heroesCheckbox.checked = !!draft.heroesDiscount;
+    state.quickLeadId = draft.quickLeadId || null;
+    state.resumeToken = draft.resumeToken || null;
+    state.customerName = draft.customerName || '';
+    state.customerEmail = draft.customerEmail || '';
+    state.customerPhone = draft.customerPhone || '';
+    state.preferredContact = draft.preferredContact || '';
+    Object.keys(draft.fields || {}).forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = draft.fields[id];
+    });
+    if (startOverBtn) startOverBtn.hidden = false;
+  }
+
   document.querySelectorAll('[data-choose-package]').forEach(btn => {
     btn.addEventListener('click', () => loadCatalog(btn.dataset.choosePackage));
+  });
+  startOverBtn?.addEventListener('click', () => {
+    clearDraft();
+    location.reload();
   });
   document.querySelectorAll('[data-back]').forEach(btn => {
     btn.addEventListener('click', () => showPanel(btn.dataset.back));
@@ -770,20 +1149,83 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('[data-next]').forEach(btn => {
     btn.addEventListener('click', () => showPanel(btn.dataset.next));
   });
-  document.querySelectorAll('[data-prompt-choice]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (btn.dataset.promptChoice === 'yes') {
-        showPanel('4');
-      } else {
-        doneMessageEl.textContent = tDyn('done_message_quick_only',
-          "Got it -- we'll reach out using the contact method you picked. If you'd rather add your project details now, you can always start another Website Designer request.");
-        showPanel('done');
-      }
-    });
+  function finishLater() {
+    doneMessageEl.textContent = tDyn('done_message_quick_only',
+      "Got it -- we'll reach out using the contact method you picked. If you'd rather add your project details now, you can always start another Website Designer request.");
+    clearDraft();
+    showPanel('done');
+  }
+
+  // The resume token travels only as a URL fragment (never a query string,
+  // so it's never sent to the server as part of this navigation, and never
+  // logged) -- see netlify/functions/website-designer.js for the full
+  // security model (hash-only storage, 24h expiry, single use, timing-safe
+  // validation).
+  function worksheetUrl() {
+    if (!state.quickLeadId || !state.resumeToken) return null;
+    return 'website-project-brief.html#resume=' + encodeURIComponent(state.quickLeadId + '.' + state.resumeToken);
+  }
+
+  // Deliberately does NOT pass the literal 'noopener' feature string to
+  // window.open() -- per spec (and confirmed in Safari on macOS/iOS), a
+  // browser that honors 'noopener' returns null from window.open() even
+  // when the popup opened successfully, since the whole point of noopener
+  // is that the caller gets no reference back. That makes `win` useless
+  // for detecting an actually-blocked popup: in Safari this made every
+  // single click look "blocked" and show the fallback link, even though
+  // the new tab opened and worked fine (Chromium browsers, which don't
+  // null the return value out, never surfaced this in testing). Instead,
+  // get a real reference back and manually sever win.opener on it --
+  // functionally identical reverse-tabnabbing protection (the new tab
+  // can't navigate this one via window.opener), while keeping the return
+  // value meaningful so a genuinely blocked popup still falls back to the
+  // direct link instead of silently doing nothing.
+  function openWorksheet() {
+    const url = worksheetUrl();
+    if (!url) return;
+    const win = window.open(url, '_blank');
+    if (!win) {
+      if (wdWorksheetFallbackLink) wdWorksheetFallbackLink.href = url;
+      if (wdWorksheetFallback) wdWorksheetFallback.hidden = false;
+      return;
+    }
+    try { win.opener = null; } catch (e) { /* best-effort hardening only */ }
+    if (wdWorksheetFallback) wdWorksheetFallback.hidden = true;
+    showPanel('worksheet-opened');
+  }
+
+  document.querySelectorAll('[data-prompt-choice="no"]').forEach(btn => {
+    btn.addEventListener('click', finishLater);
   });
+  wdPromptYesBtn?.addEventListener('click', openWorksheet);
+  wdFinishLaterBtn?.addEventListener('click', finishLater);
+  wdOpenWorksheetAgainBtn?.addEventListener('click', openWorksheet);
   heroesCheckbox?.addEventListener('change', () => {
     if (state.package) updatePriceAndBreakdown();
+    saveDraft();
   });
+
+  featureTabsEl?.querySelectorAll('.wd-feature-tab').forEach(btn => {
+    btn.addEventListener('click', () => switchFeatureTab(btn.dataset.featureTab));
+  });
+  featureSearchEl?.addEventListener('input', () => {
+    state.searchQuery = featureSearchEl.value;
+    applyFeatureFilters();
+  });
+  reviewSubmitBtn?.addEventListener('click', () => showPanel('3'));
+  // The quote form/review panel lives inside #wdSidebar's panel system --
+  // if a customer taps "Review & submit" from the floating mobile bar
+  // while looking at Live Preview mode, #wdSidebar is display:none, so
+  // switch back to Customize first or the panel change would be invisible.
+  mobileReviewBtn?.addEventListener('click', () => {
+    setMobileMode('customize', { skipFocus: true });
+    showPanel('3');
+  });
+
+  // Debounced draft save on every keystroke in the quick-quote form (event
+  // delegation via bubbling 'input', so this covers every current and
+  // future named field in the form with one listener).
+  quickForm?.addEventListener('input', saveDraft);
 
   businessNameEl?.addEventListener('input', refreshPreviewContent);
   businessNameEl?.addEventListener('keydown', (e) => {
@@ -792,80 +1234,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // aren't visible yet.
     if (e.key === 'Enter') e.preventDefault();
   });
-
-  function fieldVal(id) {
-    const el = document.getElementById(id);
-    return el ? el.value.trim() : '';
-  }
-
-  // Only sends a conditional field's value when its section is actually
-  // active -- otherwise a value typed in before unchecking the triggering
-  // feature would still go out even though it's no longer relevant.
-  function collectBrief() {
-    return {
-      description: fieldVal('wdBizDescription'),
-      industry: fieldVal('wdBizIndustry'),
-      serviceArea: fieldVal('wdServiceArea'),
-      servicesList: fieldVal('wdServicesList'),
-      brandColors: fieldVal('wdBrandColors'),
-      styleReferences: fieldVal('wdStyleReferences'),
-      addressHours: fieldVal('wdAddressHours'),
-      socialLinks: fieldVal('wdSocialLinks'),
-      launchDate: fieldVal('wdLaunchDate'),
-      desiredDomain: fieldVal('wdDesiredDomain'),
-      staff: isBriefKeyActive('staff') ? fieldVal('wdBriefStaff') : '',
-      testimonials: isBriefKeyActive('testimonials') ? fieldVal('wdBriefTestimonials') : '',
-      faq: isBriefKeyActive('faq') ? fieldVal('wdBriefFaq') : '',
-      blog: isBriefKeyActive('blog') ? fieldVal('wdBriefBlog') : '',
-      gallery: isBriefKeyActive('gallery') ? fieldVal('wdBriefGallery') : '',
-      pricing: isBriefKeyActive('pricing') ? fieldVal('wdBriefPricing') : '',
-      booking: isBriefKeyActive('booking') ? fieldVal('wdBriefBooking') : '',
-      newsletter: isBriefKeyActive('newsletter') ? fieldVal('wdBriefNewsletter') : '',
-      sms: isBriefKeyActive('sms') ? fieldVal('wdBriefSms') : '',
-    };
-  }
-
-  function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result).split(',')[1] || '');
-      reader.onerror = () => reject(reader.error);
-      reader.readAsDataURL(file);
-    });
-  }
-
-  // Reads the logo/photo file inputs into base64 for the email attachment --
-  // same pattern the PDF already uses (client-generates, server just relays
-  // to the email provider). Returns errors instead of throwing so the submit
-  // handler can show them inline rather than via a thrown-exception path.
-  async function collectImageAttachments() {
-    const errors = [];
-    let logo = null;
-    const logoFile = document.getElementById('wdLogoFile')?.files?.[0];
-    if (logoFile) {
-      if (logoFile.size > MAX_IMAGE_BYTES) {
-        errors.push(tDyn('error_logo_too_large', 'Logo file is too large -- please use a file under 4MB.'));
-      } else {
-        logo = { filename: logoFile.name, content: await fileToBase64(logoFile) };
-      }
-    }
-
-    const photos = [];
-    const photoFiles = Array.from(document.getElementById('wdPhotosFile')?.files || []);
-    if (photoFiles.length > MAX_PHOTOS) {
-      errors.push(fillTemplate(tDyn('error_photos_max', 'Please attach at most {{max}} photos.'), { max: MAX_PHOTOS }));
-    } else {
-      for (const file of photoFiles) {
-        if (file.size > MAX_IMAGE_BYTES) {
-          errors.push(fillTemplate(tDyn('error_photo_too_large', 'Photo "{{name}}" is too large -- please use files under 4MB each.'), { name: file.name }));
-        } else {
-          photos.push({ filename: file.name, content: await fileToBase64(file) });
-        }
-      }
-    }
-
-    return { logo, photos, errors };
-  }
 
   function selectionPayload() {
     return {
@@ -877,118 +1245,54 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  function buildPdf() {
-    if (!window.jspdf) return null;
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    const { optionalSelected, premiumSelected, heroesDiscount, bundledCategories: bundled, bundleSavings } = selectionPayload();
-    const business = document.getElementById('wdBusinessName').value || 'Your business';
-    const subtotal = computeSubtotal();
-    const total = computeTotal();
-    let y = 20;
-
-    doc.setFontSize(18);
-    doc.text('Website Designer -- Project Summary', 14, y); y += 8;
-    doc.setFontSize(10);
-    doc.setTextColor(100);
-    doc.text('Little Technical Solutions LLC  |  dylan@lit-solutions.tech  |  636-426-0289', 14, y); y += 12;
-
-    doc.setTextColor(20);
-    doc.setFontSize(13);
-    doc.text(`${state.package === 'business' ? 'Business' : 'Starter'} package -- estimated starting total: $${Math.round(total).toLocaleString()}`, 14, y); y += 7;
-    doc.setFontSize(10);
-    if (bundled.length) {
-      doc.text(`(Includes ${bundled.length} category bundle discount${bundled.length === 1 ? '' : 's'} -- ${bundled.join(', ')} -- saving $${Math.round(bundleSavings).toLocaleString()})`, 14, y); y += 7;
-    }
-    if (heroesDiscount) {
-      doc.text(`(Subtotal $${Math.round(subtotal).toLocaleString()}, less 15% American Heroes Discount, pending verification)`, 14, y); y += 7;
-    }
-    y += 3;
-
-    doc.setFontSize(11);
-    doc.text(`Business: ${business}`, 14, y); y += 7;
-    doc.text(`Contact: ${document.getElementById('wdName').value || ''}`, 14, y); y += 7;
-    doc.text(`Email: ${document.getElementById('wdEmail').value || ''}`, 14, y); y += 7;
-    doc.text(`Phone: ${document.getElementById('wdPhone').value || ''}`, 14, y); y += 10;
-
-    doc.setFontSize(12);
-    doc.text(`Optional features selected (${optionalSelected.length}):`, 14, y); y += 7;
-    doc.setFontSize(10);
-    if (!optionalSelected.length) { doc.text('(none)', 18, y); y += 6; }
-    optionalSelected.forEach(f => {
-      const lines = doc.splitTextToSize(`- ${f.title} (+$${f.price})`, 175);
-      doc.text(lines, 18, y); y += 6 * lines.length;
-      if (y > 270) { doc.addPage(); y = 20; }
-    });
-    y += 4;
-
-    doc.setFontSize(12);
-    doc.text(`Premium add-ons -- custom quote (${premiumSelected.length}):`, 14, y); y += 7;
-    doc.setFontSize(10);
-    if (!premiumSelected.length) { doc.text('(none)', 18, y); y += 6; }
-    premiumSelected.forEach(t => {
-      const lines = doc.splitTextToSize(`- ${t}`, 175);
-      doc.text(lines, 18, y); y += 6 * lines.length;
-      if (y > 270) { doc.addPage(); y = 20; }
-    });
-    y += 6;
-
-    const brief = collectBrief();
-    const briefLines = [];
-    if (brief.description) briefLines.push(['What they do', brief.description]);
-    if (brief.industry) briefLines.push(['Industry', brief.industry]);
-    if (brief.serviceArea) briefLines.push(['Service area', brief.serviceArea]);
-    if (brief.servicesList) briefLines.push(['Services/products', brief.servicesList]);
-    if (brief.desiredDomain) briefLines.push(['Desired domain', brief.desiredDomain]);
-    if (brief.brandColors) briefLines.push(['Brand colors', brief.brandColors]);
-    if (brief.styleReferences) briefLines.push(['Style references', brief.styleReferences]);
-    if (brief.addressHours) briefLines.push(['Address / hours', brief.addressHours]);
-    if (brief.socialLinks) briefLines.push(['Social links', brief.socialLinks]);
-    if (brief.launchDate) briefLines.push(['Preferred launch date', brief.launchDate]);
-    [
-      ['staff', 'Team/staff'], ['testimonials', 'Testimonials'], ['faq', 'FAQ'], ['blog', 'Blog topics'],
-      ['gallery', 'Gallery/portfolio'], ['pricing', 'Pricing'], ['booking', 'Booking details'],
-      ['newsletter', 'Newsletter platform'], ['sms', 'SMS notifications'],
-    ].forEach(([key, label]) => { if (brief[key]) briefLines.push([label, brief[key]]); });
-
-    if (briefLines.length) {
-      if (y > 250) { doc.addPage(); y = 20; }
-      doc.setFontSize(12);
-      doc.text('Business brief:', 14, y); y += 7;
-      doc.setFontSize(10);
-      briefLines.forEach(([label, value]) => {
-        const lines = doc.splitTextToSize(`${label}: ${value}`, 175);
-        doc.text(lines, 18, y); y += 6 * lines.length;
-        if (y > 270) { doc.addPage(); y = 20; }
-      });
-      y += 4;
-    }
-
-    const notes = document.getElementById('wdNotes').value;
-    if (notes) {
-      doc.setFontSize(12);
-      doc.text('Notes:', 14, y); y += 7;
-      doc.setFontSize(10);
-      const lines = doc.splitTextToSize(notes, 175);
-      doc.text(lines, 18, y); y += 6 * lines.length;
-    }
-
-    doc.setFontSize(8);
-    doc.setTextColor(120);
-    doc.text('This is an example estimate only. Final scope and price are confirmed by Little Technical Solutions LLC before any work begins.', 14, 287);
-
-    return doc;
-  }
-
-  downloadBtn.addEventListener('click', () => {
-    const doc = buildPdf();
-    if (!doc) return;
-    doc.save('website-designer-summary.pdf');
-  });
-
   function submissionId() {
     return 'WD-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
   }
+
+  // Builds the shared premium-PDF payload from whatever's known at this
+  // point in the flow (package + selections + contact info) -- the full
+  // business brief doesn't exist yet on this page (see
+  // js/website-project-brief.js, which builds its own richer payload once
+  // the customer has filled that in on the worksheet).
+  function pdfPayloadFromState() {
+    const { optionalSelected, premiumSelected, heroesDiscount, bundledCategories: bundled, bundleSavings } = selectionPayload();
+    const total = computeTotal();
+    const subtotal = computeSubtotal();
+    return {
+      business: (businessNameEl && businessNameEl.value) || 'Your business',
+      customerName: document.getElementById('wdName')?.value || '',
+      customerEmail: document.getElementById('wdEmail')?.value || '',
+      customerPhone: document.getElementById('wdPhone')?.value || '',
+      reference: state.quickLeadId || submissionId(),
+      generatedDate: new Date().toLocaleDateString('en-US'),
+      packageLabel: state.package === 'business' ? 'Business package -- $1,299 starting' : 'Starter package -- $699 starting',
+      basePrice: state.basePrice,
+      includedCapabilities: includedSummaryItems(state.package),
+      optionalSelected, premiumSelected,
+      bundledCategories: bundled, bundleSavings,
+      heroesDiscount, heroesDiscountAmount: heroesDiscount ? subtotal - total : 0,
+      subtotal, total,
+      brief: {}, notes: '',
+    };
+  }
+
+  let pdfBuildInFlight = false;
+  downloadBtn.addEventListener('click', async () => {
+    if (pdfBuildInFlight || !window.LTS_WD_PDF) {
+      if (pdfErrorEl) pdfErrorEl.hidden = false;
+      return;
+    }
+    pdfBuildInFlight = true;
+    downloadBtn.disabled = true;
+    try {
+      const doc = await window.LTS_WD_PDF.buildWebsiteDesignerPdf(pdfPayloadFromState());
+      if (!doc) { if (pdfErrorEl) pdfErrorEl.hidden = false; return; }
+      doc.save('website-designer-summary.pdf');
+    } finally {
+      pdfBuildInFlight = false;
+      downloadBtn.disabled = !JSPDF_READY;
+    }
+  });
 
   // Step 3: quick quote capture. Minimal fields only (name/email/phone/
   // preferred contact method) -- no content brief, no PDF -- so a lead
@@ -1032,11 +1336,13 @@ document.addEventListener('DOMContentLoaded', () => {
           const data = await res.json().catch(() => ({}));
           if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
           state.quickLeadId = data.id || submissionId();
+          state.resumeToken = data.resumeToken || null;
           state.customerName = customerName;
           state.customerEmail = email;
           state.customerPhone = phone;
           state.preferredContact = preferredContact;
           document.getElementById('wdSubmissionId').textContent = state.quickLeadId;
+          saveDraftNow();
           showPanel('prompt');
         })
         .catch((err) => {
@@ -1048,75 +1354,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Step 4 (optional): the full content brief, only reached if the
-  // customer opts in from the post-quote prompt. Contact info is already
-  // known from step 3 (state.customerName/Email/Phone), so this payload
-  // only needs to add the brief, files, and the PDF summary, tagged with
-  // the quick-lead id so Dylan can match this to the earlier quote email.
-  if (briefForm) {
-    briefForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (!state.package) return;
-      if (document.getElementById('wdHoneypotFull').value) return; // bot
-
-      const submitBtn = document.getElementById('wdSubmitBtn');
-      submitBtn.disabled = true;
-      formStatus.textContent = tDyn('status_reading_files', 'Reading your files...');
-
-      const { logo, photos, errors } = await collectImageAttachments();
-      if (errors.length) {
-        formStatus.textContent = errors.join(' ');
-        submitBtn.disabled = false;
-        return;
-      }
-
-      formStatus.textContent = tDyn('status_building_pdf', 'Building your PDF and sending it over...');
-
-      const doc = buildPdf();
-      const pdfBase64 = doc ? doc.output('datauristring').split(',')[1] : null;
-      const { optionalSelected, premiumSelected, heroesDiscount, bundledCategories: bundled, bundleSavings } = selectionPayload();
-
-      const payload = {
-        stage: 'full',
-        quickLeadId: state.quickLeadId,
-        package: state.package,
-        businessName: document.getElementById('wdBusinessName').value,
-        customerName: state.customerName,
-        email: state.customerEmail,
-        phone: state.customerPhone,
-        preferredContact: state.preferredContact,
-        domain: document.getElementById('wdDomain').value,
-        notes: document.getElementById('wdNotes').value,
-        subtotal: Math.round(computeSubtotal()),
-        estimateTotal: Math.round(computeTotal()),
-        heroesDiscount,
-        bundledCategories: bundled,
-        bundleSavings: Math.round(bundleSavings),
-        optionalSelected, premiumSelected,
-        pdfBase64, pdfFilename: 'website-designer-summary.pdf',
-        brief: collectBrief(),
-        logo, photos,
-      };
-
-      fetch('/.netlify/functions/website-designer', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      })
-        .then(async (res) => {
-          const data = await res.json().catch(() => ({}));
-          if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
-          document.getElementById('wdSubmissionId').textContent = data.id || state.quickLeadId || submissionId();
-          showPanel('done');
-        })
-        .catch((err) => {
-          formStatus.textContent = err.message && err.message !== 'Failed to fetch'
-            ? err.message
-            : tDyn('error_generic_submit', 'Something went wrong sending your project -- please call 636-426-0289 or email dylan@lit-solutions.tech directly.');
-          submitBtn.disabled = false;
-        });
-    });
-  }
+  // The full content brief, file uploads, and full-submission PDF/POST now
+  // live entirely in website-project-brief.html / js/website-project-brief.js
+  // (opened in a new tab via openWorksheet() above) -- this page never
+  // shows the complete brief inline again.
 
   // Everything above is built from JS, not static HTML, so switching
   // language mid-session (the visitor is on Step 2/3 already) needs an
@@ -1137,6 +1378,21 @@ document.addEventListener('DOMContentLoaded', () => {
     refreshPreviewContent();
     renderBadges();
     updatePriceAndBreakdown();
-    updateBriefVisibility();
+    renderCategoryChips();
+    applyFeatureFilters();
+    // renderCategoryGroup() just rebuilt every category block from scratch
+    // (fresh accordion markup, nothing open), so re-apply the same
+    // "land on real, selectable options" behavior a first-time catalog
+    // load gets, instead of leaving a customer who switched languages
+    // mid-selection staring at an all-collapsed list.
+    if (state.featureTab === 'addons') openFirstCategoryIfNoneOpen(optionalContainer);
+    if (state.featureTab === 'premium') openFirstCategoryIfNoneOpen(premiumContainer);
+    syncMobileBarHeight();
   });
+
+  // Resume an interrupted session (accidental refresh/navigation) --
+  // silent, since sessionStorage only ever holds this same tab's own
+  // in-progress draft, not something from a different visit to second-guess.
+  const savedDraft = loadDraft();
+  if (savedDraft) loadCatalog(savedDraft.package, savedDraft);
 });

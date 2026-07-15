@@ -22,6 +22,16 @@ actually changes.
   websites, computers, networking, cybersecurity, and small-business IT —
   not primarily an "AI website company." Do not exaggerate credentials,
   business age, staffing, or response capacity in any customer-facing copy.
+- **Founder-bio fact duplication (audit F036, Info severity, no build
+  step to de-duplicate through):** the facts above — Navy years, ship
+  name/hull number, degree, university — are hand-typed independently in
+  `about.html` (photo caption, founder lede, credential cards),
+  `index.html` (homepage lede, credential cards), `team.html` (founder
+  bio line), `testimonials.html` (credential cards), and every
+  `i18n/*.json`'s translated equivalents of those same strings. If any of
+  these facts ever change again, this is the checklist of every location
+  that needs the same edit — the CG-64→CG-54 correction (`9a753a6`)
+  already had to be done as a manual sweep across all of them once.
 
 ## Versioning convention
 
@@ -58,8 +68,11 @@ actually changes.
 - **16 languages** via a client-side swap (`js/i18n.js`, `data-i18n`
   attributes, one URL per page, dictionaries fetched on-demand per
   language — no hreflang, since there are no separate per-language URLs).
-- **Zero automated tests** exist anywhere in the repository as of this
-  writing (no jest/playwright/cypress config, no `test/` directory).
+- **Automated tests**: `test/` (node's built-in `node:test`, run via
+  `npm test`) covers the Website Designer pricing/discount math
+  (`recomputeEstimate`/`priceMismatchFlag`) and a static consistency check
+  that heroes-pricing.html's hand-typed Heroes Discount prices actually
+  match `was * (1 - rate)`. No other suites (no jest/playwright/cypress).
 
 ## Active audit record
 

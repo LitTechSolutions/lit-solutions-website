@@ -16,7 +16,10 @@
 const { readCookie, getSession, verifyPassword, hashPassword, revokeAllSessionsForUser, clearSessionCookie, json, rateLimited } = require("./_lib/auth_utils");
 const { getJSON, setJSON, deleteKey, store } = require("./_lib/blob_store");
 
-const VALID_LANGUAGES = ["en", "es", "fr", "de"];
+// Matches js/i18n.js's LANGS list exactly -- this codebase supports all 16
+// of these site-wide, so the account preference must accept all 16 too
+// (previously stuck at just the first 4, predating the i18n expansion).
+const VALID_LANGUAGES = ["en", "es", "fr", "zh", "ja", "vi", "tl", "ar", "ko", "de", "ht", "pt", "ru", "it", "pl", "hi"];
 
 function withDefaultPreferences(preferences) {
   return Object.assign({ language: "en", timezone: "", emailNotifications: true }, preferences || {});

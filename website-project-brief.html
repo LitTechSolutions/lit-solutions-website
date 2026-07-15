@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+(function(){
+  try{
+    var saved = localStorage.getItem('lts-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  }catch(e){}
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Website Project Details Worksheet — Little Technical Solutions LLC</title>
+<meta name="description" content="Finish your Website Designer project details -- business info, content, and files -- so we can start building.">
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header wpb-header" id="siteHeader">
+  <div class="wrap header-inner">
+    <a href="index.html" class="logo" aria-label="Little Technical Solutions LLC — home">
+      <span class="logo-mark" aria-hidden="true">
+        <img src="assets/logo-icon.png" alt="" width="40" height="40">
+      </span>
+      <span class="logo-text">
+        <span class="logo-line1">Little Technical</span>
+        <span class="logo-line2">Solutions <span class="logo-llc">LLC</span></span>
+      </span>
+    </a>
+    <div class="header-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <a href="tel:+16364260289" class="phone-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        636-426-0289
+      </a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wpb-shell">
+    <div class="wrap wpb-wrap">
+
+      <!-- Validating / loading state -->
+      <section class="wpb-state" id="wpbLoading">
+        <div class="wpb-loading-spinner" aria-hidden="true"></div>
+        <p>Opening your project worksheet…</p>
+      </section>
+
+      <!-- Invalid / expired link state -->
+      <section class="wpb-state" id="wpbInvalid" hidden>
+        <div class="card wpb-invalid-card">
+          <h1>We couldn't open this worksheet</h1>
+          <p id="wpbInvalidMessage">We couldn't reopen this project worksheet. Your original quote request may still have been received. Please contact Little Technical Solutions at 636-426-0289 or dylan@lit-solutions.tech.</p>
+          <a href="index.html" class="btn btn-ghost">Back to home</a>
+        </div>
+      </section>
+
+      <!-- Main worksheet form -->
+      <section class="wpb-state" id="wpbForm" hidden>
+
+        <div class="wpb-summary card">
+          <div class="wpb-summary-row">
+            <div>
+              <p class="wpb-summary-label">Business</p>
+              <p class="wpb-summary-value" id="wpbSummaryBusiness">&nbsp;</p>
+            </div>
+            <div>
+              <p class="wpb-summary-label">Quote reference</p>
+              <p class="wpb-summary-value" id="wpbSummaryRef">&nbsp;</p>
+            </div>
+            <div>
+              <p class="wpb-summary-label">Package</p>
+              <p class="wpb-summary-value" id="wpbSummaryPackage">&nbsp;</p>
+            </div>
+            <div>
+              <p class="wpb-summary-label">Starting estimate</p>
+              <p class="wpb-summary-value" id="wpbSummaryEstimate">&nbsp;</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="wpb-progress-row">
+          <div class="wpb-progress-track" role="progressbar" aria-label="Worksheet progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="wpbProgressTrack">
+            <div class="wpb-progress-fill" id="wpbProgressFill"></div>
+          </div>
+          <span class="wpb-progress-text" id="wpbProgressText">0% complete</span>
+          <span class="wpb-autosave-status" id="wpbAutosaveStatus" aria-live="polite"></span>
+        </div>
+
+        <p class="wpb-intro">This is what actually lets us start building -- it gets turned into a project summary PDF and sent straight to us. Nothing here is final; we'll confirm everything with you directly.</p>
+
+        <form id="wdBriefForm" novalidate>
+          <p class="visually-hidden"><label>Don't fill this out: <input name="wd-bot-field" id="wdHoneypotFull"></label></p>
+
+          <section class="wpb-section" id="wpbSection1">
+            <h2 class="wpb-section-title"><span class="wpb-section-num">1</span> About your business</h2>
+            <div class="form-row">
+              <label for="wdBizDescription">What does your business do, and who are your customers? *</label>
+              <textarea id="wdBizDescription" name="brief_description" rows="3" required placeholder="e.g. We repair residential HVAC systems for homeowners in the Northern Neck of Virginia."></textarea>
+            </div>
+            <div class="form-row">
+              <label for="wdBizIndustry">Industry / type of business *</label>
+              <input type="text" id="wdBizIndustry" name="brief_industry" required placeholder="e.g. HVAC repair">
+            </div>
+          </section>
+
+          <section class="wpb-section" id="wpbSection2">
+            <h2 class="wpb-section-title"><span class="wpb-section-num">2</span> Services and service area</h2>
+            <div class="form-row">
+              <label for="wdServiceArea">City/region(s) you serve *</label>
+              <input type="text" id="wdServiceArea" name="brief_service_area" required placeholder="e.g. Montross &amp; King George, VA">
+            </div>
+            <div class="form-row">
+              <label for="wdServicesList">List your services or products (one per line) *</label>
+              <textarea id="wdServicesList" name="brief_services_list" rows="3" required placeholder="AC repair&#10;Furnace installation&#10;Duct cleaning"></textarea>
+            </div>
+          </section>
+
+          <section class="wpb-section" id="wpbSection3">
+            <h2 class="wpb-section-title"><span class="wpb-section-num">3</span> Domain preferences</h2>
+            <div class="form-row">
+              <label for="wdDomain">Current website or domain (if you have one)</label>
+              <input type="text" id="wdDomain" name="current_domain">
+            </div>
+            <div class="form-row">
+              <label for="wdDesiredDomain">If you don't have a domain yet, what name would you like? (optional -- we can register it for you)</label>
+              <input type="text" id="wdDesiredDomain" name="desired_domain" placeholder="e.g. riversideplumbing.com">
+            </div>
+          </section>
+
+          <section class="wpb-section" id="wpbSection4">
+            <h2 class="wpb-section-title"><span class="wpb-section-num">4</span> Branding and visual direction</h2>
+            <div class="form-row">
+              <label for="wdBrandColors">Brand colors, if you have them</label>
+              <input type="text" id="wdBrandColors" name="brief_brand_colors" placeholder="e.g. navy blue &amp; orange, or hex codes">
+            </div>
+            <div class="form-row">
+              <label for="wdStyleReferences">Websites whose look you like</label>
+              <input type="text" id="wdStyleReferences" name="brief_style_references" placeholder="Paste a link or two">
+            </div>
+          </section>
+
+          <section class="wpb-section" id="wpbSection5">
+            <h2 class="wpb-section-title"><span class="wpb-section-num">5</span> Content and social links</h2>
+            <div class="form-row">
+              <label for="wdAddressHours">Physical address &amp; business hours, if customers visit you</label>
+              <textarea id="wdAddressHours" name="brief_address_hours" rows="2"></textarea>
+            </div>
+            <div class="form-row">
+              <label for="wdSocialLinks">Social media links</label>
+              <textarea id="wdSocialLinks" name="brief_social_links" rows="2" placeholder="Facebook, Instagram, etc."></textarea>
+            </div>
+          </section>
+
+          <section class="wpb-section" id="wpbSection6" hidden>
+            <h2 class="wpb-section-title"><span class="wpb-section-num">6</span> Selected feature details</h2>
+            <p class="wd-note">These only appear because of the features you selected in the configurator.</p>
+            <div id="wdBriefConditional">
+              <div class="form-row wd-brief-group" id="wdBriefGroup_staff" hidden>
+                <label for="wdBriefStaff">Team/staff details *</label>
+                <textarea id="wdBriefStaff" name="brief_staff" rows="3" placeholder="One person per line: Name — Title — short bio"></textarea>
+              </div>
+              <div class="form-row wd-brief-group" id="wdBriefGroup_testimonials" hidden>
+                <label for="wdBriefTestimonials">Testimonials/reviews to feature *</label>
+                <textarea id="wdBriefTestimonials" name="brief_testimonials" rows="3" placeholder="One per line: Customer name — their quote"></textarea>
+              </div>
+              <div class="form-row wd-brief-group" id="wdBriefGroup_faq" hidden>
+                <label for="wdBriefFaq">FAQ questions &amp; answers *</label>
+                <textarea id="wdBriefFaq" name="brief_faq" rows="3" placeholder="One per line: Question? | Answer"></textarea>
+              </div>
+              <div class="form-row wd-brief-group" id="wdBriefGroup_blog" hidden>
+                <label for="wdBriefBlog">Blog topics to start with *</label>
+                <textarea id="wdBriefBlog" name="brief_blog" rows="2" placeholder="2-3 topics or article titles"></textarea>
+              </div>
+              <div class="form-row wd-brief-group" id="wdBriefGroup_gallery" hidden>
+                <label for="wdBriefGallery">What should the gallery/portfolio show?</label>
+                <textarea id="wdBriefGallery" name="brief_gallery" rows="2" placeholder="Describe the images, or note you'll send photos separately"></textarea>
+              </div>
+              <div class="form-row wd-brief-group" id="wdBriefGroup_pricing" hidden>
+                <label for="wdBriefPricing">Prices to display *</label>
+                <textarea id="wdBriefPricing" name="brief_pricing" rows="3" placeholder="List services/packages and prices (or ranges)"></textarea>
+              </div>
+              <div class="form-row wd-brief-group" id="wdBriefGroup_booking" hidden>
+                <label for="wdBriefBooking">Booking details *</label>
+                <textarea id="wdBriefBooking" name="brief_booking" rows="3" placeholder="What can be booked, your typical hours/availability, and how you'd like requests confirmed (call, text, email)"></textarea>
+              </div>
+              <div class="form-row wd-brief-group" id="wdBriefGroup_newsletter" hidden>
+                <label for="wdBriefNewsletter">Newsletter platform</label>
+                <input type="text" id="wdBriefNewsletter" name="brief_newsletter" placeholder="Mailchimp, Constant Contact, etc. -- or leave blank and we'll recommend one">
+              </div>
+              <div class="form-row wd-brief-group" id="wdBriefGroup_sms" hidden>
+                <label for="wdBriefSms">SMS notifications details *</label>
+                <textarea id="wdBriefSms" name="brief_sms" rows="3" placeholder="What should trigger a text (appointment reminders, order updates, etc.)? Preferred SMS provider? Note: recipients must explicitly opt in -- we'll help build that consent flow."></textarea>
+              </div>
+            </div>
+          </section>
+
+          <section class="wpb-section" id="wpbSection7">
+            <h2 class="wpb-section-title"><span class="wpb-section-num">7</span> Logo and photo uploads</h2>
+            <div class="form-row">
+              <label for="wdLogoFile">Logo file, if you have one</label>
+              <input type="file" id="wdLogoFile" name="logo_file" accept="image/png,image/jpeg,image/svg+xml,image/webp">
+              <p class="wd-note wd-note-inline">PNG, JPG, SVG, or WebP -- up to 4MB.</p>
+            </div>
+            <div class="form-row">
+              <label for="wdPhotosFile">A few real photos (team, location, work)</label>
+              <input type="file" id="wdPhotosFile" name="photo_files" accept="image/png,image/jpeg,image/webp" multiple>
+              <p class="wd-note wd-note-inline">Up to 4 photos, 4MB each. No photos yet? Leave blank -- we'll follow up.</p>
+            </div>
+            <p class="wpb-note-warning">Files aren't kept if you refresh this page -- you'll need to re-select your logo/photos.</p>
+          </section>
+
+          <section class="wpb-section" id="wpbSection8">
+            <h2 class="wpb-section-title"><span class="wpb-section-num">8</span> Schedule and launch preferences</h2>
+            <div class="form-row">
+              <label for="wdLaunchDate">Preferred launch date, if any</label>
+              <input type="date" id="wdLaunchDate" name="brief_launch_date">
+            </div>
+          </section>
+
+          <section class="wpb-section" id="wpbSection9">
+            <h2 class="wpb-section-title"><span class="wpb-section-num">9</span> Additional notes</h2>
+            <div class="form-row">
+              <label for="wdNotes">Notes, questions, or anything specific you want</label>
+              <textarea id="wdNotes" name="notes" rows="4"></textarea>
+            </div>
+          </section>
+
+          <section class="wpb-section" id="wpbSection10">
+            <h2 class="wpb-section-title"><span class="wpb-section-num">10</span> Review and submit</h2>
+            <p class="wd-note">Submitting sends your full project details -- plus a PDF summary -- straight to Little Technical Solutions. We'll follow up using the contact method you picked earlier.</p>
+            <div class="wpb-panel-actions">
+              <button type="submit" class="btn btn-primary" id="wdSubmitBtn">Submit project details</button>
+            </div>
+            <p class="form-status" role="status" id="wdFormStatus"></p>
+          </section>
+        </form>
+      </section>
+
+      <!-- Post-submission confirmation -->
+      <section class="wpb-state" id="wpbDone" hidden>
+        <div class="card wpb-invalid-card">
+          <h1>Thanks -- we've got your full project details.</h1>
+          <p>Your project brief has been sent to Little Technical Solutions. We typically respond within one business day with next steps and a firm quote.</p>
+          <p class="wd-note">Reference: <strong id="wpbDoneRef"></strong></p>
+          <div class="wpb-panel-actions">
+            <button type="button" class="btn btn-ghost" id="wpbDownloadPdfBtn">Download project summary (PDF)</button>
+            <a href="index.html" class="btn btn-primary">Back to home</a>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer wpb-footer">
+  <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. All rights reserved.</p>
+</footer>
+
+<script src="js/main.js"></script>
+<script src="assets/vendor/jspdf/jspdf.umd.min.js"></script>
+<script src="js/website-designer-pdf.js"></script>
+<script src="js/website-project-brief.js"></script>
+</body>
+</html>

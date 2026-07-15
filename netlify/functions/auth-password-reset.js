@@ -1,16 +1,24 @@
-// auth-password-reset.js -- single-use, expiring reset tokens.
+// auth-password-reset.js -- single-use, expiring reset tokens, emailed to
+// the account holder the same way auth-register.js/auth-verify-email.js
+// email their verification links (see _lib/verification.js -- this file
+// follows that exact pattern rather than a separate one).
 //
-// POST { action: "request", email }
+// POST { action: "request", email, page? }
 //   -> always 200 (doesn't reveal whether the email is registered), stores
-//      a single-use token. Wire SEND_RESET_EMAIL to a real provider if you
-//      want this delivered automatically -- until then, generate the link
-//      and send it yourself (see README_ADMIN_SETUP.md).
+//      a single-use token and emails a {page}.html#reset?token=... link to
+//      the account (best-effort -- see _lib/email.js's no-op behavior when
+//      RESEND_API_KEY/EMAIL_FROM aren't configured). `page` is "myaccount"
+//      (default, customers) or "admin" (staff, via admin.html's own
+//      reset-request view) -- only those two values are accepted, so the
+//      link always lands on a real page in this site.
 // POST { action: "confirm", token, newPassword }
 //   -> validates the token, sets the new password, revokes existing
 //      sessions (rotation on privilege change).
 
 const { hashPassword, createSingleUseToken, verify, revokeAllSessionsForUser, json, rateLimited } = require("./_lib/auth_utils");
 const { getJSON, setJSON, store } = require("./_lib/blob_store");
+const { sendEmail } = require("./_lib/email");
+const { siteOrigin } = require("./_lib/verification");
 
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") return json(405, { error: "Method not allowed" });
@@ -29,11 +37,16 @@ exports.handler = async (event) => {
     if (user) {
       const resetToken = createSingleUseToken("password-reset", user.id);
       await setJSON("tokens", resetToken, { type: "password-reset", userId: user.id, used: false });
-      // SEND_RESET_EMAIL: email a link like
-      // https://{domain}/admin.html#reset?token=<resetToken> to `email` here.
-      // Until that's wired up, find the token in the Netlify Blobs dashboard
-      // (Site > Blobs > "tokens" store, most recent key) and build the link
-      // yourself.
+      const page = body.page === "admin" ? "admin" : "myaccount";
+      const link = `${siteOrigin(event)}/${page}.html#reset?token=${resetToken}`;
+      await sendEmail({
+        to: user.email,
+        subject: "Reset your password — Little Technical Solutions LLC",
+        html: `<p>Hi ${user.name},</p>` +
+          `<p>Click the link below to set a new password for your account at Little Technical Solutions LLC:</p>` +
+          `<p><a href="${link}">${link}</a></p>` +
+          `<p>This link is single-use and expires in 30 minutes. If you didn't request this, you can ignore this email -- your password won't be changed.</p>`,
+      });
     }
     return json(200, { message: "If that email is registered, a reset link has been generated." });
   }

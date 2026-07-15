@@ -165,6 +165,15 @@ function json(statusCode, body, extraHeaders) {
 }
 
 // ---- rate limiting ----
+// Known limitation (docs/audit F027, accepted as-is): this read-then-write
+// is not atomic, so truly concurrent requests in the same window can each
+// read the same `count` before either write lands, letting a determined
+// attacker exceed `limit` by a small margin under heavy concurrency. Netlify
+// Blobs' Store API (checked against @netlify/blobs 8.2.0) has no
+// conditional/compare-and-swap write to close this without a larger
+// redesign (e.g. a distributed counter or a different backing store) --
+// disproportionate for what this guards (abuse throttling, not a hard
+// security boundary), so this is accepted rather than reworked.
 async function rateLimited(action, ip, limit, windowSeconds) {
   const key = `${action}:${ip || "unknown"}`;
   const now = Date.now();

@@ -17,6 +17,7 @@
 
 const { readCookie, getSession, json } = require("./_lib/auth_utils");
 const { getJSON, setJSON, deleteKey, store } = require("./_lib/blob_store");
+const { isRecognizedDataUri } = require("./_lib/file_signatures");
 
 const MAX_DATA_URI_LENGTH = 4 * 1024 * 1024; // ~4MB base64 string
 
@@ -49,7 +50,11 @@ exports.handler = async (event) => {
   try { body = JSON.parse(event.body || "{}"); } catch (e) { return json(400, { error: "Invalid JSON" }); }
 
   if (body.action === "upload") {
-    if (!body.dataUri || !body.dataUri.startsWith("data:image/")) return json(400, { error: "A valid image data URI is required." });
+    // Sniff the real file signature rather than trusting the data: URI's
+    // declared MIME type (see _lib/file_signatures.js) -- SVG is
+    // deliberately not allowed here since it can carry executable script,
+    // unlike the raster formats this library actually needs.
+    if (!isRecognizedDataUri(body.dataUri, { allowSvg: false })) return json(400, { error: "A valid image (PNG, JPEG, or WEBP) is required." });
     if (body.dataUri.length > MAX_DATA_URI_LENGTH) return json(400, { error: "Image too large (max ~3MB)." });
     const imageId = require("crypto").randomBytes(10).toString("hex");
     await setJSON("images", imageId, {

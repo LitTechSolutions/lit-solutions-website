@@ -11,6 +11,8 @@
     "otpauth": "^9.5.1"
   },
   "devDependencies": {
+    "jsdom": "^29.1.1",
+    "jspdf": "2.5.2",
     "netlify-cli": "^26.2.0"
   }
 }

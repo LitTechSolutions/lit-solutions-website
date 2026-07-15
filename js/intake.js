@@ -9,6 +9,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const formNote = document.getElementById('formNote');
   const missingNote = document.getElementById('missingFieldsNote');
 
+  // Same t()-with-English-fallback pattern js/cms.js and
+  // js/website-designer.js already use for JS-generated (not static-HTML,
+  // so untouched by i18n.js's own data-i18n pass) text.
+  function tt(path, fallback) {
+    return window.LTS_I18N ? window.LTS_I18N.t(path, fallback) : fallback;
+  }
+
   // ----------------------------------------------------------------
   // Collapsible sections (Website Project Details / Gov Contracting)
   // Manual expand/collapse works for everyone. Checking the relevant
@@ -77,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const lbl = document.querySelector(`label[for="${el.id}"]`);
       if (lbl) return lbl.textContent.replace('*', '').trim();
     }
-    return 'A required field';
+    return tt('intake.missing_field_fallback', 'A required field');
   }
 
   function isFilled(el) {
@@ -91,8 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function clearErrors() {
-    form.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
-    form.querySelectorAll('.group-error').forEach(el => el.classList.remove('group-error'));
+    form.querySelectorAll('.field-error').forEach(el => { el.classList.remove('field-error'); el.removeAttribute('aria-invalid'); el.removeAttribute('aria-describedby'); });
+    form.querySelectorAll('.group-error').forEach(el => { el.classList.remove('group-error'); el.removeAttribute('aria-invalid'); el.removeAttribute('aria-describedby'); });
     missingNote.classList.remove('is-visible');
     missingNote.innerHTML = '';
   }
@@ -112,6 +119,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!isFilled(el)) {
         missing.push(fieldLabel(el));
         if (!firstBadEl) firstBadEl = el;
+        el.setAttribute('aria-invalid', 'true');
+        el.setAttribute('aria-describedby', 'missingFieldsNote');
         if (isGroupField(el)) {
           el.classList.add('group-error');
         } else {
@@ -121,7 +130,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (missing.length) {
-      missingNote.innerHTML = `<strong>Please fill in the following before submitting (type 4 or N/A if a question doesn't apply to you):</strong><ul>${missing.map(m => `<li>${m}</li>`).join('')}</ul>`;
+      const intro = tt('intake.missing_fields_intro', "Please fill in the following before submitting (type N/A if a question doesn't apply to you):");
+      missingNote.innerHTML = `<strong>${intro}</strong><ul>${missing.map(m => `<li>${m}</li>`).join('')}</ul>`;
       missingNote.classList.add('is-visible');
       if (firstBadEl) {
         firstBadEl.scrollIntoView({ behavior: 'smooth', block: 'center' });

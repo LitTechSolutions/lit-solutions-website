@@ -42,6 +42,17 @@
     document.addEventListener("lts:langchange", render);
   }
 
+  // Meta descriptions are plain static HTML with no i18n hook (js/i18n.js
+  // never touches <meta> tags), so once a page actually has real content
+  // the static "nothing here yet" description is just replaced with a
+  // fixed English string, same as everything else meta descriptions do.
+  function updateMetaDescription(text) {
+    var desc = document.querySelector('meta[name="description"]');
+    if (desc) desc.setAttribute("content", text);
+    var ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) ogDesc.setAttribute("content", text);
+  }
+
   function paragraphs(text) {
     return String(text || "").split(/\n\s*\n/).map(function (p) {
       return "<p>" + esc(p.trim()).replace(/\n/g, "<br>") + "</p>";
@@ -131,7 +142,7 @@
   function renderBlogCard(post) {
     var meta = [esc(post.date || ""), esc(post.category || "")].filter(Boolean).join(" &middot; ");
     var art = post.imageDataUri
-      ? '<img class="blog-card-art" src="' + post.imageDataUri + '" alt="">'
+      ? '<img class="blog-card-art" src="' + post.imageDataUri + '" alt="' + esc(post.title) + '">'
       : '<div class="blog-card-art">' + DOC_ICON + '</div>';
     return '<a href="blog-post.html?slug=' + encodeURIComponent(post.slug) + '" class="blog-card reveal is-visible">' +
       art +
@@ -181,8 +192,22 @@
     if (titleEl) titleEl.textContent = post.title;
     if (metaEl) metaEl.textContent = [post.date, post.category, "Little Technical Solutions LLC"].filter(Boolean).join(" · ");
     if (bodyEl) bodyEl.innerHTML = paragraphs(post.body);
+
+    // Every post shares this one template, so without this the canonical
+    // URL and meta description would stay stuck on the generic template
+    // defaults for every post -- Google does execute this page's JS (see
+    // the <head> comment), so it's worth setting these per-post even
+    // though non-JS crawlers (Facebook/etc., see the OG tags) won't see it.
+    var canonicalEl = document.getElementById("cmsPostCanonical");
+    if (canonicalEl) canonicalEl.href = "https://lit-solutions.tech/blog-post.html?slug=" + encodeURIComponent(post.slug);
+    var descEl = document.getElementById("cmsPostMetaDescription");
+    if (descEl) {
+      var plain = String(post.body || "").replace(/\s+/g, " ").trim();
+      var excerpt = plain.length > 155 ? plain.slice(0, 155).replace(/\s+\S*$/, "") + "…" : plain;
+      if (excerpt) descEl.setAttribute("content", excerpt);
+    }
     if (imgWrap && post.imageDataUri) {
-      imgWrap.innerHTML = '<img class="blog-post-image" src="' + post.imageDataUri + '" alt="">';
+      imgWrap.innerHTML = '<img class="blog-post-image" src="' + post.imageDataUri + '" alt="' + esc(post.title) + '">';
     }
     mountBookmark("#cmsBookmarkMount", { itemId: "blog:" + post.slug, label: post.title, href: "blog-post.html?slug=" + encodeURIComponent(post.slug) });
   }
@@ -197,11 +222,12 @@
     if (placeholder) placeholder.style.display = "none";
     swapHeroForHasContent(heroH1Selector, heroLedeSelector, "portfolio",
       "Recent work", "Real projects we've built for real clients -- see the details below.");
+    updateMetaDescription("See real projects we've built for real clients -- before/after examples, screenshots, and project details.");
     var mount = document.querySelector(gridMountSelector);
     if (!mount) return;
     mount.innerHTML = items.map(function (item) {
       var img = item.imageDataUri
-        ? '<img class="portfolio-card-img" src="' + item.imageDataUri + '" alt="">'
+        ? '<img class="portfolio-card-img" src="' + item.imageDataUri + '" alt="' + esc(item.title) + '">'
         : '<div class="portfolio-card-img portfolio-card-img--empty">' + IMG_ICON + '</div>';
       return '<div class="portfolio-card reveal is-visible">' + img +
         '<div class="portfolio-card-body"><h3>' + esc(item.title) + '</h3><p>' + esc(item.description) + '</p>' +
@@ -228,6 +254,7 @@
     if (placeholder) placeholder.style.display = "none";
     swapHeroForHasContent(heroH1Selector, heroLedeSelector, "testimonials",
       "What our customers are saying", "Real feedback from real projects -- not stock quotes, not stand-ins.");
+    updateMetaDescription("Real reviews from real clients -- see what people are saying about working with Little Technical Solutions LLC.");
     var mount = document.querySelector(gridMountSelector);
     if (!mount) return;
     mount.innerHTML = items.map(function (item) {

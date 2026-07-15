@@ -36,7 +36,7 @@
 <div class="lang-bar">
   <div class="wrap lang-bar-inner">
     <div class="nav-dropdown">
-      <button type="button" class="nav-dropdown-toggle lang-dropdown-toggle" aria-expanded="false" aria-controls="langMenu" aria-label="Choose language" data-i18n-attr-aria-label="header.choose_language">
+      <button type="button" class="nav-dropdown-toggle lang-dropdown-toggle" aria-haspopup="listbox" aria-expanded="false" aria-controls="langMenu" aria-label="Choose language" data-i18n-attr-aria-label="header.choose_language">
         <span id="langCurrentLabel">ENG</span>
         <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
       </button>
@@ -74,8 +74,9 @@
     </a>
 
     <nav class="main-nav" id="mainNav" aria-label="Primary">
+      <a href="index.html" data-i18n="nav.home">Home</a>
       <div class="nav-dropdown">
-        <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-controls="servicesDropdown">
+        <button type="button" class="nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="servicesDropdown">
           <span data-i18n="nav.services">Services</span>
           <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
         </button>
@@ -86,29 +87,11 @@
           <a href="service-networking.html" data-i18n="nav.service_networking">Networking</a>
           <a href="service-cybersecurity.html" data-i18n="nav.service_cybersecurity">Cybersecurity</a>
           <a href="service-business-it.html" data-i18n="nav.service_business_it">Small Business IT</a>
+          <a href="pricing.html" data-i18n="nav.pricing">Pricing</a>
         </div>
       </div>
-      <a href="about.html" data-i18n="nav.about">About</a>
-      <a href="pricing.html" data-i18n="nav.pricing">Pricing</a>
       <a href="website-designer.html" data-i18n="nav.website_designer">Website Designer</a>
-      <a href="heroes-pricing.html" data-i18n="nav.heroes_discount">Heroes Discount</a>
-      <div class="nav-dropdown">
-        <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-controls="resourcesDropdown">
-          <span data-i18n="nav.resources">Resources</span>
-          <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
-        </button>
-        <div class="nav-dropdown-menu" id="resourcesDropdown">
-          <a href="service-area.html" data-i18n="nav.service_area">Service Area</a>
-          <a href="testimonials.html" data-i18n="nav.testimonials">Testimonials</a>
-          <a href="team.html" data-i18n="nav.team">Our Team</a>
-          <a href="portfolio.html" data-i18n="nav.portfolio">Portfolio</a>
-          <a href="gallery.html" data-i18n="nav.gallery">Gallery</a>
-          <a href="faq.html" data-i18n="nav.faq">FAQ</a>
-          <a href="blog.html" data-i18n="nav.blog">Blog</a>
-          <a href="booking.html" data-i18n="nav.booking">Booking</a>
-        </div>
-      </div>
-      <a href="payment.html" data-i18n="nav.payments">Payments</a>
+      <a href="about.html" data-i18n="nav.about">About</a>
       <a href="contact.html" data-i18n="nav.contact">Contact</a>
     </nav>
 
@@ -120,14 +103,14 @@
       <a href="search.html" class="search-toggle" aria-label="Search this site" title="Search this site" data-i18n-attr-aria-label="header.search_site" data-i18n-attr-title="header.search_site">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-3.8-3.8"/></svg>
       </a>
-      <a href="myaccount.html" class="search-toggle" aria-label="My Account" title="My Account" data-i18n-attr-aria-label="header.my_account" data-i18n-attr-title="header.my_account">
+      <a href="myaccount.html" class="search-toggle" aria-label="Client Sign In" title="Client Sign In" data-i18n-attr-aria-label="header.my_account" data-i18n-attr-title="header.my_account">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </a>
       <a href="tel:+16364260289" class="phone-link">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         636-426-0289
       </a>
-      <a href="intake.html" class="btn btn-primary btn-small" data-i18n="header.get_quote">Get a quote</a>
+      <a href="intake.html" class="btn btn-primary btn-small" data-i18n="header.get_quote">Request Service</a>
     </div>
 
     <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu" data-i18n-attr-aria-label="header.toggle_menu">
@@ -154,7 +137,10 @@
         <p data-i18n="privacy.section1_intro">What we collect depends on how you interact with us: browsing this public website, or holding an active Care Hub account as an ongoing customer or staff member.</p>
         <p><strong data-i18n="privacy.section1_public_heading">From this public website (all visitors):</strong></p>
         <ul>
-          <li data-i18n-html="privacy.section1_item1"><strong>Contact &amp; project forms.</strong> When you use the quick contact form, the project intake form, or the newsletter signup, we receive the name, email, and message/project details you submit.</li>
+          <li data-i18n-html="privacy.section1_item1"><strong>Contact &amp; project forms.</strong> When you use the quick contact form, the project intake form, the Website Designer tool, or the newsletter signup, we receive the name, email, phone, and message/project details you submit — including, for the Website Designer, any logo or photo files you choose to upload.</li>
+          <li data-i18n-html="privacy.section1_item4"><strong>Customer accounts.</strong> If you create an account, we store your name, email address, language preference, and a securely hashed password — we never see or store your actual password in readable form.</li>
+          <li data-i18n-html="privacy.section1_item5"><strong>Documents, messages, favorites &amp; notifications.</strong> Once you have an account, we store the documents (such as invoices or receipts) shared with your account, the content of messages exchanged with our staff, items you save as favorites, and account-related notifications — all tied to your account and visible only to you and authorized staff.</li>
+          <li data-i18n-html="privacy.section1_item6"><strong>IP addresses.</strong> We log the IP address associated with form submissions, account sign-ins, and other account actions. This is used to prevent abuse (for example, limiting how many requests one visitor can make in a short period) and is stored alongside the related inquiry or account activity.</li>
           <li data-i18n-html="privacy.section1_item2"><strong>Site analytics.</strong> We use Netlify Analytics, which is server-side and cookie-free — it reports aggregate traffic (pages visited, referring sites, rough location by country/region) without tracking individual visitors across sites or building an ad profile.</li>
           <li data-i18n-html="privacy.section1_item3"><strong>Local storage, not cookies.</strong> Your dark/light mode choice and whether you've dismissed the cookie notice are saved in your browser's local storage, not a cookie. Nothing here is used to track you across other websites.</li>
           <li data-i18n-html="privacy.section1_item4"><strong>Website Designer quote tool.</strong> If you use our quote-builder tool, the project details, preferences, and budget range you enter are saved as a lead so we can follow up with a quote.</li>
@@ -172,10 +158,10 @@
         <p data-i18n="privacy.section1_outro">We do not collect or store payment card information, on this website or in the Care Hub. Payments are processed directly by Square; see their own privacy policy for how they handle payment data.</p>
 
         <h2 data-i18n="privacy.section2_heading">2. How we use it</h2>
-        <p data-i18n="privacy.section2_body">Information you submit through this website is used to respond to your inquiry, scope and deliver the service you requested, and — only if you opted in — send the occasional blog update. Care Hub information is used solely to authenticate you, deliver the services your organization is a customer for, bill you, keep the platform secure, and meet our own recordkeeping obligations. We do not use your information for advertising, and we do not build advertising profiles.</p>
+        <p data-i18n="privacy.section2_body">Information you submit through this website is used to respond to your inquiry, scope and deliver the service you requested, operate your account (if you create one) and the features you use within it, and — only if you opted in — send the occasional blog update. Care Hub information is used solely to authenticate you, deliver the services your organization is a customer for, bill you, keep the platform secure, and meet our own recordkeeping obligations. We do not use your information for advertising, and we do not build advertising profiles.</p>
 
         <h2 data-i18n="privacy.section3_heading">3. How it's shared</h2>
-        <p data-i18n="privacy.section3_body">We do not sell your personal information. We use a small number of service providers to run this website and the Care Hub, none of whom are permitted to use your information for their own purposes: Netlify (our hosting, forms, and traffic-analytics provider, and — for the Care Hub — some account/session/document storage); Neon (our database provider, storing Care Hub account, ticket, and service records); Resend (sends transactional emails on our behalf, such as account invitations and notifications — Resend sees only the content of an email we ask it to send); and Square (our payment processor, which we never see or store card details from). We do not share your information with anyone else except where required by law.</p>
+        <p data-i18n="privacy.section3_body">We do not sell your personal information. We use a small number of service providers to run this website and the Care Hub, none of whom are permitted to use your information for their own purposes: Netlify (our hosting, forms, file-storage, and traffic-analytics provider, and — for the Care Hub — some account/session/document storage); Neon (our database provider, storing Care Hub account, ticket, and service records); Resend (sends transactional emails on our behalf, such as account verification, password reset, invitations, and notifications — Resend sees only the content of an email we ask it to send); and Square (our payment processor, which we never see or store card details from). We do not share your information with anyone else except where required by law.</p>
 
         <h2 data-i18n="privacy.section4_heading">4. Cookies &amp; tracking</h2>
         <p data-i18n="privacy.section4_body">This site does not set third-party advertising or tracking cookies. The cookie notice you may see on your first visit is a transparency notice, not a tracking opt-in — there's nothing nonessential to opt into beyond the analytics described above, which collects no personal data.</p>
@@ -211,19 +197,16 @@
       <p data-i18n="footer.tagline">Websites, computers, networks, and security — handled by one call.</p>
     </div>
     <nav class="footer-nav" aria-label="Footer">
+      <a href="index.html" data-i18n="nav.home">Home</a>
       <a href="services.html" data-i18n="nav.services">Services</a>
+      <a href="website-designer.html" data-i18n="nav.website_designer">Website Designer</a>
+      <a href="pricing.html" data-i18n="nav.pricing">Pricing</a>
+      <a href="heroes-pricing.html" data-i18n="nav.heroes_discount">Heroes Discount</a>
       <a href="about.html" data-i18n="nav.about">About</a>
       <a href="team.html" data-i18n="nav.team">Our Team</a>
-      <a href="portfolio.html" data-i18n="nav.portfolio">Portfolio</a>
-      <a href="gallery.html" data-i18n="nav.gallery">Gallery</a>
-      <a href="pricing.html" data-i18n="nav.pricing">Pricing</a>
-      <a href="website-designer.html" data-i18n="nav.website_designer">Website Designer</a>
-      <a href="heroes-pricing.html" data-i18n="nav.heroes_discount">Heroes Discount</a>
       <a href="service-area.html" data-i18n="nav.service_area">Service Area</a>
-      <a href="testimonials.html" data-i18n="nav.testimonials">Testimonials</a>
       <a href="faq.html" data-i18n="nav.faq">FAQ</a>
       <a href="blog.html" data-i18n="nav.blog">Blog</a>
-      <a href="booking.html" data-i18n="nav.booking">Booking</a>
       <a href="payment.html" data-i18n="nav.payments">Payments</a>
       <a href="contact.html" data-i18n="nav.contact">Contact</a>
       <a href="intake.html" data-i18n="footer.new_client_form">New Client Form</a>
@@ -231,7 +214,7 @@
       <a href="sitemap.html" data-i18n="footer.sitemap">Sitemap</a>
       <a href="privacy.html" data-i18n="footer.privacy_policy">Privacy Policy</a>
       <a href="terms.html" data-i18n="footer.terms">Terms &amp; Conditions</a>
-      <a href="patch-notes.html" data-i18n="footer.patch_notes">Patch Notes</a>
+      <a href="patch-notes.html" data-i18n="footer.patch_notes">Website Updates</a>
       <a href="#" id="manageConsentLink" data-i18n="footer.cookie_notice">Cookie Notice</a>
     </nav>
     <nav class="footer-social" aria-label="Social">
@@ -246,7 +229,7 @@
     </nav>
   </div>
   <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span data-i18n="footer.rights">All rights reserved.</span></p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version 3.2.2</a></p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version <span id="siteVersion">3.2.2</span></a></p>
   <p class="footer-version"><a href="admin.html" data-i18n="footer.staff_signin">Staff Sign In</a></p>
 </footer>
 
@@ -261,5 +244,6 @@
 
 <script src="js/i18n.js"></script>
 <script src="js/main.js"></script>
+<script src="js/site-version.js"></script>
 </body>
 </html>

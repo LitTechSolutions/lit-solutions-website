@@ -36,7 +36,7 @@
 <div class="lang-bar">
   <div class="wrap lang-bar-inner">
     <div class="nav-dropdown">
-      <button type="button" class="nav-dropdown-toggle lang-dropdown-toggle" aria-expanded="false" aria-controls="langMenu" aria-label="Choose language" data-i18n-attr-aria-label="header.choose_language">
+      <button type="button" class="nav-dropdown-toggle lang-dropdown-toggle" aria-haspopup="listbox" aria-expanded="false" aria-controls="langMenu" aria-label="Choose language" data-i18n-attr-aria-label="header.choose_language">
         <span id="langCurrentLabel">ENG</span>
         <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
       </button>
@@ -75,8 +75,9 @@
     </a>
 
     <nav class="main-nav" id="mainNav" aria-label="Primary">
+      <a href="index.html" data-i18n="nav.home">Home</a>
       <div class="nav-dropdown">
-        <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-controls="servicesDropdown">
+        <button type="button" class="nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="servicesDropdown">
           <span data-i18n="nav.services">Services</span>
           <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
         </button>
@@ -87,29 +88,11 @@
           <a href="service-networking.html" data-i18n="nav.service_networking">Networking</a>
           <a href="service-cybersecurity.html" data-i18n="nav.service_cybersecurity">Cybersecurity</a>
           <a href="service-business-it.html" data-i18n="nav.service_business_it">Small Business IT</a>
+          <a href="pricing.html" data-i18n="nav.pricing">Pricing</a>
         </div>
       </div>
-      <a href="about.html" data-i18n="nav.about">About</a>
-      <a href="pricing.html" data-i18n="nav.pricing">Pricing</a>
       <a href="website-designer.html" data-i18n="nav.website_designer">Website Designer</a>
-      <a href="heroes-pricing.html" data-i18n="nav.heroes_discount">Heroes Discount</a>
-      <div class="nav-dropdown">
-        <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-controls="resourcesDropdown">
-          <span data-i18n="nav.resources">Resources</span>
-          <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
-        </button>
-        <div class="nav-dropdown-menu" id="resourcesDropdown">
-          <a href="service-area.html" data-i18n="nav.service_area">Service Area</a>
-          <a href="testimonials.html" data-i18n="nav.testimonials">Testimonials</a>
-          <a href="team.html" data-i18n="nav.team">Our Team</a>
-          <a href="portfolio.html" data-i18n="nav.portfolio">Portfolio</a>
-          <a href="gallery.html" data-i18n="nav.gallery">Gallery</a>
-          <a href="faq.html" data-i18n="nav.faq">FAQ</a>
-          <a href="blog.html" data-i18n="nav.blog">Blog</a>
-          <a href="booking.html" data-i18n="nav.booking">Booking</a>
-        </div>
-      </div>
-      <a href="payment.html" data-i18n="nav.payments">Payments</a>
+      <a href="about.html" data-i18n="nav.about">About</a>
       <a href="contact.html" data-i18n="nav.contact">Contact</a>
     </nav>
 
@@ -121,14 +104,14 @@
       <a href="search.html" class="search-toggle" aria-label="Search this site" title="Search this site" data-i18n-attr-aria-label="header.search_site" data-i18n-attr-title="header.search_site">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-3.8-3.8"/></svg>
       </a>
-      <a href="myaccount.html" class="search-toggle" aria-label="My Account" title="My Account" data-i18n-attr-aria-label="header.my_account" data-i18n-attr-title="header.my_account">
+      <a href="myaccount.html" class="search-toggle" aria-label="Client Sign In" title="Client Sign In" data-i18n-attr-aria-label="header.my_account" data-i18n-attr-title="header.my_account">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </a>
       <a href="tel:+16364260289" class="phone-link">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         636-426-0289
       </a>
-      <a href="intake.html" class="btn btn-primary btn-small" data-i18n="header.get_quote">Get a quote</a>
+      <a href="intake.html" class="btn btn-primary btn-small" data-i18n="header.get_quote">Request Service</a>
     </div>
 
     <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu" data-i18n-attr-aria-label="header.toggle_menu">
@@ -158,10 +141,10 @@
           </div>
           <ul class="patch-changes">
             <li>Corrected the hull number in founder Dylan's Navy photo caption on the About page -- USS Antietam is CG-54, not CG-64 as it previously read</li>
-            <li>Tightened server-side access controls on an internal admin tool so it's restricted to staff accounts only, as originally intended</li>
-            <li>Added rate limiting to the signed-in customer messaging feature, matching the limits already in place on every other form on the site</li>
+            <li>Reinforced access restrictions on an internal staff tool so it's reachable only by signed-in staff, as originally intended</li>
+            <li>Added the same spam/abuse protections already used elsewhere on the site to the signed-in customer messaging feature</li>
             <li>Added stronger file-type checks on Website Designer photo/logo uploads</li>
-            <li>Added an independent server-side check on Website Designer price totals, as a safeguard against a manipulated or corrupted submission being treated as legitimate</li>
+            <li>Added an extra safeguard that double-checks your Website Designer price before it's treated as final, protecting against a corrupted or incomplete submission</li>
             <li>Fixed a light-mode display bug affecting a handful of notice/callout boxes (the launch-special banner, a few info notes, and some status badges), where they could render without their intended background color</li>
           </ul>
         </article>
@@ -324,7 +307,7 @@
             <li><strong>Added email verification.</strong> New accounts (staff or customer) now have to verify their email before they can sign in — the main defense against bot/junk registrations on the open "My Account" sign-up. A "Resend verification email" link appears automatically if someone tries signing in before verifying</li>
             <li><strong>Added two-way messaging.</strong> Customers can message us directly from their account (<code>myaccount.html#messages</code>) and read our replies; staff see a Customer Inbox in the dashboard with unread counts and can reply from the same place they manage a customer's documents. Separate from the existing Contact page form, which is unchanged</li>
             <li>The "Customer Documents" staff tab is now just <strong>Customers</strong> — one lookup drives both documents and messages for whoever you pull up</li>
-            <li>A customer can only ever read or send in their own message thread — enforced server-side, verified directly over real HTTP with two separate customer accounts</li>
+            <li>A customer can only ever read or send messages in their own conversation — confirmed by testing with separate customer accounts</li>
           </ul>
         </article>
 
@@ -335,7 +318,7 @@
           <ul class="patch-changes">
             <li><strong>Added customer accounts.</strong> A new "My Account" link (person icon, next to search) in the header lets customers create their own account and sign in — separate from staff sign-in — to view their invoices, receipts, and other paperwork whenever they want, with download links for any attached file</li>
             <li>Added a <strong>Customer Documents</strong> tab to the staff dashboard: look up a customer by the email they registered with, then upload invoices, receipts, or paperwork (title, type, amount, paid/unpaid status, date, notes, optional PDF/image attachment) for them to see</li>
-            <li>Customers can only ever see their own documents — enforced server-side, not just hidden in the interface — and can manage their own login email/password the same way staff can</li>
+            <li>Customers can only ever see their own documents, not just other customers' paperwork hidden from view — and can manage their own login email/password the same way staff can</li>
             <li>This isn't a billing system — payments are still made through the existing Payments page — it's a record locker so paperwork doesn't have to be tracked over email</li>
           </ul>
         </article>
@@ -349,7 +332,7 @@
             <li><strong>Added a sign-in-protected admin content editor</strong> at a low-key "Staff Sign In" link in the footer — lets the business owner add, edit, delete, and reorder blog posts, portfolio items, and testimonials, with photo uploads, from a real dashboard. Changes go live immediately, no rebuild needed. Every page's existing content and honest placeholders are untouched until something is actually added</li>
             <li>New blog posts get their own page automatically and appear on the Blog list above the 3 original articles; the first portfolio item or testimonial added replaces that page's "still building it out" placeholder</li>
             <li>Added an <strong>Account Settings</strong> tab so the admin login email and password can be updated directly from the dashboard, without needing the Netlify Blobs dashboard for routine changes</li>
-            <li>Backed by Netlify Functions + Netlify Blobs: hashed passwords, secure HttpOnly session cookies, rate-limited sign-in/register/password-reset, and server-side (not just UI-hidden) permission checks on every write</li>
+            <li>Built on secure, industry-standard practices: encrypted passwords, secure session handling, protections against repeated sign-in attempts, and permission checks enforced by the system on every change</li>
           </ul>
         </article>
 
@@ -499,19 +482,16 @@
       <p data-i18n="footer.tagline">Websites, computers, networks, and security — handled by one call.</p>
     </div>
     <nav class="footer-nav" aria-label="Footer">
+      <a href="index.html" data-i18n="nav.home">Home</a>
       <a href="services.html" data-i18n="nav.services">Services</a>
+      <a href="website-designer.html" data-i18n="nav.website_designer">Website Designer</a>
+      <a href="pricing.html" data-i18n="nav.pricing">Pricing</a>
+      <a href="heroes-pricing.html" data-i18n="nav.heroes_discount">Heroes Discount</a>
       <a href="about.html" data-i18n="nav.about">About</a>
       <a href="team.html" data-i18n="nav.team">Our Team</a>
-      <a href="portfolio.html" data-i18n="nav.portfolio">Portfolio</a>
-      <a href="gallery.html" data-i18n="nav.gallery">Gallery</a>
-      <a href="pricing.html" data-i18n="nav.pricing">Pricing</a>
-      <a href="website-designer.html" data-i18n="nav.website_designer">Website Designer</a>
-      <a href="heroes-pricing.html" data-i18n="nav.heroes_discount">Heroes Discount</a>
       <a href="service-area.html" data-i18n="nav.service_area">Service Area</a>
-      <a href="testimonials.html" data-i18n="nav.testimonials">Testimonials</a>
       <a href="faq.html" data-i18n="nav.faq">FAQ</a>
       <a href="blog.html" data-i18n="nav.blog">Blog</a>
-      <a href="booking.html" data-i18n="nav.booking">Booking</a>
       <a href="payment.html" data-i18n="nav.payments">Payments</a>
       <a href="contact.html" data-i18n="nav.contact">Contact</a>
       <a href="intake.html" data-i18n="footer.new_client_form">New Client Form</a>
@@ -519,7 +499,7 @@
       <a href="sitemap.html" data-i18n="footer.sitemap">Sitemap</a>
       <a href="privacy.html" data-i18n="footer.privacy_policy">Privacy Policy</a>
       <a href="terms.html" data-i18n="footer.terms">Terms &amp; Conditions</a>
-      <a href="patch-notes.html" data-i18n="footer.patch_notes">Patch Notes</a>
+      <a href="patch-notes.html" data-i18n="footer.patch_notes">Website Updates</a>
       <a href="#" id="manageConsentLink" data-i18n="footer.cookie_notice">Cookie Notice</a>
     </nav>
     <nav class="footer-social" aria-label="Social">
@@ -534,7 +514,7 @@
     </nav>
   </div>
   <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span data-i18n="footer.rights">All rights reserved.</span></p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version 3.2.2</a></p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version <span id="siteVersion">3.2.2</span></a></p>
   <p class="footer-version"><a href="admin.html" data-i18n="footer.staff_signin">Staff Sign In</a></p>
 </footer>
 
@@ -549,5 +529,6 @@
 
 <script src="js/i18n.js"></script>
 <script src="js/main.js"></script>
+<script src="js/site-version.js"></script>
 </body>
 </html>

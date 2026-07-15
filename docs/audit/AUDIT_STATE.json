@@ -2,64 +2,451 @@
   "project": "lit-solutions.tech",
   "repoVersion": "v23",
   "auditFramework": "docs/audit/",
-  "readyForSession": 2,
+  "readyForSession": null,
   "sessions": {
     "1": {
       "doc": "01_REPOSITORY_BASELINE.md",
       "status": "complete",
       "note": "Bootstrapped from an already-completed 8-parallel-pass audit; no new repository exploration performed."
     },
-    "2": { "doc": "02_PUBLIC_SITE_AUDIT.md", "status": "not_started" },
-    "3": { "doc": "03_IDENTITY_DATA_SECURITY.md", "status": "not_started" },
-    "4": { "doc": "04_BACKEND_INTEGRATIONS.md", "status": "not_started" },
-    "5": { "doc": "05_PRICING_AND_BUSINESS_RULES.md", "status": "not_started" },
-    "6": { "doc": "06_QUALITY_AUDIT.md", "status": "not_started" },
-    "7": { "doc": "07_REQUIREMENTS_GAP_MATRIX.md", "status": "not_started" },
-    "8": { "doc": "08_FINAL_AUDIT_AND_ROADMAP.md", "status": "not_started" }
+    "2": {
+      "doc": "02_PUBLIC_SITE_AUDIT.md",
+      "status": "complete",
+      "note": "Reviewed homepage/header/footer/nav, full CTA inventory across all 33 public pages, and content-accuracy spot-checks. Confirmed header/footer byte-identical across sample pages, no broken internal links, sitemap.html accurate, no staffing/credential exaggeration found. Added F037 (new); expanded F017 with full evidence table; re-confirmed F008/F009/F010/F018/F024/F029 still accurate."
+    },
+    "3": {
+      "doc": "03_IDENTITY_DATA_SECURITY.md",
+      "status": "complete",
+      "note": "Reviewed auth/session/token code, account.js, privacy.html, heroes-pricing.html. Confirmed F005/F015/F027 fixes and strengths still in place. Added F038 (password-reset never emails a link) and F039 (account-preference language stuck at 4 of 16). Re-verified F006/F007/F030 unchanged."
+    },
+    "4": {
+      "doc": "04_BACKEND_INTEGRATIONS.md",
+      "status": "complete",
+      "note": "Reviewed documents.js, messages.js, favorites.js, notifications.js, content.js, website-designer.js (forms/files/email/PDF), and contact/intake form wiring. Confirmed F012/F013 fixes and ownership-check strengths hold. Added F040 (messages.js email HTML-injection); expanded F027 with a second occurrence in documents.js."
+    },
+    "5": {
+      "doc": "05_PRICING_AND_BUSINESS_RULES.md",
+      "status": "complete",
+      "note": "Reviewed Website Designer pricing/discount logic (client + server recompute), catalogs, pricing.html, heroes-pricing.html, payment.html, terms.html. No new findings -- re-verified F010, F011 (with exact terms-gate mechanism), F031, F032 (refined), F035 (clarified: constants are cross-checked, plain-text figures are not). All spot-checked dollar figures are currently mathematically correct."
+    },
+    "6": {
+      "doc": "06_QUALITY_AUDIT.md",
+      "status": "complete",
+      "note": "Reviewed css/style.css notice tokens and RTL rules, js/cms.js image alt rendering, website-designer price ticker, intake.js form-error markup, nav dropdown ARIA, and all 16 i18n/*.json files for key parity. Confirmed F004 resolved; re-verified F016/F019/F020/F022/F023/F025/F026/F028 unchanged. Expanded F021 to include blog images. Added F041 (en.json 69% incomplete vs. the 15 real translation files, no runtime impact)."
+    },
+    "7": {
+      "doc": "07_REQUIREMENTS_GAP_MATRIX.md",
+      "status": "complete",
+      "note": "Read NEW_FUNCTIONS_README.md and all 9 REQUIREMENTS.md files in full. Built a value/risk/dependency gap matrix for all 9 candidate functions; confirmed the existing recommended build order independently. No new findings -- classification exercise only. Sharpened F033 with context: project-status and referral-program would both add further account-system surface on top of the existing open question."
+    },
+    "8": {
+      "doc": "08_FINAL_AUDIT_AND_ROADMAP.md",
+      "status": "complete",
+      "note": "Consolidated all 41 findings into a tiered fix-now/medium/low roadmap, grouped the 11 owner-decision items into direct questions for Dylan, restated Session 7's build order, and wrote handoff notes for any future implementation session. Audit complete -- no further sessions defined."
+    }
   },
-  "findingIdRange": { "next": "F037", "note": "IDs are derived from real findings only; there is no predetermined catalog size such as F001-F060." },
+  "findingIdRange": {
+    "next": "F048",
+    "note": "IDs are derived from real findings only; there is no predetermined catalog size such as F001-F060."
+  },
   "findings": {
-    "F001": { "severity": "Critical", "status": "Resolved", "domainSession": 2, "commit": "9a753a6", "summary": "USS Antietam hull number CG-64 -> CG-54" },
-    "F002": { "severity": "Critical", "status": "Resolved", "domainSession": 2, "commit": "94a9420", "summary": "Testimonials/Portfolio hero contradicted real content" },
-    "F003": { "severity": "High", "status": "Resolved", "domainSession": 2, "commit": "a6912fc", "summary": "Website Designer sticky-preview overlap bug" },
-    "F004": { "severity": "Critical", "status": "Resolved", "domainSession": 6, "commit": "57e124a", "summary": "Light-mode --notice-* CSS token bug" },
-    "F005": { "severity": "Critical", "status": "Resolved", "domainSession": 3, "commit": "57e124a", "summary": "admin-images.js authorization gap (GET checked auth only, not role)" },
-    "F006": { "severity": "Critical", "status": "Resolved", "domainSession": 3, "worktreeEvidence": "2026-07-15 Care Hub remediation", "summary": "Privacy/Terms are deliberately presented as one coherent reviewed-source English document, with an explicit English-only notice and nested lang/dir semantics, until professional translations exist" },
-    "F007": { "severity": "Critical", "status": "Resolved", "domainSession": 3, "worktreeEvidence": "2026-07-15 Care Hub remediation", "summary": "Non-English dictionaries can no longer overwrite legal disclosures with stale processor text; legal content remains coherently English and names active processors" },
-    "F008": { "severity": "Critical", "status": "Open", "ownerDecision": true, "domainSession": 2, "summary": "Gallery empty with full nav prominence" },
-    "F009": { "severity": "Critical", "status": "Open", "ownerDecision": true, "domainSession": 2, "summary": "Booking non-functional with full nav prominence" },
-    "F010": { "severity": "Critical", "status": "Open", "ownerDecision": true, "domainSession": 2, "summary": "Unsourced 'independent 2026 market research' pricing claim" },
-    "F011": { "severity": "High", "status": "Open", "ownerDecision": true, "domainSession": 5, "summary": "Square terms-gate bypassable via direct link" },
-    "F012": { "severity": "High", "status": "Resolved", "domainSession": 4, "commit": "57e124a", "summary": "Website Designer uploads had no server-side MIME validation" },
-    "F013": { "severity": "High", "status": "Resolved", "domainSession": 5, "commit": "57e124a", "summary": "Website Designer backend trusted client-submitted price totals" },
-    "F014": { "severity": "High", "status": "Resolved", "domainSession": 3, "commit": "57e124a", "summary": "messages.js had no rate limit" },
-    "F015": { "severity": "High", "status": "Resolved", "domainSession": 3, "commit": "57e124a", "summary": "auth-register.js account enumeration" },
-    "F016": { "severity": "High", "status": "Resolved", "domainSession": 6, "worktreeEvidence": "809 backend tests plus 6 Care Hub component/auth tests passing on 2026-07-15", "summary": "Automated backend, security-concurrency, frontend component, and auth-state tests now run in both workspaces" },
-    "F017": { "severity": "High", "status": "Open", "ownerDecision": true, "domainSession": 2, "summary": "14+ distinct CTA phrasings for one conceptual action" },
-    "F018": { "severity": "High", "status": "Open", "domainSession": 2, "summary": "Intake form's 'just type 4' instruction" },
-    "F019": { "severity": "Medium", "status": "Open", "domainSession": 6, "summary": "Testimonials/Portfolio meta description will go stale once real content exists" },
-    "F020": { "severity": "Medium", "status": "Open", "domainSession": 6, "summary": "Identical LocalBusiness JSON-LD everywhere; no Service/FAQPage/Article schema" },
-    "F021": { "severity": "Medium", "status": "Open", "domainSession": 6, "summary": "Portfolio card renderer hardcodes alt=\"\"" },
-    "F022": { "severity": "Medium", "status": "Open", "domainSession": 6, "summary": "No aria-live on Website Designer price ticker" },
-    "F023": { "severity": "Medium", "status": "Open", "domainSession": 6, "summary": "RTL sets dir but layout doesn't mirror" },
-    "F024": { "severity": "Medium", "status": "Open", "ownerDecision": true, "domainSession": 2, "summary": "Patch Notes reads as raw engineering changelog" },
-    "F025": { "severity": "Medium", "status": "Open", "domainSession": 6, "summary": "logo-full.png is 156KB, large for a logo" },
-    "F026": { "severity": "Medium", "status": "Open", "domainSession": 6, "summary": "Form errors lack aria-invalid/aria-describedby/role=alert" },
-    "F027": { "severity": "Low", "status": "Open", "domainSession": 3, "summary": "Rate limiter TOCTOU race; SVG not excluded from admin MIME allowlist" },
-    "F028": { "severity": "Low", "status": "Open", "domainSession": 6, "summary": "No aria-haspopup on nav dropdown toggles" },
-    "F029": { "severity": "Medium", "status": "Open", "ownerDecision": true, "domainSession": 2, "summary": "Navigation hierarchy may need simplification" },
-    "F030": { "severity": "Medium", "status": "Open", "ownerDecision": true, "domainSession": 3, "summary": "American Heroes Discount document-verification method" },
-    "F031": { "severity": "Medium", "status": "Open", "ownerDecision": true, "domainSession": 5, "summary": "Full-payment-upfront vs. deposit/milestone policy" },
-    "F032": { "severity": "Medium", "status": "Open", "ownerDecision": true, "domainSession": 5, "summary": "Subscription plan scope (edits, hours, carryover) undefined" },
-    "F033": { "severity": "Low", "status": "Open", "ownerDecision": true, "domainSession": 7, "summary": "Account-system feature scope and open-registration policy" },
-    "F034": { "severity": "Low", "status": "Open", "domainSession": 1, "summary": "Version string hardcoded across 33 footers, no shared source" },
-    "F035": { "severity": "Medium", "status": "Open", "domainSession": 1, "summary": "Base prices and Heroes-discount amounts duplicated across multiple files" },
-    "F036": { "severity": "Info", "status": "Open", "domainSession": 1, "summary": "Founder biography duplicated across 5 locations x 16 languages" }
+    "F001": {
+      "severity": "Critical",
+      "status": "Resolved",
+      "domainSession": 2,
+      "commit": "9a753a6",
+      "summary": "USS Antietam hull number CG-64 -> CG-54"
+    },
+    "F002": {
+      "severity": "Critical",
+      "status": "Resolved",
+      "domainSession": 2,
+      "commit": "94a9420",
+      "summary": "Testimonials/Portfolio hero contradicted real content"
+    },
+    "F003": {
+      "severity": "High",
+      "status": "Resolved",
+      "domainSession": 2,
+      "commit": "a6912fc",
+      "summary": "Website Designer sticky-preview overlap bug"
+    },
+    "F004": {
+      "severity": "Critical",
+      "status": "Resolved",
+      "domainSession": 6,
+      "commit": "57e124a",
+      "summary": "Light-mode --notice-* CSS token bug"
+    },
+    "F005": {
+      "severity": "Critical",
+      "status": "Resolved",
+      "domainSession": 3,
+      "commit": "57e124a",
+      "summary": "admin-images.js authorization gap (GET checked auth only, not role)"
+    },
+    "F006": {
+      "severity": "Critical",
+      "status": "Resolved",
+      "domainSession": 3,
+      "summary": "Privacy Policy under-discloses actual data collection",
+      "commit": "8caaae6",
+      "resolutionNote": "Fixed: Privacy Policy §1 now discloses accounts, documents, messages, favorites, notifications, Website Designer uploads, and IP addresses; translated into all 16 languages. Dylan should still review final wording before this is considered final."
+    },
+    "F007": {
+      "severity": "Critical",
+      "status": "Resolved",
+      "domainSession": 3,
+      "summary": "Resend not named as a sub-processor in Privacy Policy",
+      "commit": "8caaae6",
+      "resolutionNote": "Fixed: Privacy Policy §3 now names Resend as the transactional email sub-processor"
+    },
+    "F008": {
+      "severity": "Critical",
+      "status": "Resolved",
+      "ownerDecision": true,
+      "domainSession": 2,
+      "summary": "Gallery empty with full nav prominence",
+      "commit": "ba24a96",
+      "resolutionNote": "Owner decision: Gallery removed from primary/footer main-nav prominence as part of the nav-hierarchy restructure (Gallery is no longer nav-linked at all; content-population is a separate, unscheduled content task, not a code fix). See finding F029 for the same commit's broader nav rework.",
+      "ownerLabelNote": "Owner's message labeled this 'F008' (matches)."
+    },
+    "F009": {
+      "severity": "Critical",
+      "status": "Resolved",
+      "ownerDecision": true,
+      "domainSession": 2,
+      "summary": "Booking non-functional with full nav prominence",
+      "commit": "ba24a96",
+      "resolutionNote": "Owner decision: Booking demoted out of primary nav (removed from the old 'Resources' dropdown, no longer in the main-nav main menu) as part of the nav-hierarchy restructure; booking.html itself is unchanged and still honestly discloses that online self-scheduling isn't connected yet. See F029.",
+      "ownerLabelNote": "Owner's message labeled this 'F009' (matches)."
+    },
+    "F010": {
+      "severity": "Critical",
+      "status": "Resolved",
+      "ownerDecision": true,
+      "domainSession": 2,
+      "summary": "Unsourced 'independent 2026 market research' pricing claim",
+      "commit": "877ffa9",
+      "resolutionNote": "Owner decision: removed the entire unsourced 'independent 2026 market research' comparison table and 'Typically $X elsewhere' claims from pricing.html; replaced with an honest flat-rate-pricing framing that makes no unverifiable competitor claims.",
+      "ownerLabelNote": "Owner's message labeled this 'F017' (market-research claim) — the real audit ID for that topic is F010, not F017. Implemented by topic, recorded here under the correct real ID."
+    },
+    "F011": {
+      "severity": "High",
+      "status": "Resolved",
+      "ownerDecision": true,
+      "domainSession": 5,
+      "summary": "Square terms-gate bypassable via direct link",
+      "commit": "1d07b4d",
+      "resolutionNote": "Owner decision: Square Terms & Conditions checkbox gate label now explicitly links both Terms & Conditions and Privacy Policy; added 6 jsdom-based regression tests (test/payment-terms-gate.test.js) covering unchecked-by-default, click-blocked-while-unchecked, and unlock-on-check behavior against the real production payment.html/js/main.js.",
+      "ownerLabelNote": "Owner's message labeled this 'F024' (Square terms gate) — the real audit ID for that topic is F011, not F024. Implemented by topic, recorded here under the correct real ID."
+    },
+    "F012": {
+      "severity": "High",
+      "status": "Resolved",
+      "domainSession": 4,
+      "commit": "57e124a",
+      "summary": "Website Designer uploads had no server-side MIME validation"
+    },
+    "F013": {
+      "severity": "High",
+      "status": "Resolved",
+      "domainSession": 5,
+      "commit": "57e124a",
+      "summary": "Website Designer backend trusted client-submitted price totals"
+    },
+    "F014": {
+      "severity": "High",
+      "status": "Resolved",
+      "domainSession": 3,
+      "commit": "57e124a",
+      "summary": "messages.js had no rate limit"
+    },
+    "F015": {
+      "severity": "High",
+      "status": "Resolved",
+      "domainSession": 3,
+      "commit": "57e124a",
+      "summary": "auth-register.js account enumeration"
+    },
+    "F016": {
+      "severity": "High",
+      "status": "Resolved",
+      "domainSession": 6,
+      "summary": "Zero automated tests anywhere in the repository",
+      "commit": "c8387bc",
+      "resolutionNote": "Fixed: node:test coverage added for recomputeEstimate/priceMismatchFlag and a static consistency check of heroes-pricing.html's hand-typed Heroes Discount prices"
+    },
+    "F017": {
+      "severity": "High",
+      "status": "Resolved",
+      "ownerDecision": true,
+      "domainSession": 2,
+      "summary": "14+ distinct CTA phrasings for one conceptual action",
+      "commit": "a123a9b",
+      "resolutionNote": "Owner decision: consolidated 14+ distinct CTA phrasings ('Get a quote', 'Get a Custom Quote', 'Fill Out Project Form', 'Start a Project', etc.) into one consistent 'Request Service' label sitewide, with service-website.html deliberately kept distinct ('Get My Website Quote', linking to website-designer.html) since it is a genuinely different quote flow. Also relabeled the account icon from 'My Account' to 'Client Sign In'.",
+      "ownerLabelNote": "Owner's message labeled this 'F029' (CTA consistency) — the real audit ID for that topic is F017, not F029. Implemented by topic, recorded here under the correct real ID."
+    },
+    "F018": {
+      "severity": "High",
+      "status": "Resolved",
+      "domainSession": 2,
+      "summary": "Intake form's 'just type 4' instruction",
+      "commit": "98225ce",
+      "resolutionNote": "Fixed: intake copy replaced \"type 4\" with N/A across en + 15 langs"
+    },
+    "F019": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "domainSession": 6,
+      "summary": "Testimonials/Portfolio meta description will go stale once real content exists",
+      "commit": "e01a0ab",
+      "resolutionNote": "Fixed: js/cms.js updates meta/og:description once portfolio/testimonials get real content"
+    },
+    "F020": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "domainSession": 6,
+      "summary": "Identical LocalBusiness JSON-LD everywhere; no Service/FAQPage/Article schema",
+      "commit": "f088a04",
+      "resolutionNote": "Fixed: Service JSON-LD on the 5 service pages; full FAQPage JSON-LD on faq.html"
+    },
+    "F021": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "domainSession": 6,
+      "summary": "Portfolio, blog-card, and blog-post renderers all hardcode alt=\"\" despite title/description being available; Gallery's renderer does this correctly",
+      "commit": "db24fb7",
+      "resolutionNote": "Fixed: real alt text for blog/portfolio card images in js/cms.js"
+    },
+    "F022": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "domainSession": 6,
+      "summary": "No aria-live on Website Designer price ticker",
+      "commit": "db24fb7",
+      "resolutionNote": "Fixed: aria-live/aria-atomic added to the Website Designer price ticker"
+    },
+    "F023": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "domainSession": 6,
+      "summary": "RTL sets dir but layout doesn't mirror",
+      "commit": "6b4f997",
+      "resolutionNote": "Fixed: [dir=\"rtl\"] CSS override block for custom bullet markers, text-align, and margins that carry real directional meaning"
+    },
+    "F024": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "ownerDecision": true,
+      "domainSession": 2,
+      "summary": "Patch Notes reads as raw engineering changelog",
+      "commit": "0060a64",
+      "resolutionNote": "Owner decision: reworded patch-notes.html entries (v3.2.2, v1.16, v1.15, v1.14) that read like security-audit/engineering-implementation detail (server-side/testing-methodology language, named infra like 'Netlify Functions + Netlify Blobs') into plain customer-benefit language. The complete, unabridged original wording is preserved at docs/audit/ENGINEERING_CHANGELOG.md for internal reference; patch-notes.html remains intentionally English-only by existing design.",
+      "ownerLabelNote": "Owner's message labeled this 'F030' (Patch Notes tone) — the real audit ID for that topic is F024, not F030. Implemented by topic, recorded here under the correct real ID."
+    },
+    "F025": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "domainSession": 6,
+      "summary": "logo-full.png is 156KB, large for a logo",
+      "commit": "939550e",
+      "resolutionNote": "Fixed: logo-full.png recompressed 157KB -> 79KB (palette quantization, imperceptible diff, PNG format kept for crawler compatibility)"
+    },
+    "F026": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "domainSession": 6,
+      "summary": "Individual invalid form fields lack aria-invalid/aria-describedby (top-level error summary does correctly carry role=alert)",
+      "commit": "196c2b2",
+      "resolutionNote": "Fixed: per-field aria-invalid/aria-describedby on contact.html and intake.js form validation"
+    },
+    "F027": {
+      "severity": "Low",
+      "status": "Resolved",
+      "domainSession": 3,
+      "summary": "Rate limiter TOCTOU race; SVG not excluded from admin MIME allowlist in admin-images.js and documents.js (fix pattern already exists in website-designer.js's isRecognizedImage())",
+      "commit": "53c1a99",
+      "resolutionNote": "Fixed: shared magic-byte file-signature sniffing (_lib/file_signatures.js) in admin-images.js and documents.js; TOCTOU limitation documented as accepted (no atomic primitive in @netlify/blobs 8.2.0)"
+    },
+    "F028": {
+      "severity": "Low",
+      "status": "Resolved",
+      "domainSession": 6,
+      "summary": "No aria-haspopup on nav dropdown toggles",
+      "commit": "196c2b2",
+      "resolutionNote": "Fixed: aria-haspopup added to language/services/resources nav dropdowns across all 33 public pages"
+    },
+    "F029": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "ownerDecision": true,
+      "domainSession": 2,
+      "summary": "Navigation hierarchy may need simplification",
+      "commit": "ba24a96",
+      "resolutionNote": "Owner decision: restructured main-nav to Home / Services (dropdown incl. Pricing) / Website Designer / About / Contact, moving Heroes Discount, Payments, and the entire former 'Resources' dropdown (Service Area, Testimonials, Team, Portfolio, Gallery, FAQ, Blog, Booking) out of primary nav and into the footer only, where all pages remain reachable. Removed dangling in-page links to now-de-prioritized pages (e.g. testimonials links on index.html/about.html) and reworded the surrounding copy.",
+      "ownerLabelNote": "Owner's message labeled this 'F031' (navigation hierarchy) — the real audit ID for that topic is F029, not F031. Implemented by topic, recorded here under the correct real ID."
+    },
+    "F030": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "ownerDecision": true,
+      "domainSession": 3,
+      "summary": "American Heroes Discount document-verification method",
+      "commit": "438d2fa",
+      "resolutionNote": "Owner decision: Website Designer's Heroes Discount checkbox now reads 'I self-attest that I qualify...' and states eligibility is confirmed directly with the customer before the final price is set. The live cost-breakdown row and 'applied' note both now read '...pending confirmation', matching the PDF summary's existing 'pending verification' language. Rates (15%/5%) and eligible categories unchanged; heroes-pricing.html's existing per-category verification requirements (already real, no document-upload requirement for restricted federal ID categories) were left as-is.",
+      "ownerLabelNote": "Owner's message labeled this 'F032' (Heroes Discount verification) — the real audit ID for that topic is F030, not F032. Implemented by topic, recorded here under the correct real ID."
+    },
+    "F031": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "ownerDecision": true,
+      "domainSession": 5,
+      "summary": "Full-payment-upfront vs. deposit/milestone policy",
+      "resolutionNote": "Owner decision (verification only, no code change): payment.html already separates One-Time Payment (full amount, at time of quote/invoice) from Subscriptions (recurring monthly) into two clearly labeled, independently collapsible sections; no new deposit/milestone/full-payment-upfront policy was introduced. Confirmed via manual review that no conflicting or ambiguous policy language exists on the page.",
+      "ownerLabelNote": "Owner's message bundled this into 'F033' (payment/subscription/account scope) alongside F032 and F033 below — the real audit ID for the full-payment-vs-deposit topic specifically is F031."
+    },
+    "F032": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "ownerDecision": true,
+      "domainSession": 5,
+      "summary": "Subscription plan scope (edits, hours, carryover) undefined",
+      "resolutionNote": "Owner decision (verification only, no code change): both subscription plans (Website Care Plan $39/mo, Small Business IT Support $79/mo) already state billing frequency up front (not buried in fine print), and the 'cancel anytime with written notice before your next billing date' language is already consistent between the section intro copy and the detailed price-note. No new scope/hours/carryover terms were added, per the owner instruction not to invent new refund/cancellation/renewal terms.",
+      "ownerLabelNote": "Owner's message bundled this into 'F033' (payment/subscription/account scope) alongside F031 and F033 — the real audit ID for the subscription-scope topic specifically is F032."
+    },
+    "F033": {
+      "severity": "Low",
+      "status": "Resolved",
+      "ownerDecision": true,
+      "domainSession": 7,
+      "summary": "Account-system feature scope and open-registration policy",
+      "resolutionNote": "Owner decision (verification only, no code change): account creation ('Create an account') exists only on the utility myaccount.html sign-in page itself and is not promoted anywhere in the primary marketing journey (homepage, service pages, About). The header account icon was already relabeled 'Client Sign In' (see F017/commit a123a9b) to reflect its actual utility purpose rather than implying a social/community feature. No auth/password-reset/messaging protections were touched; npm test (16/16) continues to pass.",
+      "ownerLabelNote": "Owner's message bundled this into 'F033' (payment/subscription/account scope) alongside F031 and F032 — this one actually does correspond to real F033 (account-system scope)."
+    },
+    "F034": {
+      "severity": "Low",
+      "status": "Resolved",
+      "domainSession": 1,
+      "summary": "Version string hardcoded across 33 footers, no shared source",
+      "commit": "b72323a",
+      "resolutionNote": "Fixed: js/site-version.js is now the single source of truth for the footer \"Website Version\" string across all 33 pages"
+    },
+    "F035": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "domainSession": 1,
+      "summary": "Base prices and Heroes-discount amounts duplicated across multiple files as plain text with no automatic cross-check (contrast the Website Designer's pricing constants, which are duplicated but auto-cross-checked via priceMismatchFlag)",
+      "commit": "a63186b",
+      "resolutionNote": "Partially fixed: Website Designer client-side base price now derived from catalog JSON instead of hand-typed; remaining hand-typed Heroes Discount prices on heroes-pricing.html now guarded by an automated test (F016) instead of a runtime rewrite"
+    },
+    "F036": {
+      "severity": "Info",
+      "status": "Resolved",
+      "domainSession": 1,
+      "summary": "Founder biography duplicated across 5 locations x 16 languages",
+      "commit": "f7d39ff",
+      "resolutionNote": "Fixed (documentation-only, proportionate to Info severity): added a maintenance checklist to CLAUDE.md naming every one of the 5 HTML locations + all 16 i18n/*.json files that independently restate these facts, so a future correction (like the CG-64->CG-54 fix in 9a753a6) has one place to check the full list instead of being rediscovered by grep. Did not build a runtime JS substitution mechanism -- prototyped one but backed out since nested spans inside plain data-i18n (textContent-only) elements don't survive a language round-trip cleanly, which was more cleverness than the Info-severity finding warranted."
+    },
+    "F037": {
+      "severity": "High",
+      "status": "Resolved",
+      "domainSession": 2,
+      "summary": "Homepage hero 'Get a free quote' CTA links to contact.html, contradicting that page's own copy which directs quote-seekers to intake.html",
+      "commit": "98225ce",
+      "resolutionNote": "Fixed: homepage CTA now points to intake.html"
+    },
+    "F038": {
+      "severity": "High",
+      "status": "Resolved",
+      "domainSession": 3,
+      "summary": "Password-reset request never emails the reset link; only email-verification actually calls sendEmail()",
+      "commit": "bbc646a",
+      "resolutionNote": "Fixed: password-reset request now emails a real reset link (page-aware admin/myaccount routing)"
+    },
+    "F039": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "domainSession": 3,
+      "summary": "Account-preference language list hardcoded to 4 of 16 real supported languages",
+      "commit": "bbc646a",
+      "resolutionNote": "Fixed: account.js VALID_LANGUAGES and myaccount.html LANGUAGES expanded to all 16 real languages"
+    },
+    "F040": {
+      "severity": "High",
+      "status": "Resolved",
+      "domainSession": 4,
+      "summary": "messages.js embeds message body/sender name unescaped into outbound HTML email, unlike the esc() pattern used elsewhere in the codebase",
+      "commit": "bbc646a",
+      "resolutionNote": "Fixed: messages.js HTML-escapes message content before building the outbound email"
+    },
+    "F041": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "domainSession": 6,
+      "summary": "i18n/en.json has 466 of the 1,496 real translation keys (69% missing) -- stale relative to the 15 real language files, which are all identical to each other; no runtime impact since English never fetches en.json",
+      "commit": "5eadd86",
+      "resolutionNote": "Fixed: i18n/en.json regenerated from 466 to 1,496 keys, exact parity with all 15 real translation files"
+    },
+    "F042": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "domainSession": 9,
+      "commit": "47e7970",
+      "summary": "Mobile hamburger nav-toggle lacked flex-shrink:0 (unlike its header-actions siblings), so it silently squeezed below usable width on narrow phones (24px wide at 375px viewport) while absorbing the header row's space deficit alone",
+      "resolutionNote": "Fixed: added flex-shrink:0 and an explicit bar width so the icon no longer distorts; also added an invisible ::before hit-slop to theme-toggle/search-toggle/nav-toggle so touch targets reach ~44px without growing visible chrome. Verified via mobile (375) and desktop (1280) presets."
+    },
+    "F043": {
+      "severity": "High",
+      "status": "Resolved",
+      "domainSession": "post-v3-remediation",
+      "summary": "website-designer.html loads jsPDF from cdnjs, but netlify.toml's CSP restricts script-src to 'self' -- production silently blocks the script, so buildPdf() always returns null: the PDF download button no-ops and full submissions send pdfBase64: null despite the UI claiming a PDF was built.",
+      "commit": "139f473",
+      "resolutionNote": "Fixed: vendored jsPDF 2.5.2 (UMD, pinned, LICENSE included) under assets/vendor/jspdf/; page now loads the local copy, no CSP change needed. Added JSPDF_READY readiness check, disabled/accessible-error state on the download button, and a hard stop (with accessible error) on full-brief submission if buildPdf() fails, instead of silently sending no PDF. Added test/website-designer-pdf.test.js (5 tests) and live browser verification."
+    },
+    "F044": {
+      "severity": "Low",
+      "status": "Resolved",
+      "domainSession": 9,
+      "commit": "b939f17",
+      "summary": "blog-post.html (the shared template for every admin-added blog post) had no canonical tag and a generic, post-agnostic meta description",
+      "resolutionNote": "Fixed: added id-tagged canonical link + meta description with generic fallbacks, updated per-post by mountBlogPost() in js/cms.js once real content loads."
+    },
+    "F045": {
+      "severity": "Low",
+      "status": "Resolved",
+      "domainSession": 9,
+      "commit": "9dfb629",
+      "summary": "netlify.toml sends X-Frame-Options/X-Content-Type-Options/Referrer-Policy/Permissions-Policy/CSP but no Strict-Transport-Security header",
+      "resolutionNote": "Fixed: added Strict-Transport-Security: max-age=31536000; includeSubDomains. Deliberately no preload directive -- that requires submission to browser vendors' HSTS preload list and is much harder to reverse than a header change, an owner-level call outside this pass's scope."
+    },
+    "F046": {
+      "severity": "High",
+      "status": "Resolved",
+      "domainSession": 9,
+      "commit": "PENDING",
+      "summary": "js/main.js had a typo'd, non-existent email domain (dylan@littletechicalsolutions.com) in 3 error/fallback messages -- newsletter signup failure (x2) and the not-connected-yet placeholder-link guard -- while every other file on the site correctly uses dylan@lit-solutions.tech",
+      "resolutionNote": "Fixed: corrected all 3 occurrences to the real domain. A visitor hitting any of these 3 error paths would previously have been told to email a dead address."
+    },
+    "F047": {
+      "severity": "Medium",
+      "status": "Resolved",
+      "domainSession": 9,
+      "commit": "9c159b9",
+      "summary": "JS-generated form-status messages (contact form sending/success/error, missing-fields intros, newsletter signup success/error, placeholder-link not-connected-yet alert) were hardcoded English with no i18n lookup, unlike the rest of the site",
+      "resolutionNote": "Fixed: wired all 10 strings through the existing tt()/window.LTS_I18N.t() pattern in js/main.js and js/intake.js, added the keys to en.json, translated to all 15 other languages (parity-checked), verified live in English/Spanish/Arabic-RTL including missing-key fallback behavior."
+    }
   },
   "counts": {
-    "total": 36,
-    "resolved": 14,
-    "ownerDecisionOpen": 11,
-    "engineeringOpen": 11
-  }
+    "total": 47,
+    "resolved": 47,
+    "ownerDecisionOpen": 0,
+    "engineeringOpen": 0
+  },
+  "implementationPasses": [
+    {
+      "date": "2026-07-14",
+      "note": "Post-audit engineering fix pass covering every open, engineering-only finding from the Tier 1-3 roadmap in 08_FINAL_AUDIT_AND_ROADMAP.md except F036 (Info, founder-bio duplication -- not in scope this pass). Resolved: F006, F007, F016, F018, F019, F020, F021, F022, F023, F025, F026, F027, F028, F034, F035 (partial -- see its resolutionNote), F037, F038, F039, F040, F041. Commits 98225ce..8caaae6. The 11 Owner-Decision findings (F008-F011, F017, F024, F029-F033) were deliberately left untouched per 00_AUDIT_CONTROL.md's ground rule that Owner-Decision findings should not be silently implemented -- these still need Dylan's direct input."
+    }
+  ]
 }
