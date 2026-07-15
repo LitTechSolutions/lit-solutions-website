@@ -7,27 +7,22 @@ in this file has been published to any public page. Entries are added
 as they're found; each is cross-referenced to the commit that made the
 surrounding change.
 
-## 1. Armour Wireless Solutions testimonial
+## 1. Armour Wireless Solutions testimonial — RESOLVED
 
-- **Status:** Blocked — could not read the supplied source file.
-- **What happened:** Dylan referenced an attachment,
-  `Bill_Armour_Review_Approval_Fillable_Updated.pdf`, located in
-  Apple Mail's sandboxed download folder
-  (`~/Library/Containers/com.apple.mail/Data/Library/Mail Downloads/...`).
-  Reading it failed with `EPERM: operation not permitted` — the coding
-  environment cannot access another app's sandboxed container.
-- **What's needed:** Either move/copy that PDF into this project folder
-  (or anywhere outside Mail's container) and say so, or paste the
-  testimonial text and approved attribution directly into the chat.
-- **What's already done:** `testimonials.html`'s placeholder copy no
-  longer implies zero customers exist (commit `a5eff6c`) — it now
-  correctly says real client work has been completed and reviews will
-  be published once approved. The publishing mechanism itself
-  (`js/cms.js`'s `mountTestimonials()`) needs no further engineering —
-  add the item through the admin panel's Testimonials tab and it goes
-  live automatically, swapping out the placeholder.
-- **Do not:** draft, paraphrase, or infer testimonial wording on the
-  client's behalf under any circumstance.
+- **Status:** Resolved (commit `0440f3a`).
+- **What happened:** Dylan provided the signed customer-review-and-
+  approval PDF (copied outside Mail's sandboxed container so it could
+  be read). William E. Armour Jr. ("Bill Armour"), President/Owner of
+  Armour Wireless Solutions, LLC, checked "I approve the review exactly
+  as written," signed and dated it 7/13/2026, and separately checked
+  consent for publication on the testimonials page and portfolio page
+  with the attribution "Bill Armour, President / Owner, Armour Wireless
+  Solutions, LLC."
+- **What's already done:** Published the review verbatim (no
+  paraphrasing) to `testimonials.html`, updated the hero copy to match
+  the site's existing "has real content" wording, translated into all
+  15 languages, and verified live rendering matches the approved
+  document exactly.
 
 ## 2. Armour Wireless Solutions portfolio case-study detail — RESOLVED
 
