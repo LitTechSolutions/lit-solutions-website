@@ -19,6 +19,22 @@
 //
 // Every enrollment step is audited (mfa.enroll.start / mfa.enroll.confirm
 // success and failure) per the Session 20 directive.
+//
+// Security-review addendum (Session 20 step 10, Critical finding): the
+// only precondition for enrollment is possession of the short-lived
+// pre-auth cookie, which auth-login.js issues to anyone who supplies the
+// correct password -- there is no secondary check on WHO gets to be the
+// first person to enroll a device. A real fix needs an out-of-band
+// confirmation step (e.g. require clicking a link sent to the account's
+// email before the enrollment activates), which is a bigger change than
+// this pass makes. What this pass adds instead: a best-effort security
+// notification email fires the moment MFA is confirmed/activated, so the
+// legitimate owner at least finds out immediately if someone else just
+// enrolled a device on their account -- and every enrollment now records
+// whether that notification was actually delivered (mfa.enroll.notification),
+// so an operator reviewing audit-log.js can see when email wasn't
+// configured yet rather than assuming silently that owners were notified.
+// This is a mitigation, not a fix -- see SECURITY_REVIEW.md.
 
 const {
   verify,
@@ -33,6 +49,7 @@ const { generateTotpSecret, buildOtpauthUri, validateTotpToken } = require("../.
 const { encryptSecret, decryptSecret, generateRecoveryCodes, hashRecoveryCode } = require("../../src/security/mfaCrypto");
 const { createAuditRecorder } = require("../../src/audit/auditLog");
 const { createPgAuditSink } = require("../../src/db/pgAuditSink");
+const { sendEmail } = require("./_lib/email");
 
 const RECOVERY_CODE_COUNT = 10;
 
@@ -143,6 +160,30 @@ exports.handler = async (event, context, deps = {}) => {
 
     await auditRecorder.record(
       { correlationId: user.id, actorType: "user", actorId: user.id, organizationId: null, action: "mfa.enroll.confirm", targetType: "user", targetId: user.id, outcome: "success" },
+      deps
+    );
+
+    const sendEmailFn = deps.sendEmail || sendEmail;
+    const delivery = await sendEmailFn({
+      to: user.email,
+      subject: "Two-factor authentication was just enabled on your account",
+      html:
+        `<p>Two-factor authentication was just enabled on your Little Technical Solutions LLC Care Hub account (${user.email}).</p>` +
+        `<p>If this was you, no action is needed.</p>` +
+        `<p><strong>If this wasn't you</strong>, someone else may have your password -- contact us immediately at dylan@lit-solutions.tech or 636-426-0289.</p>`,
+    });
+    await auditRecorder.record(
+      {
+        correlationId: user.id,
+        actorType: "system",
+        actorId: "system",
+        organizationId: null,
+        action: "mfa.enroll.notification",
+        targetType: "user",
+        targetId: user.id,
+        outcome: delivery.sent ? "success" : "failure",
+        metadata: delivery.sent ? {} : { reason: String(delivery.reason || "unknown") },
+      },
       deps
     );
 

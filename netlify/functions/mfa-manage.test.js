@@ -116,6 +116,29 @@ test("action: reset has the same effect as disable but is audited under a distin
   assert.equal(deps.auditRecorder.events[0].action, "mfa.reset");
 });
 
+test("action: disable sends a security notification email and audits successful delivery under a distinct action name", async () => {
+  const users = { "dylan@lit-solutions.tech": enrolledAdminUser() };
+  const sentEmails = [];
+  const deps = baseDeps(users, { sendEmail: async (opts) => { sentEmails.push(opts); return { sent: true }; } });
+  await handler(baseEvent({ body: JSON.stringify({ action: "disable", password: "correct-password" }) }), {}, deps);
+
+  assert.equal(sentEmails.length, 1);
+  assert.equal(sentEmails[0].to, "dylan@lit-solutions.tech");
+  assert.equal(deps.auditRecorder.events[1].action, "mfa.disable.notification");
+  assert.equal(deps.auditRecorder.events[1].outcome, "success");
+});
+
+test("action: reset audits a failed notification delivery without failing the reset itself", async () => {
+  const users = { "dylan@lit-solutions.tech": enrolledAdminUser() };
+  const deps = baseDeps(users, { sendEmail: async () => ({ sent: false, reason: "not configured" }) });
+  const res = await handler(baseEvent({ body: JSON.stringify({ action: "reset", password: "correct-password" }) }), {}, deps);
+
+  assert.equal(res.statusCode, 200, "the reset itself still succeeds even if the notification email couldn't be delivered");
+  assert.equal(deps.auditRecorder.events[1].action, "mfa.reset.notification");
+  assert.equal(deps.auditRecorder.events[1].outcome, "failure");
+  assert.equal(deps.auditRecorder.events[1].metadata.reason, "not configured");
+});
+
 test("unsupported method returns 405", async () => {
   const res = await handler({ httpMethod: "GET" }, {}, {});
   assert.equal(res.statusCode, 405);

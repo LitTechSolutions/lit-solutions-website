@@ -121,12 +121,46 @@ test("action: confirm with the correct code activates MFA, issues recovery codes
   assert.notEqual(saved.mfaRecoveryCodeHashes[0], body.recoveryCodes[0], "stored hashed, not plaintext");
   assert.equal(saved.mfaLastUsedCounter, 1000, "seeds anti-replay tracking with the confirm code's own counter");
 
-  assert.equal(deps.auditRecorder.events.length, 1);
+  assert.equal(deps.auditRecorder.events.length, 2, "mfa.enroll.confirm plus a delivery-outcome event for the security notification email");
+  assert.equal(deps.auditRecorder.events[0].action, "mfa.enroll.confirm");
   assert.equal(deps.auditRecorder.events[0].outcome, "success");
+  assert.equal(deps.auditRecorder.events[1].action, "mfa.enroll.notification");
 
   assert.equal(res.multiValueHeaders["Set-Cookie"].length, 2);
   assert.match(res.multiValueHeaders["Set-Cookie"][0], /^lts_session=real-session-token/);
   assert.match(res.multiValueHeaders["Set-Cookie"][1], /^lts_mfa_pending=;.*Max-Age=0/);
+});
+
+test("action: confirm sends a security notification email and audits successful delivery", async () => {
+  const secret = generateTotpSecret();
+  const users = { "dylan@lit-solutions.tech": adminUser({ mfaPendingSecretEncrypted: encryptSecret(secret, MFA_KEY) }) };
+  const sentEmails = [];
+  const deps = baseDeps(users, {
+    validateTotpToken: () => ({ valid: true, counter: 1000 }),
+    sendEmail: async (opts) => { sentEmails.push(opts); return { sent: true }; },
+  });
+  await handler(baseEvent({ body: JSON.stringify({ action: "confirm", code: "123456" }) }), {}, deps);
+
+  assert.equal(sentEmails.length, 1);
+  assert.equal(sentEmails[0].to, "dylan@lit-solutions.tech");
+  assert.match(sentEmails[0].subject, /enabled/i);
+  assert.equal(deps.auditRecorder.events[1].action, "mfa.enroll.notification");
+  assert.equal(deps.auditRecorder.events[1].outcome, "success");
+});
+
+test("action: confirm audits a failed notification delivery without failing the enrollment itself", async () => {
+  const secret = generateTotpSecret();
+  const users = { "dylan@lit-solutions.tech": adminUser({ mfaPendingSecretEncrypted: encryptSecret(secret, MFA_KEY) }) };
+  const deps = baseDeps(users, {
+    validateTotpToken: () => ({ valid: true, counter: 1000 }),
+    sendEmail: async () => ({ sent: false, reason: "not configured" }),
+  });
+  const res = await handler(baseEvent({ body: JSON.stringify({ action: "confirm", code: "123456" }) }), {}, deps);
+
+  assert.equal(res.statusCode, 200, "enrollment itself still succeeds even if the notification email couldn't be delivered");
+  assert.equal(deps.auditRecorder.events[1].action, "mfa.enroll.notification");
+  assert.equal(deps.auditRecorder.events[1].outcome, "failure");
+  assert.equal(deps.auditRecorder.events[1].metadata.reason, "not configured");
 });
 
 test("action: confirm rate-limits repeated attempts", async () => {

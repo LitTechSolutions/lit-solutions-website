@@ -618,22 +618,69 @@ and the fix/document-only rationale live in `SECURITY_REVIEW.md`'s new
   `care-hub-app`'s `npm run build`: unaffected (no frontend changes this
   step). `npm audit --omit=dev`: 0 vulnerabilities in both workspaces.
 
+### Step 8 (partial) -- MFA security notifications / email hardening
+
+Step 8 covers Square Sandbox integration and "fail-closed email
+configuration," both blocked on Dylan supplying real credentials.
+Scoped this into two independent pieces (Dylan chose email hardening):
+the Square integration stays fully blocked, but email hardening needed
+no real credentials to build and directly closes part of step 10's one
+Critical finding, so it was done now rather than waiting.
+
+- `mfa-enroll.js`'s confirm step and `mfa-manage.js`'s disable/reset
+  actions now send a best-effort security-notification email to the
+  account owner ("two-factor authentication was just
+  enabled/disabled/reset on your account -- if this wasn't you, contact
+  us immediately"), reusing the existing `_lib/email.js` (Resend-backed,
+  already built in an earlier session for account verification and
+  invitations).
+- Every send is independently audited regardless of outcome
+  (`mfa.enroll.notification`, `mfa.disable.notification`,
+  `mfa.reset.notification`, `outcome: "success"`/`"failure"` with a
+  `reason` on failure, e.g. `"not configured"`) -- an operator reviewing
+  `audit-log.js` can now see exactly when account owners were or weren't
+  notified, rather than that gap being silent.
+- This is explicitly a **detective control, not a preventive one** --
+  it does not stop the underlying MFA-enrollment-hijack exploit (an
+  attacker with a leaked password can still complete enrollment before
+  the notification does anything), it just gives the legitimate owner a
+  chance to notice and react, and makes the gap auditable. The real
+  preventive fix (an out-of-band confirmation required *before*
+  enrollment activates) remains the outstanding P0 -- `SECURITY_REVIEW.md`
+  updated to reflect "partially mitigated," not "fixed."
+- `_lib/email.js`'s `sendEmail()` itself was deliberately left
+  unchanged (best-effort, never throws) -- every other caller
+  (verification, invitations, messages) depends on that behavior to
+  keep the platform working before an email provider is configured.
+  "Fail-closed" was implemented at the call-site level for
+  security-critical sends via mandatory delivery-outcome auditing, not
+  by changing the shared helper's contract. Documented in
+  `DECISION_LOG.md` and `DEPLOYMENT_PLAN.md` (new `RESEND_API_KEY`/
+  `EMAIL_FROM` section -- these existed in code before this session but
+  were never formally documented there).
+- `npm test`: **781/781 passing** (up from 777 -- 4 new cases across
+  `mfa-enroll.test.js`/`mfa-manage.test.js`).
+- Square Sandbox integration remains entirely unstarted, still blocked
+  on Dylan supplying real credentials.
+
 ## What's still not done
 
 Step 7 closed the two staff-side gaps called out at the end of step 6
 (staff checklist review, staff ticket work queue/transition). Step 9
 delivered the legal drafts. Step 10 delivered a security review, fixing
-what was cleanly fixable and documenting the rest. Step 8 of Dylan's
-directive is **not started**, blocked on external credentials:
+what was cleanly fixable and documenting the rest. Step 8's email half
+is done (MFA security notifications); its Square half remains
+**not started**, blocked on external credentials:
 
 1. Wiring the remaining endpoints into real screens beyond tickets and
    checklists -- the typed client covers all of them, but only
    `Dashboard.tsx`, `Tickets.tsx`, and `Checklists.tsx` actually call one
    from a rendered route.
-2. Square Sandbox integration and fail-closed email configuration --
-   blocked on Dylan supplying real Square/Resend credentials via
-   Netlify environment variables (cannot be pasted into chat or
-   committed).
+2. Square Sandbox integration -- blocked on Dylan supplying real Square
+   credentials via Netlify environment variables (cannot be pasted into
+   chat or committed). Also needs Dylan's input on checkout-flow details
+   (Payment Links vs. embedded checkout) before it can be scoped
+   meaningfully, not just credentials.
 3. Accessibility and end-to-end testing at real-feature scale (the
    security portion of step 10's original scope is now done -- see
    `SECURITY_REVIEW.md`'s "Session 20 step 10" section).
@@ -666,12 +713,14 @@ directive is **not started**, blocked on external credentials:
    liability/governing-law sections, and the several pricing/
    object-storage owner decisions those drafts depend on.
 10. The Critical finding from step 10's security review -- MFA
-    enrollment has no defense against a password-only compromise
-    hijacking the first enrollment -- needs step 8's email integration
-    to fix properly (notify/confirm on enrollment); treat as a P0
-    alongside step 8, not a general backlog item. See
-    `SECURITY_REVIEW.md` for the full writeup and interim risk
-    assessment.
+    enrollment has no *preventive* defense against a password-only
+    compromise hijacking the first enrollment -- is now **partially
+    mitigated** (step 8 added a security-notification email + mandatory
+    delivery-outcome auditing on every enroll/disable/reset), but the
+    actual preventive fix (an out-of-band confirmation required
+    *before* enrollment activates) is still not built. Treat as the
+    outstanding P0. See `SECURITY_REVIEW.md`'s step 8 addendum for the
+    full writeup and interim risk assessment.
 11. Medium/Low findings from step 10, all documented with remediation
     notes rather than fixed this pass: no server-side length cap on
     ticket/checklist/organization free-text fields; the still-unguarded
@@ -843,3 +892,16 @@ directive is **not started**, blocked on external credentials:
   (TOTP counter-based anti-replay design; the systemic audit-trail fix
   and the cross-agent `changeOrderStore`/`approvalStore` threading
   issue it surfaced).
+- Modified (step 8, MFA security notifications): `netlify/functions/mfa-enroll.js`
+  (+security-notification email on confirm success, +`mfa.enroll.notification`
+  audit event), `netlify/functions/mfa-enroll.test.js` (+2 cases),
+  `netlify/functions/mfa-manage.js` (+security-notification email on
+  disable/reset, +`mfa.disable.notification`/`mfa.reset.notification`
+  audit events), `netlify/functions/mfa-manage.test.js` (+2 cases).
+- Modified (step 8): `docs/development/DECISION_LOG.md` (+1 entry on
+  why "fail-closed" was implemented as audited-delivery-outcome at the
+  call site rather than changing `_lib/email.js`'s contract),
+  `docs/development/DEPLOYMENT_PLAN.md` (+`RESEND_API_KEY`/`EMAIL_FROM`
+  section, previously undocumented despite existing in code from an
+  earlier session), `docs/development/SECURITY_REVIEW.md` (Critical
+  finding updated to "partially mitigated," +step 8 addendum section).

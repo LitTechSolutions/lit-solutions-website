@@ -30,6 +30,7 @@ const {
 const { setJSON, store } = require("./_lib/blob_store");
 const { createAuditRecorder } = require("../../src/audit/auditLog");
 const { createPgAuditSink } = require("../../src/db/pgAuditSink");
+const { sendEmail } = require("./_lib/email");
 
 const ACTION_TO_AUDIT_EVENT = { disable: "mfa.disable", reset: "mfa.reset" };
 
@@ -92,6 +93,30 @@ exports.handler = async (event, context, deps = {}) => {
 
   await auditRecorder.record(
     { correlationId: user.id, actorType: "user", actorId: user.id, organizationId: null, action: auditEventAction, targetType: "user", targetId: user.id, outcome: "success" },
+    deps
+  );
+
+  const sendEmailFn = deps.sendEmail || sendEmail;
+  const delivery = await sendEmailFn({
+    to: user.email,
+    subject: "Two-factor authentication was just turned off on your account",
+    html:
+      `<p>Two-factor authentication was just ${body.action === "disable" ? "disabled" : "reset"} on your Little Technical Solutions LLC Care Hub account (${user.email}). You'll be asked to set it up again next time you sign in.</p>` +
+      `<p>If this was you, no action is needed. All other active sessions on this account have been signed out.</p>` +
+      `<p><strong>If this wasn't you</strong>, someone else may have your password -- contact us immediately at dylan@lit-solutions.tech or 636-426-0289.</p>`,
+  });
+  await auditRecorder.record(
+    {
+      correlationId: user.id,
+      actorType: "system",
+      actorId: "system",
+      organizationId: null,
+      action: `${auditEventAction}.notification`,
+      targetType: "user",
+      targetId: user.id,
+      outcome: delivery.sent ? "success" : "failure",
+      metadata: delivery.sent ? {} : { reason: String(delivery.reason || "unknown") },
+    },
     deps
   );
 

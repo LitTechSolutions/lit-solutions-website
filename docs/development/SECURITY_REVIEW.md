@@ -165,35 +165,46 @@ issue found in either category.**
 
 ### Documented, not fixed this pass (with reasons)
 
-1. **Critical — MFA enrollment has no defense against a password-only
+1. **Critical, now partially mitigated (Session 20 step 8) — MFA
+   enrollment still has no *preventive* defense against a password-only
    compromise being used to hijack the *first* enrollment.**
    `mfa-enroll.js`'s only precondition for `start`/`confirm` is
    possession of the short-lived `lts_mfa_pending` cookie, which
    `auth-login.js` issues to anyone who supplies the correct password
-   for a platform_admin account. There is no secondary check (email
-   confirmation, existing-device approval, admin notification) gating
-   who gets to be the first person to enroll a TOTP device on an
-   account. **Exploit:** an attacker who obtains a platform_admin's
-   password (phishing, credential stuffing, a leaked hash) but not their
-   physical device can sign in, receive `enrollmentRequired: true`, and
-   complete enrollment with their own authenticator app before the real
-   owner ever sets one up — permanently locking the legitimate owner out
-   (their own correct-password login now demands a code from the
-   attacker's device). **Why not fixed this pass:** the standard
-   mitigation (email the account holder when MFA is enrolled, or require
-   a confirmation link before the first enrollment activates) needs a
-   working email integration, which is step 8 of this directive and is
-   blocked on Dylan supplying real Resend credentials. Attempting a
-   different, ad hoc mitigation (e.g. requiring the invitation token
-   used at account creation) would be a real design decision, not a
-   drive-by fix, and risks getting it wrong for a security-critical flow.
-   Flagged here prominently so it's picked up as a P0 alongside step 8,
-   not lost in a backlog. In the interim: the practical exposure is
-   limited to platform_admin accounts (a small, Dylan-provisioned
-   population, not self-registered), and every login attempt is already
+   for a platform_admin account. There is still no secondary check
+   (email confirmation, existing-device approval, admin notification)
+   *gating* who gets to be the first person to enroll a TOTP device on
+   an account — enrollment still activates immediately on a correct
+   code, before any notification is sent. **Exploit:** an attacker who
+   obtains a platform_admin's password (phishing, credential stuffing, a
+   leaked hash) but not their physical device can sign in, receive
+   `enrollmentRequired: true`, and complete enrollment with their own
+   authenticator app before the real owner ever sets one up —
+   permanently locking the legitimate owner out (their own
+   correct-password login now demands a code from the attacker's
+   device). **What step 8 added:** a best-effort security notification
+   email now fires the moment enrollment completes (and on every
+   `mfa-manage.js` disable/reset), and every send's delivery outcome is
+   independently audited (`mfa.enroll.notification`,
+   `mfa.disable.notification`, `mfa.reset.notification` —
+   `outcome: "failure"` with a `reason` if not delivered). This gives
+   the legitimate owner a chance to notice and react quickly (e.g.
+   contact Dylan to have the account locked/reset before the attacker
+   does anything further), and makes the notification gap itself visible
+   in `audit-log.js` rather than silent. **This is a detective control,
+   not a preventive one — it does not stop the hijack from happening.**
+   The real fix (require an out-of-band confirmation, e.g. clicking an
+   emailed link, before enrollment activates — not just after) is a
+   bigger change than this pass makes and should still be treated as the
+   outstanding P0, now that the notification prerequisite (a working
+   email path) exists. In the interim: the practical exposure is limited
+   to platform_admin accounts (a small, Dylan-provisioned population,
+   not self-registered), and every login attempt is already
    rate-limited and audited (`auth-login.js`), so a brute-forced
    password is unlikely — the residual risk is specifically a *leaked or
-   phished* password, not a guessed one.
+   phished* password, not a guessed one. Note also that the notification
+   email itself does nothing until `RESEND_API_KEY`/`EMAIL_FROM` are set
+   in Netlify — see `DEPLOYMENT_PLAN.md`.
 2. **Medium — no server-side length cap on free-text fields.** Ticket
    `description` has no validation at all (not even a presence check,
    `src/domain/ticket.js`); checklist `comment`/`staffNote` and
@@ -257,3 +268,37 @@ not deferred indefinitely — it's the single highest-severity gap in the
 current build. Everything else documented above is Medium or lower and
 can reasonably wait for the relevant feature work (export endpoint,
 domain-validator touch-ups) to land normally.
+
+---
+
+## Session 20 step 8 addendum — MFA security notifications (email hardening)
+
+Step 8 (Square Sandbox + email) is otherwise blocked on Dylan supplying
+real credentials. The email-hardening half was scoped independently and
+completed: `mfa-enroll.js`'s confirm step and `mfa-manage.js`'s
+disable/reset actions now send a best-effort security-notification email
+to the account owner, and — regardless of whether the send actually
+succeeds — every attempt is independently audited
+(`mfa.enroll.notification`, `mfa.disable.notification`,
+`mfa.reset.notification`, `outcome: "success"`/`"failure"` with a
+`reason` on failure). See the Critical finding write-up above (now
+marked "partially mitigated") and `DECISION_LOG.md` for why this is a
+**detective control, not a preventive one** — it does not stop the
+underlying enrollment-hijack exploit, it makes the notification gap
+itself visible and gives a legitimate owner a chance to react. The real
+preventive fix (an out-of-band confirmation step required *before*
+enrollment activates, not just a notification *after*) remains
+outstanding and should stay the actual P0.
+
+`_lib/email.js`'s `sendEmail()` itself was deliberately left as
+best-effort/non-throwing for every caller (see `DECISION_LOG.md` for why
+— every other caller, including account verification and invitations,
+depends on that behavior to keep the whole platform functional before an
+email provider is configured). "Fail-closed" was implemented at the
+call-site level for security-critical sends specifically, via mandatory
+audit-of-delivery-outcome, not by changing the shared helper's contract.
+
+Verification: `npm test` — **781/781 passing** (up from 777; +4 new
+cases across `mfa-enroll.test.js`/`mfa-manage.test.js` covering
+successful-delivery and failed-delivery audit paths for both flows).
+`npm audit --omit=dev`: unaffected (no new dependencies).
