@@ -1,0 +1,13 @@
+PASS -- POST /tickets as org_member creates a ticket (201) :: status=201
+PASS -- created ticket has status 'submitted'
+PASS -- GET /tickets as org_member lists tickets (200) :: status=200
+PASS -- listed tickets include the just-created ticket
+PASS -- POST /tickets as read_only_customer is denied (403) :: status=403
+PASS -- PATCH by an unassigned technician is denied (403) :: status=403
+PASS -- PATCH by the assigned technician transitions submitted -> triaged (200) :: status=200
+PASS -- ticket status is now 'triaged'
+PASS -- PATCH attempting an illegal jump (triaged -> closed) is rejected (400) :: status=400, body={"error":"transitionTicket: cannot move from \"triaged\" directly to \"closed\""}
+
+--- summary ---
+9/9 PASS
+test data: organizationId=1801f614-fdc6-459f-b679-c0e47953094b, ticketId=afe8b67e-92ed-4701-bc27-51459a1e79b7, customerId=f47db5f1-ecc4-4d6e-99c2-b63f17290541, technicianId=1dd0e46e-cab3-4d21-a534-9325cef5e058 (left in place, same precedent as Session 13's smoke-test rows)

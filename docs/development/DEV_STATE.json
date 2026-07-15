@@ -1,13 +1,13 @@
 {
   "developmentVersion": "1.0",
-  "currentSession": 14,
-  "completedSessions": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+  "currentSession": 15,
+  "completedSessions": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
   "nextSession": null,
-  "currentWave": "Pricing/plan-limit owner decision resolved (Dylan supplied verbatim in chat, 2026-07-14). F026/F027/F028/F049/F050/F052 now fully engine-complete AND persisted -- the last functions that were only blocked on business content. Real plan-limit rows seeded into the live Neon entitlement_limits table. Next work is Netlify Function HTTP endpoints (nothing is exposed via HTTP yet) or the remaining open owner decisions.",
+  "currentWave": "First Netlify Function HTTP endpoint built and live-verified: tickets.js (F019/F023), authenticated via a new session-cookie-to-RBAC bridge (care_hub_auth.js) and a genuine deps-injection seam added to the endpoint layer so it's unit-testable for the first time in this repository's history. 20 more endpoints remain to expose the rest of the persistence layer over HTTP; a UI still doesn't exist.",
   "currentFunctionIds": [],
   "branch": "feature/business-care-hub",
   "baselineCommit": "1570734",
-  "workspaceNote": "This workspace (LTS Stand Alone Software) is a full copy of Development/Business Website/Website Code/v23, including .git and origin remote. v23 itself was not modified. Standing instruction: everything stays local to this workspace for the entire build -- no push, no merge into a new vN folder or main. Dylan granted bypass permission (2026-07-14) to take care of everything without interruption, with that one hard constraint.",
+  "workspaceNote": "This workspace (LTS Stand Alone Software) is a full copy of Development/Business Website/Website Code/v23, including .git and origin remote. v23 itself was not modified. Standing instruction: everything stays local to this workspace for the entire build -- no push, no merge into a new vN folder or main. Dylan granted bypass permission (2026-07-14) to take care of everything without interruption, with that one hard constraint. This session Dylan additionally confirmed Netlify (via Chrome) is available for setup/testing purposes -- used only to set up local-only netlify-cli tooling (already logged in on this machine), never to deploy or touch production.",
   "applicationCodeModified": true,
   "productionModified": false,
   "requirementsPackageLoaded": true,
@@ -16,19 +16,19 @@
     "audit finding F006 (Critical, open): Privacy Policy under-discloses actual data collection -- blocks finalizing F007, F058",
     "audit finding F007 (Critical, open): Resend not named as sub-processor in Privacy Policy -- blocks finalizing F007, F058",
     "audit finding F011 (High, open, owner decision): Square terms-gate bypassable via direct link -- relevant to F028, still unresolved",
-    "audit finding F016 (High, open, pre-Session-1): zero automated tests anywhere in the pre-Care-Hub repository -- src/ now has 389 unit tests plus a passing live smoke test, but this finding still describes everything outside src/",
+    "audit finding F016 (High, open, pre-Session-1): zero automated tests anywhere in the pre-Care-Hub repository -- 409 unit tests now exist in total, and this session added the first-ever tests for the netlify/functions/ layer (12 for tickets.js) plus a live smoke test; the finding still describes everything else outside src/ and this one endpoint",
     "audit finding F018 (High, open): partially addressed in src/policy/ticketSubmission.js (Session 3); the live intake.html form itself is untouched",
     "audit finding F033 (owner decision): registration model -- still blocks F002"
   ],
   "buildStatus": "not-applicable",
-  "testStatus": "passing (389/389 unit tests, node --test 'src/**/*.test.js', 2026-07-14; PLUS the Session 13 4-function live smoke test against the real Neon database -- F001/F005/F008/F019-F023 all PASS live, evidence/migrations/session-13-live-smoke-test.txt)",
+  "testStatus": "passing (409/409 unit tests, npm test / node --test full discovery, 2026-07-14; PLUS the Session 13 4-function live smoke test, the Session 14 entitlement-limit live seed, and this session's 9-check live smoke test of the tickets.js HTTP endpoint -- evidence/migrations/session-15-tickets-endpoint-live-smoke-test.txt, all PASS)",
   "lintStatus": "not-run",
   "typeCheckStatus": "not-run",
-  "migrationStatus": "EXECUTED against the live Neon database (Session 13) -- migrations/001_initial_schema.sql ran cleanly, 37 tables confirmed present. This session additionally seeded real entitlement_limits rows (5) into the live database -- the second table to hold real, owner-approved data rather than synthetic test rows.",
-  "deploymentStatus": "not-deployed (database is live; no Netlify Function endpoints or UI exist yet to deploy)",
+  "migrationStatus": "EXECUTED against the live Neon database (Session 13), 37 tables. No schema changes this session -- tickets.js reuses existing tables (tickets, assignments) and existing memberships.",
+  "deploymentStatus": "not-deployed. One Netlify Function endpoint (tickets.js) now exists and is locally verified; nothing is deployed or reachable from the public internet. netlify-cli added as a devDependency for local testing only.",
   "implementedFunctions": [
-    "41 functions have real, tested logic; 28 of them have real Postgres persistence. 5 are additionally VERIFIED against a live database (F001, F005, F008, F019, F023) from Session 13's smoke test.",
-    "This session (14): F028 payment-timing policy engine, F049/F050 overage-billing engine, plus persistence for F026 (scope of work), F027 (change orders), F028 (payment requests), F049 (entitlements/usage), F052 (subscriptions) -- all wired to their existing pure engines via fetch-validate-persist, all unit-tested against fake SQL clients, all passing. Real plan-limit values seeded live."
+    "41 functions have real, tested domain/policy/persistence logic; 28 with real Postgres persistence. 6 are additionally VERIFIED against a live database (F001, F005, F008, F019, F023 from Session 13; F019/F023 now also verified through a real HTTP handler, not just the store layer directly).",
+    "This session (15): the first Netlify Function HTTP endpoint for any Care Hub feature -- netlify/functions/tickets.js (F019/F023), plus its supporting auth bridge (netlify/functions/_lib/care_hub_auth.js) and a real per-ticket assignment check (ticketWorkflowStore.getAssignedTechnician). Endpoint logic is a thin HTTP adapter; every actual decision still happens in the already-tested ticketSubmission.js, ticketLifecycle.js, and rbac.js."
   ],
   "verifiedFunctions": ["F001", "F005", "F008", "F019", "F023"],
   "blockedFunctions": [
@@ -39,13 +39,13 @@
     "F060 (AI gate, unchanged)"
   ],
   "notStartedThisSessionByDesign": [
-    "F003, F004, F006, F059, F011, F018, F024, F030, F045, F034, F009, F012, F015 -- see prior session entries, unchanged"
+    "F003, F004, F006, F059, F011, F018, F024, F030, F045, F034, F009, F012, F015 -- see prior session entries, unchanged. Also: HTTP endpoints for every other persisted function (organizations, approvals, activity events, scope of work, change orders, payment requests, entitlements, subscriptions, technology assets, backups, reminders, IT support classification, checklists, work queue, metrics, templates, webhook events) -- tickets.js is the first of 21, not the last."
   ],
   "ownerDecisionsRequired": [
     "Primary data store -- ✅ RESOLVED 2026-07-14 (Session 10): PostgreSQL on Neon. LIVE and verified.",
     "Pricing, discounts, deposits, payment timing (audit F030, F031) -- ✅ RESOLVED 2026-07-14 (Session 14): Dylan supplied Care Hub custom-work payment timing verbatim in chat. Deposit threshold $500, 50/50 split, third-party expenses always upfront. Built, tested, persisted.",
     "Website Care Plan / Small Business IT plan limits and included work (audit F032) -- ✅ RESOLVED 2026-07-14 (Session 14): Dylan supplied both plans' full scope verbatim in chat. Overage rates built and tested; plan limits seeded live into entitlement_limits.",
-    "Customer account registration model: open vs invite-only (audit F033)",
+    "Customer account registration model: open vs invite-only (audit F033) -- growing in urgency: without it there is still no automatic path from a new Blobs user account to a Care Hub organization_memberships row, so every endpoint this session and going forward needs a membership manually created to be reachable at all",
     "Data retention, deletion, backup-aging, legal-hold rules",
     "Legal/privacy/consent wording, including open Critical audit findings F006 and F007",
     "New paid providers/infrastructure generally -- includes whether Square stays the payment provider",
@@ -54,27 +54,28 @@
     "Missing individual F001-F060 function workbooks (new) -- source of F020/F021's real configuration, F046/F047's actual checklist content, F035/F036/F038/F039/F040's actual check thresholds, and F055's actual email copy"
   ],
   "filesRequiringReview": [
-    "docs/development/OWNER_DECISIONS.md (items #1, #2, #3 all resolved -- #2/#3 resolved this session; remaining 7 items are next)",
-    "docs/development/DECISION_LOG.md (pricing/plan-limits decision entry, this session)",
-    "docs/development/REQUIREMENTS_TRACEABILITY.md (Post-Session-13 section documents the new engines and persistence)",
-    "src/db/entitlementStore.js (usage_records has no unique constraint on (org, plan_key, usage_key, period_start) to upsert against -- fetch-then-write pattern used instead, same as every other store; a real concurrency guard would need a migration to add that constraint, not attempted this session)"
+    "docs/development/OWNER_DECISIONS.md (items #1, #2, #3 resolved; F002/registration model is now the most urgent remaining decision, see above)",
+    "docs/development/REQUIREMENTS_TRACEABILITY.md (Post-Session-14 section documents the endpoint, the DI seam, and the discovered technician-list-authorization gap)",
+    "netlify/functions/tickets.js (GET denies technicians entirely -- rbac.js's per-resource 'assigned' check can't honestly authorize a list of many tickets; staff-wide visibility needs its own endpoint over the existing src/admin/workQueueViewModel.js, not built yet)",
+    "package.json (netlify-cli added as a devDependency; .env gained a locally-generated LTS_SESSION_SECRET, gitignored, needed for any future netlify dev usage)"
   ],
   "knownRisks": [
-    "Only 5 of 28 persistence-layer functions have been live-smoke-tested (F001, F005, F008, F019, F023) -- everything else is schema-verified but not individually exercised live, except the entitlement_limits seed (verified live via direct SELECT, not through the full application stack).",
+    "Only 6 of 28 persistence-layer functions have been live-smoke-tested (F001, F005, F008, F019, F023, plus this session's HTTP-layer re-verification of F019/F023) -- everything else is schema-verified but not individually exercised live.",
+    "netlify dev's local Blobs emulation could not be reached this session -- the CLI auto-detects a linked site via git remote matching, but that site's addons endpoint 404s under the current login, and --offline mode skips Blobs emulation setup entirely. Worth Dylan's attention (checking Netlify team/site access for little.dylan2000@gmail.com) if full local netlify dev testing is wanted later; did not block this session because the DI seam let the endpoint be tested without it.",
     "Netlify Blobs' users/sessions/tokens stores (F003/F004) remain unmigrated by design",
     "Existing Blobs records (documents, messages, notifications, favorites, leads) still need organization_id backfilled once real organizations exist -- tracked in MIGRATION_PLAN.md, not yet scheduled",
-    "No migration-runner tool is set up yet -- 001_initial_schema.sql and this session's entitlement-limit seed were both run via one-off root-level scripts, deleted after use",
-    "The live database now contains smoke-test data (one organization named 'Smoke Test Org', one membership, one audit event, one ticket) plus 5 real entitlement_limits rows -- worth knowing it's a mix of test and real data, not assuming the database is empty or purely synthetic",
-    "usage_records has no DB-level uniqueness constraint on (organization_id, plan_key, usage_key, period_start) -- entitlementStore.recordUsage() relies on fetch-then-write, same pattern as every other store in this codebase, but this one is more exposed to a lost-update race under real concurrent requests than most; worth a follow-up migration once real traffic exists",
+    "No migration-runner tool is set up yet -- one-off root-level scripts, deleted after use, remain the pattern",
+    "The live database now contains smoke-test data across several sessions (Smoke Test Org, several test memberships including this session's org_member/technician/read_only_customer rows, several tickets, one assignment) plus 5 real entitlement_limits rows -- a mix of test and real data, not an empty or purely synthetic database",
+    "usage_records has no DB-level uniqueness constraint on (organization_id, plan_key, usage_key, period_start) -- fetch-then-write pattern used instead, more exposed to a lost-update race under real concurrency than most stores",
     "F057's verifier/logger is ready but nothing calls it yet -- no payment webhook infrastructure exists at all",
-    "F051's cross-org query has no pagination -- fine at zero real data, will need LIMIT/cursor handling before real staff-scale data exists (SYS-API-005)",
+    "F051's cross-org query has no pagination, and has no HTTP endpoint yet either -- needed for real staff-wide ticket visibility, which tickets.js's GET deliberately does not attempt for technicians",
     "Customer documents/images are stored as base64 data URIs in Blobs; new care_hub_documents/file_assets Postgres tables use an opaque storageRef instead, but the actual object-storage provider is still undecided",
     "Two independent, near-duplicated single-file staff/customer console apps (admin.html, myaccount.html) -- still not extracted",
     "F-numbering collision between audit findings (F001-F036) and Business Care Hub functions (F001-F060) -- mitigated via naming convention",
     "src/settings/blobsSettingsStore.js remains Blobs-backed (F056 stayed on Blobs by design)",
     "CSV export (src/export/csvExport.js, F053) has no formula-injection guard for spreadsheet software -- open finding from Session 9's security review",
-    "No Netlify Function HTTP endpoints exist yet for any Care Hub feature -- everything built so far is domain/policy/persistence layer only, callable from Node but not yet reachable over HTTP or from a browser"
+    "20 more Netlify Function HTTP endpoints remain to be built to expose the rest of the persistence layer -- tickets.js is a template for the pattern (care_hub_auth.js + deps-injection seam), not a one-off"
   ],
-  "releaseRecommendation": "NOT READY, but the two largest remaining owner decisions (data store, pricing/plan-limits) are now both resolved and built out end to end. 41 functions have real tested logic, 28 with real Postgres persistence, 389 passing unit tests, live database verification from Session 13, and real plan-limit data now seeded live. Remaining work: Netlify Function HTTP endpoints (nothing is exposed via HTTP yet), a UI, and 7 remaining owner decisions (registration model, retention/legal, new providers, remote-support scope, AI policy, missing workbooks).",
+  "releaseRecommendation": "NOT READY. The two largest owner-decision blockers (data store, pricing/plan-limits) are resolved, and the first HTTP endpoint now proves the whole stack works end to end from an HTTP request down through auth, RBAC, policy engines, and Postgres. 41 functions have real tested logic, 28 with real Postgres persistence, 409 passing unit tests, and 6 functions live-verified against the real database. Remaining work: 20 more HTTP endpoints, a UI, and 7 open owner decisions -- registration model (F002) is now the most urgent of those, since every endpoint requires a manually-created organization membership until it's resolved.",
   "lastUpdated": "2026-07-14"
 }

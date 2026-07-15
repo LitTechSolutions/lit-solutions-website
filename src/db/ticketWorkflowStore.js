@@ -76,4 +76,20 @@ async function recordAssignment(candidates, organizationId, ticketId, assignedBy
   return assignment;
 }
 
-module.exports = { recordTriageResult, recordPriorityAssessment, recordAssignment };
+/**
+ * Read path for F022, used by the endpoint layer to verify a technician
+ * is genuinely assigned to a ticket before allowing "assigned"-gated
+ * actions (rbac.js's technician org-scope check) -- never trust a
+ * client-supplied assignment claim.
+ *
+ * @param {string} ticketId
+ * @param {{ sql?: Function }} [deps]
+ * @returns {Promise<string | null>} technician_user_id, or null if unassigned
+ */
+async function getAssignedTechnician(ticketId, deps = {}) {
+  const sql = deps.sql || getSql();
+  const rows = await sql`SELECT technician_user_id FROM assignments WHERE ticket_id = ${ticketId}`;
+  return rows.length > 0 ? rows[0].technician_user_id : null;
+}
+
+module.exports = { recordTriageResult, recordPriorityAssessment, recordAssignment, getAssignedTechnician };

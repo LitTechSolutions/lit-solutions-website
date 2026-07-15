@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { recordTriageResult, recordPriorityAssessment, recordAssignment } = require("./ticketWorkflowStore");
+const { recordTriageResult, recordPriorityAssessment, recordAssignment, getAssignedTechnician } = require("./ticketWorkflowStore");
 
 const FIXED_NOW = () => new Date("2026-07-14T12:00:00.000Z");
 
@@ -61,4 +61,14 @@ test("recordAssignment throws rather than persisting a null assignment when no t
   const sql = fakeSql();
   await assert.rejects(() => recordAssignment([], "org-a", "ticket-1", "user-admin-1", { sql, now: FIXED_NOW }), /no available technician/);
   assert.equal(sql.calls.length, 0);
+});
+
+test("getAssignedTechnician returns the technician_user_id when a ticket is assigned", async () => {
+  const sql = fakeSql([{ technician_user_id: "tech-1" }]);
+  assert.equal(await getAssignedTechnician("ticket-1", { sql }), "tech-1");
+});
+
+test("getAssignedTechnician returns null for an unassigned ticket -- never treat 'no row' as 'assigned'", async () => {
+  const sql = fakeSql([]);
+  assert.equal(await getAssignedTechnician("ticket-1", { sql }), null);
 });
