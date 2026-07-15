@@ -24,8 +24,8 @@
     "F003": { "severity": "High", "status": "Resolved", "domainSession": 2, "commit": "a6912fc", "summary": "Website Designer sticky-preview overlap bug" },
     "F004": { "severity": "Critical", "status": "Resolved", "domainSession": 6, "commit": "57e124a", "summary": "Light-mode --notice-* CSS token bug" },
     "F005": { "severity": "Critical", "status": "Resolved", "domainSession": 3, "commit": "57e124a", "summary": "admin-images.js authorization gap (GET checked auth only, not role)" },
-    "F006": { "severity": "Critical", "status": "Open", "domainSession": 3, "summary": "Privacy Policy under-discloses actual data collection" },
-    "F007": { "severity": "Critical", "status": "Open", "domainSession": 3, "summary": "Resend not named as a sub-processor in Privacy Policy" },
+    "F006": { "severity": "Critical", "status": "Resolved", "domainSession": 3, "commit": "3fb896b", "summary": "Privacy Policy under-discloses actual data collection -- Section 1 rewritten with explicit Care Hub data-collection subsections (account info, sign-in records, service records, files/messages, billing status, audit log)" },
+    "F007": { "severity": "Critical", "status": "Resolved", "domainSession": 3, "commit": "3fb896b", "summary": "Resend not named as a sub-processor in Privacy Policy -- Section 3 now names Netlify, Neon, Resend, and Square by name with their specific roles" },
     "F008": { "severity": "Critical", "status": "Open", "ownerDecision": true, "domainSession": 2, "summary": "Gallery empty with full nav prominence" },
     "F009": { "severity": "Critical", "status": "Open", "ownerDecision": true, "domainSession": 2, "summary": "Booking non-functional with full nav prominence" },
     "F010": { "severity": "Critical", "status": "Open", "ownerDecision": true, "domainSession": 2, "summary": "Unsourced 'independent 2026 market research' pricing claim" },
@@ -58,8 +58,8 @@
   },
   "counts": {
     "total": 36,
-    "resolved": 9,
+    "resolved": 11,
     "ownerDecisionOpen": 11,
-    "engineeringOpen": 16
+    "engineeringOpen": 14
   }
 }
