@@ -2433,6 +2433,15 @@ textarea{ resize: vertical; }
 .wpb-wrap{ max-width:900px; margin:0 auto; }
 
 .wpb-state{ display:flex; flex-direction:column; gap:1.2rem; }
+/* The real bug behind "stuck on Opening your project worksheet...": the
+   browser's built-in [hidden]{display:none} rule and this class selector
+   are equal specificity, and an author stylesheet always wins that tie
+   over the user-agent default -- so setting .hidden=true via JS toggled
+   the attribute correctly (confirmed in devtools) but never actually
+   hid the element, leaving loading/invalid/form/done all visually
+   stacked on top of each other instead of only one showing at a time.
+   This re-asserts [hidden] at higher specificity so it actually wins. */
+.wpb-state[hidden]{ display:none; }
 
 .wpb-loading-spinner{
   width:32px; height:32px; margin:3rem auto 0; border-radius:50%;
