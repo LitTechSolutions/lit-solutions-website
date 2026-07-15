@@ -15,6 +15,11 @@ function fakeSql(cannedRows = []) {
   return tag;
 }
 
+function fakeAuditRecorder() {
+  const events = [];
+  return { record: async (input) => { events.push(input); return input; }, events };
+}
+
 function ticketRow(overrides = {}) {
   return {
     id: "ticket-1",
@@ -49,12 +54,16 @@ test("integration: createTicket rejects a placeholder-junk detail value via tick
 
 test("createTicket shapes and inserts a valid submission", async () => {
   const sql = fakeSql();
+  const auditRecorder = fakeAuditRecorder();
   const ticket = await createTicket(
     { organizationId: "org-a", category: "website_change", subject: "Update hours", description: "Our hours changed", submittedBy: "user-1" },
-    { sql, now: FIXED_NOW, idGenerator: FIXED_ID }
+    { sql, now: FIXED_NOW, idGenerator: FIXED_ID, auditRecorder }
   );
   assert.equal(ticket.status, "submitted");
   assert.match(sql.calls[0].text, /INSERT INTO tickets/);
+  assert.equal(auditRecorder.events.length, 1);
+  assert.equal(auditRecorder.events[0].action, "ticket.create");
+  assert.equal(auditRecorder.events[0].actorId, "user-1");
 });
 
 test("getTicketById returns null for no match", async () => {
@@ -71,22 +80,29 @@ test("listTicketsForOrganization scopes by organization", async () => {
 
 // Integration: transitionTicket goes through the pure ticketLifecycle.js
 // state machine.
-test("integration: transitionTicket allows a legal transition and persists it", async () => {
+test("integration: transitionTicket allows a legal transition, persists it, and audits the actor", async () => {
   const sql = fakeSql([ticketRow({ status: "submitted" })]);
-  const result = await transitionTicket("ticket-1", "triaged", { sql, now: FIXED_NOW });
+  const auditRecorder = fakeAuditRecorder();
+  const result = await transitionTicket("ticket-1", "triaged", "tech-1", { sql, now: FIXED_NOW, auditRecorder });
   assert.equal(result.status, "triaged");
   assert.match(sql.calls[1].text, /UPDATE tickets/);
+  assert.equal(auditRecorder.events.length, 1);
+  assert.equal(auditRecorder.events[0].action, "ticket.transition");
+  assert.equal(auditRecorder.events[0].actorId, "tech-1");
+  assert.deepEqual(auditRecorder.events[0].metadata, { fromStatus: "submitted", toStatus: "triaged" });
 });
 
-test("integration: transitionTicket refuses an illegal transition without persisting", async () => {
+test("integration: transitionTicket refuses an illegal transition without persisting or auditing", async () => {
   const sql = fakeSql([ticketRow({ status: "submitted" })]);
-  await assert.rejects(() => transitionTicket("ticket-1", "closed", { sql, now: FIXED_NOW }), /cannot move from/);
+  const auditRecorder = fakeAuditRecorder();
+  await assert.rejects(() => transitionTicket("ticket-1", "closed", "tech-1", { sql, now: FIXED_NOW, auditRecorder }), /cannot move from/);
   assert.equal(sql.calls.length, 1, "only the SELECT ran, no UPDATE");
+  assert.equal(auditRecorder.events.length, 0);
 });
 
 test("transitionTicket throws for a nonexistent ticket", async () => {
   const sql = fakeSql([]);
-  await assert.rejects(() => transitionTicket("nope", "triaged", { sql, now: FIXED_NOW }), /no ticket/);
+  await assert.rejects(() => transitionTicket("nope", "triaged", "tech-1", { sql, now: FIXED_NOW }), /no ticket/);
 });
 
 test("mapRowToTicket omits details when null", () => {

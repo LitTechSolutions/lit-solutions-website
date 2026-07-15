@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { createPgAuditSink, mapRowToAuditEvent } = require("./pgAuditSink");
+const { createPgAuditSink, mapRowToAuditEvent, encodeAuditCursor, decodeAuditCursor, MAX_PAGE_SIZE } = require("./pgAuditSink");
 const { createAuditRecorder, shapeAuditEvent } = require("../audit/auditLog");
 
 const FIXED_NOW = () => new Date("2026-07-14T12:00:00.000Z");
@@ -13,7 +13,29 @@ function fakeSql(cannedRows = []) {
     return cannedRows;
   };
   tag.calls = calls;
+  tag.query = async (text, params) => {
+    calls.push({ text, values: params });
+    return cannedRows;
+  };
   return tag;
+}
+
+function auditRow(overrides = {}) {
+  return {
+    id: "audit-1",
+    correlation_id: "corr-1",
+    occurred_at: "2026-07-14T12:00:00.000Z",
+    actor_type: "user",
+    actor_id: "user-1",
+    actor_role: "platform_admin",
+    organization_id: "org-a",
+    action: "ticket.transition",
+    target_type: "ticket",
+    target_id: "t1",
+    outcome: "success",
+    metadata: null,
+    ...overrides,
+  };
 }
 
 function baseEventInput(overrides = {}) {
@@ -112,4 +134,70 @@ test("mapRowToAuditEvent omits optional fields when the row doesn't have them", 
   assert.equal("actorRole" in mapped, false);
   assert.equal("metadata" in mapped, false);
   assert.equal(mapped.organizationId, null);
+});
+
+test("queryAuditEvents applies every filter as a parameterized condition, newest-first", async () => {
+  const sql = fakeSql([auditRow()]);
+  const sink = createPgAuditSink({ sql });
+  const { events, nextCursor } = await sink.queryAuditEvents({
+    organizationId: "org-a",
+    actorId: "user-1",
+    action: "ticket.transition",
+    dateFrom: "2026-07-01T00:00:00.000Z",
+    dateTo: "2026-07-31T00:00:00.000Z",
+  });
+
+  assert.equal(events.length, 1);
+  assert.equal(events[0].action, "ticket.transition");
+  assert.equal(nextCursor, null, "fewer rows than the page size means no next page");
+  assert.match(sql.calls[0].text, /organization_id = \$1/);
+  assert.match(sql.calls[0].text, /actor_id = \$2/);
+  assert.match(sql.calls[0].text, /action = \$3/);
+  assert.match(sql.calls[0].text, /occurred_at >= \$4/);
+  assert.match(sql.calls[0].text, /occurred_at <= \$5/);
+  assert.match(sql.calls[0].text, /ORDER BY occurred_at DESC, id DESC/);
+  assert.deepEqual(sql.calls[0].values, ["org-a", "user-1", "ticket.transition", "2026-07-01T00:00:00.000Z", "2026-07-31T00:00:00.000Z", 26]);
+});
+
+test("queryAuditEvents with no filters queries unconditionally", async () => {
+  const sql = fakeSql([]);
+  const sink = createPgAuditSink({ sql });
+  await sink.queryAuditEvents({});
+  assert.doesNotMatch(sql.calls[0].text, /WHERE/);
+});
+
+test("queryAuditEvents returns a nextCursor and trims the lookahead row when more results exist", async () => {
+  const rows = Array.from({ length: 3 }, (_, i) => auditRow({ id: `audit-${i}`, occurred_at: `2026-07-1${4 - i}T12:00:00.000Z` }));
+  const sql = fakeSql(rows);
+  const sink = createPgAuditSink({ sql });
+  const { events, nextCursor } = await sink.queryAuditEvents({ limit: 2 });
+
+  assert.equal(events.length, 2, "the lookahead row is trimmed off the returned page");
+  assert.notEqual(nextCursor, null);
+  const decoded = decodeAuditCursor(nextCursor);
+  assert.equal(decoded.id, "audit-1");
+});
+
+test("queryAuditEvents decodes a cursor into a strict keyset (occurred_at, id) < (...) condition", async () => {
+  const sql = fakeSql([]);
+  const sink = createPgAuditSink({ sql });
+  const cursor = encodeAuditCursor("2026-07-10T00:00:00.000Z", "audit-5");
+  await sink.queryAuditEvents({ cursor });
+
+  assert.match(sql.calls[0].text, /\(occurred_at, id\) < \(\$1, \$2\)/);
+  assert.deepEqual(sql.calls[0].values.slice(0, 2), ["2026-07-10T00:00:00.000Z", "audit-5"]);
+});
+
+test("queryAuditEvents ignores a malformed cursor rather than throwing", async () => {
+  const sql = fakeSql([]);
+  const sink = createPgAuditSink({ sql });
+  await sink.queryAuditEvents({ cursor: "not-valid-base64-json" });
+  assert.doesNotMatch(sql.calls[0].text, /WHERE/);
+});
+
+test("queryAuditEvents clamps the page size to MAX_PAGE_SIZE", async () => {
+  const sql = fakeSql([]);
+  const sink = createPgAuditSink({ sql });
+  await sink.queryAuditEvents({ limit: 99999 });
+  assert.equal(sql.calls[0].values[sql.calls[0].values.length - 1], MAX_PAGE_SIZE + 1);
 });

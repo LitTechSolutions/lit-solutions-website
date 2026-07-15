@@ -312,6 +312,19 @@ test("technician has none of the new customer-facing view capabilities -- they w
   }
 });
 
+test("platform_admin has every technician ticket capability, cross-organization, with no assignment required (Session 20 owner decision)", () => {
+  const ticketActions = ["ticket.view", "ticket.work", "note.internal.write", "worklog.write", "website_it_ops.perform", "scope.create", "scope.view", "change_order.create", "change_order.view"];
+  for (const action of ticketActions) {
+    const decision = authorize({ actorRole: "platform_admin", action, actorOrgId: null, resourceOrgId: ORG_B, assigned: false });
+    assert.equal(decision.allowed, true, `platform_admin should have ${action} across organizations without an assignment fact`);
+  }
+});
+
+test("platform_admin can submit a ticket request on behalf of any organization (request.submit)", () => {
+  const decision = authorize({ actorRole: "platform_admin", action: "request.submit", actorOrgId: null, resourceOrgId: ORG_B });
+  assert.equal(decision.allowed, true);
+});
+
 test("every decision includes a non-empty reason (for downstream audit-event shaping)", () => {
   const decisions = [
     authorize({ actorRole: "org_owner", action: "member.invite", actorOrgId: ORG_A, resourceOrgId: ORG_A, actorMembershipStatus: "active" }),

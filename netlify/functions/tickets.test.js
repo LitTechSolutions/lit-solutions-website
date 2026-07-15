@@ -99,6 +99,32 @@ test("GET as a technician is denied -- listing is not a single-resource 'assigne
   assert.equal(res.statusCode, 403);
 });
 
+test("GET as platform_admin lists tickets for any organization (Session 20 owner decision -- no second staff login required)", async () => {
+  const sql = routingFakeSql({
+    tickets: [{ id: "t1", organization_id: "org-b", category: "it_support", subject: "x", description: "y", status: "submitted", submitted_at: "2026-07-01T00:00:00.000Z", submitted_by: "user-1", updated_at: "2026-07-01T00:00:00.000Z", version: 1 }],
+  });
+  const event = { httpMethod: "GET", headers: { cookie: "lts_session=fake-token" }, queryStringParameters: { organizationId: "org-b" } };
+  const deps = { ...fakeAuthDeps({ userId: "admin-1", authContext: { actorRole: "platform_admin", actorOrgId: null, actorMembershipStatus: undefined } }), sql };
+  const res = await handler(event, {}, deps);
+  assert.equal(res.statusCode, 200);
+  assert.equal(JSON.parse(res.body).tickets.length, 1);
+});
+
+test("PATCH as platform_admin transitions a ticket in any organization without an assignment fact", async () => {
+  const sql = routingFakeSql({
+    tickets: [{ id: "t1", organization_id: "org-b", category: "it_support", subject: "x", description: "y", status: "submitted", submitted_at: "2026-07-01T00:00:00.000Z", submitted_by: "user-1", updated_at: "2026-07-01T00:00:00.000Z", version: 1 }],
+  });
+  const event = {
+    httpMethod: "PATCH",
+    headers: { cookie: "lts_session=fake-token" },
+    body: JSON.stringify({ ticketId: "t1", organizationId: "org-b", nextStatus: "triaged" }),
+  };
+  const deps = { ...fakeAuthDeps({ userId: "admin-1", authContext: { actorRole: "platform_admin", actorOrgId: null, actorMembershipStatus: undefined } }), sql, now: FIXED_NOW };
+  const res = await handler(event, {}, deps);
+  assert.equal(res.statusCode, 200);
+  assert.equal(JSON.parse(res.body).ticket.status, "triaged");
+});
+
 test("PATCH as the assigned technician transitions the ticket via ticketLifecycle.js", async () => {
   const sql = routingFakeSql({
     assignments: [{ technician_user_id: "tech-1" }],

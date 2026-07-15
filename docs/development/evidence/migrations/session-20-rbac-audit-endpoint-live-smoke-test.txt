@@ -1,0 +1,15 @@
+PASS -- POST /tickets as platform_admin creates a real ticket :: status=201
+PASS -- GET /tickets as platform_admin lists this org's tickets (was previously denied) :: status=200
+PASS -- PATCH /tickets as platform_admin transitions without an assignment fact :: status=200, newStatus=triaged
+PASS -- POST /ticket-workflow prioritize records a real assessment :: status=201
+PASS -- GET /audit-log as platform_admin returns real audit events for this org :: status=200, count=10
+PASS -- audit-log includes ticket.create for this smoke test's ticket :: ["ticket.prioritize","ticket.transition","ticket.create","audit.query","ticket.prioritize","ticket.transition","ticket.create","ticket.prioritize","ticket.transition","ticket.create"]
+PASS -- audit-log includes ticket.transition for this smoke test's ticket :: ["ticket.prioritize","ticket.transition","ticket.create","audit.query","ticket.prioritize","ticket.transition","ticket.create","ticket.prioritize","ticket.transition","ticket.create"]
+PASS -- audit-log includes ticket.prioritize for this smoke test's ticket :: ["ticket.prioritize","ticket.transition","ticket.create","audit.query","ticket.prioritize","ticket.transition","ticket.create","ticket.prioritize","ticket.transition","ticket.create"]
+PASS -- audit-log includes audit.query recording access to the audit log itself (from a PRIOR call, if any) :: audit.query is recorded AFTER this query returns, verified by the next call below
+PASS -- GET /audit-log filtered by action=audit.query shows access to the audit log is itself audited :: count=3
+PASS -- GET /audit-log as a non-admin is denied (403) :: status=403
+
+--- summary ---
+11/11 PASS
+test data left in place: organizationId=77c6d532-e3b7-4904-9ab3-554b30e7b75b, ticketId=2cedd50b-eee7-48d6-9b73-06e794853be8

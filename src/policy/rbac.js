@@ -44,6 +44,24 @@ const ROLE_CAPABILITIES = {
     // Same reasoning as workqueue.view -- the operational metrics
     // dashboard (F054) has no single owning organization either.
     "metrics.view",
+    // Owner decision (Session 20): for this single-person business,
+    // platform_admin gets every technician ticket capability directly --
+    // requiring a second "staff" login just to work tickets is
+    // operationally harmful. These are already listed in
+    // ORG_SCOPED_ACTIONS (added for technician), so platform_admin's
+    // existing actorRole !== "platform_admin" bypass in the org-scope
+    // check (see authorize() below) grants cross-org ticket access with
+    // no further logic changes -- customers remain fully org-scoped.
+    "ticket.view",
+    "ticket.work",
+    "note.internal.write",
+    "worklog.write",
+    "website_it_ops.perform",
+    "request.submit",
+    "scope.create",
+    "scope.view",
+    "change_order.create",
+    "change_order.view",
   ]),
   technician: new Set([
     "ticket.view",

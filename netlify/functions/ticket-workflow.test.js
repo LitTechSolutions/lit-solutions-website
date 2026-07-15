@@ -57,7 +57,7 @@ test("POST triage for a nonexistent ticket returns 404", async () => {
 });
 
 test("POST prioritize as admin scores a ticket", async () => {
-  const sql = routingFakeSql({});
+  const sql = routingFakeSql({ tickets: [ticketRow()] });
   const res = await handler(
     { httpMethod: "POST", headers: { cookie: "lts_session=fake-token" }, body: JSON.stringify({ action: "prioritize", ticketId: "t1", inputs: { impact: 0.9, urgency: 0.9, safetyConcern: false, securityConcern: false } }) },
     {},
@@ -65,6 +65,16 @@ test("POST prioritize as admin scores a ticket", async () => {
   );
   assert.equal(res.statusCode, 201);
   assert.equal(JSON.parse(res.body).assessment.level, "critical");
+});
+
+test("POST prioritize for a nonexistent ticket returns 404", async () => {
+  const sql = routingFakeSql({ tickets: [] });
+  const res = await handler(
+    { httpMethod: "POST", headers: { cookie: "lts_session=fake-token" }, body: JSON.stringify({ action: "prioritize", ticketId: "nope", inputs: { impact: 0.9, urgency: 0.9, safetyConcern: false, securityConcern: false } }) },
+    {},
+    { ...fakeDeps("admin"), sql }
+  );
+  assert.equal(res.statusCode, 404);
 });
 
 test("POST assign as admin selects a technician", async () => {

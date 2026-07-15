@@ -70,7 +70,19 @@ async function handleList(event, deps) {
   // list request; it isn't the right tool for staff-wide visibility.
   // src/admin/workQueueViewModel.js (F051) already exists for that and
   // just needs its own endpoint -- not built yet, tracked as follow-up.
-  const action = auth.authContext.actorRole === "technician" ? "ticket.view" : "request.view";
+  // platform_admin is routed the same way as technician (both use
+  // "ticket.view"), but rbac.js's org-scope/assigned check is bypassed
+  // entirely for platform_admin (authorize()'s
+  // `actorRole !== "platform_admin"` condition), so passing
+  // `assigned: false` below still lets platform_admin list this org's
+  // tickets while continuing to deny an unassigned technician. Listing
+  // across every organization at once is still work-queue.js's (F051)
+  // job, not this endpoint's -- this only removes the incorrect denial
+  // platform_admin previously got when querying a single org.
+  const action =
+    auth.authContext.actorRole === "technician" || auth.authContext.actorRole === "platform_admin"
+      ? "ticket.view"
+      : "request.view";
   const deny = denyResponseFor(auth.authContext, organizationId, action, { assigned: false });
   if (deny) return deny;
 
@@ -100,7 +112,7 @@ async function handleTransition(event, deps) {
   if (deny) return deny;
 
   try {
-    const ticket = await transitionTicket(ticketId, nextStatus, deps);
+    const ticket = await transitionTicket(ticketId, nextStatus, auth.session.userId, deps);
     return json(200, { ticket });
   } catch (err) {
     return json(400, { error: err.message });

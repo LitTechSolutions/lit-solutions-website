@@ -43,13 +43,15 @@ exports.handler = async (event, context, deps = {}) => {
       if (!ticketId || !rules) return json(400, { error: "ticketId and rules are required." });
       const ticket = await getTicketById(ticketId, deps);
       if (!ticket) return json(404, { error: "Ticket not found." });
-      const result = await recordTriageResult(rules, ticket, deps);
+      const result = await recordTriageResult(rules, ticket, auth.session.userId, deps);
       return json(201, { result });
     }
     if (body.action === "prioritize") {
       const { ticketId, inputs } = body;
       if (!ticketId || !inputs) return json(400, { error: "ticketId and inputs are required." });
-      const assessment = await recordPriorityAssessment(ticketId, inputs, deps);
+      const ticket = await getTicketById(ticketId, deps);
+      if (!ticket) return json(404, { error: "Ticket not found." });
+      const assessment = await recordPriorityAssessment(ticketId, inputs, ticket.organizationId, auth.session.userId, deps);
       return json(201, { assessment });
     }
     const { ticketId, organizationId, candidates } = body;
