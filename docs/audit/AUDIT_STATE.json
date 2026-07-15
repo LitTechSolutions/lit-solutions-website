@@ -46,7 +46,7 @@
     }
   },
   "findingIdRange": {
-    "next": "F043",
+    "next": "F044",
     "note": "IDs are derived from real findings only; there is no predetermined catalog size such as F001-F060."
   },
   "findings": {
@@ -397,12 +397,12 @@
       "resolutionNote": "Fixed: added flex-shrink:0 and an explicit bar width so the icon no longer distorts; also added an invisible ::before hit-slop to theme-toggle/search-toggle/nav-toggle so touch targets reach ~44px without growing visible chrome. Verified via mobile (375) and desktop (1280) presets."
     },
     "F043": {
-      "severity": "Low",
+      "severity": "High",
       "status": "Resolved",
-      "domainSession": 9,
-      "commit": "05bf40b",
-      "summary": "Eyebrow labels on fixed-dark hero bands (.hero/.page-hero/.intake-hero/.contact) used the theme-adaptive --accent-teal, which fell to a sub-AA 4.40:1 contrast ratio against the dark background specifically in light theme",
-      "resolutionNote": "Fixed: added a fixed --accent-teal-on-dark constant (matching --on-dark's existing pattern) and pointed all four dark-band eyebrow rules at it, plus added the missing .hero .eyebrow rule and removed a conflicting inline style. Verified 8.81:1/7.47:1 contrast in light theme."
+      "domainSession": "post-v3-remediation",
+      "summary": "website-designer.html loads jsPDF from cdnjs, but netlify.toml's CSP restricts script-src to 'self' -- production silently blocks the script, so buildPdf() always returns null: the PDF download button no-ops and full submissions send pdfBase64: null despite the UI claiming a PDF was built.",
+      "commit": "139f473",
+      "resolutionNote": "Fixed: vendored jsPDF 2.5.2 (UMD, pinned, LICENSE included) under assets/vendor/jspdf/; page now loads the local copy, no CSP change needed. Added JSPDF_READY readiness check, disabled/accessible-error state on the download button, and a hard stop (with accessible error) on full-brief submission if buildPdf() fails, instead of silently sending no PDF. Added test/website-designer-pdf.test.js (5 tests) and live browser verification."
     },
     "F044": {
       "severity": "Low",
@@ -438,8 +438,8 @@
     }
   },
   "counts": {
-    "total": 47,
-    "resolved": 47,
+    "total": 48,
+    "resolved": 48,
     "ownerDecisionOpen": 0,
     "engineeringOpen": 0
   },
