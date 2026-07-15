@@ -4,3 +4,9 @@ node_modules/
 deno.lock
 .env
 .env.*
+
+# Care Hub (care-hub-app/) build output -- generated fresh by
+# netlify.toml's build.command on every deploy (npm --prefix
+# care-hub-app run build), so it doesn't belong in source control, same
+# as any other build artifact. Source lives in care-hub-app/src/.
+/care-hub/

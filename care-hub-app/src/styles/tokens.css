@@ -1,0 +1,97 @@
+/* =========================================================
+   Care Hub design tokens -- copied from ../../../css/style.css's
+   "Precision Signal" palette, NOT re-derived or reinterpreted.
+
+   These are the same variable NAMES and VALUES the public marketing
+   site uses, so the Care Hub reads as the same product, not a
+   different app wearing the same logo. There is no build-time or
+   runtime mechanism sharing this file with css/style.css (the public
+   site is intentionally build-less and un-bundled) -- if the source
+   palette in css/style.css changes, this file must be updated by hand
+   to match. Only the token declarations are copied here, not any of
+   css/style.css's page-specific component rules.
+   ========================================================= */
+:root {
+  /* Color */
+  --paper: #FAFAF9;
+  --paper-alt: #FFFFFF;
+  --ink: #14161A;
+  --ink-soft: #5B6169;
+  --ink-faint: #868C94;
+  --line: #E5E7EB;
+  --line-strong: #C7CBD1;
+  --accent-orange: #3548C4;
+  --accent-orange-dark: #3548C450;
+  --accent-teal: #0E8C6B;
+  --navy-deep: #10131C;
+  --navy-mid: #1B2333;
+
+  --on-dark: #F5F5F4;
+
+  --accent-orange-text: #2C3AA0;
+  --accent-teal-text: #0B7A5C;
+
+  --select-bg: #E7F5EF;
+  --select-border: #0E8C6B;
+
+  --error-bg: #FDECEA;
+  --error-border: #D93F3F;
+  --error-text: #A32E2E;
+
+  --notice-bg: #FCF3E3;
+  --notice-bg-strong: #F7E6C4;
+  --notice-border: #D9A44D;
+  --notice-text: #7A5615;
+  --notice-text-strong: #5C3F0A;
+  --notice-icon: #C97A2E;
+
+  /* Type */
+  --font-heading: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  --font-body: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Layout */
+  --wrap: 1180px;
+  --radius: 8px;
+  --header-h: 76px;
+
+  /* New tokens, Care Hub only -- the public site has no app shell, so
+     these didn't exist upstream. Derived from existing values (spacing
+     scale relative to --radius, focus ring from --accent-orange) rather
+     than invented independently, so they still feel native to the
+     palette above. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--accent-orange) 45%, transparent);
+  --sidebar-w: 240px;
+}
+
+:root[data-theme="dark"] {
+  --paper: #101216;
+  --paper-alt: #191C22;
+  --ink: #EDEEF0;
+  --ink-soft: #AEB3BB;
+  --ink-faint: #7D838C;
+  --line: #2B2E35;
+  --line-strong: #3D414A;
+  --accent-orange: #5566D9;
+  --accent-teal: #34C99A;
+  --accent-orange-text: #7E8CE8;
+  --accent-teal-text: #34C99A;
+  --select-bg: #0F2B22;
+  --select-border: #34C99A;
+  --error-bg: #3A1B18;
+  --error-border: #FF6B5C;
+  --error-text: #FF9A8C;
+  --notice-bg: #2A2313;
+  --notice-bg-strong: #2E2018;
+  --notice-border: #4A3A1E;
+  --notice-text: #E8C078;
+  --notice-text-strong: #F0D6A0;
+  --notice-icon: #E8935C;
+}

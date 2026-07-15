@@ -1,0 +1,155 @@
+/* App shell layout -- new to the Care Hub, no public-site equivalent
+   (the marketing site has a header/footer, not a persistent
+   sidebar/topbar app frame). Still built from the same tokens (spacing
+   scale, --radius, --line, --accent-orange) as everything else. */
+
+.app-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  grid-template-rows: var(--header-h) 1fr;
+  grid-template-areas:
+    "sidebar topbar"
+    "sidebar main";
+}
+
+@media (max-width: 860px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: var(--header-h) auto 1fr;
+    grid-template-areas:
+      "topbar"
+      "sidebar"
+      "main";
+  }
+  .app-sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+  }
+  .app-sidebar__nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+}
+
+.app-topbar {
+  grid-area: topbar;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: 0 var(--space-5);
+  border-bottom: 1px solid var(--line);
+  background: var(--paper-alt);
+}
+
+.app-topbar__brand {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.app-topbar__brand strong {
+  color: var(--accent-orange-text);
+}
+
+.app-sidebar {
+  grid-area: sidebar;
+  border-right: 1px solid var(--line);
+  background: var(--paper-alt);
+  padding: var(--space-5) var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.app-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.app-sidebar__link {
+  display: block;
+  padding: var(--space-3) var(--space-3);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.app-sidebar__link:hover {
+  background: var(--paper);
+  color: var(--ink);
+}
+.app-sidebar__link[aria-current="page"] {
+  background: var(--select-bg);
+  color: var(--accent-teal-text);
+}
+
+.app-main {
+  grid-area: main;
+  padding: var(--space-6) var(--space-5);
+  max-width: 960px;
+}
+
+/* Shared state screens (loading / empty / error / unauthorized /
+   session-expired) -- one visual language for "nothing to show you
+   right now, here's why," used everywhere a data view can come up
+   short. */
+.state-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-alt);
+  max-width: 480px;
+}
+.state-screen__icon {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+}
+.state-screen__title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+.state-screen__body {
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+}
+.state-screen--error {
+  border-color: var(--error-border);
+  background: var(--error-bg);
+}
+.state-screen--error .state-screen__title {
+  color: var(--error-text);
+}
+.state-screen--notice {
+  border-color: var(--notice-border);
+  background: var(--notice-bg);
+}
+.state-screen--notice .state-screen__title {
+  color: var(--notice-text-strong);
+}
+
+.spinner {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 3px solid var(--line-strong);
+  border-top-color: var(--accent-orange);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}

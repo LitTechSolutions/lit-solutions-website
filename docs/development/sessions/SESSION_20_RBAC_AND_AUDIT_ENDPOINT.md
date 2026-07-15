@@ -127,6 +127,78 @@ to be persisted in a log entry about the fact a query happened).
   `mfa.challenge.failure`, `mfa.recovery_code.used`, `mfa.disable`,
   `mfa.reset`. Secrets and recovery codes are never logged anywhere.
 
+### Step 4 -- React/Vite/TypeScript Care Hub scaffold
+
+New top-level `care-hub-app/` -- a separately-scoped, minimal-dependency
+React + Vite + TypeScript project (only `react`, `react-dom`,
+`react-router-dom` as runtime deps), source-controlled but excluded from
+the deploy upload via the new `.netlifyignore`. Builds to `../care-hub`
+(repo root, gitignored -- a generated artifact, not source), which
+`netlify.toml`'s new `build.command` produces fresh on every real
+deploy and which is what actually gets served at `/care-hub/`. The
+public marketing site's `netlify.toml` behavior (`publish = "."`, no
+prior build command) is otherwise completely unchanged -- every one of
+the 33 public HTML pages is still a plain static file with zero build
+step, exactly as before.
+
+- **Design tokens**: `src/styles/tokens.css` copies (not references --
+  the public site has no shared build step to import from) the exact
+  variable names/values from `css/style.css`'s `:root`/
+  `:root[data-theme="dark"]` blocks, plus a small set of new Care-Hub-
+  only tokens (spacing scale, focus ring, sidebar width) derived from
+  the existing palette rather than invented independently.
+  `global.css`/`app-shell.css` reuse the public site's exact reset,
+  focus-visible, skip-link, and `.btn` conventions so a Care Hub screen
+  and a marketing page read as the same product.
+- **Typed API client** (`src/api/`): `client.ts` has one typed method
+  group per backend endpoint file -- all 24 resource endpoints plus the
+  auth-login/mfa-enroll/mfa-verify/mfa-manage/auth-logout login flow --
+  with request/response shapes taken directly from each endpoint's own
+  route comment and its store's `mapRowTo*()` function (`types.ts`), not
+  guessed from REST convention. `errors.ts` defines a typed error
+  hierarchy (`SessionExpiredError`/`ForbiddenError`/`RateLimitedError`/
+  `RequestError`/`NetworkError`) so calling code branches on error TYPE,
+  not a raw re-checked status code. `http.ts` is the single fetch
+  wrapper every method goes through, always same-origin credentialed
+  (the session cookie is HttpOnly -- this app never reads or stores it).
+- **Shared UI states**: `src/components/states/` (Loading, EmptyState,
+  ErrorState, UnauthorizedState, SessionExpiredState), all built on one
+  accessible `StateScreen` primitive (`role="alert"` for errors,
+  `role="status"` + `aria-live="polite"` otherwise). `src/hooks/useApi.ts`
+  reduces any API call into loading/success/empty/error/unauthorized/
+  expired automatically, using the typed error hierarchy above --
+  `routes/Dashboard.tsx` demonstrates the full cycle against the real
+  `account.js` endpoint.
+- **App shell**: `src/components/AppShell.tsx` (topbar + sidebar,
+  landmark roles, skip link) + `src/App.tsx` (React Router, `basename:
+  "/care-hub"`). `/tickets`, `/checklists`, `/account` are honest
+  `ComingSoon` placeholders, not fake finished screens -- those are
+  steps 5-6, not this scaffolding pass.
+- **Localization-ready strings**: every user-facing string lives in
+  `src/strings/en.ts`, one file, English-only per the directive ("Do not
+  localize the Care Hub into all 16 languages yet... localization-ready
+  string organization") -- no inline JSX copy to hunt down later.
+- **Netlify wiring**: `netlify.toml` gained `build.command` (scoped to
+  `care-hub-app/` only) and a `/care-hub/* -> /care-hub/index.html`
+  (200) SPA-fallback redirect, placed before the existing catch-all
+  `/* -> /404.html` (404) rule since redirects match in order.
+  `robots.txt` gained `Disallow: /care-hub/` (the app itself is also
+  `<meta name="robots" content="noindex, nofollow">`, belt-and-suspenders).
+  New `.netlifyignore` excludes `care-hub-app/` (source) from the
+  publish upload -- only its build output is ever served.
+- **Verified, not just built**: `npm run build` (from `care-hub-app/`,
+  and via the exact `netlify.toml` command string from the repo root)
+  both produce a working `/care-hub/index.html` + hashed JS/CSS bundle.
+  Loaded in a real browser via `vite preview`: confirmed dark/light
+  theme (shared `localStorage` key with the public site), responsive
+  sidebar/topbar collapse below 860px, client-side routing (including a
+  hard refresh on a deep link, e.g. `/care-hub/tickets`), active-nav
+  `aria-current` styling, and the `ErrorState` screen rendering
+  correctly for a real failed API call (no backend running in preview
+  mode). No auth screens exist yet, so the full loading -> success path
+  couldn't be exercised against a real signed-in session this session --
+  that's step 5.
+
 ## Test results
 
 - rbac.js: +2 cases (platform_admin has every technician ticket
@@ -198,25 +270,31 @@ to be persisted in a log entry about the fact a query happened).
 
 ## What's still not done
 
-Steps 4-10 of Dylan's directive are **not started** -- each is
+Steps 5-10 of Dylan's directive are **not started** -- each is
 substantial enough to be its own session(s), and none was silently
-begun or partially built this session:
+begun or partially built this session. Step 4 delivered a scaffold
+(config, tokens, typed client, shared states, app shell, one real
+demo route) -- deliberately not real feature screens:
 
-1. **The React/Vite/TypeScript Care Hub itself** -- no UI exists
-   anywhere for any Care Hub feature, including no MFA enrollment/
-   challenge screens for the backend built this session. This is the
-   single largest remaining body of work.
-2. Authentication and account shell inside that UI.
-3. Tickets and checklists UI, including the customer/staff data split
+1. **Real authentication UI** -- a login form, the MFA enrollment flow
+   (QR/secret display, code confirmation, recovery-code display), the
+   MFA challenge screen (code or recovery code), and session-state
+   wiring (right now `App.tsx` renders the shell unconditionally; there
+   is no "am I signed in" gate yet).
+2. Tickets and checklists UI, including the customer/staff data split
    for readiness checklists (`customerEditable`/`audience` property,
    separate staff-only notes/verification/approval fields) -- not yet
    built at the persistence or endpoint layer either.
-4. Wiring the remaining 22 endpoints into the UI.
-5. Square Sandbox integration and fail-closed email configuration.
-6. The legal drafts (data-flow/processor inventory, draft Privacy
+3. Wiring the remaining ~20 endpoints into real screens -- the typed
+   client covers all of them, but only `Dashboard.tsx` (via
+   `account.js`) actually calls one from a rendered route.
+4. Square Sandbox integration and fail-closed email configuration.
+5. The legal drafts (data-flow/processor inventory, draft Privacy
    Policy, draft Care Hub Terms of Service, launch-time legal review
    checklist) -- all explicitly DRAFT-only per Dylan's directive.
-7. Accessibility, security, responsive, and end-to-end testing.
+6. Accessibility, security, responsive, and end-to-end testing at
+   real-feature scale (this session's browser verification covered the
+   scaffold's shell/states/routing/theming, not a full audit).
 
 ## Files changed
 
@@ -255,3 +333,17 @@ begun or partially built this session:
   `docs/development/DEV_INDEX.md`, `docs/development/DECISION_LOG.md`
   (+4 entries for step 3), `docs/development/DEPLOYMENT_PLAN.md`
   (`MFA_ENCRYPTION_KEY` documented).
+- New (step 4, Care Hub scaffold): `care-hub-app/` (new project --
+  `package.json`, `tsconfig.json`, `vite.config.ts`, `index.html`,
+  `README.md`, and under `src/`: `main.tsx`, `App.tsx`,
+  `vite-env.d.ts`, `api/{client,errors,http,types}.ts`,
+  `components/AppShell.tsx`, `components/states/{StateScreen,Loading,
+  EmptyState,ErrorState,UnauthorizedState,SessionExpiredState}.tsx`,
+  `hooks/useApi.ts`, `routes/{Dashboard,ComingSoon,NotFound}.tsx`,
+  `strings/en.ts`, `styles/{tokens,global,app-shell}.css`).
+- New: `.netlifyignore` (excludes `care-hub-app/` from the publish
+  upload).
+- Modified: `netlify.toml` (+`build.command` scoped to `care-hub-app/`,
+  +`/care-hub/*` SPA-fallback redirect before the existing catch-all),
+  `.gitignore` (+`/care-hub/`, the gitignored build output directory),
+  `robots.txt` (+`Disallow: /care-hub/`).

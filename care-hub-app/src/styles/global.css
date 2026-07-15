@@ -1,0 +1,210 @@
+/* =========================================================
+   Care Hub base styles -- resets and primitives deliberately mirror
+   ../../../css/style.css's conventions (box-sizing, focus-visible ring,
+   .visually-hidden, .skip-link, .btn variants) so a component built
+   here behaves and feels identical to the public site, even though
+   this is a separate stylesheet with no shared build step. Only
+   app-shell-specific rules (sidebar, topbar, state screens) are new.
+   ========================================================= */
+@import "./tokens.css";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+p {
+  margin: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: var(--navy-mid);
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  z-index: 200;
+  border-radius: 0 0 var(--radius) 0;
+  transform: translateY(-100%);
+}
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-orange);
+  outline-offset: 3px;
+}
+
+.wrap {
+  width: 100%;
+  max-width: var(--wrap);
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+/* Buttons -- same shape/family as the public site's .btn/.btn-primary/
+   .btn-ghost so a Care Hub screen and a marketing page never look like
+   different products side by side. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.01em;
+  padding: 0.85rem 1.5rem;
+  border-radius: var(--radius);
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none !important;
+}
+.btn-primary {
+  background: var(--accent-orange);
+  color: #ffffff;
+}
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: #4a5ad1;
+}
+.btn-ghost {
+  background: transparent;
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+.btn-ghost:hover:not(:disabled) {
+  border-color: var(--ink);
+}
+.btn-block {
+  width: 100%;
+}
+.btn-small {
+  padding: 0.55rem 1.1rem;
+  font-size: 0.8rem;
+}
+
+/* Form fields -- new to the Care Hub (the public site has few real
+   forms outside intake.html, which doesn't share this component set). */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.field label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.field input,
+.field select,
+.field textarea {
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--radius);
+  padding: 0.65rem 0.85rem;
+  background: var(--paper-alt);
+  color: var(--ink);
+  font-size: 0.95rem;
+}
+.field input:focus-visible,
+.field select:focus-visible,
+.field textarea:focus-visible {
+  outline: 2px solid var(--accent-orange);
+  outline-offset: 1px;
+}
+.field-error {
+  color: var(--error-text);
+  font-size: 0.82rem;
+}
+.field-error[hidden] {
+  display: none;
+}
+
+/* Card -- the generic content container used by every state screen and
+   most resource views. */
+.card {
+  background: var(--paper-alt);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-5);
+}

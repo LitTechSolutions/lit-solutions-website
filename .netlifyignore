@@ -1,0 +1,9 @@
+# Excludes files from the Netlify deploy UPLOAD even though publish = "."
+# (repo root) technically covers them -- gitignore syntax, applied after
+# the build command runs. This is distinct from .gitignore: node_modules
+# is never uploaded because it's git-ignored (Netlify builds from a git
+# clone), but care-hub-app/ itself IS committed to git (it's the Care
+# Hub's real source) and must still be kept out of the served static
+# site -- only its build OUTPUT (../care-hub, built by netlify.toml's
+# build.command) should ever be publicly reachable.
+care-hub-app/

@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /care-hub/
 
 Sitemap: https://lit-solutions.tech/sitemap.xml
