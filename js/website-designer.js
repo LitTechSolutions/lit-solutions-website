@@ -64,6 +64,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const mobileBarEl = document.getElementById('wdMobileBar');
   const mobileBarAmountEl = document.getElementById('wdMobileBarAmount');
   const mobileReviewBtn = document.getElementById('wdMobileReviewBtn');
+  // Keeps --wd-mobile-bar-height (css/style.css) equal to the bar's real
+  // rendered height at all times, so the page/footer bottom padding and
+  // the open cookie banner's clearance above the bar (both computed from
+  // that variable) stay correct as its content changes size -- a longer
+  // translated "Review & submit" label wrapping to two lines, or the page
+  // being zoomed, grows the reserved space right along with it instead of
+  // leaving a gap that's too tight or actually overlapping. Called directly
+  // at every point the bar's size could change, rather than relying only on
+  // ResizeObserver's own initial-fire timing.
+  function syncMobileBarHeight() {
+    if (mobileBarEl) document.documentElement.style.setProperty('--wd-mobile-bar-height', `${mobileBarEl.offsetHeight}px`);
+  }
+  if (mobileBarEl && 'ResizeObserver' in window) {
+    new ResizeObserver(syncMobileBarHeight).observe(mobileBarEl);
+  }
+  window.addEventListener('resize', syncMobileBarHeight);
   // jsPDF is loaded via a blocking <script src> (vendored locally, see
   // assets/vendor/jspdf/) before this file, so by the time this line runs
   // window.jspdf is either fully present or the load genuinely failed --
@@ -982,6 +998,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!draft) saveDraft();
         if (mobileBarEl) mobileBarEl.classList.add('is-visible');
         document.body.classList.add('has-mobile-bar');
+        syncMobileBarHeight();
         showPanel(draft && draft.quickLeadId ? '4' : '2');
       })
       .catch(err => {
@@ -1447,6 +1464,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateBriefVisibility();
     renderCategoryChips();
     applyFeatureFilters();
+    syncMobileBarHeight();
   });
 
   // Resume an interrupted session (accidental refresh/navigation) --
