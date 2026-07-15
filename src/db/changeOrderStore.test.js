@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { createChangeOrder, getChangeOrderById } = require("./changeOrderStore");
+const { createChangeOrder, getChangeOrderById, listChangeOrdersForOrganization } = require("./changeOrderStore");
 
 const FIXED_NOW = () => new Date("2026-07-14T12:00:00.000Z");
 let idCounter = 0;
@@ -67,4 +67,11 @@ test("no change order can exist approved without going through the shared approv
 test("getChangeOrderById returns null for no match", async () => {
   const sql = fakeSql([]);
   assert.equal(await getChangeOrderById("nope", { sql }), null);
+});
+
+test("listChangeOrdersForOrganization orders by created_at DESC", async () => {
+  const sql = fakeSql([{ id: "co-1", organization_id: "org-a", original_scope_id: "scope-1", description: "x", added_line_items: [], created_at: "2026-07-01T00:00:00.000Z", created_by: "u" }]);
+  const list = await listChangeOrdersForOrganization("org-a", { sql });
+  assert.equal(list.length, 1);
+  assert.match(sql.calls[0].text, /ORDER BY created_at DESC/);
 });

@@ -48,13 +48,23 @@ const ROLE_CAPABILITIES = {
     "note.internal.write",
     "worklog.write",
     "website_it_ops.perform",
+    // Scope-of-work/change-order drafting is technician/staff work tied
+    // to a specific ticket -- same per-resource "assigned" gate as
+    // ticket.view/ticket.work, not a standing org-wide capability.
+    "scope.create",
+    "scope.view",
+    "change_order.create",
+    "change_order.view",
   ]),
   org_owner: new Set([
     "organization.view",
     "member.invite",
     "approval.view",
     "scope.approve",
+    "scope.view",
     "change_order.approve",
+    "change_order.view",
+    "payment.view",
     "preference.manage",
   ]),
   org_member: new Set([
@@ -65,8 +75,11 @@ const ROLE_CAPABILITIES = {
     "file.upload",
     "file.view",
     "document.view",
+    "scope.view",
+    "change_order.view",
+    "payment.view",
   ]),
-  read_only_customer: new Set(["project.view", "document.view", "report.view", "history.view"]),
+  read_only_customer: new Set(["project.view", "document.view", "report.view", "history.view", "scope.view", "change_order.view", "payment.view"]),
 };
 
 // Actions that operate on a specific organization's data and therefore
@@ -82,7 +95,12 @@ const ORG_SCOPED_ACTIONS = new Set([
   "member.invite",
   "approval.view",
   "scope.approve",
+  "scope.create",
+  "scope.view",
   "change_order.approve",
+  "change_order.create",
+  "change_order.view",
+  "payment.view",
   "preference.manage",
   "request.submit",
   "request.view",

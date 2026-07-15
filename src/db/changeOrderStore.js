@@ -62,6 +62,17 @@ async function getChangeOrderById(id, deps = {}) {
   return rows.length > 0 ? mapRowToChangeOrder(rows[0]) : null;
 }
 
+/**
+ * @param {string} organizationId
+ * @param {{ sql?: Function }} [deps]
+ * @returns {Promise<import("../domain/changeOrder").ChangeOrder[]>}
+ */
+async function listChangeOrdersForOrganization(organizationId, deps = {}) {
+  const sql = deps.sql || getSql();
+  const rows = await sql`SELECT * FROM change_orders WHERE organization_id = ${organizationId} ORDER BY created_at DESC`;
+  return rows.map(mapRowToChangeOrder);
+}
+
 function mapRowToChangeOrder(row) {
   return {
     id: row.id,
@@ -74,4 +85,4 @@ function mapRowToChangeOrder(row) {
   };
 }
 
-module.exports = { createChangeOrder, getChangeOrderById, mapRowToChangeOrder, DEFAULT_APPROVAL_WINDOW_DAYS };
+module.exports = { createChangeOrder, getChangeOrderById, listChangeOrdersForOrganization, mapRowToChangeOrder, DEFAULT_APPROVAL_WINDOW_DAYS };

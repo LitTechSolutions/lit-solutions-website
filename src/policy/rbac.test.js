@@ -183,6 +183,57 @@ test("technician allowed on resource with explicit assignment", () => {
   assert.equal(decision.allowed, true);
 });
 
+test("technician can draft a scope of work only for a ticket they're assigned to", () => {
+  const denied = authorize({ actorRole: "technician", action: "scope.create", actorOrgId: null, resourceOrgId: ORG_A });
+  assert.equal(denied.allowed, false);
+  const allowed = authorize({ actorRole: "technician", action: "scope.create", actorOrgId: null, resourceOrgId: ORG_A, assigned: true });
+  assert.equal(allowed.allowed, true);
+});
+
+test("all three customer roles and technician can view a scope of work within their own org", () => {
+  for (const role of ["org_owner", "org_member", "read_only_customer"]) {
+    const decision = authorize({ actorRole: role, action: "scope.view", actorOrgId: ORG_A, resourceOrgId: ORG_A, actorMembershipStatus: "active" });
+    assert.equal(decision.allowed, true, `${role} should be able to view scope.view within their own org`);
+  }
+  const technicianDecision = authorize({ actorRole: "technician", action: "scope.view", actorOrgId: null, resourceOrgId: ORG_A, assigned: true });
+  assert.equal(technicianDecision.allowed, true);
+});
+
+test("scope.view is still org-scoped -- cannot view another organization's scope of work", () => {
+  const decision = authorize({ actorRole: "org_owner", action: "scope.view", actorOrgId: ORG_A, resourceOrgId: ORG_B, actorMembershipStatus: "active" });
+  assert.equal(decision.allowed, false);
+});
+
+test("technician can draft a change order only for a ticket they're assigned to", () => {
+  const denied = authorize({ actorRole: "technician", action: "change_order.create", actorOrgId: null, resourceOrgId: ORG_A });
+  assert.equal(denied.allowed, false);
+  const allowed = authorize({ actorRole: "technician", action: "change_order.create", actorOrgId: null, resourceOrgId: ORG_A, assigned: true });
+  assert.equal(allowed.allowed, true);
+});
+
+test("all three customer roles and technician can view a change order within their own org", () => {
+  for (const role of ["org_owner", "org_member", "read_only_customer"]) {
+    const decision = authorize({ actorRole: role, action: "change_order.view", actorOrgId: ORG_A, resourceOrgId: ORG_A, actorMembershipStatus: "active" });
+    assert.equal(decision.allowed, true, `${role} should be able to view change_order.view within their own org`);
+  }
+  const technicianDecision = authorize({ actorRole: "technician", action: "change_order.view", actorOrgId: null, resourceOrgId: ORG_A, assigned: true });
+  assert.equal(technicianDecision.allowed, true);
+});
+
+test("customer roles (not technician, not platform_admin) can view their own org's payment requests", () => {
+  for (const role of ["org_owner", "org_member", "read_only_customer"]) {
+    const decision = authorize({ actorRole: role, action: "payment.view", actorOrgId: ORG_A, resourceOrgId: ORG_A, actorMembershipStatus: "active" });
+    assert.equal(decision.allowed, true, `${role} should be able to view payment.view within their own org`);
+  }
+  const technicianDecision = authorize({ actorRole: "technician", action: "payment.view", actorOrgId: null, resourceOrgId: ORG_A, assigned: true });
+  assert.equal(technicianDecision.allowed, false, "billing is not a technician concern");
+});
+
+test("payment.view is still org-scoped -- cannot view another organization's payment requests", () => {
+  const decision = authorize({ actorRole: "org_member", action: "payment.view", actorOrgId: ORG_A, resourceOrgId: ORG_B, actorMembershipStatus: "active" });
+  assert.equal(decision.allowed, false);
+});
+
 test("automated_service denied without an explicit per-call grant", () => {
   const decision = authorize({
     actorRole: "automated_service",

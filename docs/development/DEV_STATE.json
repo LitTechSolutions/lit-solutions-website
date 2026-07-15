@@ -1,83 +1,84 @@
 {
   "developmentVersion": "1.0",
-  "currentSession": 17,
-  "completedSessions": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
+  "currentSession": 18,
+  "completedSessions": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
   "nextSession": null,
-  "currentWave": "Invite-only customer registration (F002) fully built and live-verified end to end: invitationLifecycle.js, invitationStore.js, consentStore.js, invitations.js (admin management) and invitation-accept.js (public activation). Open self-registration (auth-register.js) preserved but gated behind a disabled-by-default open_registration feature flag. 5 of ~21 planned endpoints now exist. Consent capture (F007's first real piece) is wired into account activation.",
+  "currentWave": "The full customer-facing commercial flow is now live end to end over HTTP: submit a ticket, get a scope of work drafted, get a change order drafted against it (with a real paired approval), get a payment schedule computed, get it marked paid. 9 of ~21 planned endpoints now exist: tickets, organizations, work-queue, approvals, invitations, invitation-accept, scope-of-work, change-orders, payment-requests. Registration model resolved (Session 17); remaining owner decisions and endpoints are unchanged from Session 17's list.",
   "currentFunctionIds": [],
   "branch": "feature/business-care-hub",
   "baselineCommit": "1570734",
-  "workspaceNote": "This workspace (LTS Stand Alone Software) is a full copy of Development/Business Website/Website Code/v23, including .git and origin remote. v23 itself was not modified. Standing instruction: everything stays local to this workspace for the entire build -- no push, no merge into a new vN folder or main. Dylan granted bypass permission (2026-07-14) to take care of everything without interruption, with that one hard constraint. Session 17 began under a very large autonomous-continuation directive (17 endpoints, retention/deletion, privacy/consent, remote-support boundaries, F060 AI, F001-F060 workbook regeneration); given the scope, this session delivered the #1 explicitly-prioritized item (invite-only registration) completely and rigorously rather than attempting all of it shallowly -- see the session doc for the explicit scope decision and what remains.",
+  "workspaceNote": "This workspace (LTS Stand Alone Software) is a full copy of Development/Business Website/Website Code/v23, including .git and origin remote. v23 itself was not modified. Standing instruction: everything stays local to this workspace for the entire build -- no push, no merge into a new vN folder or main. Dylan granted bypass permission (2026-07-14) to take care of everything without interruption, with that one hard constraint. Session 17 began under a very large autonomous-continuation directive (17 endpoints, retention/deletion, privacy/consent, remote-support boundaries, F060 AI, F001-F060 workbook regeneration); Session 17 delivered the #1 priority (invite-only registration). Session 18 continued down the customer-facing endpoint priority (item #2 of the directive's implementation order) with the commercial flow (F026/F027/F028).",
   "applicationCodeModified": true,
   "productionModified": false,
   "requirementsPackageLoaded": true,
   "auditAvailable": true,
   "auditBlockers": [
-    "audit finding F006 (Critical, open): Privacy Policy under-discloses actual data collection -- consent CAPTURE mechanics now exist (this session), but the Privacy Policy content itself (privacy.html) was not rewritten -- still open, needs attorney-reviewed wording per OWNER_DECISIONS.md #6",
+    "audit finding F006 (Critical, open): Privacy Policy under-discloses actual data collection -- consent CAPTURE mechanics exist (Session 17), but Privacy Policy content (privacy.html) is unchanged -- still open, needs attorney-reviewed wording per OWNER_DECISIONS.md #6",
     "audit finding F007 (Critical, open): Resend not named as sub-processor in Privacy Policy -- same as above, content not yet updated",
     "audit finding F011 (High, open, owner decision): Square terms-gate bypassable via direct link -- relevant to F028, still unresolved",
-    "audit finding F016 (High, open, pre-Session-1): zero automated tests anywhere in the pre-Care-Hub repository -- 504 unit tests now exist in total; 5 Netlify Function endpoints (tickets, organizations, work-queue, approvals, invitations, invitation-accept -- 6 counting both invitation endpoints) have their own tests plus live smoke tests; the finding still describes everything else outside src/ and these endpoints",
+    "audit finding F016 (High, open, pre-Session-1): zero automated tests anywhere in the pre-Care-Hub repository -- 541 unit tests now exist in total; 9 Netlify Function endpoints have their own tests plus live smoke tests; the finding still describes everything else outside src/ and these endpoints",
     "audit finding F018 (High, open): partially addressed in src/policy/ticketSubmission.js (Session 3); the live intake.html form itself is untouched",
-    "audit finding F033 (owner decision): registration model -- ✅ RESOLVED this session, invite-only. See OWNER_DECISIONS.md #4."
+    "audit finding F033 (owner decision): registration model -- ✅ RESOLVED Session 17, invite-only. See OWNER_DECISIONS.md #4."
   ],
   "buildStatus": "not-applicable",
-  "testStatus": "passing (504/504 unit tests, npm test / node --test full discovery, 2026-07-15; PLUS the Session 13 4-function live smoke test, the Session 14 entitlement-limit live seed, the Session 15 tickets.js endpoint smoke test, the Session 16 3-endpoint smoke test, and this session's 15-check live smoke test of the full invitation lifecycle -- evidence/migrations/session-17-invitations-live-smoke-test.txt, all PASS)",
+  "testStatus": "passing (541/541 unit tests, npm test / node --test full discovery, 2026-07-15; PLUS the Session 13 4-function live smoke test, the Session 14 entitlement-limit live seed, the Session 15 tickets.js smoke test, the Session 16 3-endpoint smoke test, the Session 17 invitation-lifecycle smoke test, and this session's 12-check live smoke test of the full commercial flow -- evidence/migrations/session-18-commercial-endpoints-live-smoke-test.txt, all PASS)",
   "lintStatus": "not-run",
   "typeCheckStatus": "not-run",
-  "migrationStatus": "EXECUTED against the live Neon database. Session 13: 37 tables (001_initial_schema.sql). Session 17: migration 002 (002_invitations_and_consent.sql) -- extended invitations with token_hash/revoked_at/revoked_by/resend_count/last_sent_at, added consent_records table. 38 tables total now. NOTE: sql.unsafe() does not execute DDL in this driver (see DECISION_LOG.md) -- use sql.query(statement), one statement per call, and always verify with information_schema afterward.",
-  "deploymentStatus": "not-deployed. Six Netlify Function endpoints now exist (tickets, organizations, work-queue, approvals, invitations, invitation-accept) and are locally verified; nothing is deployed or reachable from the public internet.",
+  "migrationStatus": "EXECUTED against the live Neon database. 38 tables (001 + 002). No schema changes this session -- all three new endpoints reuse existing tables (scope_of_work, change_orders, approval_requests, payment_requests).",
+  "deploymentStatus": "not-deployed. Nine Netlify Function endpoints now exist (tickets, organizations, work-queue, approvals, invitations, invitation-accept, scope-of-work, change-orders, payment-requests) and are locally verified; nothing is deployed or reachable from the public internet.",
   "implementedFunctions": [
-    "42 functions have real, tested domain/policy/persistence logic (F002 newly complete); 30 with real Postgres persistence. 6 are additionally VERIFIED against a live database at the store layer, and now 6 endpoints are HTTP-layer live-verified.",
-    "This session (17): F002 (Customer Invitation & Account Activation) built completely -- policy engine, persistence, two endpoints, live-verified. First real piece of F007 (Terms/Privacy/Consent) also landed: consent capture at account activation (consentStore.js, domain/consent.js), though the Privacy Policy CONTENT itself is unchanged (see auditBlockers)."
+    "42 functions have real, tested domain/policy/persistence logic; 30 with real Postgres persistence. 6 are additionally VERIFIED against a live database at the store layer, and now 9 endpoints are HTTP-layer live-verified.",
+    "This session (18): three more endpoints completing the customer-facing commercial flow -- scope-of-work.js (F026), change-orders.js (F027), payment-requests.js (F028). Also added changeOrderStore.listChangeOrdersForOrganization() (was missing -- every other store has a list function) and three new honest rbac.js capabilities (scope.create/scope.view, change_order.create/change_order.view, payment.view), reusing the existing billing.reconcile capability for payment creation/transitions rather than inventing a redundant one."
   ],
   "verifiedFunctions": ["F001", "F005", "F008", "F019", "F023"],
   "blockedFunctions": [
-    "F007 content, F058 (privacy policy wording + retention rules) -- consent CAPTURE mechanics exist now, but policy content/wording and retention rules themselves are unbuilt, OWNER_DECISIONS.md #5-6",
+    "F007 content, F058 (privacy policy wording + retention rules) -- consent CAPTURE mechanics exist (Session 17), but policy content/wording and retention rules themselves are unbuilt, OWNER_DECISIONS.md #5-6",
     "F013, F014 (deferred by design -- existing Blobs messages/documents stores reused as-is)",
     "F035/F036/F038/F039/F040 (check-EXECUTION engines not built -- needs the website-audit spec adapted)",
-    "F060 (AI gate, unchanged -- not attempted this session)"
+    "F060 (AI gate, unchanged -- not attempted yet)"
   ],
   "notStartedThisSessionByDesign": [
-    "F003, F004, F006, F059, F011, F018, F024, F030, F045, F034, F009, F012, F015 -- see prior session entries, unchanged. MFA for administrator accounts (explicitly required at launch per the approved directive) was NOT built this session -- flagged, not silently dropped. Retention/deletion/legal-hold system, remote-support/automation boundary enforcement, F060 AI implementation, and F001-F060 workbook regeneration were all explicitly in scope for the larger directive this session responded to, but none were started -- see the session doc for why (scope realism, not oversight)."
+    "F003, F004, F006, F059, F011, F018, F024, F030, F045, F034, F009, F012, F015 -- see prior session entries, unchanged. MFA for administrator accounts, the full retention/deletion/legal-hold system, remote-support/automation boundary enforcement, F060 AI implementation, and F001-F060 workbook regeneration remain not started -- all were part of Session 17's originating large directive and are itemized there, not re-derived here."
   ],
   "ownerDecisionsRequired": [
     "Primary data store -- ✅ RESOLVED 2026-07-14 (Session 10).",
     "Pricing, discounts, deposits, payment timing -- ✅ RESOLVED 2026-07-14 (Session 14).",
     "Website Care Plan / Small Business IT plan limits -- ✅ RESOLVED 2026-07-14 (Session 14).",
-    "Customer account registration model -- ✅ RESOLVED 2026-07-15 (Session 17): invite-only at launch. See OWNER_DECISIONS.md #4 for the full mechanics.",
-    "Data retention, deletion, backup-aging, legal-hold rules -- an approved directive with specific default periods was supplied this session but NOT implemented (out of scope for the time available); the defaults are recorded in the session's originating instructions and should be treated as approved when this work is picked up, not re-asked.",
-    "Legal/privacy/consent WORDING (content, not mechanics) -- consent capture mechanics are built (this session); the actual Terms/Privacy page content still needs attorney-reviewed wording per the approved directive's disclosure requirements (Resend, Square, hosting/DB/storage providers, AI provider once F060 exists).",
-    "New paid providers/infrastructure generally -- Square and Resend confirmed to remain the providers; no new provider was added or activated this session.",
-    "Remote support tooling / device agents / automated website changes scope boundary -- an approved directive with specific boundaries was supplied this session but not implemented.",
-    "AI provider, data policy, budget -- an approved directive (OpenAI, gpt-5.4-mini default, $25/mo cap, specific safety rules) was supplied this session but F060 was not implemented.",
-    "Missing individual F001-F060 function workbooks -- an approved directive to reconstruct these from code was supplied but not started this session."
+    "Customer account registration model -- ✅ RESOLVED 2026-07-15 (Session 17): invite-only at launch.",
+    "Data retention, deletion, backup-aging, legal-hold rules -- approved defaults supplied Session 17, not yet implemented; treat as already-approved when picked up.",
+    "Legal/privacy/consent WORDING (content, not mechanics) -- consent capture mechanics are built; actual Terms/Privacy page content still needs attorney-reviewed wording.",
+    "New paid providers/infrastructure generally -- Square and Resend confirmed to remain the providers; no new provider added or activated.",
+    "Remote support tooling / device agents / automated website changes scope boundary -- approved boundaries supplied Session 17, not yet implemented.",
+    "AI provider, data policy, budget -- approved directive (OpenAI, gpt-5.4-mini default, $25/mo cap) supplied Session 17, F060 not yet implemented.",
+    "Missing individual F001-F060 function workbooks -- approved directive to reconstruct these from code supplied Session 17, not yet started."
   ],
   "filesRequiringReview": [
-    "docs/development/OWNER_DECISIONS.md (item #4 now resolved -- invite-only registration, full mechanics recorded)",
-    "docs/development/REQUIREMENTS_TRACEABILITY.md (Post-Session-16 section documents F002's full build)",
-    "migrations/002_invitations_and_consent.sql (new consent_records table, invitations table extended)",
-    "netlify/functions/auth-register.js (now gated behind open_registration flag, defaults OFF -- open self-registration is NOT reachable unless this flag is explicitly enabled via the settings document)",
-    "src/domain/consent.js (CURRENT_TERMS_VERSION/CURRENT_PRIVACY_VERSION constants -- bump these when terms.html/privacy.html content materially changes; the constants track version identifiers only, not legal wording)"
+    "docs/development/OWNER_DECISIONS.md (unchanged this session -- items #1-4 resolved, 6 open)",
+    "docs/development/REQUIREMENTS_TRACEABILITY.md (Post-Session-17 section documents the 3 new commercial endpoints)",
+    "src/policy/rbac.js (added scope.create/scope.view, change_order.create/change_order.view, payment.view -- all tested, all faithful extensions matching the existing technician-assigned or customer-org-scoped patterns)",
+    "src/db/changeOrderStore.js (added listChangeOrdersForOrganization -- a real gap, not new scope)",
+    "netlify/functions/change-orders.js (GET by a single changeOrderId cannot currently authorize a technician -- same honest limitation as tickets.js's GET; customer roles are unaffected)"
   ],
   "knownRisks": [
-    "This session responded to a very large autonomous-continuation directive covering 17 endpoints, retention/deletion, privacy content, remote-support boundaries, F060 AI, and workbook regeneration. Only the #1 explicitly-prioritized item (invite-only registration) was completed to the established quality bar. The remaining items are NOT abandoned -- they were never started, and the directive's specific approved defaults (retention periods, AI budget/model, remote-support boundaries) should be treated as already-approved when picked up, not re-asked.",
-    "MFA for administrator accounts was explicitly required by the same directive and was NOT built -- the one admin account currently has no MFA. Flagged as a real gap, not deferred silently.",
-    "Only 6 of 30 persistence-layer functions have been live-smoke-tested at the store layer; 6 endpoints now have HTTP-layer live verification.",
+    "Session 17's large originating directive (16 more endpoints, retention/deletion, privacy content, remote-support boundaries, F060 AI, MFA, workbook regeneration) remains mostly unimplemented -- this session advanced only the customer-facing-endpoint portion of item #2 in that directive's priority order. Approved defaults for everything else remain recorded and should not be re-asked.",
+    "MFA for administrator accounts still not built -- the one admin account has no MFA. Unchanged from Session 17.",
+    "Only 6 of 30 persistence-layer functions have been live-smoke-tested at the store layer directly; 9 endpoints now have HTTP-layer live verification, which exercises the underlying stores too.",
     "netlify dev's local Blobs emulation still could not be reached as of Session 15 -- not attempted again; the DI seam makes it unnecessary for testing.",
-    "Netlify Blobs' users/sessions/tokens stores (F003/F004) remain unmigrated by design. The new invitation-accept.js writes directly into the Blobs users store using the same shape as auth-register.js.",
+    "Netlify Blobs' users/sessions/tokens stores (F003/F004) remain unmigrated by design.",
     "Existing Blobs records (documents, messages, notifications, favorites, leads) still need organization_id backfilled once real organizations exist -- tracked in MIGRATION_PLAN.md, not yet scheduled",
-    "No migration-runner tool is set up yet -- one-off root-level scripts, deleted after use, remain the pattern. Migration 002 required discovering that sql.unsafe() silently no-ops for DDL (see DECISION_LOG.md) -- worth building a small real runner if a third migration is ever needed, to stop rediscovering this.",
-    "The live database now contains smoke-test data across several sessions, including a fully-activated invitation smoke-test account (Postgres-side membership + consent records only -- the Blobs user side of that account was faked, per this session's testing constraints, so no real Blobs data was touched)",
+    "No migration-runner tool is set up yet -- one-off root-level scripts, deleted after use, remain the pattern. No new migration was needed this session.",
+    "The live database now contains smoke-test data across several sessions, including a full commercial-flow chain from this session (org, ticket, assignment, scope, change order + approval, two payment requests, one marked paid)",
     "usage_records has no DB-level uniqueness constraint on (organization_id, plan_key, usage_key, period_start) -- fetch-then-write pattern used instead",
     "F057's verifier/logger is ready but nothing calls it yet -- no payment webhook infrastructure exists at all",
     "F051's cross-org query has no pagination -- fine at zero real data, will need LIMIT/cursor handling before real staff-scale data exists (SYS-API-005)",
-    "platform_admin cannot use staff-only endpoints under the current rbac.js capability map -- unchanged from Session 16, still worth Dylan's attention for a single-person operation",
+    "platform_admin cannot use staff-only endpoints under the current rbac.js capability map -- unchanged, still worth Dylan's attention for a single-person operation",
+    "change-orders.js's GET-by-id cannot authorize a technician (same limitation as tickets.js's GET) -- customer roles work fine; a future pass could resolve this by fetching the change order's scope/ticket before the auth check, mirroring how POST already does it",
     "Customer documents/images are stored as base64 data URIs in Blobs; the actual object-storage provider is still undecided",
     "Two independent, near-duplicated single-file staff/customer console apps (admin.html, myaccount.html) -- still not extracted",
     "F-numbering collision between audit findings (F001-F036) and Business Care Hub functions (F001-F060) -- mitigated via naming convention",
     "CSV export (src/export/csvExport.js, F053) has no formula-injection guard for spreadsheet software -- open finding from Session 9's security review",
-    "16 more Netlify Function HTTP endpoints remain to expose the rest of the persistence layer; retention/deletion, privacy content, remote-support enforcement, F060 AI, and F001-F060 workbook regeneration are all substantial, separately-scoped bodies of work still to come"
+    "13 more Netlify Function HTTP endpoints remain to expose the rest of the persistence layer (activity events, entitlements, subscriptions, technology assets, backups, reminders, IT support classification, checklists, metrics, templates, webhook events); retention/deletion, privacy content, remote-support enforcement, F060 AI, and F001-F060 workbook regeneration remain separately-scoped bodies of work"
   ],
-  "releaseRecommendation": "NOT READY. The registration model owner decision is now resolved and fully built -- invite-only is real, tested, and live-verified end to end, with open self-registration safely disabled behind a flag. 42 functions have real tested logic, 30 with real Postgres persistence, 504 passing unit tests, 6 HTTP endpoints live-verified. Remaining work is substantial and itemized rather than estimated as a single number: 16 more endpoints, MFA for admin, data retention/deletion/legal-hold system, Privacy Policy content rewrite (mechanics exist, wording doesn't), remote-support/automation boundary enforcement, F060 AI implementation, F001-F060 workbook regeneration, and a UI. All of these were part of a single large continuation directive this session responded to; only the top-priority item was completed this round.",
+  "releaseRecommendation": "NOT READY. All four resolvable owner decisions so far are done, and the full customer-facing commercial flow (ticket -> scope -> change order -> approval -> payment) now works end to end over real HTTP endpoints against the live database. 42 functions have real tested logic, 30 with real Postgres persistence, 541 passing unit tests, 9 HTTP endpoints live-verified. Remaining work is substantial and itemized, not estimated as a single number: 13 more endpoints, MFA for admin, data retention/deletion/legal-hold system, Privacy Policy content rewrite, remote-support/automation boundary enforcement, F060 AI implementation, F001-F060 workbook regeneration, and a UI.",
   "lastUpdated": "2026-07-15"
 }
