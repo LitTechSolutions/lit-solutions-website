@@ -1342,12 +1342,12 @@
   },
   "testimonials": {
     "hero_eyebrow": "Témoignages",
-    "hero_h1": "Les avis clients arrivent bientôt.",
-    "hero_lede": "Nous avons déjà réalisé un vrai projet client — les avis seront publiés ici dès que les clients les partageront et les approuveront.",
+    "hero_h1": "Ce que disent nos clients",
+    "hero_lede": "De vrais retours sur de vrais projets — pas de citations génériques, pas de doublures.",
     "hero_h1_hascontent": "Ce que disent nos clients",
     "hero_lede_hascontent": "De vrais retours sur de vrais projets -- ni citations inventées, ni figurants.",
-    "empty_h2": "Aucun avis publié pour le moment.",
-    "empty_desc": "Ce n'est pas parce que nous n'avons pas fait le travail — c'est parce que nous ne publions un avis qu'une fois qu'un client l'a partagé et approuvé le texte exact. En attendant, découvrez notre projet terminé sur la <a href=\"portfolio.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">page Portfolio</a>, ou contactez-nous directement pour en savoir plus sur notre travail.",
+    "empty_h2": "D'autres avis arrivent bientôt.",
+    "empty_desc": "Nous publions un avis une fois qu'un client l'a partagé et a approuvé le texte exact — d'autres apparaîtront ici au fur et à mesure. En attendant, découvrez notre projet terminé sur la <a href=\"portfolio.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">page Portfolio</a>, ou contactez-nous directement pour en savoir plus sur notre travail.",
     "empty_cta": "Demander un service",
     "verify_eyebrow": "Entre-temps",
     "verify_h2": "Voici ce que vous pouvez vérifier vous-même",
@@ -1356,7 +1356,9 @@
     "cred2_title": "Formation officielle",
     "cred2_desc": "Baccalauréat en technologie de cybersécurité, University of Maryland Global Campus.",
     "cred3_title": "Tarification simple et directe",
-    "cred3_desc": "Consultez nos <a href=\"pricing.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">tarifs publiés</a> — aucun élément surprise."
+    "cred3_desc": "Consultez nos <a href=\"pricing.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">tarifs publiés</a> — aucun élément surprise.",
+    "review1_quote": "Little Technical Solutions LLC a construit un site web professionnel qui donne à Armour Wireless Solutions une présence en ligne claire et présente fidèlement notre historique, nos compétences et nos informations de marché. Dylan a travaillé directement avec moi, a communiqué tout au long du projet et a apporté les modifications que j'avais demandées. Après la livraison du site initial, il a également développé une fonctionnalité sécurisée de gestion des photos qui me permet de me connecter avec une authentification à deux facteurs et d'ajouter ou de supprimer des photos du site sans toucher au code. J'ai apprécié la simplicité du processus, l'attention personnalisée et la volonté de s'adapter aux besoins réels de mon entreprise. Je recommanderais Little Technical Solutions LLC à d'autres petites entreprises à la recherche d'un développement web professionnel et d'un accompagnement réactif et direct.",
+    "review1_author": "Bill Armour, Président / Propriétaire, Armour Wireless Solutions, LLC"
   },
   "portfolio": {
     "hero_eyebrow": "Nos réalisations",

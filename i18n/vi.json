@@ -1342,12 +1342,12 @@
   },
   "testimonials": {
     "hero_eyebrow": "Đánh giá khách hàng",
-    "hero_h1": "Phản hồi của khách hàng sắp có mặt.",
-    "hero_lede": "Chúng tôi đã hoàn thành công việc thực tế cho khách hàng — các đánh giá sẽ được đăng tại đây khi khách hàng chia sẻ và phê duyệt.",
+    "hero_h1": "Khách hàng của chúng tôi nói gì",
+    "hero_lede": "Phản hồi thực tế từ các dự án thực tế — không phải những câu trích dẫn sáo rỗng, không phải hàng thay thế.",
     "hero_h1_hascontent": "Khách hàng của chúng tôi nói gì",
     "hero_lede_hascontent": "Phản hồi thực từ những dự án thực -- không phải trích dẫn dàn dựng, không phải người đóng thế.",
-    "empty_h2": "Chưa có đánh giá nào được đăng.",
-    "empty_desc": "Không phải vì chúng tôi chưa thực hiện công việc — mà vì chúng tôi chỉ đăng đánh giá khi khách hàng đã chia sẻ và phê duyệt đúng nội dung. Trong lúc chờ đợi, hãy xem dự án đã hoàn thành của chúng tôi trên <a href=\"portfolio.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">trang Dự án tiêu biểu</a>, hoặc liên hệ trực tiếp để hỏi về công việc của chúng tôi.",
+    "empty_h2": "Nhiều đánh giá khác đang được thực hiện.",
+    "empty_desc": "Chúng tôi chỉ đăng đánh giá khi khách hàng đã chia sẻ và phê duyệt đúng nội dung — sẽ có thêm đánh giá xuất hiện tại đây khi chúng đến. Trong lúc chờ đợi, hãy xem dự án đã hoàn thành của chúng tôi trên <a href=\"portfolio.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">trang Dự án tiêu biểu</a>, hoặc liên hệ trực tiếp để hỏi về công việc của chúng tôi.",
     "empty_cta": "Yêu cầu dịch vụ",
     "verify_eyebrow": "Trong lúc này",
     "verify_h2": "Đây là những gì bạn có thể tự mình kiểm chứng",
@@ -1356,7 +1356,9 @@
     "cred2_title": "Được đào tạo bài bản",
     "cred2_desc": "Cử nhân Công nghệ An ninh mạng, University of Maryland Global Campus.",
     "cred3_title": "Giá cả rõ ràng",
-    "cred3_desc": "Xem <a href=\"pricing.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">bảng giá đã công bố</a> của chúng tôi — không có khoản mục phát sinh bất ngờ."
+    "cred3_desc": "Xem <a href=\"pricing.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">bảng giá đã công bố</a> của chúng tôi — không có khoản mục phát sinh bất ngờ.",
+    "review1_quote": "Little Technical Solutions LLC đã xây dựng một trang web chuyên nghiệp, mang lại cho Armour Wireless Solutions sự hiện diện trực tuyến rõ ràng và trình bày chính xác nền tảng, năng lực cũng như thông tin hợp đồng của chúng tôi. Dylan đã làm việc trực tiếp với tôi, trao đổi xuyên suốt dự án và thực hiện những thay đổi mà tôi yêu cầu. Sau khi trang web ban đầu được bàn giao, anh ấy còn phát triển một tính năng quản lý ảnh an toàn, cho phép tôi đăng nhập bằng xác thực hai yếu tố và tải lên hoặc xóa ảnh trên trang web mà không cần chỉnh sửa mã nguồn. Tôi đánh giá cao quy trình đơn giản, sự quan tâm cá nhân, và sự sẵn lòng xây dựng theo đúng những gì công ty tôi thực sự cần. Tôi sẽ giới thiệu Little Technical Solutions LLC cho các doanh nghiệp nhỏ khác đang tìm kiếm dịch vụ phát triển website chuyên nghiệp và hỗ trợ trực tiếp, nhanh nhạy.",
+    "review1_author": "Bill Armour, Chủ tịch / Chủ sở hữu, Armour Wireless Solutions, LLC"
   },
   "portfolio": {
     "hero_eyebrow": "Công việc của chúng tôi",

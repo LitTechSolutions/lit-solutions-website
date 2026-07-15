@@ -1342,12 +1342,12 @@
   },
   "testimonials": {
     "hero_eyebrow": "お客様の声",
-    "hero_h1": "お客様の声は近日公開予定です。",
-    "hero_lede": "私たちはすでに実際のクライアント案件を完了しています——お客様の声は、クライアントが内容を共有し承認してくださり次第、こちらに掲載されます。",
+    "hero_h1": "お客様の声",
+    "hero_lede": "実際のプロジェクトから寄せられた本物の声です——決まり文句や代わりの言葉ではありません。",
     "hero_h1_hascontent": "お客様の声",
     "hero_lede_hascontent": "実際のプロジェクトに寄せられた、本物の声です——作り物の引用も、代役もありません。",
-    "empty_h2": "まだお客様の声は掲載されていません。",
-    "empty_desc": "それは私たちが仕事をしていないからではありません——お客様が内容を共有し、正確な文言を承認してくださった場合にのみ、お客様の声を掲載しているからです。その間は、<a href=\"portfolio.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">ポートフォリオページ</a>で完了した案件をご覧いただくか、直接お問い合わせのうえ私たちの仕事についてお尋ねください。",
+    "empty_h2": "さらなるお客様の声も近日公開予定です。",
+    "empty_desc": "お客様が内容を共有し、正確な文言を承認してくださった場合にのみお客様の声を掲載しています——今後も届き次第、こちらに追加されます。その間は、<a href=\"portfolio.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">ポートフォリオページ</a>で完了した案件をご覧いただくか、直接お問い合わせのうえ私たちの仕事についてお尋ねください。",
     "empty_cta": "サービスを依頼する",
     "verify_eyebrow": "それまでの間",
     "verify_h2": "ご自身で確認いただける情報",
@@ -1356,7 +1356,9 @@
     "cred2_title": "正式な専門教育",
     "cred2_desc": "University of Maryland Global Campusにて、サイバーセキュリティ工学の学士号を取得。",
     "cred3_title": "分かりやすい料金設定",
-    "cred3_desc": "<a href=\"pricing.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">公表料金</a>をご覧ください — 想定外の項目は一切ありません。"
+    "cred3_desc": "<a href=\"pricing.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">公表料金</a>をご覧ください — 想定外の項目は一切ありません。",
+    "review1_quote": "Little Technical Solutions LLCは、Armour Wireless Solutionsに明確なオンライン上の存在感を与え、当社の経歴、対応能力、契約情報を正確に伝えるプロフェッショナルなウェブサイトを構築してくれました。Dylanは私と直接やり取りをし、プロジェクトを通してコミュニケーションを取り、私が要望した変更を行ってくれました。当初のサイト納品後には、二要素認証でサインインし、コードを編集することなくウェブサイトの写真をアップロード・削除できる安全な写真管理機能も開発してくれました。分かりやすいプロセス、きめ細やかな対応、そして当社が本当に必要としていたものに合わせて構築しようとする姿勢を高く評価しています。プロフェッショナルなウェブサイト開発と、迅速かつ直接的なサポートを求めている他の中小企業にも、Little Technical Solutions LLCを推薦したいと思います。",
+    "review1_author": "Bill Armour、社長 / オーナー、Armour Wireless Solutions, LLC"
   },
   "portfolio": {
     "hero_eyebrow": "私たちの実績",

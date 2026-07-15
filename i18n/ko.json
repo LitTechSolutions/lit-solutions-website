@@ -1342,12 +1342,12 @@
   },
   "testimonials": {
     "hero_eyebrow": "고객 후기",
-    "hero_h1": "고객 후기가 곧 공개됩니다.",
-    "hero_lede": "저희는 이미 실제 고객 프로젝트를 완료했습니다 — 후기는 고객이 공유하고 승인하는 대로 이곳에 게시됩니다.",
+    "hero_h1": "고객님들의 후기",
+    "hero_lede": "실제 프로젝트에서 나온 진짜 후기입니다 — 상투적인 문구도, 대역도 아닙니다.",
     "hero_h1_hascontent": "고객님들의 후기",
     "hero_lede_hascontent": "실제 프로젝트에 대한 진짜 후기입니다 -- 지어낸 인용문도, 대역도 없습니다.",
-    "empty_h2": "아직 게시된 후기가 없습니다.",
-    "empty_desc": "작업을 하지 않아서가 아닙니다 — 고객이 정확한 문구를 공유하고 승인한 경우에만 후기를 게시하기 때문입니다. 그동안 <a href=\"portfolio.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">포트폴리오 페이지</a>에서 완료된 프로젝트를 확인하시거나, 직접 문의하여 저희 작업에 대해 물어보세요.",
+    "empty_h2": "더 많은 후기가 곧 공개됩니다.",
+    "empty_desc": "고객이 정확한 문구를 공유하고 승인한 경우에만 후기를 게시합니다 — 후기가 들어오는 대로 이곳에 계속 추가됩니다. 그동안 <a href=\"portfolio.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">포트폴리오 페이지</a>에서 완료된 프로젝트를 확인하시거나, 직접 문의하여 저희 작업에 대해 물어보세요.",
     "empty_cta": "서비스 신청",
     "verify_eyebrow": "그동안",
     "verify_h2": "직접 확인하실 수 있는 사항들",
@@ -1356,7 +1356,9 @@
     "cred2_title": "정식 교육 이수",
     "cred2_desc": "University of Maryland Global Campus 사이버 보안 기술 학사.",
     "cred3_title": "투명한 요금",
-    "cred3_desc": "<a href=\"pricing.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">공시된 요금</a>을 확인해 보세요 — 예상치 못한 추가 항목이 없습니다."
+    "cred3_desc": "<a href=\"pricing.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">공시된 요금</a>을 확인해 보세요 — 예상치 못한 추가 항목이 없습니다.",
+    "review1_quote": "Little Technical Solutions LLC는 Armour Wireless Solutions에 명확한 온라인 입지를 제공하고 저희 회사의 배경, 역량, 계약 정보를 정확하게 보여주는 전문적인 웹사이트를 구축해 주었습니다. Dylan은 저와 직접 소통했고, 프로젝트 내내 연락을 유지했으며, 제가 요청한 변경 사항을 반영해 주었습니다. 원래 사이트가 완성된 후에는 2단계 인증으로 로그인하여 코드를 수정하지 않고도 웹사이트 사진을 업로드하거나 삭제할 수 있는 안전한 사진 관리 기능도 개발해 주었습니다. 저는 이 간단명료한 진행 방식, 세심한 관심, 그리고 저희 회사가 실제로 필요로 하는 것에 맞춰 구축하려는 의지에 감사하게 생각합니다. 전문적인 웹사이트 개발과 신속하고 직접적인 지원을 원하는 다른 소규모 사업체에도 Little Technical Solutions LLC를 추천하고 싶습니다.",
+    "review1_author": "Bill Armour, 대표 / 소유주, Armour Wireless Solutions, LLC"
   },
   "portfolio": {
     "hero_eyebrow": "저희 작업",

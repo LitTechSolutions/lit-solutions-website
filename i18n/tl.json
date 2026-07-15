@@ -1342,12 +1342,12 @@
   },
   "testimonials": {
     "hero_eyebrow": "Mga Patotoo",
-    "hero_h1": "Paparating na ang mga puna ng kliyente.",
-    "hero_lede": "Nakumpleto na namin ang tunay na trabaho para sa kliyente — ilalathala rito ang mga review kapag ibinahagi at inaprubahan na ito ng mga kliyente.",
+    "hero_h1": "Ang sabi ng aming mga customer",
+    "hero_lede": "Tunay na puna mula sa tunay na mga proyekto — hindi stock na quote, hindi panghalili.",
     "hero_h1_hascontent": "Ang sinasabi ng aming mga customer",
     "hero_lede_hascontent": "Tunay na feedback mula sa tunay na proyekto -- hindi gawa-gawang quote, hindi pa-pormang tao.",
-    "empty_h2": "Wala pang nailathalang review.",
-    "empty_desc": "Hindi ito dahil hindi namin nagawa ang trabaho — dahil inilalathala lang namin ang isang review kapag ibinahagi at inaprubahan na ng kliyente ang eksaktong pananalita. Samantala, tingnan ang aming natapos na proyekto sa <a href=\"portfolio.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">Portfolio page</a>, o direktang makipag-ugnayan sa amin para magtanong tungkol sa aming trabaho.",
+    "empty_h2": "Marami pang review ang paparating.",
+    "empty_desc": "Naglalathala lamang kami ng review kapag ibinahagi at inaprubahan na ng kliyente ang eksaktong pananalita — magdaragdag pa ng iba habang dumarating ang mga ito. Samantala, tingnan ang aming natapos na proyekto sa <a href=\"portfolio.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">Portfolio page</a>, o direktang makipag-ugnayan sa amin para magtanong tungkol sa aming trabaho.",
     "empty_cta": "Humiling ng Serbisyo",
     "verify_eyebrow": "Samantala",
     "verify_h2": "Narito ang maaari mong i-verify sa sarili mo",
@@ -1356,7 +1356,9 @@
     "cred2_title": "Pormal na sinanay",
     "cred2_desc": "B.S. Cybersecurity Technology, University of Maryland Global Campus.",
     "cred3_title": "Tapat na presyo",
-    "cred3_desc": "Tingnan ang aming <a href=\"pricing.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">naka-publish na rate</a> — walang gulat-gulat na line item."
+    "cred3_desc": "Tingnan ang aming <a href=\"pricing.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">naka-publish na rate</a> — walang gulat-gulat na line item.",
+    "review1_quote": "Nagtayo ang Little Technical Solutions LLC ng propesyonal na website na nagbibigay sa Armour Wireless Solutions ng malinaw na online presence at tumpak na naglalahad ng aming background, kakayahan, at impormasyon sa kontrata. Direktang nakipagtulungan sa akin si Dylan, nakipag-ugnayan sa buong proyekto, at ginawa ang mga pagbabagong hiniling ko. Matapos maihatid ang orihinal na site, nagdevelop din siya ng secure na photo-management feature na nagpapahintulot sa akin na mag-sign in gamit ang two-factor authentication at mag-upload o mag-alis ng mga larawan sa website nang hindi kailangang mag-edit ng code. Naapresyahan ko ang tuwid-na-daan na proseso, personal na pansin, at kahandaang bumuo batay sa talagang kailangan ng aking kumpanya. Irerekomenda ko ang Little Technical Solutions LLC sa ibang maliliit na negosyo na naghahanap ng propesyonal na website development at mabilis, direktang suporta.",
+    "review1_author": "Bill Armour, Pangulo / May-ari, Armour Wireless Solutions, LLC"
   },
   "portfolio": {
     "hero_eyebrow": "Ang Aming Trabaho",

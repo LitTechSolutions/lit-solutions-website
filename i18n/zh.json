@@ -1342,12 +1342,12 @@
   },
   "testimonials": {
     "hero_eyebrow": "客户评价",
-    "hero_h1": "客户评价即将上线。",
-    "hero_lede": "我们已经完成了真实的客户项目——评价将在客户分享并批准后发布在这里。",
+    "hero_h1": "客户评价",
+    "hero_lede": "来自真实项目的真实反馈——不是套话,也不是替代品。",
     "hero_h1_hascontent": "客户对我们的评价",
     "hero_lede_hascontent": "真实项目的真实反馈——没有编造的评价,没有替身。",
-    "empty_h2": "暂无已发布的评价。",
-    "empty_desc": "这并不是因为我们没有完成相关工作——而是我们只有在客户分享并批准具体措辞后才会发布评价。与此同时,您可以在我们的<a href=\"portfolio.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">作品集页面</a>查看已完成的项目,或直接联系我们了解我们的工作情况。",
+    "empty_h2": "更多评价即将上线。",
+    "empty_desc": "我们只有在客户分享并批准具体措辞后才会发布评价——随着评价陆续到来,更多内容会出现在这里。与此同时,您可以在我们的<a href=\"portfolio.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">作品集页面</a>查看已完成的项目,或直接联系我们了解我们的工作情况。",
     "empty_cta": "申请服务",
     "verify_eyebrow": "与此同时",
     "verify_h2": "以下是您可以自行核实的信息",
@@ -1356,7 +1356,9 @@
     "cred2_title": "受过正规培训",
     "cred2_desc": "University of Maryland Global Campus 网络安全技术学士学位。",
     "cred3_title": "直截了当的价格",
-    "cred3_desc": "详见我们的<a href=\"pricing.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">公示价格</a> — 绝无意外收费项目。"
+    "cred3_desc": "详见我们的<a href=\"pricing.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">公示价格</a> — 绝无意外收费项目。",
+    "review1_quote": "Little Technical Solutions LLC 建立了一个专业的网站,为 Armour Wireless Solutions 提供了清晰的线上形象,并准确地展示了我们的背景、能力和合同信息。Dylan 与我直接沟通,在整个项目过程中保持联系,并根据我的要求做出了修改。原网站交付后,他还开发了一项安全的照片管理功能,让我可以通过双重身份验证登录,自行上传或删除网站照片,而无需编写代码。我很欣赏这种简单直接的流程、个性化的关注,以及愿意根据我公司实际需求来打造方案的态度。我会向其他寻求专业网站开发以及及时、直接支持的小企业推荐 Little Technical Solutions LLC。",
+    "review1_author": "Bill Armour,总裁/所有者,Armour Wireless Solutions, LLC"
   },
   "portfolio": {
     "hero_eyebrow": "我们的作品",

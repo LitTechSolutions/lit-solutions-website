@@ -1342,12 +1342,12 @@
   },
   "testimonials": {
     "hero_eyebrow": "Temwayaj",
-    "hero_h1": "Kòmantè kliyan yo ap vini.",
-    "hero_lede": "Nou deja fin fè yon vrè travay pou kliyan — n ap pibliye kòmantè yo isit la kòm kliyan yo pataje e apwouve yo.",
+    "hero_h1": "Sa kliyan nou yo ap di",
+    "hero_lede": "Vrè kòmantè ki soti nan vrè pwojè — pa gen sitasyon jenerik, pa gen ranplasan.",
     "hero_h1_hascontent": "Sa kliyan nou yo ap di",
     "hero_lede_hascontent": "Vrè kòmantè sou vrè pwojè -- pa gen sitasyon envante, pa gen aktè ki ranplase.",
-    "empty_h2": "Poko gen okenn kòmantè ki pibliye.",
-    "empty_desc": "Se pa paske nou pa fè travay la — se paske nou pibliye yon kòmantè sèlman lè yon kliyan pataje l e apwouve mo egzak yo. Nan tan sa a, gade pwojè nou fin fè a sou <a href=\"portfolio.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">paj Pòtfolyo</a> nou an, oswa kontakte nou dirèkteman pou poze kesyon sou travay nou.",
+    "empty_h2": "Gen plis kòmantè k ap vini.",
+    "empty_desc": "Nou pibliye yon kòmantè sèlman lè yon kliyan pataje l e apwouve mo egzak yo — plis ap parèt isit la kòm yo rive. Nan tan sa a, gade pwojè nou fin fè a sou <a href=\"portfolio.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">paj Pòtfolyo</a> nou an, oswa kontakte nou dirèkteman pou poze kesyon sou travay nou.",
     "empty_cta": "Mande Sèvis",
     "verify_eyebrow": "Pou kounye a",
     "verify_h2": "Men sa ou ka verifye ou menm",
@@ -1356,7 +1356,9 @@
     "cred2_title": "Fòme fòmèlman",
     "cred2_desc": "Bakaloreya nan Teknoloji Sekirite Sibènetik, University of Maryland Global Campus.",
     "cred3_title": "Pri klè e dirèk",
-    "cred3_desc": "Gade <a href=\"pricing.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">tarif pibliye</a> nou yo — pa gen okenn eleman sipriz."
+    "cred3_desc": "Gade <a href=\"pricing.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">tarif pibliye</a> nou yo — pa gen okenn eleman sipriz.",
+    "review1_quote": "Little Technical Solutions LLC te bati yon sit wèb pwofesyonèl ki bay Armour Wireless Solutions yon prezans anliy klè epi ki prezante avèk presizyon background nou, kapasite nou, ak enfòmasyon kontra nou. Dylan te travay dirèkteman avèk mwen, te kominike pandan tout pwojè a, epi te fè chanjman mwen te mande yo. Apre sit orijinal la te livre, li te devlope tou yon fonksyon jesyon foto ki sekirize ki pèmèt mwen konekte avèk otantifikasyon de-faktè epi telechaje oswa retire foto sou sit wèb la san m pa bezwen modifye kòd. Mwen te apresye pwosesis senp lan, atansyon pèsonèl la, ak volonte pou bati selon sa konpayi m nan reyèlman bezwen. Mwen ta rekòmande Little Technical Solutions LLC bay lòt ti biznis k ap chèche devlopman sit wèb pwofesyonèl ak sipò dirèk, ki reponn rapid.",
+    "review1_author": "Bill Armour, Prezidan / Pwopriyetè, Armour Wireless Solutions, LLC"
   },
   "portfolio": {
     "hero_eyebrow": "Travay Nou",

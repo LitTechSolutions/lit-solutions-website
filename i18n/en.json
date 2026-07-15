@@ -1256,10 +1256,10 @@
   },
   "testimonials": {
     "hero_eyebrow": "Testimonials",
-    "hero_h1": "Client feedback is on its way.",
-    "hero_lede": "We've completed real client work — reviews will be published here as clients share and approve them.",
-    "empty_h2": "No reviews published yet.",
-    "empty_desc": "That's not because we haven't done the work — it's because we only publish a review once a client has shared it and approved the exact wording. In the meantime, see our completed project on the <a href=\"portfolio.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">Portfolio page</a>, or reach out directly to ask about our work.",
+    "hero_h1": "What our customers are saying",
+    "hero_lede": "Real feedback from real projects — not stock quotes, not stand-ins.",
+    "empty_h2": "More reviews are on the way.",
+    "empty_desc": "We publish a review once a client has shared it and approved the exact wording — more will appear here as they come in. In the meantime, see our completed project on the <a href=\"portfolio.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">Portfolio page</a>, or reach out directly to ask about our work.",
     "empty_cta": "Request Service",
     "verify_eyebrow": "In the meantime",
     "verify_h2": "Here's what you can verify yourself",
@@ -1270,7 +1270,9 @@
     "cred3_title": "Straightforward pricing",
     "cred3_desc": "See our <a href=\"pricing.html\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">published rates</a> — no surprise line items.",
     "hero_h1_hascontent": "What our customers are saying",
-    "hero_lede_hascontent": "Real feedback from real projects -- not stock quotes, not stand-ins."
+    "hero_lede_hascontent": "Real feedback from real projects -- not stock quotes, not stand-ins.",
+    "review1_quote": "Little Technical Solutions LLC built a professional website that gives Armour Wireless Solutions a clear online presence and accurately presents our background, capabilities, and contracting information. Dylan worked directly with me, communicated throughout the project, and made the changes I requested. After the original site was delivered, he also developed a secure photo-management feature that allows me to sign in with two-factor authentication and upload or remove website photos without editing code. I appreciated the straightforward process, personal attention, and willingness to build around what my company actually needed. I would recommend Little Technical Solutions LLC to other small businesses looking for professional website development and responsive, direct support.",
+    "review1_author": "Bill Armour, President / Owner, Armour Wireless Solutions, LLC"
   },
   "wd": {
     "hero_eyebrow": "Website Designer",
