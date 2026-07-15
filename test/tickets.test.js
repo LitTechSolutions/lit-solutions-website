@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { handler } = require("./tickets");
+const { handler } = require("../netlify/functions/tickets");
 
 const FIXED_NOW = () => new Date("2026-07-14T12:00:00.000Z");
 const FIXED_ID = () => "ticket-fixed-id";

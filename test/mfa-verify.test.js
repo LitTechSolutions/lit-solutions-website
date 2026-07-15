@@ -1,8 +1,8 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { handler } = require("./mfa-verify");
-const { generateTotpSecret } = require("../../src/security/totp");
-const { encryptSecret, generateRecoveryCodes, hashRecoveryCode } = require("../../src/security/mfaCrypto");
+const { handler } = require("../netlify/functions/mfa-verify");
+const { generateTotpSecret } = require("../src/security/totp");
+const { encryptSecret, generateRecoveryCodes, hashRecoveryCode } = require("../src/security/mfaCrypto");
 
 const MFA_KEY = "a".repeat(64);
 

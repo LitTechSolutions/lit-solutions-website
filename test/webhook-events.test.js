@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { handler } = require("./webhook-events");
+const { handler } = require("../netlify/functions/webhook-events");
 
 function routingFakeSql(byTable) {
   const calls = [];

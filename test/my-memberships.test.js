@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { handler } = require("./my-memberships");
+const { handler } = require("../netlify/functions/my-memberships");
 
 function fakeDeps({ userId = "user-1", memberships = [], organizations = {} } = {}) {
   return {

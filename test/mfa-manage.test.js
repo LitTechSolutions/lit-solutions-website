@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { handler } = require("./mfa-manage");
+const { handler } = require("../netlify/functions/mfa-manage");
 
 function fakeAuditRecorder() {
   const events = [];

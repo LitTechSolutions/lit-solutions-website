@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { handler } = require("./audit-log");
+const { handler } = require("../netlify/functions/audit-log");
 
 function fakeAuthDeps({ userId = "admin-1", role = "admin" } = {}) {
   return {

@@ -6,7 +6,7 @@
 
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { handler } = require("./auth-login");
+const { handler } = require("../netlify/functions/auth-login");
 
 function adminUser(overrides = {}) {
   return { id: "admin-1", email: "dylan@lit-solutions.tech", name: "Dylan", role: "admin", passwordHash: "irrelevant", verified: true, ...overrides };

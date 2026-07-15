@@ -1,7 +1,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { handler } = require("./invitation-accept");
-const { hashInvitationToken } = require("../../src/policy/invitationLifecycle");
+const { handler } = require("../netlify/functions/invitation-accept");
+const { hashInvitationToken } = require("../src/policy/invitationLifecycle");
 
 const FIXED_NOW = () => new Date("2026-07-15T12:00:00.000Z");
 const NO_RATE_LIMIT = { rateLimited: async () => false };

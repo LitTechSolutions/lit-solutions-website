@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { handler } = require("./checklists");
+const { handler } = require("../netlify/functions/checklists");
 
 const FIXED_ID = () => "checklist-fixed-id";
 const FIXED_NOW = () => new Date("2026-07-15T12:00:00.000Z");

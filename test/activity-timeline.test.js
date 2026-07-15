@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { handler } = require("./activity-timeline");
+const { handler } = require("../netlify/functions/activity-timeline");
 
 function routingFakeSql(byTable) {
   const calls = [];

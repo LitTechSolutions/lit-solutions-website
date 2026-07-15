@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { handler } = require("./scope-of-work");
+const { handler } = require("../netlify/functions/scope-of-work");
 
 const FIXED_NOW = () => new Date("2026-07-15T12:00:00.000Z");
 const FIXED_ID = () => "scope-fixed-id";

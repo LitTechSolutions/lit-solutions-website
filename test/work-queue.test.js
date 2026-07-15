@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { handler } = require("./work-queue");
+const { handler } = require("../netlify/functions/work-queue");
 
 function routingFakeSql(byTable) {
   const calls = [];

@@ -6,8 +6,8 @@
 
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { handler } = require("./auth-register");
-const { createEmptyDocument, applyFeatureFlagUpdate } = require("../../src/settings/settingsStore");
+const { handler } = require("../netlify/functions/auth-register");
+const { createEmptyDocument, applyFeatureFlagUpdate } = require("../src/settings/settingsStore");
 
 function disabledDoc() {
   return createEmptyDocument(); // no flags set at all -- fail closed

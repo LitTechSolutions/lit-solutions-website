@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { handler } = require("./templates");
+const { handler } = require("../netlify/functions/templates");
 
 const FIXED_ID = () => "tpl-fixed-id";
 

@@ -1,8 +1,8 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { handler } = require("./mfa-enroll");
-const { generateTotpSecret, buildOtpauthUri, validateTotpToken } = require("../../src/security/totp");
-const { encryptSecret, decryptSecret } = require("../../src/security/mfaCrypto");
+const { handler } = require("../netlify/functions/mfa-enroll");
+const { generateTotpSecret, buildOtpauthUri, validateTotpToken } = require("../src/security/totp");
+const { encryptSecret, decryptSecret } = require("../src/security/mfaCrypto");
 
 const MFA_KEY = "a".repeat(64);
 const FIXED_TS = 1752580800000;
