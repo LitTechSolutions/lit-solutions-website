@@ -145,51 +145,78 @@
         <button type="button" class="wd-start-over" id="wdStartOver" hidden data-i18n="wd.start_over">Start over</button>
       </div>
 
-      <div class="wd-layout">
+      <div class="wd-studio">
 
-        <div class="wd-preview-hero" aria-label="Live preview of your website">
+        <div class="wd-studio-preview" aria-label="Live preview of your website">
           <div class="wd-browser" id="wdBrowser">
             <div class="wd-browser-chrome">
               <span class="wd-browser-dot"></span><span class="wd-browser-dot"></span><span class="wd-browser-dot"></span>
               <span class="wd-browser-url" id="wdBrowserUrl">yourbusiness.com</span>
             </div>
+            <div class="wd-browser-capabilities" id="wdPreviewBadges"></div>
             <div class="wd-browser-viewport" id="wdBrowserViewport">
               <div class="wd-browser-empty" id="wdBrowserEmpty">
                 <span class="wd-browser-empty-icon">🌱</span>
                 <p data-i18n="wd.browser_empty_text">Your website will grow here as you build it.</p>
               </div>
-              <nav class="wd-preview-nav" id="wdPreviewNav" hidden></nav>
-              <div class="wd-preview-sections" id="wdPreviewSections"></div>
-              <div class="wd-preview-badges" id="wdPreviewBadges"></div>
+              <div class="wd-preview-base" id="wdPreviewBase" hidden>
+                <nav class="wd-preview-nav" id="wdPreviewNav">
+                  <span class="wd-preview-nav-pill wd-preview-nav-pill--base" data-i18n="wd.preview_nav_home">Home</span>
+                  <span class="wd-preview-nav-pill wd-preview-nav-pill--base" data-i18n="wd.preview_nav_services">Services</span>
+                  <span class="wd-preview-nav-pill wd-preview-nav-pill--base" data-i18n="wd.preview_nav_about">About</span>
+                  <span class="wd-preview-nav-pill wd-preview-nav-pill--base" data-i18n="wd.preview_nav_contact">Contact</span>
+                </nav>
+                <div class="wd-preview-hero-mock">
+                  <p class="wd-preview-hero-mock-name" id="wdPreviewHeroName">Your business</p>
+                  <p class="wd-preview-hero-mock-headline" id="wdPreviewHeroHeadline" data-i18n="wd.preview_hero_headline">Quality service, done right the first time.</p>
+                  <span class="wd-preview-hero-mock-cta" data-i18n="wd.preview_hero_cta">Get a Free Quote</span>
+                </div>
+                <div class="wd-preview-services-mock">
+                  <div class="wd-preview-services-mock-item"><span class="wd-mock-icon-shape wd-mock-icon-shape--circle"></span><span data-i18n="wd.preview_service1">Service one</span></div>
+                  <div class="wd-preview-services-mock-item"><span class="wd-mock-icon-shape wd-mock-icon-shape--square"></span><span data-i18n="wd.preview_service2">Service two</span></div>
+                  <div class="wd-preview-services-mock-item"><span class="wd-mock-icon-shape wd-mock-icon-shape--diamond"></span><span data-i18n="wd.preview_service3">Service three</span></div>
+                </div>
+                <div class="wd-preview-sections" id="wdPreviewSections"></div>
+                <div class="wd-preview-about-mock">
+                  <p data-i18n="wd.preview_about_text">Locally owned and trusted -- straightforward pricing and real people who answer the phone.</p>
+                </div>
+                <div class="wd-preview-footer-mock">
+                  <span id="wdPreviewFooterName">Your business</span>
+                  <span class="wd-preview-footer-mock-dot">&middot;</span>
+                  <span data-i18n="wd.preview_footer_contact">Contact</span>
+                </div>
+              </div>
             </div>
           </div>
+          <p class="wd-preview-disclaimer" data-i18n="wd.preview_disclaimer">Interactive concept preview — final design is customized for your business.</p>
+        </div>
 
-          <div class="wd-preview-hero-info">
+        <div class="wd-sidebar" id="wdSidebar">
+
+          <div class="wd-sidebar-header">
             <div class="wd-bizname-field">
               <label for="wdBusinessName" data-i18n="wd.bizname_label">Your business name</label>
               <input type="text" id="wdBusinessName" name="business_name" form="wdQuickForm" placeholder="e.g. Riverside Plumbing" autocomplete="organization" required data-i18n-attr-placeholder="wd.bizname_placeholder">
-              <p class="wd-note wd-note-inline" data-i18n="wd.bizname_note">Used to personalize your preview above, and required to submit.</p>
             </div>
 
-            <div class="wd-price-ticker" aria-live="polite" aria-atomic="true">
-              <span class="wd-price-ticker-label" data-i18n="wd.price_ticker_label">Your estimate</span>
-              <span class="wd-price-ticker-amount" id="wdPriceAmount">$0</span>
-              <span class="wd-price-ticker-savings" id="wdPriceSavings" hidden></span>
-              <span class="wd-price-ticker-note" id="wdPriceNote" data-i18n="wd.price_ticker_note_default">Choose a package to begin</span>
+            <div class="wd-feature-tabs" role="tablist" id="wdFeatureTabs" aria-label="Feature categories" data-i18n-attr-aria-label="wd.feature_tabs_aria_label" hidden>
+              <button type="button" class="wd-feature-tab is-active" data-feature-tab="addons" role="tab" aria-selected="true" aria-controls="wdOptionalCategories" data-i18n="wd.tab_addons">Add-ons</button>
+              <button type="button" class="wd-feature-tab" data-feature-tab="premium" role="tab" aria-selected="false" aria-controls="wdPremiumCategories" data-i18n="wd.tab_premium">Premium</button>
+              <button type="button" class="wd-feature-tab" data-feature-tab="included" role="tab" aria-selected="false" aria-controls="wdIncludedPanel" data-i18n="wd.tab_included">Included</button>
             </div>
 
-            <label class="wd-heroes-toggle">
-              <input type="checkbox" id="wdHeroesDiscount">
-              <span data-i18n-html="wd.heroes_toggle_text">I self-attest that I qualify for the <a href="heroes-pricing.html" target="_blank" rel="noopener">American Heroes Discount</a> (15% off one-time work) &mdash; eligibility is confirmed with you directly before your final price is set</span>
-            </label>
-
-            <div class="wd-cost-breakdown" id="wdCostBreakdown"></div>
-            <button type="button" class="btn btn-ghost btn-block" id="wdDownloadPdf" hidden>Download summary (PDF)</button>
-            <p class="wd-pdf-error" id="wdPdfError" role="alert" hidden data-i18n="wd.pdf_init_error">The PDF summary tool didn't load correctly. You can still submit your project -- we'll follow up directly -- or refresh the page to try again.</p>
+            <div class="wd-feature-toolbar" id="wdFeatureToolbar" hidden>
+              <div class="wd-feature-search">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-3.8-3.8"/></svg>
+                <input type="search" id="wdFeatureSearch" data-i18n-attr-placeholder="wd.feature_search_placeholder" placeholder="Search features...">
+              </div>
+              <div class="wd-category-chips" id="wdCategoryChips"></div>
+            </div>
           </div>
-        </div>
 
-        <div class="wd-main">
+          <div class="wd-sidebar-scroll" id="wdSidebarScroll">
+
+          <div class="wd-main">
 
           <!-- Step 1: package selection -->
           <div class="wd-panel is-active" id="wdStep1" data-panel="1">
@@ -233,19 +260,28 @@
 
           <!-- Step 2: feature selection (filled by JS from the catalog JSON) -->
           <div class="wd-panel" id="wdStep2" data-panel="2">
-            <div class="card wd-included-card">
-              <h2 id="wdIncludedTitle" data-i18n="wd.included_title">Included in your package</h2>
-              <p class="wd-note" data-i18n="wd.included_note">These come standard -- nothing to select.</p>
-              <div id="wdIncludedSummary" class="wd-included-summary"></div>
+
+            <div class="wd-feature-tab-panel" id="wdOptionalCategoriesPanel" data-feature-panel="addons">
+              <h2 class="wd-section-title" data-i18n="wd.optional_features_title">Optional features</h2>
+              <p class="wd-note" data-i18n="wd.optional_features_note">Check anything you'd like added. We'll confirm the final scope and price with you.</p>
+              <div id="wdOptionalCategories"></div>
             </div>
 
-            <h2 class="wd-section-title" data-i18n="wd.optional_features_title">Optional features</h2>
-            <p class="wd-note" data-i18n="wd.optional_features_note">Check anything you'd like added. We'll confirm the final scope and price with you.</p>
-            <div id="wdOptionalCategories"></div>
+            <div class="wd-feature-tab-panel" id="wdPremiumCategoriesPanel" data-feature-panel="premium" hidden>
+              <h2 class="wd-section-title" data-i18n-html="wd.premium_addons_title">Premium add-ons <span class="wd-note-inline">(custom quote)</span></h2>
+              <p class="wd-note" data-i18n="wd.premium_addons_note">Bigger capabilities, scoped and priced separately -- check anything you'd like a quote for.</p>
+              <div id="wdPremiumCategories"></div>
+            </div>
 
-            <h2 class="wd-section-title" data-i18n-html="wd.premium_addons_title">Premium add-ons <span class="wd-note-inline">(custom quote)</span></h2>
-            <p class="wd-note" data-i18n="wd.premium_addons_note">Bigger capabilities, scoped and priced separately -- check anything you'd like a quote for.</p>
-            <div id="wdPremiumCategories"></div>
+            <div class="wd-feature-tab-panel" id="wdIncludedPanel" data-feature-panel="included" hidden>
+              <div class="card wd-included-card">
+                <h2 id="wdIncludedTitle" data-i18n="wd.included_title">Included in your package</h2>
+                <p class="wd-note" data-i18n="wd.included_note">These come standard -- nothing to select.</p>
+                <div id="wdIncludedSummary" class="wd-included-summary"></div>
+              </div>
+            </div>
+
+            <p class="wd-feature-empty-note" id="wdFeatureEmptyNote" hidden data-i18n="wd.feature_search_empty">No features match your search.</p>
 
             <div class="wd-panel-actions">
               <button type="button" class="btn btn-ghost" data-back="1" data-i18n="wd.step2_back">Back</button>
@@ -255,13 +291,14 @@
 
           <!-- Step 3: clear price recap + quick contact capture (no long form yet) -->
           <div class="wd-panel" id="wdStep3" data-panel="3">
-            <h2 class="wd-section-title" data-i18n="wd.step3_title">Get your quote</h2>
+            <h2 class="wd-section-title" id="wdStep3Heading" tabindex="-1" data-i18n="wd.step3_title">Get your quote</h2>
             <p class="wd-note" data-i18n="wd.step3_note">Just your contact info -- no long form required. We'll follow up, and you can add full project details now or later.</p>
 
             <div class="card wd-quote-recap">
               <span class="wd-quote-recap-label" data-i18n="wd.quote_recap_label">Your estimate</span>
               <span class="wd-quote-recap-amount" id="wdQuoteRecapAmount">$0</span>
               <span class="wd-quote-recap-note" data-i18n="wd.quote_recap_note">Starting price -- confirmed by us before any work begins.</span>
+              <div class="wd-cost-breakdown wd-quote-recap-breakdown" id="wdQuoteRecapBreakdown" aria-label="Itemized estimate"></div>
             </div>
 
             <form id="wdQuickForm">
@@ -311,7 +348,7 @@
           <!-- Prompt shown right after the quick quote is sent -->
           <div class="wd-panel" id="wdStepPrompt" data-panel="prompt">
             <div class="card wd-done-card">
-              <h2 data-i18n="wd.prompt_title">Want to finish your project details now?</h2>
+              <h2 id="wdStepPromptHeading" tabindex="-1" data-i18n="wd.prompt_title">Want to finish your project details now?</h2>
               <p data-i18n="wd.prompt_message">The more we know up front, the faster we can start once you're ready -- but it's completely optional. We'll follow up either way using the contact method you picked.</p>
               <div class="wd-panel-actions">
                 <button type="button" class="btn btn-ghost" data-prompt-choice="no" data-i18n="wd.prompt_no">Not right now</button>
@@ -322,7 +359,7 @@
 
           <!-- Step 4 (optional): full project brief, only reached via the prompt above -->
           <div class="wd-panel" id="wdStep4" data-panel="4">
-            <h2 class="wd-section-title" data-i18n="wd.step4_title">Project details</h2>
+            <h2 class="wd-section-title" id="wdStep4Heading" tabindex="-1" data-i18n="wd.step4_title">Project details</h2>
             <p class="wd-note" data-i18n="wd.step4_note">This is what actually lets us start building -- it gets turned into a project summary PDF and sent straight to us.</p>
             <form id="wdBriefForm">
               <p class="visually-hidden"><label>Don't fill this out: <input name="wd-bot-field" id="wdHoneypotFull"></label></p>
@@ -451,15 +488,47 @@
           <!-- Confirmation -->
           <div class="wd-panel" id="wdStepDone" data-panel="done">
             <div class="card wd-done-card">
-              <h2 data-i18n="wd.done_title">Thanks -- we've got it.</h2>
+              <h2 id="wdStepDoneHeading" tabindex="-1" data-i18n="wd.done_title">Thanks -- we've got it.</h2>
               <p id="wdDoneMessage" data-i18n="wd.done_message">Your project request has been sent. We typically respond within one business day with next steps and a firm quote.</p>
               <p class="wd-note"><span data-i18n="wd.done_reference_label">Submission reference:</span> <strong id="wdSubmissionId"></strong></p>
               <a href="index.html" class="btn btn-ghost" data-i18n="wd.done_back_home">Back to home</a>
             </div>
           </div>
 
+          </div>
+
+          </div>
+
+          <div class="wd-sidebar-footer" id="wdSidebarFooter">
+            <label class="wd-heroes-toggle">
+              <input type="checkbox" id="wdHeroesDiscount">
+              <span data-i18n-html="wd.heroes_toggle_text">I self-attest that I qualify for the <a href="heroes-pricing.html" target="_blank" rel="noopener">American Heroes Discount</a> (15% off one-time work) &mdash; eligibility is confirmed with you directly before your final price is set</span>
+            </label>
+
+            <div class="wd-price-ticker" aria-live="polite" aria-atomic="true">
+              <span class="wd-price-ticker-label" data-i18n="wd.price_ticker_label">Your estimate</span>
+              <span class="wd-price-ticker-amount" id="wdPriceAmount">$0</span>
+              <span class="wd-price-ticker-savings" id="wdPriceSavings" hidden></span>
+              <span class="wd-price-ticker-note" id="wdPriceNote" data-i18n="wd.price_ticker_note_default">Choose a package to begin</span>
+              <span class="wd-price-ticker-count" id="wdFeatureCount" hidden></span>
+            </div>
+
+            <div class="wd-cost-breakdown" id="wdCostBreakdown"></div>
+            <button type="button" class="btn btn-primary btn-block" id="wdReviewSubmitBtn" hidden data-i18n="wd.review_submit_btn">Review &amp; submit</button>
+            <button type="button" class="btn btn-ghost btn-block" id="wdDownloadPdf" hidden>Download summary (PDF)</button>
+            <p class="wd-pdf-error" id="wdPdfError" role="alert" hidden data-i18n="wd.pdf_init_error">The PDF summary tool didn't load correctly. You can still submit your project -- we'll follow up directly -- or refresh the page to try again.</p>
+          </div>
+
         </div>
 
+      </div>
+
+      <div class="wd-mobile-bar" id="wdMobileBar">
+        <div class="wd-mobile-bar-info">
+          <span class="wd-mobile-bar-amount" id="wdMobileBarAmount">$0</span>
+          <span class="wd-mobile-bar-label" data-i18n="wd.mobile_bar_label">starting estimate</span>
+        </div>
+        <button type="button" class="btn btn-primary" id="wdMobileReviewBtn" data-i18n="wd.review_submit_btn">Review &amp; submit</button>
       </div>
     </div>
   </section>

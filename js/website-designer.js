@@ -37,16 +37,33 @@ document.addEventListener('DOMContentLoaded', () => {
   const priceAmountEl = document.getElementById('wdPriceAmount');
   const priceSavingsEl = document.getElementById('wdPriceSavings');
   const priceNoteEl = document.getElementById('wdPriceNote');
+  const featureCountEl = document.getElementById('wdFeatureCount');
   const quoteRecapAmountEl = document.getElementById('wdQuoteRecapAmount');
   const businessNameEl = document.getElementById('wdBusinessName');
   const browserUrlEl = document.getElementById('wdBrowserUrl');
   const browserEmptyEl = document.getElementById('wdBrowserEmpty');
+  const previewBaseEl = document.getElementById('wdPreviewBase');
+  const previewHeroNameEl = document.getElementById('wdPreviewHeroName');
+  const previewFooterNameEl = document.getElementById('wdPreviewFooterName');
   const previewNavEl = document.getElementById('wdPreviewNav');
   const previewSectionsEl = document.getElementById('wdPreviewSections');
   const previewBadgesEl = document.getElementById('wdPreviewBadges');
   const costBreakdownEl = document.getElementById('wdCostBreakdown');
+  const quoteRecapBreakdownEl = document.getElementById('wdQuoteRecapBreakdown');
   const downloadBtn = document.getElementById('wdDownloadPdf');
   const pdfErrorEl = document.getElementById('wdPdfError');
+  const reviewSubmitBtn = document.getElementById('wdReviewSubmitBtn');
+  const featureTabsEl = document.getElementById('wdFeatureTabs');
+  const featureToolbarEl = document.getElementById('wdFeatureToolbar');
+  const featureSearchEl = document.getElementById('wdFeatureSearch');
+  const categoryChipsEl = document.getElementById('wdCategoryChips');
+  const featureEmptyNoteEl = document.getElementById('wdFeatureEmptyNote');
+  const optionalPanelEl = document.getElementById('wdOptionalCategoriesPanel');
+  const premiumPanelEl = document.getElementById('wdPremiumCategoriesPanel');
+  const includedPanelEl = document.getElementById('wdIncludedPanel');
+  const mobileBarEl = document.getElementById('wdMobileBar');
+  const mobileBarAmountEl = document.getElementById('wdMobileBarAmount');
+  const mobileReviewBtn = document.getElementById('wdMobileReviewBtn');
   // jsPDF is loaded via a blocking <script src> (vendored locally, see
   // assets/vendor/jspdf/) before this file, so by the time this line runs
   // window.jspdf is either fully present or the load genuinely failed --
@@ -73,6 +90,9 @@ document.addEventListener('DOMContentLoaded', () => {
     customerEmail: '',
     customerPhone: '',
     preferredContact: '',
+    featureTab: 'addons', // 'addons' | 'premium' | 'included'
+    categoryFilter: null, // null = all categories
+    searchQuery: '',
   };
 
   // ---- Draft persistence (survive an accidental refresh/navigation) --
@@ -345,6 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // would have left the ticker stuck at a stale number).
     priceAmountEl.textContent = fmtMoney(newTotal);
     if (quoteRecapAmountEl) quoteRecapAmountEl.textContent = fmtMoney(newTotal);
+    if (mobileBarAmountEl) mobileBarAmountEl.textContent = fmtMoney(newTotal);
     state.displayedTotal = newTotal;
     if (delta === 0 || prefersReducedMotion) return;
     const duration = 400;
@@ -371,6 +392,21 @@ document.addEventListener('DOMContentLoaded', () => {
       if (name === '2' || name === '3' || name === 'prompt' || name === '4' || name === 'done') s.disabled = false;
     });
     if (name === 'prompt' || name === '4' || name === 'done') window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+    // Move focus to the new panel's heading so screen-reader/keyboard users
+    // land on the new content instead of a now-hidden or stale element.
+    const activePanel = document.querySelector(`.wd-panel[data-panel="${name}"]`);
+    const heading = activePanel && activePanel.querySelector('h2[tabindex="-1"]');
+    if (heading) heading.focus();
+    // The feature tabs/search/toolbar and "Review & submit" button only
+    // make sense while actually browsing add-ons (panel 2) -- hide them
+    // the rest of the time rather than leaving inert controls visible
+    // above whatever panel (package picker, quote form, done screen) is
+    // actually showing.
+    if (featureTabsEl) featureTabsEl.hidden = name !== '2';
+    if (featureToolbarEl) featureToolbarEl.hidden = name !== '2' || state.featureTab === 'included';
+    if (reviewSubmitBtn) reviewSubmitBtn.hidden = name !== '2' || !state.package;
+    const sidebarScrollEl = document.getElementById('wdSidebarScroll');
+    if (sidebarScrollEl) sidebarScrollEl.scrollTop = 0;
   }
 
   function renderIncludedSummary() {
@@ -538,7 +574,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const itemFull = { ...i, category: cat.category };
         const label = document.createElement('label');
         label.className = 'checkbox-pill wd-feature-pill';
-        const priceTag = i.price != null ? `<span class="wd-price-tag">+$${i.price}</span>` : `<span class="wd-price-tag wd-price-tag--quote">${escHtml(tDyn('cost_row_quote', 'quote'))}</span>`;
+        const priceTag = i.price != null ? `<span class="wd-price-tag">+$${i.price}</span>` : `<span class="wd-price-tag wd-price-tag--quote">${escHtml(tDyn('cost_row_quote', 'Custom quote'))}</span>`;
         label.innerHTML = `<input type="checkbox" data-priority="${priority}" data-title="${escHtml(i.title)}" data-price="${i.price != null ? i.price : ''}" data-category="${escHtml(cat.category)}" value="${escHtml(i.pdf_label)}"> <span class="wd-feature-pill-label">${escHtml(tCatItem(i.title))}</span>${priceTag}`;
         label.querySelector('input').addEventListener('change', (e) => onFeatureToggle(e.target, itemFull));
         grid.appendChild(label);
@@ -548,6 +584,105 @@ document.addEventListener('DOMContentLoaded', () => {
 
       container.appendChild(block);
     });
+  }
+
+  // ---- Feature tabs (Add-ons / Premium / Included) + search + category
+  // chips. Purely a display filter over the category blocks/pills that
+  // renderCategoryGroup() already built -- selection state, pricing, and
+  // the preview are completely untouched by any of this.
+  function currentFeaturePriority() {
+    return state.featureTab === 'premium' ? 'S' : 'C';
+  }
+
+  function renderCategoryChips() {
+    if (!categoryChipsEl || !state.catalog) return;
+    categoryChipsEl.innerHTML = '';
+    if (state.featureTab === 'included') return;
+    const priority = currentFeaturePriority();
+    const categories = state.catalog.categories.filter(c => c.items.some(i => i.priority === priority));
+    if (categories.length < 2) return; // nothing meaningful to filter with only one category
+    const allChip = document.createElement('button');
+    allChip.type = 'button';
+    allChip.className = 'wd-category-chip' + (state.categoryFilter === null ? ' is-active' : '');
+    allChip.setAttribute('aria-pressed', String(state.categoryFilter === null));
+    allChip.textContent = tDyn('chip_all_categories', 'All');
+    allChip.addEventListener('click', () => {
+      state.categoryFilter = null;
+      renderCategoryChips();
+      applyFeatureFilters();
+    });
+    categoryChipsEl.appendChild(allChip);
+    categories.forEach(cat => {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      const active = state.categoryFilter === cat.category;
+      chip.className = 'wd-category-chip' + (active ? ' is-active' : '');
+      chip.setAttribute('aria-pressed', String(active));
+      chip.textContent = tCatCategory(cat.category);
+      chip.addEventListener('click', () => {
+        state.categoryFilter = active ? null : cat.category;
+        renderCategoryChips();
+        applyFeatureFilters();
+      });
+      categoryChipsEl.appendChild(chip);
+    });
+  }
+
+  function applyFeatureFilters() {
+    if (!state.catalog) return;
+    const priority = currentFeaturePriority();
+    const container = priority === 'S' ? premiumContainer : optionalContainer;
+    const query = state.searchQuery.trim().toLowerCase();
+    let anyVisible = false;
+    Array.from(container.querySelectorAll('.wd-category')).forEach(block => {
+      const categoryMatches = !state.categoryFilter || block.dataset.category === state.categoryFilter;
+      let categoryHasMatch = false;
+      Array.from(block.querySelectorAll('.wd-feature-pill')).forEach(pill => {
+        const label = pill.querySelector('.wd-feature-pill-label');
+        const text = label ? label.textContent.toLowerCase() : '';
+        const matchesQuery = !query || text.includes(query);
+        const visible = categoryMatches && matchesQuery;
+        pill.hidden = !visible;
+        if (visible) categoryHasMatch = true;
+      });
+      const blockVisible = categoryMatches && (!query || categoryHasMatch);
+      block.hidden = !blockVisible;
+      if (blockVisible) {
+        anyVisible = true;
+        // Auto-expand a category with a live search match so results
+        // aren't hidden behind its collapsed accordion header.
+        if (query && categoryHasMatch) {
+          const header = block.querySelector('.wd-category-header');
+          const panel = block.querySelector('.wd-category-panel');
+          if (header && panel && header.getAttribute('aria-expanded') !== 'true') {
+            header.setAttribute('aria-expanded', 'true');
+            panel.hidden = false;
+            block.classList.add('is-open');
+          }
+        }
+      }
+    });
+    if (featureEmptyNoteEl) featureEmptyNoteEl.hidden = anyVisible || state.featureTab === 'included';
+  }
+
+  function switchFeatureTab(tab) {
+    state.featureTab = tab;
+    state.categoryFilter = null;
+    if (featureSearchEl) featureSearchEl.value = '';
+    state.searchQuery = '';
+    if (featureTabsEl) {
+      Array.from(featureTabsEl.querySelectorAll('.wd-feature-tab')).forEach(btn => {
+        const active = btn.dataset.featureTab === tab;
+        btn.classList.toggle('is-active', active);
+        btn.setAttribute('aria-selected', String(active));
+      });
+    }
+    if (optionalPanelEl) optionalPanelEl.hidden = tab !== 'addons';
+    if (premiumPanelEl) premiumPanelEl.hidden = tab !== 'premium';
+    if (includedPanelEl) includedPanelEl.hidden = tab !== 'included';
+    if (featureToolbarEl) featureToolbarEl.hidden = tab === 'included';
+    renderCategoryChips();
+    applyFeatureFilters();
   }
 
   function selectedInputs(priority) {
@@ -582,6 +717,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const total = computeTotal();
     const heroes = heroesEligible();
     animatePrice(total);
+
+    const selectedCount = optionalSel.length + premiumSel.length;
+    if (featureCountEl) {
+      featureCountEl.hidden = selectedCount === 0;
+      featureCountEl.textContent = selectedCount === 1
+        ? tDyn('feature_count_one', '1 feature selected')
+        : fillTemplate(tDyn('feature_count_many', '{{count}} features selected'), { count: selectedCount });
+    }
 
     // What they'd have paid with no discounts at all, vs. what they're
     // actually paying -- shown as a concrete dollar figure under the price,
@@ -637,13 +780,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (premiumSel.length) {
       const quoteDividerLabel = tDyn('cost_row_quote_divider', 'Custom-quote add-ons');
-      const quoteLabel = tDyn('cost_row_quote', 'quote');
+      const quoteLabel = tDyn('cost_row_quote', 'Custom quote');
       html += `<div class="wd-cost-row wd-cost-row--divider"><span>${escHtml(quoteDividerLabel)}</span></div>`;
       premiumSel.forEach(el => {
         html += `<div class="wd-cost-row wd-cost-row--quote"><span>${escHtml(tCatItem(el.dataset.title))}</span><strong>${escHtml(quoteLabel)}</strong></div>`;
       });
     }
     costBreakdownEl.innerHTML = html;
+    if (quoteRecapBreakdownEl) quoteRecapBreakdownEl.innerHTML = html;
     downloadBtn.hidden = false;
     downloadBtn.disabled = !JSPDF_READY;
     downloadBtn.setAttribute('aria-disabled', String(!JSPDF_READY));
@@ -723,7 +867,6 @@ document.addEventListener('DOMContentLoaded', () => {
       clearTimeout(existingCard._removeTimeout);
       existingCard.classList.remove('wd-leaving');
       if (!document.getElementById(`wd-nav-${slug}`)) {
-        previewNavEl.hidden = false;
         const navPill = document.createElement('span');
         navPill.className = 'wd-preview-nav-pill';
         navPill.id = `wd-nav-${slug}`;
@@ -733,8 +876,8 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // nav pill
-    previewNavEl.hidden = false;
+    // nav pill -- appended after the always-visible base nav items
+    // (Home/Services/About/Contact), never replacing them.
     const navPill = document.createElement('span');
     navPill.className = 'wd-preview-nav-pill';
     navPill.id = `wd-nav-${slug}`;
@@ -760,9 +903,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (card.classList.contains('wd-leaving')) card.remove();
       }, 220);
     }
-    if (!previewSectionsEl.children.length) {
-      setTimeout(() => { if (!previewSectionsEl.children.length) previewNavEl.hidden = true; }, 230);
-    }
   }
 
   // Re-renders the text/graphics of every preview card already on screen --
@@ -771,6 +911,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function refreshPreviewContent() {
     const name = businessNameEl && businessNameEl.value.trim();
     browserUrlEl.textContent = name ? name.toLowerCase().replace(/[^a-z0-9]+/g, '') + '.com' : 'yourbusiness.com';
+    const displayName = name || tDyn('preview_default_business_name', 'Your business');
+    if (previewHeroNameEl) previewHeroNameEl.textContent = displayName;
+    if (previewFooterNameEl) previewFooterNameEl.textContent = displayName;
     if (!state.catalog) return;
     document.querySelectorAll('.wd-preview-card').forEach(card => {
       const slug = card.id.replace('wd-preview-', '');
@@ -822,16 +965,23 @@ document.addEventListener('DOMContentLoaded', () => {
         renderIncludedSummary();
         renderCategoryGroup(optionalContainer, data.categories, 'C');
         renderCategoryGroup(premiumContainer, data.categories, 'S');
-        previewNavEl.innerHTML = '';
-        previewNavEl.hidden = true;
+        // Clear only the dynamically-added nav pills -- the base nav's own
+        // Home/Services/About/Contact pills stay put, since the preview
+        // now always looks like a real (if starter) site rather than
+        // starting empty.
+        Array.from(previewNavEl.querySelectorAll('.wd-preview-nav-pill:not(.wd-preview-nav-pill--base)')).forEach(el => el.remove());
         previewSectionsEl.innerHTML = '';
         previewBadgesEl.innerHTML = '';
-        browserEmptyEl.hidden = false;
+        browserEmptyEl.hidden = true;
+        previewBaseEl.hidden = false;
         refreshPreviewContent();
+        switchFeatureTab('addons');
         if (draft) applyDraft(draft);
         updatePriceAndBreakdown();
         updateBriefVisibility();
         if (!draft) saveDraft();
+        if (mobileBarEl) mobileBarEl.classList.add('is-visible');
+        document.body.classList.add('has-mobile-bar');
         showPanel(draft && draft.quickLeadId ? '4' : '2');
       })
       .catch(err => {
@@ -900,6 +1050,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (state.package) updatePriceAndBreakdown();
     saveDraft();
   });
+
+  featureTabsEl?.querySelectorAll('.wd-feature-tab').forEach(btn => {
+    btn.addEventListener('click', () => switchFeatureTab(btn.dataset.featureTab));
+  });
+  featureSearchEl?.addEventListener('input', () => {
+    state.searchQuery = featureSearchEl.value;
+    applyFeatureFilters();
+  });
+  reviewSubmitBtn?.addEventListener('click', () => showPanel('3'));
+  mobileReviewBtn?.addEventListener('click', () => showPanel('3'));
 
   // Debounced draft save on every keystroke in the quick-quote and full
   // brief forms (event delegation via bubbling 'input', so this covers
@@ -1285,6 +1445,8 @@ document.addEventListener('DOMContentLoaded', () => {
     renderBadges();
     updatePriceAndBreakdown();
     updateBriefVisibility();
+    renderCategoryChips();
+    applyFeatureFilters();
   });
 
   // Resume an interrupted session (accidental refresh/navigation) --

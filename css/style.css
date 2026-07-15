@@ -1716,9 +1716,92 @@ textarea{ resize: vertical; }
 }
 .wd-start-over:hover{ color: var(--accent-orange); }
 
-.wd-layout{ display:flex; flex-direction:column; gap:2.5rem; }
+/* ---- Studio workspace: persistent two-column configurator. Left column
+   is the live preview (visual focal point, ~64% width); right column is
+   a sticky sidebar (~36%) whose header/footer stay put while only the
+   feature list scrolls. Below 900px this collapses to a single stacked
+   column in normal document flow (see the max-width:899px block near the
+   end of this section) with a fixed mobile estimate bar instead. ---- */
+.wd-studio{
+  display:grid; grid-template-columns: 64fr 36fr; gap:1.75rem; align-items:start;
+  margin-bottom: 2rem;
+}
+.wd-studio-preview{ min-width:0; }
+.wd-preview-disclaimer{
+  font-size:.76rem; color: var(--ink-faint); text-align:center; margin:.75rem 0 0; font-style:italic;
+}
+
+.wd-sidebar{
+  display:flex; flex-direction:column; min-width:0;
+  background: var(--paper); border:1px solid var(--line); border-radius: calc(var(--radius) + 4px);
+  box-shadow: 0 14px 34px rgba(20,33,61,0.10);
+  position: sticky; top: 1.5rem;
+  height: 76vh; min-height: 480px; max-height: 820px;
+  overflow: hidden;
+}
+:root[data-theme="dark"] .wd-sidebar{ box-shadow: 0 14px 34px rgba(0,0,0,0.35); }
+
+.wd-sidebar-header{
+  flex-shrink:0; padding:1.1rem 1.2rem .9rem; border-bottom:1px solid var(--line);
+  display:flex; flex-direction:column; gap:.8rem; min-width:0;
+}
+.wd-sidebar-scroll{
+  flex:1 1 auto; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch;
+  padding:1.1rem 1.2rem;
+}
+.wd-sidebar-footer{
+  flex-shrink:0; padding:1rem 1.2rem 1.1rem; border-top:1px solid var(--line);
+  background: var(--paper-alt); display:flex; flex-direction:column; gap:.75rem;
+}
+
+.wd-main{ min-width:0; }
 .wd-panel{ display:none; }
 .wd-panel.is-active{ display:block; }
+
+/* ---- Feature tabs (Add-ons / Premium / Included) ---- */
+.wd-feature-tabs{ display:flex; gap:.35rem; min-width:0; }
+.wd-feature-tabs[hidden], .wd-feature-toolbar[hidden]{ display:none; }
+.wd-feature-tab{
+  flex:1; min-width:0; background: var(--paper-alt); border:1px solid var(--line); border-radius:999px;
+  padding:.45rem .5rem; font-family: var(--font-display); font-size:.76rem; font-weight:700;
+  color: var(--ink-soft); cursor:pointer; text-align:center; white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis;
+}
+.wd-feature-tab.is-active{ background: var(--navy-deep); color: var(--on-dark); border-color: var(--navy-deep); }
+.wd-feature-tab:focus-visible{ outline:2px solid var(--accent-teal); outline-offset:2px; }
+
+.wd-feature-toolbar{ display:flex; flex-direction:column; gap:.6rem; min-width:0; }
+.wd-feature-search{
+  display:flex; align-items:center; gap:.5rem; background: var(--paper-alt); border:1px solid var(--line);
+  border-radius:999px; padding:.5rem .9rem; color: var(--ink-faint); min-width:0;
+}
+.wd-feature-search input{
+  border:none; background:none; outline:none; flex:1; font-size:.85rem; color: var(--ink); min-width:0; width:0;
+}
+.wd-feature-search input::-webkit-search-cancel-button{ cursor:pointer; }
+.wd-category-chips{ display:flex; flex-wrap:wrap; gap:.4rem; max-height:3.6rem; overflow-y:auto; min-width:0; }
+.wd-category-chip{
+  font-family: var(--font-display); font-size:.7rem; font-weight:600; color: var(--ink-soft);
+  background: var(--paper-alt); border:1px solid var(--line); border-radius:999px; padding:.25rem .7rem;
+  cursor:pointer; flex-shrink:0;
+}
+.wd-category-chip.is-active{ background: var(--select-bg); color: var(--accent-teal-text); border-color: var(--accent-teal); }
+.wd-feature-empty-note{ font-size:.85rem; color: var(--ink-faint); text-align:center; padding:1.5rem 0; }
+
+.wd-feature-tab-panel[hidden]{ display:none; }
+.wd-price-ticker-count{ display:block; font-size:.7rem; color: rgba(245,245,244,0.65); margin-top:.2rem; }
+
+/* ---- Mobile sticky estimate bar (below 900px only, see media query) ---- */
+.wd-mobile-bar{
+  display:none; position:fixed; left:0; right:0; bottom:0; z-index:40;
+  align-items:center; justify-content:space-between; gap:1rem;
+  background: var(--paper); border-top:1px solid var(--line); box-shadow: 0 -6px 20px rgba(20,33,61,0.12);
+  padding:.75rem 1rem; padding-bottom: calc(.75rem + env(safe-area-inset-bottom, 0px));
+}
+.wd-mobile-bar-info{ display:flex; flex-direction:column; min-width:0; }
+.wd-mobile-bar-amount{ font-family: var(--font-display); font-size:1.3rem; font-weight:700; color: var(--ink); line-height:1.1; }
+.wd-mobile-bar-label{ font-size:.7rem; color: var(--ink-faint); }
+.wd-mobile-bar .btn{ flex-shrink:0; }
 
 .wd-section-title{ font-size:1.15rem; margin:2rem 0 .3rem; }
 .wd-note{ font-size:.85rem; color: var(--ink-soft); margin-bottom:1rem; }
@@ -1780,26 +1863,13 @@ textarea{ resize: vertical; }
 }
 .wd-price-tag--quote{ color: var(--accent-orange-text); background:var(--notice-bg-strong); }
 
-/* ---- Live preview hero: the tool's focal point. Full-width, in normal
-   document flow -- no sticky/pinned positioning, so it can never overlap
-   subsequent content (the bug this replaced) and never sits in the way
-   of scrolling to the step panels below it. Same structure at every
-   breakpoint; only sizing changes responsively. ---- */
-.wd-preview-hero{ margin-bottom:.5rem; }
-
-.wd-preview-hero-info{
-  display:grid; grid-template-columns: 1fr 1fr; gap:1.1rem 1.75rem; align-items:start; margin-top:1.25rem;
-}
-.wd-preview-hero-info .wd-heroes-toggle,
-.wd-preview-hero-info .wd-cost-breakdown,
-.wd-preview-hero-info #wdDownloadPdf{ grid-column: 1 / -1; }
-
-@media (max-width:720px){
-  .wd-preview-hero-info{ grid-template-columns: 1fr; }
-}
-
-.wd-bizname-field{ display:flex; flex-direction:column; gap:.35rem; }
+.wd-bizname-field{ display:flex; flex-direction:column; gap:.35rem; min-width:0; }
 .wd-bizname-field .wd-note{ margin:0; }
+.wd-bizname-field label{ font-family: var(--font-display); font-size:.72rem; font-weight:700; letter-spacing:.03em; text-transform:uppercase; color: var(--ink-faint); }
+.wd-bizname-field input{
+  font-size:.95rem; padding:.55rem .8rem; border-radius: var(--radius); border:1px solid var(--select-border);
+  background: var(--paper); color: var(--ink); width:100%; box-sizing:border-box;
+}
 
 .wd-price-ticker{
   background: var(--navy-deep); color: var(--on-dark); border-radius: var(--radius); padding:1.1rem 1.3rem;
@@ -1823,6 +1893,12 @@ textarea{ resize: vertical; }
 .wd-quote-recap-label{ display:block; font-family: var(--font-display); font-size:.76rem; letter-spacing:.05em; text-transform:uppercase; color: var(--accent-teal); margin-bottom:.4rem; }
 .wd-quote-recap-amount{ display:block; font-family: var(--font-display); font-size:2.6rem; font-weight:700; line-height:1.1; }
 .wd-quote-recap-note{ display:block; font-size:.8rem; color: rgba(245,245,244,0.7); margin-top:.5rem; }
+.wd-quote-recap-breakdown{
+  margin-top:1.1rem; text-align:left; background: rgba(245,245,244,0.06); border-color: rgba(245,245,244,0.16); color: var(--on-dark);
+}
+.wd-quote-recap-breakdown:empty{ display:none; }
+.wd-quote-recap-breakdown .wd-cost-row{ border-bottom-color: rgba(245,245,244,0.14); }
+.wd-quote-recap-breakdown .wd-cost-row--divider{ color: rgba(245,245,244,0.6); }
 
 .wd-heroes-toggle{
   display:flex; align-items:flex-start; gap:.5rem; font-size:.78rem; color: var(--ink-soft);
@@ -1842,16 +1918,57 @@ textarea{ resize: vertical; }
   background: var(--paper-alt); border:1px solid var(--line); border-radius:999px; padding:.2rem .7rem; flex:1;
   min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
 }
-.wd-browser-viewport{ min-height:280px; max-height:560px; overflow-y:auto; padding:1.2rem; }
+.wd-browser-viewport{ min-height:420px; max-height:76vh; overflow-y:auto; padding:1.2rem; }
 .wd-browser-empty{ text-align:center; padding:2.5rem 1rem; color: var(--ink-faint); }
 .wd-browser-empty-icon{ font-size:1.8rem; display:block; margin-bottom:.5rem; }
 .wd-browser-empty p{ font-size:.82rem; margin:0; }
 
-.wd-preview-nav{ display:flex; flex-wrap:wrap; gap:.4rem; margin-bottom:.8rem; padding-bottom:.8rem; border-bottom:1px dashed var(--line); }
+/* Non-visual/technical capabilities (backups, SEO, auth, analytics,
+   security...) get a small strip of tasteful indicator chips in the
+   browser chrome instead of a fake full-page content section -- they're
+   not something a visitor would ever see as its own page. */
+.wd-browser-capabilities{ display:flex; flex-wrap:wrap; gap:.35rem; padding:0 .8rem; }
+.wd-browser-capabilities:not(:empty){ padding:.5rem .8rem; border-bottom:1px solid var(--line); background: var(--paper-alt); }
+
+.wd-preview-base{ display:flex; flex-direction:column; gap:1.1rem; }
+.wd-preview-base[hidden]{ display:none; }
+
+.wd-preview-nav{ display:flex; flex-wrap:wrap; gap:.4rem; padding-bottom:.8rem; border-bottom:1px dashed var(--line); }
 .wd-preview-nav-pill{
   font-size:.68rem; font-weight:600; color: var(--ink-soft); background: var(--paper); border:1px solid var(--line);
   border-radius:999px; padding:.2rem .6rem; animation: wd-pop .25s ease;
 }
+.wd-preview-nav-pill--base{ background: var(--paper-alt); animation:none; }
+
+.wd-preview-hero-mock{
+  text-align:center; padding:1.6rem 1rem; border-radius: var(--radius);
+  background: linear-gradient(180deg, var(--select-bg), var(--paper));
+}
+.wd-preview-hero-mock-name{ font-family: var(--font-display); font-size:.72rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color: var(--accent-teal-text); margin-bottom:.5rem; }
+.wd-preview-hero-mock-headline{ font-size:1.15rem; font-weight:700; color: var(--ink); margin-bottom:.9rem; line-height:1.35; }
+.wd-preview-hero-mock-cta{
+  display:inline-block; font-family: var(--font-display); font-size:.78rem; font-weight:700; color: var(--on-dark);
+  background: var(--accent-orange); border-radius:999px; padding:.55rem 1.3rem;
+}
+
+.wd-preview-services-mock{ display:grid; grid-template-columns: repeat(3, 1fr); gap:.7rem; }
+.wd-preview-services-mock-item{
+  display:flex; flex-direction:column; align-items:center; gap:.5rem; text-align:center; font-size:.72rem;
+  color: var(--ink-soft); background: var(--paper); border:1px solid var(--line); border-radius: var(--radius);
+  padding:.9rem .5rem;
+}
+
+.wd-preview-about-mock{
+  font-size:.8rem; color: var(--ink-soft); text-align:center; padding:.9rem 1rem;
+  border:1px dashed var(--line); border-radius: var(--radius);
+}
+.wd-preview-about-mock p{ margin:0; }
+
+.wd-preview-footer-mock{
+  display:flex; align-items:center; justify-content:center; gap:.4rem; font-size:.72rem; color: var(--ink-faint);
+  padding-top:.9rem; border-top:1px solid var(--line);
+}
+.wd-preview-footer-mock-dot{ opacity:.5; }
 
 .wd-preview-sections{ display:flex; flex-direction:column; gap:.6rem; }
 .wd-preview-card{
@@ -1936,7 +2053,6 @@ textarea{ resize: vertical; }
 .wd-mock-calendar span{ display:block; aspect-ratio:1; border-radius:3px; background: var(--select-bg); }
 .wd-mock-calendar-selected{ background: var(--accent-teal) !important; }
 
-.wd-preview-badges{ display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.8rem; }
 .wd-badge-chip{
   font-size:.68rem; font-weight:600; color: var(--accent-teal-text); background: var(--select-bg);
   border:1px solid var(--select-border); border-radius:999px; padding:.25rem .65rem; animation: wd-pop .25s ease;
@@ -1969,10 +2085,33 @@ textarea{ resize: vertical; }
 
   .wd-browser-viewport{ min-height:0; height:38vh; max-height:280px; }
 
+  /* Below the desktop studio breakpoint: stack the preview above the
+     sidebar and let the page scroll normally -- no nested nested-scroll
+     traps. The sidebar's own header/scroll/footer structure collapses
+     back into plain document flow. */
+  .wd-studio{ display:flex; flex-direction:column; align-items:stretch; gap:1.5rem; }
+  .wd-sidebar{
+    position:static; height:auto; min-height:0; max-height:none; overflow:visible;
+  }
+  .wd-sidebar-scroll{ overflow-y:visible; }
+
+  /* Fixed mobile estimate bar -- shown once a package is chosen (JS adds
+     .is-visible); padding-bottom on the body (via .has-mobile-bar, JS-set
+     alongside it) keeps the real site footer and cookie notice from being
+     covered by the fixed bar at the very bottom of the page. */
+  .wd-mobile-bar.is-visible{ display:flex; }
+  body.has-mobile-bar{ padding-bottom: 4.75rem; }
+  body.has-mobile-bar .cookie-banner{ margin-bottom: 4.75rem; }
+
   /* Comfortable tap targets for the tool's checkboxes on touch devices. */
   .wd-tool .checkbox-pill input,
   .wd-heroes-toggle input,
   .wd-bundle-box input{ width:20px; height:20px; }
+
+  /* 44px minimum interactive targets on touch devices. */
+  .wd-feature-tab{ min-height:44px; }
+  .wd-category-chip{ min-height:44px; padding-top:0; padding-bottom:0; display:inline-flex; align-items:center; }
+  .wd-category-chips{ max-height:10rem; }
 }
 
 @media (prefers-reduced-motion: reduce){
