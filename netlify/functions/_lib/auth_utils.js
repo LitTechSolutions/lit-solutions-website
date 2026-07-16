@@ -48,15 +48,28 @@ function sign(payloadObj) {
 }
 
 function verify(token) {
-  if (!token || token.indexOf(".") === -1) return null;
+  if (!token || token.indexOf(".") === -1) {
+    console.log(`[TEMP-DIAG] verify: no token or malformed (present=${!!token}, hasDot=${token ? token.indexOf(".") !== -1 : "n/a"})`);
+    return null;
+  }
   const [payload, sig] = token.split(".");
   const expected = crypto.createHmac("sha256", getSecret()).update(payload).digest("base64url");
   const sigBuf = Buffer.from(sig);
   const expBuf = Buffer.from(expected);
-  if (sigBuf.length !== expBuf.length || !crypto.timingSafeEqual(sigBuf, expBuf)) return null;
+  if (sigBuf.length !== expBuf.length || !crypto.timingSafeEqual(sigBuf, expBuf)) {
+    console.log(`[TEMP-DIAG] verify: signature mismatch (secretLen=${getSecret().length}, sigLen=${sigBuf.length}, expectedLen=${expBuf.length})`);
+    return null;
+  }
   let obj;
-  try { obj = JSON.parse(Buffer.from(payload, "base64url").toString()); } catch (e) { return null; }
-  if (obj.exp && Date.now() > obj.exp) return null;
+  try { obj = JSON.parse(Buffer.from(payload, "base64url").toString()); } catch (e) {
+    console.log(`[TEMP-DIAG] verify: payload did not parse as JSON`);
+    return null;
+  }
+  if (obj.exp && Date.now() > obj.exp) {
+    console.log(`[TEMP-DIAG] verify: token expired (exp=${obj.exp}, now=${Date.now()})`);
+    return null;
+  }
+  console.log(`[TEMP-DIAG] verify: success (sid=${obj.sid ? obj.sid.slice(0, 6) + "..." : "none"})`);
   return obj;
 }
 
@@ -72,7 +85,15 @@ async function getSession(token) {
   const decoded = verify(token);
   if (!decoded || !decoded.sid) return null;
   const session = await getJSON("sessions", decoded.sid);
-  if (!session || Date.now() > session.expiresAt) return null;
+  if (!session) {
+    console.log(`[TEMP-DIAG] getSession: no Blobs record for sid=${decoded.sid.slice(0, 6)}...`);
+    return null;
+  }
+  if (Date.now() > session.expiresAt) {
+    console.log(`[TEMP-DIAG] getSession: session expired (expiresAt=${session.expiresAt}, now=${Date.now()})`);
+    return null;
+  }
+  console.log(`[TEMP-DIAG] getSession: success (role=${session.role})`);
   return { sessionId: decoded.sid, ...session };
 }
 
@@ -130,6 +151,11 @@ function clearMfaPendingCookie() {
 function readCookie(event, name) {
   const header = (event.headers && (event.headers.cookie || event.headers.Cookie)) || "";
   const match = header.split(";").map((c) => c.trim()).find((c) => c.startsWith(name + "="));
+  if (name === "lts_session") {
+    // TEMP-DIAG (2026-07-16): remove once the sign-in-then-bounce bug is
+    // found. Logs presence/shape only -- never the header value itself.
+    console.log(`[TEMP-DIAG] readCookie(lts_session): header present=${!!header}, cookie names seen=${JSON.stringify(header.split(";").map((c) => c.trim().split("=")[0]).filter(Boolean))}, found=${!!match}`);
+  }
   return match ? match.slice(name.length + 1) : null;
 }
 
