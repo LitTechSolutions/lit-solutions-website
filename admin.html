@@ -156,7 +156,20 @@
     v.querySelector("#si-submit").addEventListener("click", async function () {
       var status = v.querySelector("#si-status");
       var r = await api("auth-login", { method: "POST", body: JSON.stringify({ email: v.querySelector("#si-email").value, password: v.querySelector("#si-password").value }) });
-      if (r.ok) {
+      if (r.ok && r.body && r.body.mfaRequired) {
+        // Password was correct, but this is an admin-role account and
+        // two-factor authentication is mandatory for those -- auth-login.js
+        // deliberately withholds a real session until that's completed. This
+        // page has no TOTP enrollment/verification UI of its own (Care Hub's
+        // React app already has a full, tested one), so point there rather
+        // than falsely claiming success and silently failing to sign in.
+        status.innerHTML = r.body.enrollmentRequired
+          ? "Your password was correct, but administrator accounts require two-factor authentication. " +
+            'Set it up at <a href="/care-hub/login">the Care Hub sign-in page</a> -- once that\'s done, come back here and you\'ll be signed in.'
+          : "Your password was correct. Enter your authenticator app code at " +
+            '<a href="/care-hub/login">the Care Hub sign-in page</a> to finish signing in, then come back here.';
+        status.className = "status error";
+      } else if (r.ok) {
         status.textContent = "Signed in.";
         status.className = "status ok";
         await loadSession();
