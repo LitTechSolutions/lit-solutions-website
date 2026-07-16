@@ -482,12 +482,24 @@ document.addEventListener('DOMContentLoaded', () => {
       s.classList.toggle('is-active', stepNum === name);
       if (name === '2' || name === '3' || name === 'prompt' || name === 'worksheet-opened' || name === 'done') s.disabled = false;
     });
-    if (name === 'prompt' || name === 'worksheet-opened' || name === 'done') window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
     // Move focus to the new panel's heading so screen-reader/keyboard users
-    // land on the new content instead of a now-hidden or stale element.
+    // land on the new content instead of a now-hidden or stale element, and
+    // (for the post-quote prompt/worksheet-opened/done panels specifically)
+    // scroll that panel itself into view. This used to be
+    // window.scrollTo({top:0}) -- which scrolls the whole PAGE to its very
+    // top, i.e. the hero/launch-banner section, not the tool. Since the
+    // prompt panel lives well below that inside .wd-sidebar, forcing the
+    // page to the top after a quick-quote submission actively hid the
+    // "want to continue?" prompt below the fold right when a customer most
+    // needed to see it -- scrollIntoView brings the actual panel into view
+    // instead (a no-op if it's already visible, which it usually is, since
+    // the customer just clicked a submit button inside this same sidebar).
     const activePanel = document.querySelector(`.wd-panel[data-panel="${name}"]`);
+    if ((name === 'prompt' || name === 'worksheet-opened' || name === 'done') && activePanel) {
+      activePanel.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
+    }
     const heading = activePanel && activePanel.querySelector('h2[tabindex="-1"]');
-    if (heading) heading.focus();
+    if (heading) heading.focus({ preventScroll: true });
     // The feature tabs/search/toolbar and "Review & submit" button only
     // make sense while actually browsing add-ons (panel 2) -- hide them
     // the rest of the time rather than leaving inert controls visible
