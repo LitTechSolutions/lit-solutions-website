@@ -135,6 +135,9 @@ export const strings = {
     cardTitle: "Make a payment",
     cardBody: "Pay an invoice or deposit online.",
     payButton: "Pay now",
+    termsAgreeLabel:
+      "I have read and agree to the Terms & Conditions and Privacy Policy, including the payment, refund, and dispute policies. This is required before paying.",
+    termsWarning: "Please check the box above to agree to our Terms & Conditions before paying.",
   },
 } as const;
 

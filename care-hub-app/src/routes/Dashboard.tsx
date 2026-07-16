@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { api } from "../api/client";
 import { Loading } from "../components/states/Loading";
 import { EmptyState } from "../components/states/EmptyState";
@@ -25,6 +25,13 @@ export function Dashboard() {
   const state = useApi(fetchAccount, []);
   const { state: authState } = useAuth();
   const isStaff = authState.status === "signedIn" && isStaffRole(authState.user.role);
+  // F011 -- the same Square Payment Link (square.link/u/2oozkfhz) is gated
+  // behind an explicit terms checkbox on payment.html; this button used to
+  // skip that gate entirely, letting a customer pay before ever seeing the
+  // terms. Mirrors payment.html's agreeTerms/pay-btn lock pattern exactly
+  // (same legal copy) rather than inventing new wording.
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [showTermsWarning, setShowTermsWarning] = useState(false);
 
   switch (state.status) {
     case "loading":
@@ -48,12 +55,50 @@ export function Dashboard() {
             <div className="card">
               <h2 style={{ fontSize: "1rem" }}>{strings.payments.cardTitle}</h2>
               <p style={{ color: "var(--ink-soft)" }}>{strings.payments.cardBody}</p>
+              <label style={{ display: "flex", alignItems: "flex-start", gap: "var(--space-2)", marginTop: "var(--space-3)" }}>
+                <input
+                  type="checkbox"
+                  checked={agreedToTerms}
+                  onChange={(e) => {
+                    setAgreedToTerms(e.target.checked);
+                    if (e.target.checked) setShowTermsWarning(false);
+                  }}
+                />
+                <span style={{ fontSize: "0.85rem" }}>
+                  I have read and agree to the{" "}
+                  <a href="/terms.html" target="_blank" rel="noopener">
+                    Terms &amp; Conditions
+                  </a>{" "}
+                  and{" "}
+                  <a href="/privacy.html" target="_blank" rel="noopener">
+                    Privacy Policy
+                  </a>
+                  , including the payment, refund, and dispute policies. {strings.payments.termsAgreeLabel}
+                </span>
+              </label>
+              {showTermsWarning ? (
+                <p role="alert" style={{ color: "var(--error-text, #A32E2E)", fontSize: "0.85rem", marginTop: "var(--space-2)" }}>
+                  {strings.payments.termsWarning}
+                </p>
+              ) : null}
               <a
                 className="btn btn-primary btn-small"
-                href={SQUARE_DEV_PAYMENT_LINK_URL}
+                href={agreedToTerms ? SQUARE_DEV_PAYMENT_LINK_URL : undefined}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ display: "inline-block", marginTop: "var(--space-3)" }}
+                aria-disabled={!agreedToTerms}
+                style={{
+                  display: "inline-block",
+                  marginTop: "var(--space-3)",
+                  opacity: agreedToTerms ? 1 : 0.5,
+                  cursor: agreedToTerms ? "pointer" : "not-allowed",
+                }}
+                onClick={(e) => {
+                  if (!agreedToTerms) {
+                    e.preventDefault();
+                    setShowTermsWarning(true);
+                  }
+                }}
               >
                 {strings.payments.payButton}
               </a>
