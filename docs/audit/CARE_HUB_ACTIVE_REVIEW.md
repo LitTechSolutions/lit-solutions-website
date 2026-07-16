@@ -4,6 +4,116 @@
 **Reviewed baseline:** commit `b2772e9` on 2026-07-15; no tracked worktree changes were present when verification began
 **Purpose:** Preserve fix-ready Care Hub findings until they are reconciled into the numbered security, backend, and quality audit sessions.
 
+## Reconciliation update — 2026-07-16
+
+The sections below (dated 2026-07-15) describe findings against baseline
+`b2772e9`. **Commit `ddc2cad` ("fix: harden Care Hub launch blockers"),
+authored by Dylan the same day, landed after that baseline and was never
+reconciled into this document** -- the per-finding "Status:" fields below
+are stale. Every claim in this update was verified today by directly
+reading the current code (not by trusting `ddc2cad`'s own commit message
+or this document's top summary), the same independent-verification
+standard used for the original IDOR discovery.
+
+**Confirmed resolved as of current `main` (`ea16f1d`):**
+
+- **CH-P0-01** (approval atomicity) -- `src/db/approvalStore.js`'s
+  `applyApprovalDecision` uses one `WITH changed AS (UPDATE ... WHERE
+  status = 'pending' ... RETURNING *), audited AS (INSERT ... FROM changed
+  RETURNING id) SELECT ...` statement. A forced-concurrent test (two
+  simultaneous decisions against the same row) now allows exactly one
+  winner.
+- **CH-P0-02** (MFA fail-open) -- `netlify/functions/mfa-enroll.js` fails
+  closed (503, enrollment not activated) when confirmation email cannot
+  be delivered; no fallback to immediate activation exists.
+  `mfaChallengeStore.js`'s `claimMfaEnrollmentChallenge` atomically
+  consumes the confirmation token (`UPDATE ... WHERE consumed_at IS NULL
+  ... RETURNING`).
+  - **Still genuinely open:** there is still no separate, strongly-
+    authenticated break-glass recovery path for a platform_admin who
+    gets fail-closed out by a real email outage during first enrollment
+    -- that's an intentional trade (fail closed, don't silently fall
+    back), but it means a real Resend outage during enrollment currently
+    has no recovery path at all. Worth a decision, not urgent given
+    Resend is already live.
+- **CH-H-05** (MFA link auto-fires on mount) --
+  `care-hub-app/src/routes/MfaEnrollVerify.tsx` shows a "confirm" phase
+  with a real button (`onClick={handleConfirm}`); the confirmation POST
+  never fires from a mount-time effect.
+- **CH-H-01** (parent ownership on creation) -- `scope-of-work.js` validates
+  the ticket's `organizationId` before creating a scope; `change-orders.js`
+  validates the referenced scope's `organizationId` before creating a
+  change order; `payment-requests.js`'s `subjectBelongsToOrganization()`
+  validates the scope/change-order/subscription subject before creating a
+  payment request.
+- **CH-M-02** (staff sees customer payment card) --
+  `care-hub-app/src/auth/roles.ts` now has both `isStaffRole()` (admin OR
+  technician -- used to hide the customer payment card from any staff
+  account) and a narrower `isPlatformAdminRole()` (admin only -- used for
+  platform_admin-only screens). `Dashboard.tsx` uses the former.
+- **CH-H-06** (legal disclosures incomplete in 15 languages) -- resolved
+  via the alternative this document itself proposed: `privacy.html`'s
+  legal content is `lang="en" dir="ltr" data-legal-english-only`, and
+  `js/i18n.js` skips translating/replacing text inside that container, so
+  a non-English visitor sees a clearly-marked, internally-consistent
+  English document rather than mixed-language text. Not a translation --
+  a deliberate, correctly-executed English-only presentation.
+- **CH-M-05** (frontend dev-dependency vulnerabilities) -- `care-hub-app`
+  was upgraded to Vite 8 / Vitest 4 / `@vitejs/plugin-react` 6. Re-checked
+  today: `npm audit` (with and without `--omit=dev`) reports **0
+  vulnerabilities**.
+
+**Fixed today (2026-07-16), building on the same pattern `ddc2cad`
+established -- CH-H-02 was only partially closed by that commit
+(approvals, tickets, subscriptions, and payment-request transitions got
+the atomic-CTE treatment; scope versioning, change-order creation, and
+invitation acceptance did not):**
+
+- `src/db/scopeOfWorkStore.js`'s `createNextScopeVersion` -- the supersede-
+  update, next-version insert, and audit event are now one statement;
+  a concurrent re-versioning of the same scope loses cleanly instead of
+  both succeeding.
+- `src/db/changeOrderStore.js`'s `createChangeOrder` -- the change-order
+  insert, its paired approval-request insert, and both audit events are
+  now one statement (previously four separate writes; a change order
+  could exist with no approval request if the process died mid-sequence).
+- `src/db/invitationStore.js`'s `acceptInvitation` -- its `UPDATE` now
+  repeats the status predicate it already read (`WHERE status = ...`),
+  closing a race where two simultaneous accepts of the same token could
+  both return success, creating two membership/consent records for one
+  invitation.
+- All three verified with new concurrency-specific regression tests;
+  full suite 892/892 passing (root) after these changes.
+
+**Still genuinely open (verified today, not just carried forward):**
+
+- **CH-P0-03** -- `NETLIFY_BLOBS_TOKEN` still needs a real provider-side
+  rotation (a new token issued, the old one revoked); re-entering the same
+  value doesn't address the exposure. Requires Dylan directly in Netlify's
+  dashboard.
+- **CH-H-02, cross-provider portion** -- `invitation-accept.js`'s endpoint
+  still spans Netlify Blobs (user record) and Postgres (membership,
+  consent) with no shared transaction boundary. This needs an actual
+  saga/outbox design, not a quick patch; today's fix only closed the
+  single-table Postgres race inside `acceptInvitation` itself.
+- **CH-H-03** -- Square is still a static, non-integrated payment link.
+- **CH-H-04** -- Cloudinary is still not integrated; documents remain
+  base64 in Blobs.
+- **CH-M-01** -- frontend/backend type contracts (approval subject-type
+  naming, payment status enums, scope line-item pricing shape) have not
+  been reconciled; not re-verified today.
+- **CH-M-03** -- no browser/e2e/accessibility test suite exists for
+  `care-hub-app` (component/unit tests only).
+- **CH-M-04** -- the generic webhook verifier remains provider-
+  incompatible; moot until CH-H-03 is actually built.
+- **Infrastructure, not code:** `DATABASE_URL` is confirmed absent from
+  the live Netlify project's environment variables as of 2026-07-16 --
+  every Postgres-backed function above is unreachable in production
+  until it's set. The local dev Neon database itself was verified today
+  (42 tables, all expected tables present, real accumulated smoke-test
+  data) -- the database is ready; only the production environment
+  variable is missing.
+
 This is an audit artifact, not an implementation. Temporary identifiers in
 this file use `CH-*`. They must be reconciled into the appropriate numbered
 audit sessions after the development baseline is stable.

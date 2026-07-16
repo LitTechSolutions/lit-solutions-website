@@ -70,36 +70,53 @@ test("getScopeById returns null for no match", async () => {
 });
 
 // Integration: fetch-then-version through the pure scopeVersioning.js engine.
-test("integration: createNextScopeVersion fetches, versions via scopeVersioning.js, and persists both rows", async () => {
-  const sql = fakeSql([scopeRow({ status: "sent" })]);
-  const auditRecorder = fakeAuditRecorder();
+test("integration: createNextScopeVersion fetches, versions via scopeVersioning.js, and persists both rows in one atomic statement", async () => {
+  const selectRows = [scopeRow({ status: "sent" })];
+  const calls = [];
+  const sql = async (strings, ...values) => {
+    calls.push({ text: strings.join("?"), values });
+    return calls.length === 1 ? selectRows : [{ id: "scope-1" }];
+  };
+  sql.calls = calls;
   const newLineItems = [{ description: "Extra page", quantity: 1, priceRef: "priceRef-2" }];
-  const next = await createNextScopeVersion("scope-1", { lineItems: newLineItems }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID, actorId: "user-tech-1", auditRecorder });
+  const next = await createNextScopeVersion("scope-1", { lineItems: newLineItems }, { sql, now: FIXED_NOW, idGenerator: FIXED_ID, actorId: "user-tech-1" });
 
   assert.equal(next.version, 2);
   assert.equal(next.status, "draft");
   assert.deepEqual(next.lineItems, newLineItems);
-  assert.equal(sql.calls.length, 3, "1 SELECT + 1 UPDATE (supersede old) + 1 INSERT (new version)");
+  assert.equal(sql.calls.length, 2, "1 SELECT (fetch current) + 1 combined UPDATE/INSERT/audit statement");
+  assert.match(sql.calls[1].text, /WITH superseded AS/);
   assert.match(sql.calls[1].text, /UPDATE scope_of_work/);
-  assert.match(sql.calls[2].text, /INSERT INTO scope_of_work/);
-  assert.equal(auditRecorder.events.length, 1);
-  assert.equal(auditRecorder.events[0].action, "scope.new_version");
-  assert.equal(auditRecorder.events[0].actorId, "user-tech-1");
-  assert.deepEqual(auditRecorder.events[0].metadata, { scopeId: "scope-1", version: 2 });
+  assert.match(sql.calls[1].text, /INSERT INTO scope_of_work/);
+  assert.match(sql.calls[1].text, /INSERT INTO audit_events/);
 });
 
 test("integration: cannot version an already-superseded scope", async () => {
   const sql = fakeSql([scopeRow({ status: "superseded" })]);
-  const auditRecorder = fakeAuditRecorder();
-  await assert.rejects(() => createNextScopeVersion("scope-1", {}, { sql, now: FIXED_NOW, idGenerator: FIXED_ID, auditRecorder }), /already superseded/);
-  assert.equal(auditRecorder.events.length, 0);
+  await assert.rejects(() => createNextScopeVersion("scope-1", {}, { sql, now: FIXED_NOW, idGenerator: FIXED_ID }), /already superseded/);
+  assert.equal(sql.calls.length, 1, "the pure-function rejection fires before any write is attempted");
 });
 
 test("createNextScopeVersion throws for a nonexistent scope", async () => {
   const sql = fakeSql([]);
-  const auditRecorder = fakeAuditRecorder();
-  await assert.rejects(() => createNextScopeVersion("nope", {}, { sql, now: FIXED_NOW, auditRecorder }), /no scope/);
-  assert.equal(auditRecorder.events.length, 0);
+  await assert.rejects(() => createNextScopeVersion("nope", {}, { sql, now: FIXED_NOW }), /no scope/);
+});
+
+test("integration: a concurrent version request racing the same scope loses cleanly", async () => {
+  // Simulates another request having already superseded (or re-versioned)
+  // this exact scope between our SELECT and our write -- the combined
+  // statement's UPDATE matches no row, so every downstream CTE is empty
+  // and the write returns zero rows instead of silently double-versioning.
+  const calls = [];
+  const sql = async (strings, ...values) => {
+    calls.push({ text: strings.join("?"), values });
+    return calls.length === 1 ? [scopeRow({ status: "sent" })] : [];
+  };
+  sql.calls = calls;
+  await assert.rejects(
+    () => createNextScopeVersion("scope-1", {}, { sql, now: FIXED_NOW, idGenerator: FIXED_ID }),
+    /versioned or superseded by another request/
+  );
 });
 
 test("listScopeVersionsForTicket orders by version and scopes the query by organizationId", async () => {

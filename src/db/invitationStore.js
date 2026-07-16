@@ -263,7 +263,36 @@ async function acceptInvitation(token, deps = {}) {
   }
 
   const nowIso = now().toISOString();
-  await sql`UPDATE invitations SET status = ${decision.nextStatus}, accepted_at = ${nowIso} WHERE id = ${current.id}`;
+  // CH-H-02: repeat the status predicate we already read (same pattern as
+  // approvalStore.js/ticketStore.js) so two simultaneous accepts of the
+  // same token can't both win -- without this, both requests would pass
+  // the transitionInvitation() check above (neither has written yet),
+  // both issue this UPDATE, and both return 201 to invitation-accept.js,
+  // which would create two membership rows and two consent records for a
+  // single invitation.
+  const written = await sql`
+    UPDATE invitations
+    SET status = ${decision.nextStatus}, accepted_at = ${nowIso}
+    WHERE id = ${current.id} AND status = ${current.status}
+    RETURNING id
+  `;
+  if (written.length === 0) {
+    await auditRecorder.record(
+      {
+        correlationId: current.id,
+        actorType: "user",
+        actorId: "unknown",
+        organizationId: current.organizationId,
+        action: "invitation.accept",
+        targetType: "invitation",
+        targetId: current.id,
+        outcome: "denied",
+        metadata: { reason: "concurrent accept already redeemed this token", currentStatus: current.status },
+      },
+      deps
+    );
+    throw new Error(GENERIC_ERROR);
+  }
 
   await auditRecorder.record(
     {

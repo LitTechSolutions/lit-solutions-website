@@ -7,7 +7,7 @@ const crypto = require("node:crypto");
 const { getSql } = require("./pgClient");
 const { assertValidScopeOfWork } = require("../domain/scopeOfWork");
 const { createNextVersion } = require("../policy/scopeVersioning");
-const { createAuditRecorder } = require("../audit/auditLog");
+const { createAuditRecorder, shapeAuditEvent } = require("../audit/auditLog");
 const { createPgAuditSink } = require("./pgAuditSink");
 
 function resolveAuditRecorder(deps) {
@@ -79,6 +79,14 @@ async function getScopeById(id, deps = {}) {
  * and the new row -- versioned records are never silently overwritten
  * (SYS-NFR-011).
  *
+ * CH-H-02: the supersede-update, next-version insert, and audit event are
+ * one indivisible statement (mirrors approvalStore.js/ticketStore.js's
+ * pattern). The supersede UPDATE repeats the status predicate we already
+ * read, so a concurrent caller versioning the same scope loses cleanly --
+ * their INSERT/audit CTEs run "FROM superseded", which is empty if the
+ * UPDATE matched no row, so the whole statement is a no-op for the loser
+ * instead of two racing callers both creating a "version 2".
+ *
  * @param {string} scopeId
  * @param {Pick<import("../domain/scopeOfWork").ScopeOfWork, "assumptions" | "exclusions" | "lineItems">} updates
  * @param {{ sql?: Function, now?: () => Date, idGenerator?: () => string, actorId?: string, auditRecorder?: object }} [deps]
@@ -86,20 +94,15 @@ async function getScopeById(id, deps = {}) {
  */
 async function createNextScopeVersion(scopeId, updates, deps = {}) {
   const sql = deps.sql || getSql();
-  const auditRecorder = resolveAuditRecorder(deps);
+  const now = deps.now || (() => new Date());
   const current = await getScopeById(scopeId, { sql });
   if (!current) {
     throw new Error(`createNextScopeVersion: no scope "${scopeId}"`);
   }
   const { supersededPrevious, next } = createNextVersion(current, updates, deps);
 
-  await sql`UPDATE scope_of_work SET status = ${supersededPrevious.status} WHERE id = ${current.id}`;
-  await sql`
-    INSERT INTO scope_of_work (id, organization_id, ticket_id, version, status, assumptions, exclusions, line_items, created_at, created_by)
-    VALUES (${next.id}, ${next.organizationId}, ${next.ticketId}, ${next.version}, ${next.status}, ${JSON.stringify(next.assumptions)}, ${JSON.stringify(next.exclusions)}, ${JSON.stringify(next.lineItems)}, ${next.createdAt}, ${next.createdBy})
-  `;
-
-  await auditRecorder.record(
+  const nowIso = now().toISOString();
+  const auditEvent = shapeAuditEvent(
     {
       correlationId: next.id,
       actorType: "user",
@@ -111,8 +114,32 @@ async function createNextScopeVersion(scopeId, updates, deps = {}) {
       outcome: "success",
       metadata: { scopeId, version: next.version },
     },
-    deps
+    { now: () => new Date(nowIso), idGenerator: deps.auditIdGenerator }
   );
+
+  const written = await sql`
+    WITH superseded AS (
+      UPDATE scope_of_work
+      SET status = ${supersededPrevious.status}
+      WHERE id = ${current.id} AND status = ${current.status}
+      RETURNING id
+    ), inserted AS (
+      INSERT INTO scope_of_work (id, organization_id, ticket_id, version, status, assumptions, exclusions, line_items, created_at, created_by)
+      SELECT ${next.id}, ${next.organizationId}, ${next.ticketId}, ${next.version}, ${next.status}, ${JSON.stringify(next.assumptions)}, ${JSON.stringify(next.exclusions)}, ${JSON.stringify(next.lineItems)}, ${next.createdAt}, ${next.createdBy}
+      FROM superseded
+      RETURNING id
+    ), audited AS (
+      INSERT INTO audit_events (id, correlation_id, occurred_at, actor_type, actor_id, actor_role, organization_id, action, target_type, target_id, outcome, metadata)
+      SELECT ${auditEvent.id}, ${auditEvent.correlationId}, ${auditEvent.occurredAt}, ${auditEvent.actorType}, ${auditEvent.actorId}, ${auditEvent.actorRole || null}, ${auditEvent.organizationId}, ${auditEvent.action}, ${auditEvent.targetType}, ${auditEvent.targetId}, ${auditEvent.outcome}, ${JSON.stringify(auditEvent.metadata)}
+      FROM inserted
+      RETURNING id
+    )
+    SELECT inserted.id FROM inserted INNER JOIN audited ON TRUE
+  `;
+
+  if (written.length === 0) {
+    throw new Error("createNextScopeVersion: scope was versioned or superseded by another request");
+  }
 
   return next;
 }

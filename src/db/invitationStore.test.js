@@ -161,3 +161,26 @@ test("acceptInvitation rejects an expired token even if not yet marked expired (
   const sql = routingFakeSql({ invitations: [invitationRow({ token_hash: hashInvitationToken(rawToken), expires_at: "2026-07-01T00:00:00.000Z" })] });
   await assert.rejects(() => acceptInvitation(rawToken, { sql, now: FIXED_NOW }), /invalid or has expired/);
 });
+
+test("acceptInvitation: two simultaneous accepts of the same token -- only one can win", async () => {
+  // Simulates a concurrent second request having already redeemed this
+  // exact token between our fetch and our write -- the guarded UPDATE
+  // (WHERE status = the status we read) matches no row, so the second
+  // caller is rejected instead of falsely succeeding a second time.
+  const rawToken = "e".repeat(64);
+  const row = invitationRow({ token_hash: hashInvitationToken(rawToken) });
+  const auditRecorder = fakeAuditRecorder();
+  const calls = [];
+  const sql = async (strings, ...values) => {
+    const text = strings.join("?");
+    calls.push({ text, values });
+    if (text.includes("UPDATE invitations")) return [];
+    if (text.includes("invitations")) return [row];
+    return [];
+  };
+  sql.calls = calls;
+  await assert.rejects(() => acceptInvitation(rawToken, { sql, now: FIXED_NOW, auditRecorder }), /invalid or has expired/);
+  const denial = auditRecorder.events.at(-1);
+  assert.equal(denial.outcome, "denied");
+  assert.match(denial.metadata.reason, /concurrent accept/);
+});
