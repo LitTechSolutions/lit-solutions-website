@@ -11,26 +11,38 @@
 // email directly, so a document stays correctly attached even if the
 // customer later changes their login email via account.js.
 //
-// GET                              -> signed-in customer: their own documents (list, no fileDataUri)
-// GET ?customerEmail=x@y.com       -> admin/staff only: that customer's documents (list, no fileDataUri)
-// GET ?id=xyz                      -> full single record (with fileDataUri) -- admin/staff, or the
-//                                      owning customer themselves (server-side ownership check)
+// GET                              -> signed-in customer: their own documents (list, no file data)
+// GET ?customerEmail=x@y.com       -> admin/staff only: that customer's documents (list, no file data)
+// GET ?id=xyz                      -> full single record (with a freshly-signed fileUrl, if a file is
+//                                      attached) -- admin/staff, or the owning customer themselves
+//                                      (server-side ownership check)
 // POST { action: "upload", customerEmail, title, type, amount, status,
 //         date, notes, fileDataUri, fileName }   -> admin/staff only
 // POST { action: "delete", documentId }           -> admin/staff only
+//
+// Attachments are stored in Cloudinary (see _lib/cloudinary_store.js),
+// not as base64 in this Blobs record -- customer paperwork is private
+// data, so uploads use Cloudinary's "authenticated" delivery type (not
+// reachable by a bare URL) and every view mints a fresh, short-lived
+// signed URL server-side, after the ownership check above already ran.
+// Records written before this migration may still carry a legacy
+// `fileDataUri` directly; those are served as-is rather than broken by
+// this change (see resolveFileUrl below).
 
 const { readCookie, getSession, json } = require("./_lib/auth_utils");
 const { getJSON, setJSON, deleteKey, store } = require("./_lib/blob_store");
 const { createNotification } = require("./notifications");
 const { sendEmail } = require("./_lib/email");
 const { isRecognizedDataUri } = require("./_lib/file_signatures");
+const { uploadPrivateAsset, signedUrlForPrivateAsset, destroyAsset } = require("./_lib/cloudinary_store");
 
 const MAX_DATA_URI_LENGTH = 4 * 1024 * 1024; // ~4MB base64 string
 const VALID_TYPES = ["invoice", "receipt", "paperwork", "other"];
 const VALID_STATUSES = ["paid", "unpaid", "n/a"];
 
-async function findUserByEmail(email) {
-  return getJSON("users", email.toLowerCase());
+async function findUserByEmail(email, deps = {}) {
+  const getJSONFn = deps.getJSON || getJSON;
+  return getJSONFn("users", email.toLowerCase());
 }
 
 function isStaff(session) {
@@ -38,32 +50,60 @@ function isStaff(session) {
 }
 
 function stripFile(record) {
-  const { fileDataUri, ...rest } = record;
+  const { fileDataUri, cloudinaryPublicId, cloudinaryResourceType, cloudinaryFormat, ...rest } = record;
   return rest;
 }
 
-exports.handler = async (event) => {
-  const token = readCookie(event, "lts_session");
-  const session = token ? await getSession(token) : null;
-  if (!session) return json(401, { error: "Sign in required." });
+// A record has either the new Cloudinary fields (mint a fresh signed URL,
+// nothing about the asset cached/stored) or a legacy raw fileDataUri
+// (pre-migration record -- pass it through as-is), or no attachment at
+// all. Never both; upload() below only ever writes one or the other.
+function resolveFileUrl(record, deps = {}) {
+  if (record.cloudinaryPublicId) {
+    const signedUrlForPrivateAssetFn = deps.signedUrlForPrivateAsset || signedUrlForPrivateAsset;
+    return signedUrlForPrivateAssetFn({
+      publicId: record.cloudinaryPublicId,
+      resourceType: record.cloudinaryResourceType,
+      format: record.cloudinaryFormat,
+    });
+  }
+  return record.fileDataUri || null;
+}
 
-  const docsStore = store("documents");
+exports.handler = async (event, context, deps = {}) => {
+  const getSessionFn = deps.getSession || getSession;
+  const getJSONFn = deps.getJSON || getJSON;
+  const setJSONFn = deps.setJSON || setJSON;
+  const deleteKeyFn = deps.deleteKey || deleteKey;
+  const createNotificationFn = deps.createNotification || createNotification;
+  const sendEmailFn = deps.sendEmail || sendEmail;
+
+  const token = readCookie(event, "lts_session");
+  const session = token ? await getSessionFn(token) : null;
+  if (!session) return json(401, { error: "Sign in required." });
 
   if (event.httpMethod === "GET") {
     const params = event.queryStringParameters || {};
 
     if (params.id) {
-      const record = await getJSON("documents", params.id);
+      const record = await getJSONFn("documents", params.id);
       if (!record) return json(404, { error: "Document not found." });
       if (!isStaff(session) && record.customerId !== session.userId) {
         return json(403, { error: "Not authorized." });
       }
-      return json(200, record);
+      const { cloudinaryPublicId, cloudinaryResourceType, cloudinaryFormat, cloudinaryBytes, fileDataUri, ...clientRecord } = record;
+      return json(200, { ...clientRecord, fileUrl: resolveFileUrl(record, deps) });
     }
+
+    // The two branches below still list every record directly from the
+    // Blobs store rather than through getJSON/setJSON -- not converted to
+    // deps injection with the rest of this handler, since that's a larger,
+    // separate change; unaffected by the Cloudinary migration.
+    const docsStore = store("documents");
 
     if (params.customerEmail) {
       if (!isStaff(session)) return json(403, { error: "Not authorized." });
-      const customer = await findUserByEmail(params.customerEmail);
+      const customer = await findUserByEmail(params.customerEmail, deps);
       if (!customer) return json(404, { error: "No account found with that email." });
       const { blobs } = await docsStore.list();
       const items = [];
@@ -94,11 +134,12 @@ exports.handler = async (event) => {
 
   if (body.action === "upload") {
     if (!body.customerEmail) return json(400, { error: "customerEmail is required." });
-    const customer = await findUserByEmail(body.customerEmail);
+    const customer = await findUserByEmail(body.customerEmail, deps);
     if (!customer) return json(404, { error: "No account found with that email. The customer needs to register at myaccount.html first." });
     if (!body.title || !body.title.trim()) return json(400, { error: "Title is required." });
     if (!VALID_TYPES.includes(body.type)) return json(400, { error: `type must be one of: ${VALID_TYPES.join(", ")}` });
     if (body.status && !VALID_STATUSES.includes(body.status)) return json(400, { error: `status must be one of: ${VALID_STATUSES.join(", ")}` });
+    let cloudinaryAsset = null;
     if (body.fileDataUri) {
       // Sniff the real file signature rather than trusting the data: URI's
       // declared MIME type (see _lib/file_signatures.js) -- SVG is
@@ -107,10 +148,17 @@ exports.handler = async (event) => {
         return json(400, { error: "Attachment must be a PDF, PNG, JPEG, or WEBP image." });
       }
       if (body.fileDataUri.length > MAX_DATA_URI_LENGTH) return json(400, { error: "Attachment too large (max ~3MB)." });
+
+      const uploadPrivateAssetFn = deps.uploadPrivateAsset || uploadPrivateAsset;
+      try {
+        cloudinaryAsset = await uploadPrivateAssetFn(body.fileDataUri);
+      } catch (e) {
+        return json(502, { error: "Could not store the attachment. Try again shortly." });
+      }
     }
 
     const documentId = require("crypto").randomBytes(10).toString("hex");
-    await setJSON("documents", documentId, {
+    await setJSONFn("documents", documentId, {
       customerId: customer.id,
       customerEmail: customer.email,
       title: body.title.trim(),
@@ -119,20 +167,27 @@ exports.handler = async (event) => {
       status: body.status || "n/a",
       date: body.date || new Date().toISOString().slice(0, 10),
       notes: body.notes || "",
-      fileDataUri: body.fileDataUri || "",
+      ...(cloudinaryAsset
+        ? {
+            cloudinaryPublicId: cloudinaryAsset.publicId,
+            cloudinaryResourceType: cloudinaryAsset.resourceType,
+            cloudinaryFormat: cloudinaryAsset.format,
+            cloudinaryBytes: cloudinaryAsset.bytes,
+          }
+        : {}),
       fileName: body.fileName || "",
       uploadedBy: session.userId,
       uploadedAt: Date.now(),
     });
 
     const TYPE_LABEL = { invoice: "invoice", receipt: "receipt", paperwork: "document", other: "document" };
-    await createNotification(customer.id, {
+    await createNotificationFn(customer.id, {
       title: `New ${TYPE_LABEL[body.type] || "document"}: ${body.title.trim()}`,
       body: "Uploaded by Little Technical Solutions LLC. View it in your dashboard.",
       href: "myaccount.html#documents",
     });
     if ((customer.preferences || {}).emailNotifications !== false) {
-      await sendEmail({
+      await sendEmailFn({
         to: customer.email,
         subject: `New ${TYPE_LABEL[body.type] || "document"} from Little Technical Solutions LLC`,
         html: `<p>We uploaded a new ${TYPE_LABEL[body.type] || "document"} to your account: <strong>${body.title.trim()}</strong>.</p><p>Sign in to view it: <a href="https://lit-solutions.tech/myaccount.html#documents">myaccount.html#documents</a></p>`,
@@ -144,7 +199,19 @@ exports.handler = async (event) => {
 
   if (body.action === "delete") {
     if (!body.documentId) return json(400, { error: "documentId is required." });
-    await deleteKey("documents", body.documentId);
+    const record = await getJSONFn("documents", body.documentId);
+    if (record && record.cloudinaryPublicId) {
+      const destroyAssetFn = deps.destroyAsset || destroyAsset;
+      try {
+        await destroyAssetFn({ publicId: record.cloudinaryPublicId, resourceType: record.cloudinaryResourceType });
+      } catch (e) {
+        // Don't let a Cloudinary hiccup block deleting the customer-facing
+        // record -- an orphaned asset is a minor storage-cost cleanup
+        // item, not a reason to keep showing the customer a document
+        // they were told is gone.
+      }
+    }
+    await deleteKeyFn("documents", body.documentId);
     return json(200, { message: "Deleted." });
   }
 

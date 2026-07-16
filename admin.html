@@ -580,7 +580,10 @@
         listEl.innerHTML = "";
         if (!r.ok || !r.body.images.length) { listEl.appendChild(el('<p class="admin-empty">No images uploaded yet.</p>')); return; }
         r.body.images.forEach(function (img) {
-          var row = el('<div class="admin-item"><div class="admin-item-thumb"></div>' +
+          var thumb = img.url
+            ? '<img class="admin-item-thumb" src="' + esc(img.url) + '" alt="" loading="lazy">'
+            : '<div class="admin-item-thumb"></div>';
+          var row = el('<div class="admin-item">' + thumb +
             '<div class="admin-item-body"><h3>' + esc(img.alt || "(no alt text)") + '</h3><p>Uploaded ' + esc(new Date(img.uploadedAt).toLocaleDateString()) + '</p></div>' +
             '<div class="admin-item-actions"><button type="button" class="btn btn-ghost" data-act="delete">Delete</button></div></div>');
           row.querySelector('[data-act="delete"]').addEventListener("click", async function () {

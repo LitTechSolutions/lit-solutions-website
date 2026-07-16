@@ -466,8 +466,8 @@
           var full = await api("documents?id=" + encodeURIComponent(doc.id));
           if (!full.ok) { detail.innerHTML = "<p>Could not load this document.</p>"; return; }
           var d = full.body;
-          var fileBit = d.fileDataUri
-            ? '<p style="margin-top:1rem;"><a href="' + d.fileDataUri + '" download="' + esc(d.fileName || d.title) + '" class="btn btn-primary btn-small">Download attachment</a></p>'
+          var fileBit = d.fileUrl
+            ? '<p style="margin-top:1rem;"><a href="' + d.fileUrl + '" download="' + esc(d.fileName || d.title) + '" class="btn btn-primary btn-small">Download attachment</a></p>'
             : '<p style="margin-top:1rem; color:var(--ink-faint); font-size:.85rem;">No file attached to this record.</p>';
           detail.innerHTML = '<h3 style="font-size:1.05rem; margin-bottom:.6rem;">' + esc(d.title) + '</h3>' +
             '<p style="font-size:.88rem; color:var(--ink-soft);">Type: ' + esc(TYPE_LABEL[d.type] || d.type) + '<br>Date: ' + esc(d.date) +

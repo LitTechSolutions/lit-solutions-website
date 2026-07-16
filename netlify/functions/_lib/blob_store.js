@@ -11,10 +11,15 @@
 //   tokens        : key = token (verify/reset)    -> { type, userId, used }
 //   content       : key = slug (blog-posts,       -> { data: [...], updatedAt, updatedBy }
 //                   portfolio-items, testimonials)
-//   images        : key = imageId                 -> { dataUri, alt, caption, uploadedBy, uploadedAt }
+//   images        : key = imageId                 -> { cloudinaryPublicId, cloudinaryResourceType, cloudinaryUrl,
+//                                                        alt, caption, uploadedBy, uploadedAt } (or a legacy
+//                                                        raw `dataUri` on records predating the Cloudinary
+//                                                        migration -- see _lib/cloudinary_store.js)
 //   documents     : key = documentId               -> { customerId, customerEmail, title, type, amount,
-//                   (invoices/receipts/paperwork,      status, date, notes, fileDataUri, fileName,
-//                   admin-uploaded per customer)        uploadedBy, uploadedAt }
+//                   (invoices/receipts/paperwork,      status, date, notes, fileName, uploadedBy, uploadedAt,
+//                   admin-uploaded per customer)        cloudinaryPublicId, cloudinaryResourceType,
+//                                                        cloudinaryFormat, cloudinaryBytes } (or a legacy raw
+//                                                        `fileDataUri` on pre-migration records)
 //   messages      : key = messageId                 -> { customerId, customerEmail, from ("customer"|"staff"),
 //                   (two-way customer<->staff thread)   fromName, body, createdAt, readByStaff, readByCustomer }
 //   favorites     : key = userId (one record/user) -> { items: [{itemId,label,href,addedAt}],

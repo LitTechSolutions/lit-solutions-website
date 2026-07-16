@@ -8,6 +8,7 @@
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
     "@netlify/blobs": "^8.1.0",
+    "cloudinary": "^2.10.0",
     "otpauth": "^9.5.1"
   },
   "devDependencies": {
