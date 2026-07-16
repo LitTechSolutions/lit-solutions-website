@@ -82,4 +82,65 @@ function mapRowToWebsiteProfile(row) {
   };
 }
 
-module.exports = { createWebsiteProfile, listWebsiteProfilesForOrganization, mapRowToWebsiteProfile };
+/**
+ * Fetch-then-persist (same shape as markBackupRestoreVerified() in
+ * assetStore.js / updateServiceRecordStatus() in serviceRecordStore.js):
+ * fetch the current row first so an unset field can be written back
+ * unchanged and so the audit event can carry organizationId, then
+ * re-SELECT after the UPDATE so the returned value always reflects
+ * exactly what's now persisted rather than a locally-guessed merge.
+ *
+ * @param {string} id
+ * @param {{ primaryUrl?: string, domainRegistrar?: string, hostingProvider?: string }} updates - Only fields actually provided (not `undefined`) are changed.
+ * @param {{ sql?: Function, now?: () => Date, actorId?: string, auditRecorder?: object }} [deps]
+ * @returns {Promise<import("../domain/websiteProfile").WebsiteProfile>}
+ */
+async function updateWebsiteProfile(id, updates = {}, deps = {}) {
+  const sql = deps.sql || getSql();
+  const now = deps.now || (() => new Date());
+  const auditRecorder = resolveAuditRecorder(deps);
+
+  const rows = await sql`SELECT * FROM website_profiles WHERE id = ${id}`;
+  if (rows.length === 0) {
+    throw new Error(`updateWebsiteProfile: no website profile "${id}"`);
+  }
+  const current = mapRowToWebsiteProfile(rows[0]);
+
+  const primaryUrl = updates.primaryUrl !== undefined ? updates.primaryUrl : current.primaryUrl;
+  const domainRegistrar = updates.domainRegistrar !== undefined ? updates.domainRegistrar : current.domainRegistrar;
+  const hostingProvider = updates.hostingProvider !== undefined ? updates.hostingProvider : current.hostingProvider;
+  const updatedAt = now().toISOString();
+
+  // Same validation this file's create() already runs before its INSERT --
+  // an update that only touches domainRegistrar/hostingProvider still
+  // re-validates the (possibly unchanged) primaryUrl, so a profile can
+  // never be left in a state create() itself would have refused to write.
+  assertValidWebsiteProfile({ ...current, primaryUrl });
+
+  await sql`
+    UPDATE website_profiles
+    SET primary_url = ${primaryUrl}, domain_registrar = ${domainRegistrar || null}, hosting_provider = ${hostingProvider || null}, updated_at = ${updatedAt}
+    WHERE id = ${id}
+  `;
+
+  const updatedRows = await sql`SELECT * FROM website_profiles WHERE id = ${id}`;
+  const updated = mapRowToWebsiteProfile(updatedRows[0]);
+
+  await auditRecorder.record(
+    {
+      correlationId: id,
+      actorType: "user",
+      actorId: deps.actorId || "system",
+      organizationId: updated.organizationId,
+      action: "website_profile.update",
+      targetType: "website_profile",
+      targetId: id,
+      outcome: "success",
+    },
+    deps
+  );
+
+  return updated;
+}
+
+module.exports = { createWebsiteProfile, listWebsiteProfilesForOrganization, updateWebsiteProfile, mapRowToWebsiteProfile };

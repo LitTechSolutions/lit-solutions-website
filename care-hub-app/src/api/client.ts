@@ -138,7 +138,10 @@ export const workLog = {
     request<{ entry: TimeEntry }>("/work-log", { method: "POST", body: { kind: "time", ticketId, organizationId, minutes, note } }),
   recordNote: (ticketId: string, organizationId: string, body: string) =>
     request<{ note: unknown }>("/work-log", { method: "POST", body: { kind: "note", ticketId, organizationId, body } }),
-  total: (ticketId: string) => request<{ totalMinutes: number }>("/work-log", { query: { ticketId } }),
+  // work-log.js's GET handler 400s without both params -- organizationId
+  // was missing here, which would have 400ed on every real call.
+  total: (ticketId: string, organizationId: string) =>
+    request<{ ticketId: string; totalMinutes: number }>("/work-log", { query: { ticketId, organizationId } }),
 };
 
 // ---- F017 Activity timeline ----
@@ -159,8 +162,11 @@ export const scopeOfWork = {
 
 // ---- F027 Change Orders ----
 export const changeOrders = {
+  // change-orders.js's createChangeOrder() always pairs a new change
+  // order with an Approval (F016) as a side effect -- both come back in
+  // the same 201 response.
   create: (input: { organizationId: string; originalScopeId: string; description: string; addedLineItems: LineItem[] }) =>
-    request<{ changeOrder: ChangeOrder }>("/change-orders", { method: "POST", body: input }),
+    request<{ changeOrder: ChangeOrder; approval: Approval }>("/change-orders", { method: "POST", body: input }),
   get: (organizationId: string, changeOrderId: string) =>
     request<{ changeOrder: ChangeOrder }>("/change-orders", { query: { organizationId, changeOrderId } }),
   list: (organizationId: string) => request<{ changeOrders: ChangeOrder[] }>("/change-orders", { query: { organizationId } }),
@@ -194,6 +200,8 @@ export const websiteProfiles = {
   create: (input: { organizationId: string; primaryUrl: string; domainRegistrar?: string; hostingProvider?: string }) =>
     request<{ profile: WebsiteProfile }>("/website-profiles", { method: "POST", body: input }),
   list: (organizationId: string) => request<{ profiles: WebsiteProfile[] }>("/website-profiles", { query: { organizationId } }),
+  update: (input: { profileId: string; primaryUrl?: string; domainRegistrar?: string; hostingProvider?: string }) =>
+    request<{ profile: WebsiteProfile }>("/website-profiles", { method: "PATCH", body: input }),
 };
 
 // ---- F049 Entitlements ----
@@ -202,6 +210,11 @@ export const entitlements = {
     request<RecordUsageResult>("/entitlements", { method: "POST", body: { organizationId, planKey, usageKey, amount } }),
   view: (organizationId: string, planKey: string, usageKey: string) =>
     request<EntitlementUsageView>("/entitlements", { query: { organizationId, planKey, usageKey } }),
+  // GET with organizationId+planKey and usageKey omitted -- entitlements.js's
+  // handleView() branches on usageKey's absence to return every usage key
+  // configured for that plan instead of a single view.
+  listForPlan: (organizationId: string, planKey: string) =>
+    request<{ views: EntitlementUsageView[] }>("/entitlements", { query: { organizationId, planKey } }),
 };
 
 // ---- F052 Subscriptions ----
@@ -219,7 +232,10 @@ export const technologyAssets = {
     request<{ asset: TechnologyAsset }>("/technology-assets", { method: "POST", body: { kind: "asset", ...input } }),
   recordBackup: (input: { organizationId: string; websiteProfileId: string; category: BackupRecord["category"]; location: string }) =>
     request<{ backup: BackupRecord }>("/technology-assets", { method: "POST", body: { kind: "backup", ...input } }),
-  list: (organizationId: string) => request<{ assets: TechnologyAsset[] }>("/technology-assets", { query: { organizationId } }),
+  // technology-assets.js's GET now returns backups alongside assets --
+  // real, persisted records, not the session-only list this used to force.
+  list: (organizationId: string) =>
+    request<{ assets: TechnologyAsset[]; backups: BackupRecord[] }>("/technology-assets", { query: { organizationId } }),
   verifyBackup: (backupId: string) => request<{ message: string }>("/technology-assets", { method: "PATCH", body: { backupId } }),
 };
 
@@ -258,8 +274,15 @@ export const metrics = {
 export const templates = {
   create: (input: { key: string; subject: string; body: string; allowedVariables: string[] }) =>
     request<{ definition: TemplateDefinition }>("/templates", { method: "POST", body: input }),
+  // GET with no `key` at all -- templates.js's handleRender() branches on
+  // key's absence to return the full list instead of a render.
+  list: () => request<{ definitions: TemplateDefinition[] }>("/templates"),
+  // `key` is placed after the spread deliberately -- if a template's own
+  // allowedVariables ever included a variable literally named "key", a
+  // {key, ...variables} order would let it silently overwrite which
+  // template gets rendered.
   render: (key: string, variables: Record<string, string>) =>
-    request<{ rendered: RenderedTemplate }>("/templates", { query: { key, ...variables } }),
+    request<{ rendered: RenderedTemplate }>("/templates", { query: { ...variables, key } }),
 };
 
 // ---- F057 Webhook Events (platform_admin, read-only log review) ----

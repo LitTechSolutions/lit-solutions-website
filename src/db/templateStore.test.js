@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { createTemplateDefinition, renderTemplateByKey } = require("./templateStore");
+const { createTemplateDefinition, renderTemplateByKey, listTemplateDefinitions } = require("./templateStore");
 
 const FIXED_ID = () => "template-fixed-id";
 
@@ -65,4 +65,22 @@ test("integration: renderTemplateByKey still refuses an undeclared caller-suppli
 test("renderTemplateByKey throws for an unknown key", async () => {
   const sql = fakeSql([]);
   await assert.rejects(() => renderTemplateByKey("nonexistent", {}, { sql }), /no template with key/);
+});
+
+test("listTemplateDefinitions queries without a WHERE clause -- templates are global, not org-scoped", async () => {
+  const sql = fakeSql([
+    { id: "t1", key: "ticket_created", subject: "Hi {{customerName}}", body: "Body", allowed_variables: ["customerName"] },
+    { id: "t2", key: "no_vars", subject: "Subject", body: "Body", allowed_variables: [] },
+  ]);
+  const definitions = await listTemplateDefinitions({ sql });
+  assert.equal(definitions.length, 2);
+  assert.deepEqual(definitions[0], { id: "t1", key: "ticket_created", subject: "Hi {{customerName}}", body: "Body", allowedVariables: ["customerName"] });
+  assert.deepEqual(definitions[1].allowedVariables, []);
+  assert.match(sql.calls[0].text, /SELECT \* FROM template_definitions/);
+  assert.doesNotMatch(sql.calls[0].text, /WHERE/);
+});
+
+test("listTemplateDefinitions returns an empty array when no templates exist", async () => {
+  const sql = fakeSql([]);
+  assert.deepEqual(await listTemplateDefinitions({ sql }), []);
 });

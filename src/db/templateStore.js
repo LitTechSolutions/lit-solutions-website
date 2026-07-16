@@ -70,4 +70,23 @@ async function renderTemplateByKey(key, variables, deps = {}) {
   return renderTemplate(definition, variables);
 }
 
-module.exports = { createTemplateDefinition, renderTemplateByKey };
+/**
+ * Lists every template definition. Templates are global configuration,
+ * not org-scoped (see this file's header comment) -- no WHERE clause.
+ *
+ * @param {{ sql?: Function }} [deps]
+ * @returns {Promise<import("../templates/templateRenderer").TemplateDefinition[]>}
+ */
+async function listTemplateDefinitions(deps = {}) {
+  const sql = deps.sql || getSql();
+  const rows = await sql`SELECT * FROM template_definitions`;
+  return rows.map((row) => ({
+    id: row.id,
+    key: row.key,
+    subject: row.subject,
+    body: row.body,
+    allowedVariables: row.allowed_variables,
+  }));
+}
+
+module.exports = { createTemplateDefinition, renderTemplateByKey, listTemplateDefinitions };

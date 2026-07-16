@@ -62,6 +62,17 @@ const ROLE_CAPABILITIES = {
     "scope.view",
     "change_order.create",
     "change_order.view",
+    // Owner decision: platform_admin can view and decide approvals on a
+    // customer's behalf (e.g. recording a verbal approval), matching
+    // approvals.js's/change-orders.js's own route comments, which always
+    // described this bypass -- ROLE_CAPABILITIES just never actually
+    // granted it until now. Deliberately NOT extended to technician:
+    // approvals are the customer's independent check on staff-proposed
+    // work, and only platform_admin (not the technician who may have
+    // authored the scope/change-order being approved) gets the override.
+    "approval.view",
+    "scope.approve",
+    "change_order.approve",
   ]),
   technician: new Set([
     "ticket.view",

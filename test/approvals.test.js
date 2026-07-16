@@ -102,24 +102,28 @@ test("PATCH rejecting an already-decided approval surfaces the state-machine err
   assert.equal(res.statusCode, 400);
 });
 
-test("PATCH as platform_admin is denied -- scope.approve/change_order.approve are customer-side capabilities platform_admin was never granted", async () => {
+test("PATCH as platform_admin approves a pending approval on the customer's behalf (owner decision: platform_admin bypass added to scope.approve/change_order.approve)", async () => {
   const sql = routingFakeSql({ approvals: [approvalRow({ subject_type: "change_order" })] });
   const res = await handler(
     { httpMethod: "PATCH", headers: { cookie: "lts_session=fake-token" }, body: JSON.stringify({ approvalId: "appr-1", organizationId: "org-a", subjectType: "change_order", decisionAction: "approve" }) },
     {},
     { ...fakeAuthDeps({ role: "admin" }), sql, now: FIXED_NOW }
   );
-  assert.equal(res.statusCode, 403);
+  assert.equal(res.statusCode, 200);
+  const body = JSON.parse(res.body);
+  assert.equal(body.approval.status, "approved");
+  assert.equal(body.approval.decidedBy, "user-1");
 });
 
-test("GET as platform_admin views any org's approval inbox -- organization.view-style bypass still applies to approval.view", async () => {
+test("GET as platform_admin views any org's approval inbox (owner decision: platform_admin bypass added to approval.view)", async () => {
   const sql = routingFakeSql({ approvals: [approvalRow()] });
   const res = await handler(
     { httpMethod: "GET", headers: { cookie: "lts_session=fake-token" }, queryStringParameters: { organizationId: "org-a" } },
     {},
     { ...fakeAuthDeps({ role: "admin" }), sql }
   );
-  assert.equal(res.statusCode, 403, "platform_admin also has no approval.view capability -- same reasoning as the PATCH case above");
+  assert.equal(res.statusCode, 200);
+  assert.equal(JSON.parse(res.body).approvals.length, 1);
 });
 
 test("unsupported method returns 405", async () => {

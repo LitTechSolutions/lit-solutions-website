@@ -78,6 +78,84 @@ test("GET for an unconfigured plan/usage pair returns 404", async () => {
   assert.equal(res.statusCode, 404);
 });
 
+test("GET with organizationId+planKey and no usageKey returns a views array covering every usage key defined for that plan", async () => {
+  const sql = routingFakeSql({
+    limits: [
+      { plan_key: "website_care", usage_key: "monthly_edit_minutes", limit_value: 30, reset_period: "monthly" },
+      { plan_key: "website_care", usage_key: "included_hours", limit_value: 5, reset_period: "monthly" },
+    ],
+    usage: [{ consumed: 10 }],
+  });
+  const res = await handler(
+    { httpMethod: "GET", headers: { cookie: "lts_session=fake-token" }, queryStringParameters: { organizationId: "org-a", planKey: "website_care" } },
+    {},
+    { ...fakeCustomerDeps({ actorRole: "org_owner", actorOrgId: "org-a", actorMembershipStatus: "active" }), sql, now: FIXED_NOW }
+  );
+  assert.equal(res.statusCode, 200);
+  const body = JSON.parse(res.body);
+  assert.equal(body.views.length, 2);
+  assert.equal(body.views[0].limit.usageKey, "monthly_edit_minutes");
+  assert.equal(body.views[0].consumed, 10);
+  assert.equal(body.views[0].remaining, 20);
+  assert.equal(body.views[0].periodStart, "2026-07-01T00:00:00.000Z");
+  assert.equal(body.views[1].limit.usageKey, "included_hours");
+  assert.equal(body.views[1].consumed, 10);
+  assert.equal(body.views[1].remaining, 0, "Math.max(5 - 10, 0)");
+});
+
+test("GET with organizationId+planKey+usageKey still returns the original single-view shape (regression)", async () => {
+  const sql = routingFakeSql({ limits: [{ plan_key: "website_care", usage_key: "monthly_edit_minutes", limit_value: 30, reset_period: "monthly" }], usage: [{ consumed: 10 }] });
+  const res = await handler(
+    { httpMethod: "GET", headers: { cookie: "lts_session=fake-token" }, queryStringParameters: { organizationId: "org-a", planKey: "website_care", usageKey: "monthly_edit_minutes" } },
+    {},
+    { ...fakeCustomerDeps({ actorRole: "org_owner", actorOrgId: "org-a", actorMembershipStatus: "active" }), sql, now: FIXED_NOW }
+  );
+  assert.equal(res.statusCode, 200);
+  const body = JSON.parse(res.body);
+  assert.equal(body.consumed, 10);
+  assert.equal(body.remaining, 20);
+  assert.equal(body.limit.usageKey, "monthly_edit_minutes");
+  assert.equal(body.views, undefined, "the single-view shape has no `views` key");
+});
+
+test("GET with no usageKey for a plan with zero defined limits returns an empty views array without erroring", async () => {
+  const sql = routingFakeSql({ limits: [] });
+  const res = await handler(
+    { httpMethod: "GET", headers: { cookie: "lts_session=fake-token" }, queryStringParameters: { organizationId: "org-a", planKey: "no_such_plan" } },
+    {},
+    { ...fakeCustomerDeps({ actorRole: "org_owner", actorOrgId: "org-a", actorMembershipStatus: "active" }), sql, now: FIXED_NOW }
+  );
+  assert.equal(res.statusCode, 200);
+  assert.deepEqual(JSON.parse(res.body).views, []);
+});
+
+test("GET without a usageKey requires organizationId and planKey just like before", async () => {
+  const res = await handler(
+    { httpMethod: "GET", headers: { cookie: "lts_session=fake-token" }, queryStringParameters: { organizationId: "org-a" } },
+    {},
+    fakeDeps("admin")
+  );
+  assert.equal(res.statusCode, 400);
+});
+
+test("GET without a usageKey for a caller with no access to the organization is denied (auth unchanged)", async () => {
+  const res = await handler(
+    { httpMethod: "GET", headers: { cookie: "lts_session=fake-token" }, queryStringParameters: { organizationId: "org-a", planKey: "website_care" } },
+    {},
+    { ...fakeCustomerDeps(null), sql: routingFakeSql({}) }
+  );
+  assert.equal(res.statusCode, 403);
+});
+
+test("GET with a usageKey for a caller with no access to the organization is still denied (regression)", async () => {
+  const res = await handler(
+    { httpMethod: "GET", headers: { cookie: "lts_session=fake-token" }, queryStringParameters: { organizationId: "org-a", planKey: "website_care", usageKey: "monthly_edit_minutes" } },
+    {},
+    { ...fakeCustomerDeps(null), sql: routingFakeSql({}) }
+  );
+  assert.equal(res.statusCode, 403);
+});
+
 test("unsupported method returns 405", async () => {
   const res = await handler({ httpMethod: "DELETE" }, {}, {});
   assert.equal(res.statusCode, 405);

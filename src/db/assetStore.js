@@ -155,10 +155,36 @@ async function markBackupRestoreVerified(id, deps = {}) {
   );
 }
 
+/**
+ * @param {string} organizationId
+ * @param {{ sql?: Function }} [deps]
+ * @returns {Promise<import("../domain/backupRecord").BackupRecord[]>}
+ */
+async function listBackupRecordsForOrganization(organizationId, deps = {}) {
+  const sql = deps.sql || getSql();
+  const rows = await sql`SELECT * FROM backup_records WHERE organization_id = ${organizationId}`;
+  return rows.map(mapRowToBackupRecord);
+}
+
+function mapRowToBackupRecord(row) {
+  return {
+    id: row.id,
+    organizationId: row.organization_id,
+    websiteProfileId: row.website_profile_id,
+    category: row.category,
+    location: row.location,
+    takenAt: new Date(row.taken_at).toISOString(),
+    restoreVerified: Boolean(row.restore_verified),
+    ...(row.restore_verified_at ? { restoreVerifiedAt: new Date(row.restore_verified_at).toISOString() } : {}),
+  };
+}
+
 module.exports = {
   createTechnologyAsset,
   listTechnologyAssets,
   mapRowToTechnologyAsset,
   recordBackup,
   markBackupRestoreVerified,
+  listBackupRecordsForOrganization,
+  mapRowToBackupRecord,
 };

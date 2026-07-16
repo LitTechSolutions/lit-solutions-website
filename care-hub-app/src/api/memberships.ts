@@ -1,9 +1,14 @@
 import { request } from "./http";
+import type { RoleName } from "./types";
 
 export interface Membership {
   organizationId: string;
   organizationName: string | null;
-  role: string;
+  // In practice always "org_owner" | "org_member" | "read_only_customer"
+  // -- platform_admin/technician are never org members (see
+  // useMemberships.ts) -- but matches src/db/membershipStore.js's own
+  // RoleName typing exactly rather than re-narrowing it here.
+  role: RoleName;
   status: string;
 }
 

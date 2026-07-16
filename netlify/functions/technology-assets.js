@@ -6,14 +6,20 @@
 //   POST  /technology-assets -- create an asset OR record a backup,
 //                                selected by body.kind ("asset" | "backup")
 //                                (platform_admin, customer.administer)
-//   GET   /technology-assets?organizationId= -- list an org's assets
-//                                (all customer roles, asset.view)
+//   GET   /technology-assets?organizationId= -- list an org's assets AND
+//                                backup records (all customer roles, asset.view)
 //   PATCH /technology-assets -- mark a backup restore-verified
 //                                (platform_admin, customer.administer)
 
 const { json } = require("./_lib/auth_utils");
 const { authenticateForOrg, authenticatePlatformAction, denyResponseFor } = require("./_lib/care_hub_auth");
-const { createTechnologyAsset, listTechnologyAssets, recordBackup, markBackupRestoreVerified } = require("../../src/db/assetStore");
+const {
+  createTechnologyAsset,
+  listTechnologyAssets,
+  recordBackup,
+  markBackupRestoreVerified,
+  listBackupRecordsForOrganization,
+} = require("../../src/db/assetStore");
 
 exports.handler = async (event, context, deps = {}) => {
   if (event.httpMethod === "POST") return handleCreate(event, deps);
@@ -69,7 +75,8 @@ async function handleList(event, deps) {
   if (deny) return deny;
 
   const assets = await listTechnologyAssets(organizationId, deps);
-  return json(200, { assets });
+  const backups = await listBackupRecordsForOrganization(organizationId, deps);
+  return json(200, { assets, backups });
 }
 
 async function handleVerifyBackup(event, deps) {

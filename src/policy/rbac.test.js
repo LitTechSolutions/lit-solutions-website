@@ -334,6 +334,22 @@ test("platform_admin can submit a ticket request on behalf of any organization (
   assert.equal(decision.allowed, true);
 });
 
+test("platform_admin can view and decide approvals across organizations, with no assignment fact needed (owner decision, matching approvals.js's/change-orders.js's own route comments)", () => {
+  const approvalActions = ["approval.view", "scope.approve", "change_order.approve"];
+  for (const action of approvalActions) {
+    const decision = authorize({ actorRole: "platform_admin", action, actorOrgId: null, resourceOrgId: ORG_B });
+    assert.equal(decision.allowed, true, `platform_admin should have ${action} across organizations`);
+  }
+});
+
+test("technician still has no approval-decision capability -- the platform_admin bypass was deliberately not extended to technician", () => {
+  const approvalActions = ["approval.view", "scope.approve", "change_order.approve"];
+  for (const action of approvalActions) {
+    const decision = authorize({ actorRole: "technician", action, actorOrgId: null, resourceOrgId: ORG_A, assigned: true });
+    assert.equal(decision.allowed, false, `technician should not have ${action}`);
+  }
+});
+
 test("every decision includes a non-empty reason (for downstream audit-event shaping)", () => {
   const decisions = [
     authorize({ actorRole: "org_owner", action: "member.invite", actorOrgId: ORG_A, resourceOrgId: ORG_A, actorMembershipStatus: "active" }),

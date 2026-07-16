@@ -89,6 +89,22 @@ async function getEntitlementLimit(planKey, usageKey, deps = {}) {
 }
 
 /**
+ * Lists every entitlement limit configured for a plan -- lets a caller who
+ * already knows an org's planKey (e.g. from subscriptionStore's
+ * listSubscriptionsForOrganization()) discover every usageKey that plan
+ * defines, instead of needing to already know each one out-of-band.
+ *
+ * @param {string} planKey
+ * @param {{ sql?: Function }} [deps]
+ * @returns {Promise<import("../domain/entitlement").EntitlementLimit[]>}
+ */
+async function listEntitlementLimitsForPlan(planKey, deps = {}) {
+  const sql = deps.sql || getSql();
+  const rows = await sql`SELECT * FROM entitlement_limits WHERE plan_key = ${planKey}`;
+  return rows.map(mapRowToEntitlementLimit);
+}
+
+/**
  * @param {string} organizationId
  * @param {string} planKey
  * @param {string} usageKey
@@ -196,6 +212,7 @@ function mapRowToEntitlementLimit(row) {
 module.exports = {
   upsertEntitlementLimit,
   getEntitlementLimit,
+  listEntitlementLimitsForPlan,
   getConsumedForPeriod,
   recordUsage,
   resolvePeriodStart,

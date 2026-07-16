@@ -1,6 +1,13 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { createTechnologyAsset, listTechnologyAssets, recordBackup, markBackupRestoreVerified } = require("./assetStore");
+const {
+  createTechnologyAsset,
+  listTechnologyAssets,
+  recordBackup,
+  markBackupRestoreVerified,
+  listBackupRecordsForOrganization,
+  mapRowToBackupRecord,
+} = require("./assetStore");
 
 const FIXED_NOW = () => new Date("2026-07-14T12:00:00.000Z");
 const FIXED_ID = () => "asset-fixed-id";
@@ -102,4 +109,34 @@ test("markBackupRestoreVerified throws for a nonexistent backup record without a
   const auditRecorder = fakeAuditRecorder();
   await assert.rejects(() => markBackupRestoreVerified("nope", { sql, now: FIXED_NOW, auditRecorder }), /no backup record/);
   assert.equal(auditRecorder.events.length, 0);
+});
+
+test("listBackupRecordsForOrganization scopes by organization and maps rows", async () => {
+  const sql = fakeSql([backupRow()]);
+  const backups = await listBackupRecordsForOrganization("org-a", { sql });
+  assert.equal(backups.length, 1);
+  assert.match(sql.calls[0].text, /SELECT \* FROM backup_records WHERE organization_id/);
+  assert.equal(backups[0].organizationId, "org-a");
+  assert.equal(backups[0].websiteProfileId, "profile-1");
+  assert.equal(backups[0].restoreVerified, false);
+  assert.equal("restoreVerifiedAt" in backups[0], false);
+});
+
+test("mapRowToBackupRecord maps every field 1:1, including the optional restoreVerifiedAt when present", () => {
+  const mapped = mapRowToBackupRecord(backupRow({ restore_verified: true, restore_verified_at: "2026-07-05T00:00:00.000Z" }));
+  assert.deepEqual(mapped, {
+    id: "backup-1",
+    organizationId: "org-a",
+    websiteProfileId: "profile-1",
+    category: "source",
+    location: "Netlify deploy history",
+    takenAt: "2026-07-01T00:00:00.000Z",
+    restoreVerified: true,
+    restoreVerifiedAt: "2026-07-05T00:00:00.000Z",
+  });
+});
+
+test("mapRowToBackupRecord omits restoreVerifiedAt when the row has none", () => {
+  const mapped = mapRowToBackupRecord(backupRow());
+  assert.equal("restoreVerifiedAt" in mapped, false);
 });

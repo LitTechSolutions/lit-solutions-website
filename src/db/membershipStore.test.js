@@ -5,6 +5,7 @@ const {
   resolveAuthorizationContext,
   listMembershipsForUser,
   updateMembershipStatus,
+  getOrganizationOwnerUserId,
   mapRowToMembership,
 } = require("./membershipStore");
 const { authorize } = require("../policy/rbac");
@@ -93,6 +94,20 @@ test("updateMembershipStatus issues an UPDATE (this is how suspension takes effe
   await updateMembershipStatus("m1", "suspended", { sql, now: FIXED_NOW });
   assert.match(sql.calls[0].text, /UPDATE organization_memberships/);
   assert.ok(sql.calls[0].values.includes("suspended"));
+});
+
+test("getOrganizationOwnerUserId returns the owner's user id when an active org_owner membership exists", async () => {
+  const sql = fakeSql([{ user_id: "user-owner-1" }]);
+  const ownerId = await getOrganizationOwnerUserId("org-a", { sql });
+  assert.equal(ownerId, "user-owner-1");
+  assert.match(sql.calls[0].text, /organization_memberships/);
+  assert.match(sql.calls[0].text, /role = 'org_owner'/);
+});
+
+test("getOrganizationOwnerUserId returns null when no active org_owner membership exists", async () => {
+  const sql = fakeSql([]);
+  const ownerId = await getOrganizationOwnerUserId("org-a", { sql });
+  assert.equal(ownerId, null);
 });
 
 test("mapRowToMembership omits invitedBy when the row has none", () => {

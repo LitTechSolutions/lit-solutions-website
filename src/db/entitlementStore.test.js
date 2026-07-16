@@ -3,6 +3,7 @@ const assert = require("node:assert/strict");
 const {
   upsertEntitlementLimit,
   getEntitlementLimit,
+  listEntitlementLimitsForPlan,
   recordUsage,
   resolvePeriodStart,
 } = require("./entitlementStore");
@@ -50,6 +51,24 @@ test("upsertEntitlementLimit rejects an invalid limit before writing", async () 
 test("getEntitlementLimit returns null when nothing is configured for that plan/usage pair", async () => {
   const sql = fakeSql([]);
   assert.equal(await getEntitlementLimit("website_care", "monthly_edit_minutes", { sql }), null);
+});
+
+test("listEntitlementLimitsForPlan queries by plan_key only and maps every row", async () => {
+  const sql = fakeSql([
+    { plan_key: "website_care", usage_key: "monthly_edit_minutes", limit_value: 30, reset_period: "monthly" },
+    { plan_key: "website_care", usage_key: "included_hours", limit_value: null, reset_period: "unlimited" },
+  ]);
+  const limits = await listEntitlementLimitsForPlan("website_care", { sql });
+  assert.equal(limits.length, 2);
+  assert.deepEqual(limits[0], { planKey: "website_care", usageKey: "monthly_edit_minutes", limit: 30, resetPeriod: "monthly" });
+  assert.deepEqual(limits[1], { planKey: "website_care", usageKey: "included_hours", limit: null, resetPeriod: "unlimited" });
+  assert.match(sql.calls[0].text, /SELECT \* FROM entitlement_limits WHERE plan_key/);
+  assert.doesNotMatch(sql.calls[0].text, /usage_key/);
+});
+
+test("listEntitlementLimitsForPlan returns an empty array for a plan with no configured limits", async () => {
+  const sql = fakeSql([]);
+  assert.deepEqual(await listEntitlementLimitsForPlan("no_such_plan", { sql }), []);
 });
 
 test("resolvePeriodStart buckets monthly usage to the 1st of the current UTC month", () => {

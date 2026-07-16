@@ -55,15 +55,44 @@ test("POST with an invalid kind returns 400", async () => {
   assert.equal(res.statusCode, 400);
 });
 
-test("GET as org_owner lists assets", async () => {
-  const sql = routingFakeSql({ assets: [{ id: "asset-1", organization_id: "org-a", type: "computer", label: "x", warranty_expires_at: null, license_expires_at: null, created_at: "2026-07-01T00:00:00.000Z", updated_at: "2026-07-01T00:00:00.000Z" }] });
+test("GET as org_owner lists both assets and backups", async () => {
+  const sql = routingFakeSql({
+    assets: [{ id: "asset-1", organization_id: "org-a", type: "computer", label: "x", warranty_expires_at: null, license_expires_at: null, created_at: "2026-07-01T00:00:00.000Z", updated_at: "2026-07-01T00:00:00.000Z" }],
+    backups: [
+      {
+        id: "backup-1",
+        organization_id: "org-a",
+        website_profile_id: "wp-1",
+        category: "database",
+        location: "Offsite S3",
+        taken_at: "2026-07-01T00:00:00.000Z",
+        restore_verified: true,
+        restore_verified_at: "2026-07-02T00:00:00.000Z",
+      },
+    ],
+  });
   const res = await handler(
     { httpMethod: "GET", headers: { cookie: "lts_session=fake-token" }, queryStringParameters: { organizationId: "org-a" } },
     {},
     { ...fakeCustomerDeps({ actorRole: "org_owner", actorOrgId: "org-a", actorMembershipStatus: "active" }), sql }
   );
   assert.equal(res.statusCode, 200);
-  assert.equal(JSON.parse(res.body).assets.length, 1);
+  const body = JSON.parse(res.body);
+  assert.equal(body.assets.length, 1);
+  assert.equal(body.backups.length, 1);
+  assert.equal(body.backups[0].websiteProfileId, "wp-1");
+  assert.equal(body.backups[0].restoreVerified, true);
+  assert.equal(body.backups[0].restoreVerifiedAt, "2026-07-02T00:00:00.000Z");
+});
+
+test("GET as technician (legacy staff role, no asset.view capability) is denied", async () => {
+  const sql = routingFakeSql({});
+  const res = await handler(
+    { httpMethod: "GET", headers: { cookie: "lts_session=fake-token" }, queryStringParameters: { organizationId: "org-a" } },
+    {},
+    { ...fakeDeps("staff"), sql }
+  );
+  assert.equal(res.statusCode, 403);
 });
 
 test("PATCH as admin marks a backup restore-verified", async () => {

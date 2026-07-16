@@ -91,6 +91,27 @@ async function updateMembershipStatus(membershipId, status, deps = {}) {
   `;
 }
 
+/**
+ * Resolves the (first) active org_owner membership for an organization,
+ * so a system process (e.g. reminder-scheduler.js) can notify "the
+ * customer" without a human caller already knowing who that is. Not
+ * part of the rbac.authorize() path -- this is a lookup, not an
+ * authorization decision.
+ *
+ * @param {string} organizationId
+ * @param {{ sql?: Function }} [deps]
+ * @returns {Promise<string | null>}
+ */
+async function getOrganizationOwnerUserId(organizationId, deps = {}) {
+  const sql = deps.sql || getSql();
+  const rows = await sql`
+    SELECT user_id FROM organization_memberships
+    WHERE organization_id = ${organizationId} AND role = 'org_owner' AND status = 'active'
+    LIMIT 1
+  `;
+  return rows.length > 0 ? rows[0].user_id : null;
+}
+
 function mapRowToMembership(row) {
   return {
     id: row.id,
@@ -109,5 +130,6 @@ module.exports = {
   resolveAuthorizationContext,
   listMembershipsForUser,
   updateMembershipStatus,
+  getOrganizationOwnerUserId,
   mapRowToMembership,
 };

@@ -13,10 +13,15 @@
 //                    endpoint is for staff previewing/using templates,
 //                    e.g. composing a notification, not a customer-facing
 //                    render)
+//   GET  /templates (no `key` param at all) -- list every template
+//                    definition (platform_admin, platform.configure --
+//                    same auth as the render-by-key form above). Lets
+//                    staff see which templates already exist instead of
+//                    needing to already know a key out-of-band.
 
 const { json } = require("./_lib/auth_utils");
 const { authenticatePlatformAction, denyResponseFor } = require("./_lib/care_hub_auth");
-const { createTemplateDefinition, renderTemplateByKey } = require("../../src/db/templateStore");
+const { createTemplateDefinition, renderTemplateByKey, listTemplateDefinitions } = require("../../src/db/templateStore");
 
 exports.handler = async (event, context, deps = {}) => {
   if (event.httpMethod === "POST") return handleCreate(event, deps);
@@ -53,13 +58,17 @@ async function handleCreate(event, deps) {
 async function handleRender(event, deps) {
   const params = event.queryStringParameters || {};
   const { key, ...variables } = params;
-  if (!key) return json(400, { error: "key is required." });
 
   const auth = await authenticatePlatformAction(event, deps);
   if (!auth.ok) return auth.response;
 
   const deny = denyResponseFor(auth.authContext, null, "platform.configure");
   if (deny) return deny;
+
+  if (!key) {
+    const definitions = await listTemplateDefinitions(deps);
+    return json(200, { definitions });
+  }
 
   try {
     const rendered = await renderTemplateByKey(key, variables, deps);

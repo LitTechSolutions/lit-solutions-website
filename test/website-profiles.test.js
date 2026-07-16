@@ -50,6 +50,57 @@ test("GET as read_only_customer lists website profiles", async () => {
   assert.equal(JSON.parse(res.body).profiles.length, 1);
 });
 
+test("PATCH as admin updates a website profile", async () => {
+  const sql = routingFakeSql({
+    profiles: [{ id: "wp-1", organization_id: "org-a", primary_url: "https://updated.example.com", domain_registrar: null, hosting_provider: null, created_at: "2026-07-01T00:00:00.000Z", updated_at: "2026-07-15T12:00:00.000Z" }],
+  });
+  const res = await handler(
+    { httpMethod: "PATCH", headers: { cookie: "lts_session=fake-token" }, body: JSON.stringify({ profileId: "wp-1", primaryUrl: "https://updated.example.com" }) },
+    {},
+    { ...fakeDeps("admin"), sql, now: FIXED_NOW }
+  );
+  assert.equal(res.statusCode, 200);
+  assert.equal(JSON.parse(res.body).profile.primaryUrl, "https://updated.example.com");
+});
+
+test("PATCH as a non-admin is denied", async () => {
+  const res = await handler(
+    { httpMethod: "PATCH", headers: { cookie: "lts_session=fake-token" }, body: JSON.stringify({ profileId: "wp-1", primaryUrl: "https://x.com" }) },
+    {},
+    fakeDeps("customer")
+  );
+  assert.equal(res.statusCode, 403);
+});
+
+test("PATCH with no updatable field is a 400", async () => {
+  const res = await handler(
+    { httpMethod: "PATCH", headers: { cookie: "lts_session=fake-token" }, body: JSON.stringify({ profileId: "wp-1" }) },
+    {},
+    fakeDeps("admin")
+  );
+  assert.equal(res.statusCode, 400);
+});
+
+test("PATCH without a profileId is a 400", async () => {
+  const res = await handler(
+    { httpMethod: "PATCH", headers: { cookie: "lts_session=fake-token" }, body: JSON.stringify({ primaryUrl: "https://x.com" }) },
+    {},
+    fakeDeps("admin")
+  );
+  assert.equal(res.statusCode, 400);
+});
+
+test("PATCH for a nonexistent profileId surfaces the store's error as a 400", async () => {
+  const sql = routingFakeSql({});
+  const res = await handler(
+    { httpMethod: "PATCH", headers: { cookie: "lts_session=fake-token" }, body: JSON.stringify({ profileId: "nope", primaryUrl: "https://x.com" }) },
+    {},
+    { ...fakeDeps("admin"), sql, now: FIXED_NOW }
+  );
+  assert.equal(res.statusCode, 400);
+  assert.match(JSON.parse(res.body).error, /no website profile/);
+});
+
 test("unsupported method returns 405", async () => {
   const res = await handler({ httpMethod: "DELETE" }, {}, {});
   assert.equal(res.statusCode, 405);

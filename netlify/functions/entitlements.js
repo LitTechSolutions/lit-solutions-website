@@ -9,12 +9,20 @@
 //                          logged by staff when work is performed, not
 //                          self-reported by the customer)
 //   GET  /entitlements?organizationId=&planKey=&usageKey= -- view current
-//                          usage vs. the plan limit (all customer roles,
-//                          entitlement.view)
+//                          usage vs. the plan limit for that one usage key
+//                          (all customer roles, entitlement.view)
+//   GET  /entitlements?organizationId=&planKey= (usageKey omitted) -- view
+//                          current usage vs. limit for EVERY usage key
+//                          configured on that plan (same auth,
+//                          entitlement.view); returns { views: [{ limit,
+//                          consumed, remaining, periodStart }, ...] }
+//                          instead of the single flat shape above.
+//                          organizationId and planKey are always
+//                          required; only usageKey is optional.
 
 const { json } = require("./_lib/auth_utils");
 const { authenticateForOrg, authenticatePlatformAction, denyResponseFor } = require("./_lib/care_hub_auth");
-const { recordUsage, getEntitlementLimit, getConsumedForPeriod, resolvePeriodStart } = require("../../src/db/entitlementStore");
+const { recordUsage, getEntitlementLimit, listEntitlementLimitsForPlan, getConsumedForPeriod, resolvePeriodStart } = require("../../src/db/entitlementStore");
 
 exports.handler = async (event, context, deps = {}) => {
   if (event.httpMethod === "POST") return handleRecordUsage(event, deps);
@@ -52,8 +60,8 @@ async function handleView(event, deps) {
   const organizationId = event.queryStringParameters && event.queryStringParameters.organizationId;
   const planKey = event.queryStringParameters && event.queryStringParameters.planKey;
   const usageKey = event.queryStringParameters && event.queryStringParameters.usageKey;
-  if (!organizationId || !planKey || !usageKey) {
-    return json(400, { error: "organizationId, planKey, and usageKey are required." });
+  if (!organizationId || !planKey) {
+    return json(400, { error: "organizationId and planKey are required." });
   }
 
   const auth = await authenticateForOrg(event, organizationId, deps);
@@ -62,10 +70,24 @@ async function handleView(event, deps) {
   const deny = denyResponseFor(auth.authContext, organizationId, "entitlement.view");
   if (deny) return deny;
 
+  const now = deps.now || (() => new Date());
+
+  if (!usageKey) {
+    const limits = await listEntitlementLimitsForPlan(planKey, deps);
+    const views = await Promise.all(
+      limits.map(async (limit) => {
+        const periodStart = resolvePeriodStart(limit.resetPeriod, now);
+        const consumed = await getConsumedForPeriod(organizationId, planKey, limit.usageKey, periodStart, deps);
+        const remaining = limit.resetPeriod === "unlimited" ? null : Math.max(limit.limit - consumed, 0);
+        return { limit, consumed, remaining, periodStart };
+      })
+    );
+    return json(200, { views });
+  }
+
   const limit = await getEntitlementLimit(planKey, usageKey, deps);
   if (!limit) return json(404, { error: "No entitlement limit configured for this plan/usage pair." });
 
-  const now = deps.now || (() => new Date());
   const periodStart = resolvePeriodStart(limit.resetPeriod, now);
   const consumed = await getConsumedForPeriod(organizationId, planKey, usageKey, periodStart, deps);
   const remaining = limit.resetPeriod === "unlimited" ? null : Math.max(limit.limit - consumed, 0);
