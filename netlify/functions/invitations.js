@@ -111,7 +111,13 @@ async function handleAction(event, deps) {
 
 async function sendInvitationEmail(event, invitation, token, deps) {
   const sendEmailFn = deps.sendEmail || sendEmail;
-  const link = `${siteOrigin(event)}/myaccount.html#accept-invite?token=${token}`;
+  // Care Hub invitations create Care Hub (Postgres/organization-based)
+  // accounts, a different account system from the legacy Blobs-based
+  // myaccount.html -- this must land in the Care Hub React app, not the
+  // legacy site. Was previously wired to a myaccount.html hash route
+  // that was never built (a copy-paste leftover from before the Care Hub
+  // frontend existed) -- the link has never actually worked.
+  const link = `${siteOrigin(event)}/care-hub/invite?token=${token}`;
   await sendEmailFn({
     to: invitation.email,
     subject: "You're invited to the Little Technical Solutions LLC Care Hub",

@@ -10,7 +10,7 @@ export type RoleName = "platform_admin" | "technician" | "org_owner" | "org_memb
 export interface Organization {
   id: string;
   name: string;
-  status: "active" | "suspended";
+  status: "active" | "suspended" | "archived";
   createdAt: string;
   updatedAt: string;
   createdBy: string;
@@ -128,7 +128,7 @@ export interface ChangeOrder {
 export interface PaymentRequest {
   id: string;
   organizationId: string;
-  subjectType: "scope_of_work" | "change_order" | "subscription";
+  subjectType: "scope" | "change_order" | "subscription";
   subjectId: string;
   amountRef: string;
   status: "requested" | "paid" | "reconciliation_pending" | "reconciled" | "failed";
@@ -165,7 +165,7 @@ export interface EntitlementLimit {
   planKey: string;
   usageKey: string;
   limit: number;
-  resetPeriod: "monthly" | "annual" | "one_time";
+  resetPeriod: "monthly" | "total" | "unlimited";
 }
 export interface EntitlementUsageView {
   limit: EntitlementLimit;
@@ -207,9 +207,10 @@ export interface BackupRecord {
   id: string;
   organizationId: string;
   websiteProfileId: string;
-  category: string;
+  category: "source" | "content" | "assets" | "database" | "configuration";
   location: string;
-  createdAt: string;
+  takenAt: string;
+  restoreVerified: boolean;
   restoreVerifiedAt?: string;
 }
 
@@ -376,6 +377,15 @@ export interface AuthenticatedUser {
   email: string;
   role: "customer" | "staff" | "admin";
   verified: boolean;
+}
+// Matches account.js's withDefaultPreferences() -- language is one of
+// js/i18n.js's 16 site-wide language codes (kept as a plain string here
+// rather than a union, since the legacy site's list can grow without a
+// Care Hub-side type change; account.js is the real validation boundary).
+export interface AccountPreferences {
+  language: string;
+  timezone: string;
+  emailNotifications: boolean;
 }
 export interface LoginResult {
   message: string;

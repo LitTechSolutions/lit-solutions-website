@@ -8,6 +8,7 @@
 // comment) -- not guessed from REST convention.
 import { request } from "./http";
 import type {
+  AccountPreferences,
   Approval,
   ActivityEvent,
   Assignment,
@@ -216,10 +217,10 @@ export const subscriptions = {
 export const technologyAssets = {
   createAsset: (input: { organizationId: string; type: string; label: string; warrantyExpiresAt?: string; licenseExpiresAt?: string }) =>
     request<{ asset: TechnologyAsset }>("/technology-assets", { method: "POST", body: { kind: "asset", ...input } }),
-  recordBackup: (input: { organizationId: string; websiteProfileId: string; category: string; location: string }) =>
+  recordBackup: (input: { organizationId: string; websiteProfileId: string; category: BackupRecord["category"]; location: string }) =>
     request<{ backup: BackupRecord }>("/technology-assets", { method: "POST", body: { kind: "backup", ...input } }),
   list: (organizationId: string) => request<{ assets: TechnologyAsset[] }>("/technology-assets", { query: { organizationId } }),
-  verifyBackup: (backupId: string) => request<{ backup: BackupRecord }>("/technology-assets", { method: "PATCH", body: { backupId } }),
+  verifyBackup: (backupId: string) => request<{ message: string }>("/technology-assets", { method: "PATCH", body: { backupId } }),
 };
 
 // ---- F048/F037 Reminders ----
@@ -280,8 +281,20 @@ export const auditLog = {
 };
 
 // ---- Account (existing pre-Care-Hub endpoint, reused as-is) ----
+// update-password/update-email revoke every session server-side and
+// clear the session cookie on success (account.js's own "rotate on
+// privilege change" rule) -- the caller must treat a successful response
+// from either as an implicit sign-out, not just a data update.
 export const account = {
-  get: () => request<{ user: AuthenticatedUser & { preferences: Record<string, unknown> } }>("/account"),
+  get: () => request<{ user: AuthenticatedUser & { preferences: AccountPreferences } }>("/account"),
+  updateName: (newName: string) =>
+    request<{ message: string; user: AuthenticatedUser }>("/account", { method: "POST", body: { action: "update-name", newName } }),
+  updatePreferences: (preferences: Partial<AccountPreferences>) =>
+    request<{ message: string; preferences: AccountPreferences }>("/account", { method: "POST", body: { action: "update-preferences", preferences } }),
+  updatePassword: (currentPassword: string, newPassword: string) =>
+    request<{ message: string }>("/account", { method: "POST", body: { action: "update-password", currentPassword, newPassword } }),
+  updateEmail: (currentPassword: string, newEmail: string) =>
+    request<{ message: string }>("/account", { method: "POST", body: { action: "update-email", currentPassword, newEmail } }),
 };
 
 export const api = {

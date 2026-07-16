@@ -66,6 +66,23 @@ export const strings = {
     mfaEmailMissingToken: "This confirmation link is missing its token.",
     mfaEmailInvalid: "This confirmation link is invalid or has expired.",
   },
+  invite: {
+    loading: "Checking your invitation…",
+    invalidTitle: "This invitation link isn't valid",
+    invalidBody: "It may have already been used, revoked, or expired. Contact us if you think this is a mistake.",
+    introPrefix: "You've been invited to join",
+    introSuffix: "on the Care Hub as",
+    nameLabel: "Your name",
+    passwordLabel: "Choose a password (at least 10 characters)",
+    termsRequired: "You must agree to the Terms of Service and acknowledge the Privacy Policy to continue.",
+    marketingLabel: "Send me occasional updates and offers (optional).",
+    submitButton: "Create account",
+    submitting: "Creating account…",
+    doneTitle: "Account created",
+    doneBody: "Sign in below with the password you just set.",
+    goToSignIn: "Go to sign in",
+    genericError: "Something went wrong. Try again, or contact us if it keeps happening.",
+  },
   tickets: {
     title: "Tickets",
     newTicket: "New ticket",
@@ -131,12 +148,42 @@ export const strings = {
     scoreLabel: "Score",
     audienceLabels: { customer: "Customer", staff: "Staff" },
   },
+  account: {
+    signedInAs: "Signed in as",
+    nameHeading: "Your name",
+    nameLabel: "Name",
+    nameSubmit: "Update name",
+    emailHeading: "Change email",
+    newEmailLabel: "New email",
+    currentPasswordLabel: "Current password",
+    emailSubmit: "Update email",
+    passwordHeading: "Change password",
+    newPasswordLabel: "New password (at least 10 characters)",
+    passwordSubmit: "Update password",
+    signOutNotice: "For your security, that signs you out everywhere -- sign in again with your new credentials.",
+    preferencesHeading: "Preferences",
+    languageLabel: "Language",
+    timezoneLabel: "Timezone (optional, e.g. America/New_York)",
+    emailNotificationsLabel: "Email me about new tickets, checklist updates, and messages",
+    preferencesSubmit: "Save preferences",
+    mfaHeading: "Two-factor authentication",
+    mfaBody: "Two-factor authentication is required for administrator accounts and can't be turned off, but you can reset it (useful if you've lost your authenticator app) by confirming your password below.",
+    mfaPasswordLabel: "Current password",
+    mfaResetButton: "Reset two-factor authentication",
+    saving: "Saving…",
+    saved: "Saved.",
+  },
   payments: {
     cardTitle: "Make a payment",
     cardBody: "Pay an invoice or deposit online.",
     payButton: "Pay now",
-    termsAgreeLabel:
-      "I have read and agree to the Terms & Conditions and Privacy Policy, including the payment, refund, and dispute policies. This is required before paying.",
+    // Only the trailing sentence -- Dashboard.tsx's JSX already renders "I
+    // have read and agree to the [Terms & Conditions link] and [Privacy
+    // Policy link], including the payment, refund, and dispute policies."
+    // directly (real links can't live in a plain string constant); this
+    // used to duplicate that entire sentence a second time in plain text
+    // right after it.
+    termsAgreeLabel: "This is required before paying.",
     termsWarning: "Please check the box above to agree to our Terms & Conditions before paying.",
   },
 } as const;
