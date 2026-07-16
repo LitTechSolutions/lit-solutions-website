@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { handler } = require("./documents");
+const { handler } = require("../netlify/functions/documents");
 
 // A tiny (1x1) real PNG, base64-encoded -- passes _lib/file_signatures.js's
 // magic-byte sniff, unlike a fabricated "data:image/png;base64,xxx" string.
