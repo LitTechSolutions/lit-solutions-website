@@ -240,7 +240,7 @@
       tabsEl.hidden = false;
       tabsEl.innerHTML = '<a href="#dashboard" data-i18n="myaccount.tab_dashboard">Dashboard</a><a href="#documents" data-i18n="myaccount.tab_documents">Documents</a><a href="#messages" data-i18n="myaccount.tab_messages">Messages</a>' +
         '<a href="#favorites" data-i18n="myaccount.tab_favorites">Favorites</a><a href="#notifications">Notifications<span class="tab-badge" id="notifTabBadge" hidden>0</span></a>' +
-        '<a href="#profile" data-i18n="myaccount.tab_profile_login">Profile &amp; Login</a><a href="#" id="account-signout" data-i18n="myaccount.tab_sign_out">Sign out</a>';
+        '<a href="#profile" data-i18n="myaccount.tab_profile_login">Account Settings</a><a href="#" id="account-signout" data-i18n="myaccount.tab_sign_out">Sign out</a>';
       document.getElementById("account-signout").addEventListener("click", async function (e) {
         e.preventDefault();
         await api("auth-logout", { method: "POST" });
@@ -327,11 +327,20 @@
       '<div class="form-row"><label for="rg-name" data-i18n="myaccount.register_name_label">Name</label><input id="rg-name" type="text"></div>' +
       '<div class="form-row"><label for="rg-email" data-i18n="myaccount.register_email_label">Email</label><input id="rg-email" type="email"></div>' +
       '<div class="form-row"><label for="rg-password" data-i18n-html="myaccount.register_password_label">Password <span style="font-weight:400; color:var(--ink-faint);">(at least 10 characters)</span></label><input id="rg-password" type="password"></div>' +
+      '<div class="form-row" style="display:flex; align-items:flex-start; gap:.5rem;">' +
+      '<input type="checkbox" id="rg-terms" style="margin-top:.2rem;">' +
+      '<label for="rg-terms" data-i18n-html="myaccount.register_terms_label">I have read and agree to the <a href="terms.html" target="_blank" rel="noopener">Terms &amp; Conditions</a> and <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</label>' +
+      '</div>' +
       '<button class="btn btn-primary" id="rg-submit" data-i18n="myaccount.register_submit">Create account</button>' +
       '<p class="form-note" id="rg-status"></p></div>');
     v.querySelector("#rg-submit").addEventListener("click", async function () {
       var status = v.querySelector("#rg-status");
-      var r = await api("auth-register", { method: "POST", body: JSON.stringify({ name: v.querySelector("#rg-name").value, email: v.querySelector("#rg-email").value, password: v.querySelector("#rg-password").value }) });
+      if (!v.querySelector("#rg-terms").checked) {
+        status.textContent = "You must agree to the Terms of Service and acknowledge the Privacy Policy to continue.";
+        status.className = "form-note form-note--error";
+        return;
+      }
+      var r = await api("auth-register", { method: "POST", body: JSON.stringify({ name: v.querySelector("#rg-name").value, email: v.querySelector("#rg-email").value, password: v.querySelector("#rg-password").value, termsAccepted: true }) });
       status.textContent = (r.body && (r.body.message || r.body.error)) || "Something went wrong.";
       status.className = "form-note" + (r.ok ? "" : " form-note--error");
       if (r.ok) window.location.hash = "#signin";
@@ -643,7 +652,7 @@
 
   views.profile = function () {
     if (!requireAuth()) return el("<div></div>");
-    setPageTitle("myaccount.tab_profile_login", "Profile & Login");
+    setPageTitle("myaccount.tab_profile_login", "Account Settings");
     var prefs = state.user.preferences || { language: "en", timezone: "", emailNotifications: true };
     var LANGUAGES = [["en", "English"], ["es", "Español"], ["fr", "Français"], ["zh", "中文"], ["ja", "日本語"], ["vi", "Tiếng Việt"], ["tl", "Filipino"], ["ar", "العربية"], ["ko", "한국어"], ["de", "Deutsch"], ["ht", "Kreyòl Ayisyen"], ["pt", "Português"], ["ru", "Русский"], ["it", "Italiano"], ["pl", "Polski"], ["hi", "हिन्दी"]];
 

@@ -1,17 +1,20 @@
-// auth-register.js -- open self-registration. DISABLED BY DEFAULT as of
-// Session 17 (OWNER_DECISIONS.md #4, resolved): the Care Hub launches
-// invite-only -- see invitations.js/invitation-accept.js for the real
-// account-creation path. This endpoint stays in place, gated behind the
-// "open_registration" feature flag (src/settings, defaults OFF / fail
-// closed like every other flag in this codebase), so open registration
-// can be turned on later via F056's settings document without a code
-// deploy, without ever being live by accident.
+// auth-register.js -- open self-registration, re-enabled 2026-07-16 (see
+// OWNER_DECISIONS.md #4) to coexist with the invite-only path
+// (invitations.js/invitation-accept.js) rather than replace it -- gated
+// behind the "open_registration" feature flag (src/settings, fail closed
+// like every other flag in this codebase).
 //
 // The behavior below (rate-limited, unverified-until-email-click,
 // generic responses to prevent email enumeration) is unchanged from
-// before Session 17 -- only the new flag check at the top is new.
+// before Session 17. termsAccepted is new: this path had no consent
+// capture at all before re-enabling it, unlike invitation-accept.js's
+// required, never-defaulted gate -- brought to parity here. Self-
+// registered accounts are Blobs-only (no Postgres organization_id to
+// attach a src/db/consentStore.js row to, unlike the Care Hub's
+// relational accounts), so the accepted version/timestamp is recorded
+// directly on this user's own Blobs record instead.
 //
-// POST { email, password, name }
+// POST { email, password, name, termsAccepted }
 
 const { hashPassword, json, rateLimited } = require("./_lib/auth_utils");
 const { getJSON, setJSON } = require("./_lib/blob_store");
@@ -19,6 +22,7 @@ const { sendVerificationEmail } = require("./_lib/verification");
 const { sendEmail } = require("./_lib/email");
 const { loadSettingsDocument } = require("../../src/settings/blobsSettingsStore");
 const { isFeatureEnabled } = require("../../src/settings/settingsStore");
+const { CURRENT_TERMS_VERSION, CURRENT_PRIVACY_VERSION } = require("../../src/domain/consent");
 
 const REGISTRATION_DISABLED_MESSAGE = "Open registration is currently disabled. Please contact us to request an invitation.";
 
@@ -45,11 +49,16 @@ exports.handler = async (event, context, deps = {}) => {
 
   let body;
   try { body = JSON.parse(event.body || "{}"); } catch (e) { return json(400, { error: "Invalid JSON" }); }
-  const { email, password, name } = body;
+  const { email, password, name, termsAccepted } = body;
 
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json(400, { error: "A valid email is required." });
   if (!password || password.length < 10) return json(400, { error: "Password must be at least 10 characters." });
   if (!name || !name.trim()) return json(400, { error: "Name is required." });
+  // Never inferred/defaulted -- the client must send an explicit true,
+  // same rule invitation-accept.js already enforces for its own accounts.
+  if (termsAccepted !== true) {
+    return json(400, { error: "You must agree to the Terms of Service and acknowledge the Privacy Policy to continue." });
+  }
 
   const key = email.toLowerCase();
   const existing = await getJSON("users", key);
@@ -72,6 +81,9 @@ exports.handler = async (event, context, deps = {}) => {
   const user = {
     id: userId, email: key, name: name.trim(), passwordHash,
     role: "customer", verified: false, createdAt: Date.now(),
+    termsAcceptedAt: new Date().toISOString(),
+    termsVersion: CURRENT_TERMS_VERSION,
+    privacyVersion: CURRENT_PRIVACY_VERSION,
   };
   await setJSON("users", key, user);
   await sendVerificationEmail(event, user);
