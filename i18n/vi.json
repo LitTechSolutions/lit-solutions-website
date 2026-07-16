@@ -263,7 +263,7 @@
     "q1_question": "Quý công ty phục vụ những khu vực nào?",
     "q1_answer": "Dịch vụ sửa chữa máy tính, mạng và công việc an ninh mạng tại chỗ được cung cấp trực tiếp tại Montross, Colonial Beach, King George, và Dahlgren, Virginia. Thiết kế website thì khác — dịch vụ này hoàn toàn từ xa, vì vậy chúng tôi nhận khách hàng website ở bất kỳ đâu tại Hoa Kỳ. Xem <a href=\"service-area.html\">trang Khu vực phục vụ</a> của chúng tôi để biết chi tiết đầy đủ.",
     "q2_question": "Làm thế nào để bắt đầu?",
-    "q2_answer": "Gọi <a href=\"tel:+16364260289\">636-426-0289</a>, gửi email đến <a href=\"mailto:dylan@lit-solutions.tech\">dylan@lit-solutions.tech</a>, hoặc điền vào <a href=\"intake.html\">biểu mẫu dự án</a> của chúng tôi — chúng tôi thường phản hồi ngay trong ngày làm việc.",
+    "q2_answer": "Gọi <a href=\"tel:+18043090968\">804-309-0968</a>, gửi email đến <a href=\"mailto:dylan@lit-solutions.tech\">dylan@lit-solutions.tech</a>, hoặc điền vào <a href=\"intake.html\">biểu mẫu dự án</a> của chúng tôi — chúng tôi thường phản hồi ngay trong ngày làm việc.",
     "q3_question": "Quý công ty có ký hợp đồng không?",
     "q3_answer": "Có — <a href=\"terms.html\" data-i18n=\"footer.terms\">Điều khoản & Điều kiện</a> của chúng tôi quy định rõ điều khoản thanh toán, hủy dự án, quyền sở hữu, và mọi thứ khác bằng ngôn ngữ dễ hiểu trước khi bất kỳ dự án nào bắt đầu.",
     "cat2_website": "Dự án website",
@@ -619,7 +619,7 @@
     "error_logo_too_large": "Tệp logo quá lớn -- vui lòng dùng tệp dưới 4MB.",
     "error_photos_max": "Vui lòng đính kèm tối đa {{max}} ảnh.",
     "error_photo_too_large": "Ảnh \"{{name}}\" quá lớn -- vui lòng dùng tệp dưới 4MB mỗi ảnh.",
-    "error_generic_submit": "Đã có lỗi xảy ra khi gửi dự án của bạn -- vui lòng gọi 636-426-0289 hoặc gửi email trực tiếp đến dylan@lit-solutions.tech.",
+    "error_generic_submit": "Đã có lỗi xảy ra khi gửi dự án của bạn -- vui lòng gọi 804-309-0968 hoặc gửi email trực tiếp đến dylan@lit-solutions.tech.",
     "preview_additional_pages_blurb": "Một trang mới cho {{biz}}, sẵn sàng để bạn thêm nội dung.",
     "preview_blog_headline": "5 điều khách hàng của {{biz}} thường hỏi nhất",
     "preview_blog_posted": "Đăng tuần này",
@@ -651,7 +651,7 @@
     "preview_default_business_name": "doanh nghiệp của bạn",
     "status_sending_quote": "Đang gửi yêu cầu báo giá của bạn...",
     "done_message_quick_only": "Đã nhận được -- chúng tôi sẽ liên hệ lại bằng phương thức liên hệ bạn đã chọn. Nếu bạn muốn bổ sung thông tin dự án ngay bây giờ, bạn luôn có thể bắt đầu một yêu cầu Công cụ thiết kế website khác.",
-    "error_pdf_unavailable": "Chúng tôi không thể tạo bản tóm tắt PDF của bạn, vì vậy chúng tôi chưa gửi yêu cầu của bạn. Vui lòng làm mới trang và thử lại, hoặc gọi 636-426-0289 / gửi email trực tiếp đến dylan@lit-solutions.tech.",
+    "error_pdf_unavailable": "Chúng tôi không thể tạo bản tóm tắt PDF của bạn, vì vậy chúng tôi chưa gửi yêu cầu của bạn. Vui lòng làm mới trang và thử lại, hoặc gọi 804-309-0968 / gửi email trực tiếp đến dylan@lit-solutions.tech.",
     "chip_all_categories": "Tất cả",
     "feature_count_one": "Đã chọn 1 tính năng",
     "feature_count_many": "Đã chọn {{count}} tính năng"
@@ -776,7 +776,7 @@
     "section3_li5": "Thanh toán trễ hạn có thể dẫn đến việc tạm ngừng các dịch vụ đang diễn ra (chẳng hạn như hỗ trợ lưu trữ website hoặc hỗ trợ IT hàng tháng) cho đến khi tài khoản được thanh toán đầy đủ.",
     "section4_heading": "4. Hủy dịch vụ, Hoàn tiền & Khiếu nại hoàn tiền qua ngân hàng",
     "section4_p1": "Vì các dự án giá trọn gói (chẳng hạn như thiết kế website) bắt đầu bằng việc lên kế hoạch, thiết kế, thiết lập, cấu hình, và công sức tùy chỉnh ngay sau khi thanh toán, khoản thanh toán của bạn có thể trở thành một phần hoặc toàn bộ không được hoàn lại một khi công việc đã bắt đầu. Bất kỳ khoản hoàn tiền nào cũng chỉ giới hạn ở phần công việc chưa được thực hiện và do Little Technical Solutions LLC xác định một cách thiện chí, dựa trên công sức đã hoàn thành và chi phí đã phát sinh. Nếu bạn hủy trước khi bất kỳ công việc nào bắt đầu, khoản thanh toán của bạn có thể được hoàn lại theo quyết định riêng của chúng tôi, sau khi trừ đi mọi phí giao dịch đã phát sinh.",
-    "section4_p2": "Công việc đã hoàn thành và bàn giao (bao gồm nhưng không giới hạn ở các website đã hoàn thiện, các sửa chữa đã hoàn tất, và các lắp đặt đã hoàn tất) sẽ không được hoàn tiền. Nếu bạn cho rằng công việc chưa được hoàn thành đúng như thỏa thuận, bạn phải liên hệ trực tiếp với chúng tôi qua <strong>636-426-0289</strong> hoặc <strong>dylan@lit-solutions.tech</strong> trong vòng 7 ngày kể từ khi hoàn thành để chúng tôi có thể giải quyết vấn đề trực tiếp.",
+    "section4_p2": "Công việc đã hoàn thành và bàn giao (bao gồm nhưng không giới hạn ở các website đã hoàn thiện, các sửa chữa đã hoàn tất, và các lắp đặt đã hoàn tất) sẽ không được hoàn tiền. Nếu bạn cho rằng công việc chưa được hoàn thành đúng như thỏa thuận, bạn phải liên hệ trực tiếp với chúng tôi qua <strong>804-309-0968</strong> hoặc <strong>dylan@lit-solutions.tech</strong> trong vòng 7 ngày kể từ khi hoàn thành để chúng tôi có thể giải quyết vấn đề trực tiếp.",
     "section4_p3": "<strong>Bạn đồng ý liên hệ với chúng tôi và cố gắng giải quyết trực tiếp mọi tranh chấp về hóa đơn trước khi khởi tạo yêu cầu chargeback, tranh chấp, hoặc hoàn trả với ngân hàng, đơn vị phát hành thẻ, hoặc Square của bạn.</strong> Việc khởi tạo yêu cầu chargeback đối với các dịch vụ đã thực sự được cung cấp, mà không cố gắng giải quyết vấn đề với chúng tôi trước, có thể bị coi là gian lận và bị xử lý ở mức tối đa mà pháp luật cho phép, bao gồm việc thu hồi số tiền tranh chấp, chi phí thu hồi nợ, và phí luật sư hợp lý. Chúng tôi lưu giữ toàn bộ hồ sơ trao đổi, phạm vi dự án, và công việc đã bàn giao để phản bác các tranh chấp không có căn cứ.",
     "section5_heading": "5. Trách nhiệm của Khách hàng",
     "section5_intro": "Bạn cam kết và bảo đảm rằng:",
@@ -807,7 +807,7 @@
     "section16_heading": "16. Tính Độc lập của Các Điều khoản",
     "section16_body": "Nếu bất kỳ điều khoản nào trong các Điều khoản này bị coi là không thể thi hành, các điều khoản còn lại vẫn tiếp tục có đầy đủ hiệu lực và giá trị thi hành.",
     "section17_heading": "17. Liên hệ",
-    "section17_body": "Mọi thắc mắc về các Điều khoản này có thể được gửi đến Little Technical Solutions LLC qua <strong>636-426-0289</strong> hoặc <strong>dylan@lit-solutions.tech</strong>."
+    "section17_body": "Mọi thắc mắc về các Điều khoản này có thể được gửi đến Little Technical Solutions LLC qua <strong>804-309-0968</strong> hoặc <strong>dylan@lit-solutions.tech</strong>."
   },
   "privacy": {
     "hero_eyebrow": "Pháp lý",
@@ -826,7 +826,7 @@
     "section4_heading": "4. Cookie & Theo dõi",
     "section4_body": "Trang web này không đặt cookie quảng cáo hoặc theo dõi của bên thứ ba. Thông báo cookie mà bạn có thể thấy trong lần truy cập đầu tiên là một thông báo minh bạch, không phải là một lựa chọn đồng ý theo dõi — không có gì không thiết yếu để bạn phải đồng ý ngoài phần phân tích đã mô tả ở trên, vốn không thu thập bất kỳ dữ liệu cá nhân nào.",
     "section5_heading": "5. Lưu trữ dữ liệu & Quyền của bạn",
-    "section5_body": "Chúng tôi lưu giữ các biểu mẫu đã gửi và hồ sơ dự án trong khoảng thời gian hợp lý cần thiết để cung cấp dịch vụ, duy trì hồ sơ kinh doanh, và đáp ứng các nghĩa vụ pháp lý. Bạn có thể yêu cầu truy cập, chỉnh sửa, hoặc xóa thông tin của mình bất kỳ lúc nào bằng cách liên hệ với chúng tôi qua <strong>636-426-0289</strong> hoặc <strong>dylan@lit-solutions.tech</strong>.",
+    "section5_body": "Chúng tôi lưu giữ các biểu mẫu đã gửi và hồ sơ dự án trong khoảng thời gian hợp lý cần thiết để cung cấp dịch vụ, duy trì hồ sơ kinh doanh, và đáp ứng các nghĩa vụ pháp lý. Bạn có thể yêu cầu truy cập, chỉnh sửa, hoặc xóa thông tin của mình bất kỳ lúc nào bằng cách liên hệ với chúng tôi qua <strong>804-309-0968</strong> hoặc <strong>dylan@lit-solutions.tech</strong>.",
     "section6_heading": "6. Bảo mật",
     "section6_body": "Trang web này hoạt động hoàn toàn qua giao thức HTTPS. Chúng tôi không lưu trữ dữ liệu thẻ thanh toán. Dữ liệu biểu mẫu được truyền và lưu trữ thông qua hạ tầng của Netlify với các biện pháp bảo vệ kỹ thuật hợp lý.",
     "section7_heading": "7. Quyền riêng tư của trẻ em",
@@ -834,7 +834,7 @@
     "section8_heading": "8. Thay đổi đối với chính sách này",
     "section8_body": "Chúng tôi có thể cập nhật chính sách này theo thời gian. Phiên bản có hiệu lực tại thời điểm bạn sử dụng trang web này hoặc gửi biểu mẫu sẽ áp dụng cho việc sử dụng đó.",
     "section9_heading": "9. Liên hệ",
-    "section9_body": "Mọi thắc mắc về chính sách này có thể được gửi đến Little Technical Solutions LLC qua <strong>636-426-0289</strong> hoặc <strong>dylan@lit-solutions.tech</strong>. Xem thêm <a href=\"terms.html\" data-i18n=\"footer.terms\">Điều khoản &amp; Điều kiện</a> của chúng tôi.",
+    "section9_body": "Mọi thắc mắc về chính sách này có thể được gửi đến Little Technical Solutions LLC qua <strong>804-309-0968</strong> hoặc <strong>dylan@lit-solutions.tech</strong>. Xem thêm <a href=\"terms.html\" data-i18n=\"footer.terms\">Điều khoản &amp; Điều kiện</a> của chúng tôi.",
     "section1_item4": "<strong>Tài khoản khách hàng.</strong> Nếu bạn tạo tài khoản, chúng tôi sẽ lưu trữ họ tên, địa chỉ email, ngôn ngữ ưa thích và mật khẩu đã được mã hóa an toàn — chúng tôi không bao giờ xem hoặc lưu trữ mật khẩu thực của bạn ở dạng có thể đọc được.",
     "section1_item5": "<strong>Tài liệu, tin nhắn, mục yêu thích &amp; thông báo.</strong> Sau khi bạn có tài khoản, chúng tôi lưu trữ các tài liệu (chẳng hạn như hóa đơn hoặc biên lai) được chia sẻ với tài khoản của bạn, nội dung tin nhắn trao đổi với nhân viên của chúng tôi, các mục bạn lưu làm yêu thích, và các thông báo liên quan đến tài khoản — tất cả đều gắn liền với tài khoản của bạn và chỉ hiển thị cho bạn và nhân viên được ủy quyền.",
     "section1_item6": "<strong>Địa chỉ IP.</strong> Chúng tôi ghi lại địa chỉ IP liên quan đến việc gửi biểu mẫu, đăng nhập tài khoản và các hoạt động khác trên tài khoản. Thông tin này được sử dụng để ngăn chặn hành vi lạm dụng (ví dụ: giới hạn số lượng yêu cầu mà một khách truy cập có thể thực hiện trong một khoảng thời gian ngắn) và được lưu trữ cùng với yêu cầu hoặc hoạt động tài khoản liên quan."
@@ -1062,7 +1062,7 @@
     "type2_title": "Cuộc gọi Khởi động Dự án",
     "type2_desc": "Dành cho các dự án website và IT doanh nghiệp — một cuộc gọi tập trung để chốt phạm vi, thời gian, và các bước tiếp theo.",
     "cta_h2": "Bạn muốn gọi điện trực tiếp hơn?",
-    "cta_contact_desc": "Gọi <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal); text-decoration:underline;\">636-426-0289</a>, gửi email đến <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal); text-decoration:underline;\">dylan@lit-solutions.tech</a>, hoặc dùng biểu mẫu dự án đầy đủ của chúng tôi để nhận báo giá chi tiết.",
+    "cta_contact_desc": "Gọi <a href=\"tel:+18043090968\" style=\"color:var(--accent-teal); text-decoration:underline;\">804-309-0968</a>, gửi email đến <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal); text-decoration:underline;\">dylan@lit-solutions.tech</a>, hoặc dùng biểu mẫu dự án đầy đủ của chúng tôi để nhận báo giá chi tiết.",
     "cta_intake": "Yêu cầu dịch vụ",
     "form_heading": "Yêu cầu một khung giờ",
     "form_intro": "Đây là yêu cầu về thời gian — chưa được xác nhận cho đến khi chúng tôi phản hồi, thường trong vòng một ngày làm việc.",
@@ -1529,7 +1529,7 @@
     "reset_request_heading": "Đặt lại mật khẩu của bạn",
     "reset_request_email_label": "Email",
     "reset_request_submit": "Gửi liên kết đặt lại",
-    "reset_request_contact_note": "Không nhận được email? Hãy kiểm tra thư mục spam, hoặc gọi <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> hoặc gửi email đến <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a> và chúng tôi sẽ giúp bạn đăng nhập lại.",
+    "reset_request_contact_note": "Không nhận được email? Hãy kiểm tra thư mục spam, hoặc gọi <a href=\"tel:+18043090968\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">804-309-0968</a> hoặc gửi email đến <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a> và chúng tôi sẽ giúp bạn đăng nhập lại.",
     "reset_heading": "Đặt mật khẩu mới",
     "reset_new_password_label": "Mật khẩu mới",
     "reset_submit": "Cập nhật mật khẩu",
@@ -1655,7 +1655,7 @@
     "related_all_articles": "Tất cả bài viết"
   },
   "forms": {
-    "not_connected_yet": "Chức năng này chưa được kết nối. Vui lòng gọi 636-426-0289 hoặc email dylan@lit-solutions.tech.",
+    "not_connected_yet": "Chức năng này chưa được kết nối. Vui lòng gọi 804-309-0968 hoặc email dylan@lit-solutions.tech.",
     "missing_field_fallback": "Một trường bắt buộc"
   },
   "newsletter": {

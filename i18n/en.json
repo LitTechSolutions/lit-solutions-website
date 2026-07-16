@@ -197,7 +197,7 @@
     "type2_title": "Project Kickoff Call",
     "type2_desc": "For website and business IT projects — a focused call to lock in scope, timeline, and next steps.",
     "cta_h2": "Prefer to just call?",
-    "cta_contact_desc": "Call <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal); text-decoration:underline;\">636-426-0289</a>, email <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal); text-decoration:underline;\">dylan@lit-solutions.tech</a>, or use our full project form for a detailed quote.",
+    "cta_contact_desc": "Call <a href=\"tel:+18043090968\" style=\"color:var(--accent-teal); text-decoration:underline;\">804-309-0968</a>, email <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal); text-decoration:underline;\">dylan@lit-solutions.tech</a>, or use our full project form for a detailed quote.",
     "cta_intake": "Request Service",
     "form_heading": "Request a time",
     "form_intro": "This requests a time — it isn't confirmed until we respond, usually within one business day.",
@@ -249,7 +249,7 @@
     "q1_question": "What areas do you serve?",
     "q1_answer": "Computer repair, networking, and on-site cybersecurity work is available in person across Montross, Colonial Beach, King George, and Dahlgren, Virginia. Website design is different — it's fully remote, so we take on website clients anywhere in the United States. See our <a href=\"service-area.html\">Service Area page</a> for the full breakdown.",
     "q2_question": "How do I get started?",
-    "q2_answer": "Call <a href=\"tel:+16364260289\">636-426-0289</a>, email <a href=\"mailto:dylan@lit-solutions.tech\">dylan@lit-solutions.tech</a>, or fill out our <a href=\"intake.html\">project form</a> — we typically respond the same business day.",
+    "q2_answer": "Call <a href=\"tel:+18043090968\">804-309-0968</a>, email <a href=\"mailto:dylan@lit-solutions.tech\">dylan@lit-solutions.tech</a>, or fill out our <a href=\"intake.html\">project form</a> — we typically respond the same business day.",
     "q3_question": "Do you sign a contract?",
     "q3_answer": "Yes — our <a href=\"terms.html\" data-i18n=\"footer.terms\">Terms & Conditions</a> cover payment terms, cancellations, ownership, and everything else in plain language before any project starts.",
     "cat2_website": "Website Projects",
@@ -553,7 +553,7 @@
     "reset_request_heading": "Reset your password",
     "reset_request_email_label": "Email",
     "reset_request_submit": "Send reset link",
-    "reset_request_contact_note": "Didn't get the email? Check your spam folder, or call <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> or email <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a> and we'll help you get back in.",
+    "reset_request_contact_note": "Didn't get the email? Check your spam folder, or call <a href=\"tel:+18043090968\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">804-309-0968</a> or email <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a> and we'll help you get back in.",
     "reset_heading": "Set a new password",
     "reset_new_password_label": "New password",
     "reset_submit": "Update password",
@@ -798,7 +798,7 @@
     "section4_heading": "4. Cookies & tracking",
     "section4_body": "This site does not set third-party advertising or tracking cookies. The cookie notice you may see on your first visit is a transparency notice, not a tracking opt-in — there's nothing nonessential to opt into beyond the analytics described above, which collects no personal data.",
     "section5_heading": "5. Data retention & your rights",
-    "section5_body": "We retain form submissions and project records for as long as reasonably necessary to deliver the service, maintain business records, and meet legal obligations. You can request access to, correction of, or deletion of your information at any time by contacting us at <strong>636-426-0289</strong> or <strong>dylan@lit-solutions.tech</strong>.",
+    "section5_body": "We retain form submissions and project records for as long as reasonably necessary to deliver the service, maintain business records, and meet legal obligations. You can request access to, correction of, or deletion of your information at any time by contacting us at <strong>804-309-0968</strong> or <strong>dylan@lit-solutions.tech</strong>.",
     "section6_heading": "6. Security",
     "section6_body": "This site is served entirely over HTTPS. We do not store payment card data. Form data is transmitted and stored through Netlify's infrastructure with reasonable technical safeguards.",
     "section7_heading": "7. Children's privacy",
@@ -806,7 +806,7 @@
     "section8_heading": "8. Changes to this policy",
     "section8_body": "We may update this policy from time to time. The version in effect at the time you use this site or submit a form governs that use.",
     "section9_heading": "9. Contact",
-    "section9_body": "Questions about this policy can be directed to Little Technical Solutions LLC at <strong>636-426-0289</strong> or <strong>dylan@lit-solutions.tech</strong>. See also our <a href=\"terms.html\" data-i18n=\"footer.terms\">Terms & Conditions</a>.",
+    "section9_body": "Questions about this policy can be directed to Little Technical Solutions LLC at <strong>804-309-0968</strong> or <strong>dylan@lit-solutions.tech</strong>. See also our <a href=\"terms.html\" data-i18n=\"footer.terms\">Terms & Conditions</a>.",
     "section1_item4": "<strong>Customer accounts.</strong> If you create an account, we store your name, email address, language preference, and a securely hashed password — we never see or store your actual password in readable form.",
     "section1_item5": "<strong>Documents, messages, favorites & notifications.</strong> Once you have an account, we store the documents (such as invoices or receipts) shared with your account, the content of messages exchanged with our staff, items you save as favorites, and account-related notifications — all tied to your account and visible only to you and authorized staff.",
     "section1_item6": "<strong>IP addresses.</strong> We log the IP address associated with form submissions, account sign-ins, and other account actions. This is used to prevent abuse (for example, limiting how many requests one visitor can make in a short period) and is stored alongside the related inquiry or account activity."
@@ -1222,7 +1222,7 @@
     "section3_li5": "Late payments may result in suspension of ongoing services (such as website hosting assistance or monthly IT support) until the account is brought current.",
     "section4_heading": "4. Cancellations, Refunds & Chargebacks",
     "section4_p1": "Because fixed-price project work (such as website design) begins with planning, design, setup, configuration, and custom labor immediately after payment, your payment may become partially or fully non-refundable once work has commenced. Any refund is limited to work not yet performed and is determined by Little Technical Solutions LLC in good faith based on completed labor and incurred costs. If you cancel before any work has begun, your payment may be refunded at our sole discretion, less any transaction fees already incurred.",
-    "section4_p2": "Completed, delivered work (including but not limited to finished websites, completed repairs, and completed installations) is non-refundable. If you believe work was not completed as agreed, you must contact us directly at <strong>636-426-0289</strong> or <strong>dylan@lit-solutions.tech</strong> within 7 days of completion so we can address the issue directly.",
+    "section4_p2": "Completed, delivered work (including but not limited to finished websites, completed repairs, and completed installations) is non-refundable. If you believe work was not completed as agreed, you must contact us directly at <strong>804-309-0968</strong> or <strong>dylan@lit-solutions.tech</strong> within 7 days of completion so we can address the issue directly.",
     "section4_p3": "<strong>You agree to contact us and attempt to resolve any billing dispute directly before initiating a chargeback, dispute, or reversal with your bank, card issuer, or Square.</strong> Initiating a chargeback for services that were actually rendered, without first attempting to resolve the matter with us, may be treated as fraudulent and pursued to the fullest extent permitted by law, including recovery of the disputed amount, collection costs, and reasonable attorney's fees. We retain all records of communications, project scope, and delivered work to contest unwarranted disputes.",
     "section5_heading": "5. Client Responsibilities",
     "section5_intro": "You represent and warrant that:",
@@ -1253,7 +1253,7 @@
     "section16_heading": "16. Severability",
     "section16_body": "If any provision of these Terms is found unenforceable, the remaining provisions will continue in full force and effect.",
     "section17_heading": "17. Contact",
-    "section17_body": "Questions about these Terms can be directed to Little Technical Solutions LLC at <strong>636-426-0289</strong> or <strong>dylan@lit-solutions.tech</strong>."
+    "section17_body": "Questions about these Terms can be directed to Little Technical Solutions LLC at <strong>804-309-0968</strong> or <strong>dylan@lit-solutions.tech</strong>."
   },
   "testimonials": {
     "hero_eyebrow": "Testimonials",
@@ -1591,7 +1591,7 @@
     "cost_row_quote": "Custom quote",
     "cost_row_quote_divider": "Custom-quote add-ons",
     "done_message_quick_only": "Got it -- we'll reach out using the contact method you picked. If you'd rather add your project details now, you can always start another Website Designer request.",
-    "error_generic_submit": "Something went wrong sending your project -- please call 636-426-0289 or email dylan@lit-solutions.tech directly.",
+    "error_generic_submit": "Something went wrong sending your project -- please call 804-309-0968 or email dylan@lit-solutions.tech directly.",
     "error_logo_too_large": "Logo file is too large -- please use a file under 4MB.",
     "error_photo_too_large": "Photo \"{{name}}\" is too large -- please use files under 4MB each.",
     "error_photos_max": "Please attach at most {{max}} photos.",
@@ -1649,13 +1649,13 @@
     "status_building_pdf": "Building your PDF and sending it over...",
     "status_reading_files": "Reading your files...",
     "status_sending_quote": "Sending your quote request...",
-    "error_pdf_unavailable": "We couldn't generate your PDF summary, so we didn't send your submission. Please refresh the page and try again, or call 636-426-0289 / email dylan@lit-solutions.tech directly.",
+    "error_pdf_unavailable": "We couldn't generate your PDF summary, so we didn't send your submission. Please refresh the page and try again, or call 804-309-0968 / email dylan@lit-solutions.tech directly.",
     "chip_all_categories": "All",
     "feature_count_one": "1 feature selected",
     "feature_count_many": "{{count}} features selected"
   },
   "forms": {
-    "not_connected_yet": "This isn't connected yet. Please call 636-426-0289 or email dylan@lit-solutions.tech.",
+    "not_connected_yet": "This isn't connected yet. Please call 804-309-0968 or email dylan@lit-solutions.tech.",
     "missing_field_fallback": "A required field"
   },
   "newsletter": {

@@ -8,7 +8,7 @@ actually changes.
 
 - **Business:** Little Technical Solutions LLC
 - **Owner/founder:** Dylan Little
-- **Contact:** dylan@lit-solutions.tech · 636-426-0289
+- **Contact:** dylan@lit-solutions.tech · 804-309-0968
 - **Primary local service area:** Montross, Colonial Beach, King George,
   Dahlgren, VA, and surrounding Northern Neck communities (on-site work).
   Website design services are offered nationwide, remote.

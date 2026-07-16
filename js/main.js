@@ -319,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
       const msg = link.dataset.notConnectedMsg ||
-        tt('forms.not_connected_yet', "This isn't connected yet. Please call 636-426-0289 or email dylan@lit-solutions.tech.");
+        tt('forms.not_connected_yet', "This isn't connected yet. Please call 804-309-0968 or email dylan@lit-solutions.tech.");
       alert(msg);
     });
   });

@@ -108,7 +108,7 @@ exports.handler = async (event, context, deps = {}) => {
     html:
       `<p>Two-factor authentication was just ${body.action === "disable" ? "disabled" : "reset"} on your Little Technical Solutions LLC Care Hub account (${user.email}). You'll be asked to set it up again next time you sign in.</p>` +
       `<p>If this was you, no action is needed. All other active sessions on this account have been signed out.</p>` +
-      `<p><strong>If this wasn't you</strong>, someone else may have your password -- contact us immediately at dylan@lit-solutions.tech or 636-426-0289.</p>`,
+      `<p><strong>If this wasn't you</strong>, someone else may have your password -- contact us immediately at dylan@lit-solutions.tech or 804-309-0968.</p>`,
   });
   await auditRecorder.record(
     {

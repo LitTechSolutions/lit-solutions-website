@@ -199,7 +199,7 @@
     "q1_question": "対応エリアはどこですか?",
     "q1_answer": "パソコン修理、ネットワーク、訪問でのサイバーセキュリティ作業は、Montross、Colonial Beach、King George、Dahlgren, Virginiaの各エリアで直接対応しています。ウェブサイトデザインは事情が異なります — 完全リモートで対応するため、アメリカ全土のお客様のウェブサイト制作をお引き受けしています。詳細は<a href=\"service-area.html\">対応エリアページ</a>をご覧ください。",
     "q2_question": "どうすれば依頼を始められますか?",
-    "q2_answer": "<a href=\"tel:+16364260289\">636-426-0289</a>までお電話いただくか、<a href=\"mailto:dylan@lit-solutions.tech\">dylan@lit-solutions.tech</a>までメールをお送りいただくか、<a href=\"intake.html\">プロジェクトフォーム</a>にご記入ください — 通常、同じ営業日中にご返信します。",
+    "q2_answer": "<a href=\"tel:+18043090968\">804-309-0968</a>までお電話いただくか、<a href=\"mailto:dylan@lit-solutions.tech\">dylan@lit-solutions.tech</a>までメールをお送りいただくか、<a href=\"intake.html\">プロジェクトフォーム</a>にご記入ください — 通常、同じ営業日中にご返信します。",
     "q3_question": "契約書は交わしますか?",
     "q3_answer": "はい — <a href=\"terms.html\" data-i18n=\"footer.terms\">利用規約</a>にて、お支払い条件、キャンセル規定、権利の帰属など、プロジェクト開始前に必要な内容をすべて分かりやすい言葉でご説明しています。",
     "cat2_website": "ウェブサイト制作",
@@ -619,7 +619,7 @@
     "error_logo_too_large": "ロゴファイルのサイズが大きすぎます -- 4MB未満のファイルをご使用ください。",
     "error_photos_max": "写真は最大{{max}}枚まで添付できます。",
     "error_photo_too_large": "写真「{{name}}」のサイズが大きすぎます -- 各ファイルは4MB未満にしてください。",
-    "error_generic_submit": "プロジェクトの送信中に問題が発生しました -- 636-426-0289までお電話いただくか、dylan@lit-solutions.techまで直接メールをお送りください。",
+    "error_generic_submit": "プロジェクトの送信中に問題が発生しました -- 804-309-0968までお電話いただくか、dylan@lit-solutions.techまで直接メールをお送りください。",
     "preview_additional_pages_blurb": "{{biz}}向けの新しいページです。コンテンツを追加する準備ができています。",
     "preview_blog_headline": "{{biz}}のお客様からよく寄せられる質問5選",
     "preview_blog_posted": "今週投稿",
@@ -651,7 +651,7 @@
     "preview_default_business_name": "貴社",
     "status_sending_quote": "お見積もりのご依頼を送信しています...",
     "done_message_quick_only": "承知いたしました -- ご希望の連絡方法で折り返しご連絡いたします。今すぐプロジェクトの詳細を追加したい場合は、いつでも新たにウェブサイトデザイナーのリクエストを開始できます。",
-    "error_pdf_unavailable": "PDF概要を生成できなかったため、送信内容を送信しませんでした。ページを更新して再度お試しいただくか、636-426-0289までお電話、またはdylan@lit-solutions.techまで直接メールにてご連絡ください。",
+    "error_pdf_unavailable": "PDF概要を生成できなかったため、送信内容を送信しませんでした。ページを更新して再度お試しいただくか、804-309-0968までお電話、またはdylan@lit-solutions.techまで直接メールにてご連絡ください。",
     "chip_all_categories": "すべて",
     "feature_count_one": "1件の機能を選択中",
     "feature_count_many": "{{count}}件の機能を選択中"
@@ -776,7 +776,7 @@
     "section3_li5": "お支払いが遅れた場合、アカウントが正常な状態に戻るまで、継続サービス(ウェブサイトホスティングのサポートや月額ITサポートなど)を一時停止させていただく場合があります。",
     "section4_heading": "4. キャンセル、返金、チャージバック",
     "section4_p1": "定額制のプロジェクト作業(ウェブサイトデザインなど)は、お支払い直後から企画、デザイン、セットアップ、設定、カスタム作業が開始されるため、作業が開始された時点で、お支払いの一部または全部が返金対象外となる場合があります。返金は未実施の作業分に限られ、完了した作業と発生済みの費用に基づき、Little Technical Solutions LLCが誠実に判断いたします。作業が開始される前にキャンセルされた場合、当社の裁量により、既に発生した取引手数料を差し引いた金額を返金する場合があります。",
-    "section4_p2": "完了し納品済みの作業(完成したウェブサイト、完了した修理、完了した設置作業などを含みますが、これらに限りません)は返金対象外です。合意した内容通りに作業が完了していないとお考えの場合は、問題に直接対応できるよう、完了後7日以内に<strong>636-426-0289</strong>または<strong>dylan@lit-solutions.tech</strong>まで直接ご連絡ください。",
+    "section4_p2": "完了し納品済みの作業(完成したウェブサイト、完了した修理、完了した設置作業などを含みますが、これらに限りません)は返金対象外です。合意した内容通りに作業が完了していないとお考えの場合は、問題に直接対応できるよう、完了後7日以内に<strong>804-309-0968</strong>または<strong>dylan@lit-solutions.tech</strong>まで直接ご連絡ください。",
     "section4_p3": "<strong>お客様は、銀行、カード発行会社、またはSquareに対してチャージバック、異議申し立て、または取消しを行う前に、まず当社に直接ご連絡いただき、請求に関する問題の解決を試みることに同意するものとします。</strong>実際に提供されたサービスについて、当社との解決を試みることなくチャージバックを申し立てた場合、それは不正行為とみなされ、争われている金額の回収、回収費用、および合理的な弁護士費用を含め、法律で認められる最大限の範囲で対応させていただく場合があります。当社は、不当な異議申し立てに対抗するため、やり取りの記録、プロジェクトの作業範囲、および納品物の記録をすべて保管しています。",
     "section5_heading": "5. クライアントの責任",
     "section5_intro": "お客様は、以下について表明し保証するものとします。",
@@ -807,7 +807,7 @@
     "section16_heading": "16. 分離可能性",
     "section16_body": "本規約のいずれかの条項が執行不能と判断された場合であっても、残りの条項は引き続き完全な効力を有するものとします。",
     "section17_heading": "17. お問い合わせ",
-    "section17_body": "本規約に関するご質問は、<strong>636-426-0289</strong>または<strong>dylan@lit-solutions.tech</strong>まで、Little Technical Solutions LLCにお問い合わせください。"
+    "section17_body": "本規約に関するご質問は、<strong>804-309-0968</strong>または<strong>dylan@lit-solutions.tech</strong>まで、Little Technical Solutions LLCにお問い合わせください。"
   },
   "privacy": {
     "hero_eyebrow": "法務",
@@ -826,7 +826,7 @@
     "section4_heading": "4. クッキーとトラッキング",
     "section4_body": "当サイトは、第三者による広告用またはトラッキング用のクッキーを設置していません。初回訪問時に表示されることがあるクッキーに関するお知らせは、トラッキングへのオプトインではなく、透明性確保のためのお知らせです — 上記で説明したアクセス解析(個人データを収集しません)以外に、オプトインが必要な非必須の項目はありません。",
     "section5_heading": "5. データの保存期間とお客様の権利",
-    "section5_body": "当社は、サービスの提供、事業記録の維持、法的義務の履行のために合理的に必要な期間、フォームの送信内容とプロジェクト記録を保存します。お客様は、<strong>636-426-0289</strong>または<strong>dylan@lit-solutions.tech</strong>までご連絡いただくことで、いつでもご自身の情報へのアクセス、訂正、削除をご請求いただけます。",
+    "section5_body": "当社は、サービスの提供、事業記録の維持、法的義務の履行のために合理的に必要な期間、フォームの送信内容とプロジェクト記録を保存します。お客様は、<strong>804-309-0968</strong>または<strong>dylan@lit-solutions.tech</strong>までご連絡いただくことで、いつでもご自身の情報へのアクセス、訂正、削除をご請求いただけます。",
     "section6_heading": "6. セキュリティ",
     "section6_body": "当サイトはすべてHTTPSで提供されています。当社はお支払いカードのデータを保存しません。フォームデータは、Netlifyのインフラを通じて、相応の技術的保護対策のもとで送信・保存されます。",
     "section7_heading": "7. 児童のプライバシー",
@@ -834,7 +834,7 @@
     "section8_heading": "8. 本ポリシーの変更",
     "section8_body": "当社は、本ポリシーを随時更新することがあります。当サイトのご利用またはフォームの送信を行った時点で有効なバージョンが、当該利用に適用されます。",
     "section9_heading": "9. お問い合わせ",
-    "section9_body": "本ポリシーに関するご質問は、<strong>636-426-0289</strong>または<strong>dylan@lit-solutions.tech</strong>まで、Little Technical Solutions LLCにお問い合わせください。<a href=\"terms.html\" data-i18n=\"footer.terms\">利用規約</a>もあわせてご覧ください。",
+    "section9_body": "本ポリシーに関するご質問は、<strong>804-309-0968</strong>または<strong>dylan@lit-solutions.tech</strong>まで、Little Technical Solutions LLCにお問い合わせください。<a href=\"terms.html\" data-i18n=\"footer.terms\">利用規約</a>もあわせてご覧ください。",
     "section1_item4": "<strong>顧客アカウント。</strong>アカウントを作成された場合、お名前、メールアドレス、言語設定、そして安全にハッシュ化されたパスワードを保存します。実際のパスワードを読み取り可能な形式で閲覧・保存することはありません。",
     "section1_item5": "<strong>ドキュメント、メッセージ、お気に入り、通知。</strong>アカウントを作成すると、アカウントに共有されたドキュメント（請求書や領収書など）、当社スタッフとのメッセージのやり取りの内容、お気に入りとして保存した項目、アカウントに関する通知を保存します。これらはすべてお客様のアカウントに紐づけられ、お客様ご本人と権限を持つスタッフのみが閲覧できます。",
     "section1_item6": "<strong>IP アドレス。</strong>フォームの送信、アカウントへのサインイン、その他のアカウント操作に関連する IP アドレスを記録します。これは不正利用の防止（例えば、短時間に1人の訪問者が送信できるリクエスト数を制限するなど）を目的として使用され、関連するお問い合わせやアカウント操作の記録とともに保存されます。"
@@ -1062,7 +1062,7 @@
     "type2_title": "プロジェクトキックオフ通話",
     "type2_desc": "ウェブサイトや中小企業向けITのプロジェクト向け — 作業範囲、スケジュール、次のステップを固めるための集中的なお打ち合わせです。",
     "cta_h2": "すぐにお電話をご希望ですか?",
-    "cta_contact_desc": "<a href=\"tel:+16364260289\" style=\"color:var(--accent-teal); text-decoration:underline;\">636-426-0289</a>までお電話いただくか、<a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal); text-decoration:underline;\">dylan@lit-solutions.tech</a>までメールをお送りいただくか、詳細なお見積もりには完全なプロジェクトフォームをご利用ください。",
+    "cta_contact_desc": "<a href=\"tel:+18043090968\" style=\"color:var(--accent-teal); text-decoration:underline;\">804-309-0968</a>までお電話いただくか、<a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal); text-decoration:underline;\">dylan@lit-solutions.tech</a>までメールをお送りいただくか、詳細なお見積もりには完全なプロジェクトフォームをご利用ください。",
     "cta_intake": "サービスを依頼する",
     "form_heading": "希望日時をリクエスト",
     "form_intro": "これは希望日時のリクエストです——こちらから返信するまでは確定ではありません。通常1営業日以内にご連絡します。",
@@ -1529,7 +1529,7 @@
     "reset_request_heading": "パスワードをリセット",
     "reset_request_email_label": "メールアドレス",
     "reset_request_submit": "リセット用リンクを送信",
-    "reset_request_contact_note": "メールが届きませんか？迷惑メールフォルダをご確認いただくか、<a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a>までお電話いただくか、<a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a>までメールをお送りください。ログインできるようサポートいたします。",
+    "reset_request_contact_note": "メールが届きませんか？迷惑メールフォルダをご確認いただくか、<a href=\"tel:+18043090968\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">804-309-0968</a>までお電話いただくか、<a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a>までメールをお送りください。ログインできるようサポートいたします。",
     "reset_heading": "新しいパスワードを設定",
     "reset_new_password_label": "新しいパスワード",
     "reset_submit": "パスワードを更新",
@@ -1655,7 +1655,7 @@
     "related_all_articles": "すべての記事"
   },
   "forms": {
-    "not_connected_yet": "この機能はまだ接続されていません。636-426-0289までお電話いただくか、dylan@lit-solutions.techまでメールをお送りください。",
+    "not_connected_yet": "この機能はまだ接続されていません。804-309-0968までお電話いただくか、dylan@lit-solutions.techまでメールをお送りください。",
     "missing_field_fallback": "必須項目"
   },
   "newsletter": {

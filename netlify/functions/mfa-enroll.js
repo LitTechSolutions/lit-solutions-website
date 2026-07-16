@@ -299,7 +299,7 @@ exports.handler = async (event, context, deps = {}) => {
         `<p>Someone just entered a valid code to set up two-factor authentication on your Little Technical Solutions LLC Care Hub account (${user.email}).</p>` +
         `<p>Click the link below within 30 minutes to finish turning it on:</p>` +
         `<p><a href="${link}">${link}</a></p>` +
-        `<p><strong>If this wasn't you</strong>, someone else may have your password -- do not click the link, and contact us immediately at dylan@lit-solutions.tech or 636-426-0289.</p>`,
+        `<p><strong>If this wasn't you</strong>, someone else may have your password -- do not click the link, and contact us immediately at dylan@lit-solutions.tech or 804-309-0968.</p>`,
     });
 
     if (delivery.sent) {

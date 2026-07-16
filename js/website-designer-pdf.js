@@ -342,7 +342,7 @@
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9.5);
     setText(doc, '#C7CCE8');
-    doc.text('dylan@lit-solutions.tech  |  636-426-0289  |  lit-solutions.tech', PAGE_MARGIN + (ctx.logo ? 24 : 0), 28.5);
+    doc.text('dylan@lit-solutions.tech  |  804-309-0968  |  lit-solutions.tech', PAGE_MARGIN + (ctx.logo ? 24 : 0), 28.5);
 
     setFill(doc, COLORS.emerald);
     doc.rect(PAGE_MARGIN, 40, 3, 12, 'F');
@@ -507,7 +507,7 @@
     ].forEach((step, i) => drawWrappedText(doc, ctx, `${i + 1}. ${step}`, { size: 9.5, gapAfter: 2 }));
 
     ctx.y += 2;
-    drawNoticeBox(doc, ctx, `Questions any time: dylan@lit-solutions.tech or 636-426-0289. Reference ${ctx.reference}.`, 'info');
+    drawNoticeBox(doc, ctx, `Questions any time: dylan@lit-solutions.tech or 804-309-0968. Reference ${ctx.reference}.`, 'info');
 
     // ---- Footers (every page after the cover) ----
     const totalPages = doc.internal.getNumberOfPages();

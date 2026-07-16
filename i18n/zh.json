@@ -199,7 +199,7 @@
     "q1_question": "你们服务哪些地区?",
     "q1_answer": "电脑维修、网络服务与上门网络安全服务在 Montross, Colonial Beach, King George, and Dahlgren, Virginia 均可上门提供。网站设计则不同 — 完全远程完成,因此我们可以为美国境内任何地方的客户建站。完整说明请见我们的<a href=\"service-area.html\">服务区域页面</a>。",
     "q2_question": "我该如何开始?",
-    "q2_answer": "致电 <a href=\"tel:+16364260289\">636-426-0289</a>,发邮件至 <a href=\"mailto:dylan@lit-solutions.tech\">dylan@lit-solutions.tech</a>,或填写我们的<a href=\"intake.html\">项目表单</a> — 我们通常会在当天工作日内回复。",
+    "q2_answer": "致电 <a href=\"tel:+18043090968\">804-309-0968</a>,发邮件至 <a href=\"mailto:dylan@lit-solutions.tech\">dylan@lit-solutions.tech</a>,或填写我们的<a href=\"intake.html\">项目表单</a> — 我们通常会在当天工作日内回复。",
     "q3_question": "你们会签合同吗?",
     "q3_answer": "会 — 我们的<a href=\"terms.html\" data-i18n=\"footer.terms\">条款与条件</a>会在项目开始前,用通俗易懂的语言涵盖付款条款、取消政策、所有权等所有内容。",
     "cat2_website": "网站项目",
@@ -619,7 +619,7 @@
     "error_logo_too_large": "Logo 文件过大 -- 请使用小于4MB的文件。",
     "error_photos_max": "最多只能附加 {{max}} 张照片。",
     "error_photo_too_large": "照片“{{name}}”过大 -- 请使用每张小于4MB的文件。",
-    "error_generic_submit": "提交项目时出了点问题 -- 请直接致电 636-426-0289 或发送邮件至 dylan@lit-solutions.tech。",
+    "error_generic_submit": "提交项目时出了点问题 -- 请直接致电 804-309-0968 或发送邮件至 dylan@lit-solutions.tech。",
     "preview_additional_pages_blurb": "为 {{biz}} 新建的页面,随时可以填充您的内容。",
     "preview_blog_headline": "{{biz}} 客户最常问的5个问题",
     "preview_blog_posted": "本周发布",
@@ -651,7 +651,7 @@
     "preview_default_business_name": "您的企业",
     "status_sending_quote": "正在发送您的报价请求...",
     "done_message_quick_only": "收到 -- 我们会通过您选择的联系方式与您联系。如果您想现在就补充项目详情,也可以随时重新发起一次网站设计工具申请。",
-    "error_pdf_unavailable": "我们无法生成您的PDF摘要,因此未发送您的提交内容。请刷新页面重试,或直接致电 636-426-0289 / 发送邮件至 dylan@lit-solutions.tech。",
+    "error_pdf_unavailable": "我们无法生成您的PDF摘要,因此未发送您的提交内容。请刷新页面重试,或直接致电 804-309-0968 / 发送邮件至 dylan@lit-solutions.tech。",
     "chip_all_categories": "全部",
     "feature_count_one": "已选择 1 项功能",
     "feature_count_many": "已选择 {{count}} 项功能"
@@ -776,7 +776,7 @@
     "section3_li5": "逾期付款可能导致持续性服务(如网站托管协助或按月IT支持)暂停,直至账户恢复正常。",
     "section4_heading": "4. 取消、退款与拒付",
     "section4_p1": "由于一口价项目工作(如网站设计)在付款后会立即开始规划、设计、设置、配置与定制劳务,您的付款在工作开始后可能部分或全部不予退还。任何退款仅限于尚未执行的工作部分,并由 Little Technical Solutions LLC 根据已完成的劳务与已产生的成本本着诚信原则自行判定。如果您在任何工作开始前取消,我们可自行决定是否退还付款,但需扣除已产生的交易手续费。",
-    "section4_p2": "已完成并交付的工作(包括但不限于已完成的网站、维修与安装)不予退款。如果您认为工作未按约定完成,必须在完工后7天内直接联系我们(<strong>636-426-0289</strong> 或 <strong>dylan@lit-solutions.tech</strong>),以便我们直接处理该问题。",
+    "section4_p2": "已完成并交付的工作(包括但不限于已完成的网站、维修与安装)不予退款。如果您认为工作未按约定完成,必须在完工后7天内直接联系我们(<strong>804-309-0968</strong> 或 <strong>dylan@lit-solutions.tech</strong>),以便我们直接处理该问题。",
     "section4_p3": "<strong>您同意在向您的银行、发卡机构或 Square 提出拒付、争议或撤销付款之前,先联系我们并尝试直接解决任何账单争议。</strong>对于实际已提供的服务,如未先尝试与我们协商解决即发起拒付,可能被视为欺诈行为,我们将在法律允许的最大范围内追究责任,包括追回争议金额、催收费用以及合理的律师费。我们会保留所有沟通记录、项目范围与交付成果的记录,用于对无理争议提出异议。",
     "section5_heading": "5. 客户责任",
     "section5_intro": "您声明并保证:",
@@ -807,7 +807,7 @@
     "section16_heading": "16. 可分割性",
     "section16_body": "如果本条款中的任何条款被认定不可执行,其余条款仍将继续完全有效。",
     "section17_heading": "17. 联系方式",
-    "section17_body": "如对本条款有任何疑问,请通过 <strong>636-426-0289</strong> 或 <strong>dylan@lit-solutions.tech</strong> 联系 Little Technical Solutions LLC。"
+    "section17_body": "如对本条款有任何疑问,请通过 <strong>804-309-0968</strong> 或 <strong>dylan@lit-solutions.tech</strong> 联系 Little Technical Solutions LLC。"
   },
   "privacy": {
     "hero_eyebrow": "法律",
@@ -826,7 +826,7 @@
     "section4_heading": "4. Cookie 与追踪",
     "section4_body": "本网站不会设置第三方广告或追踪 Cookie。您首次访问时可能看到的 Cookie 提示,只是一项透明度声明,而非追踪同意选项 — 除上述不收集任何个人数据的分析工具外,没有其他非必要项目需要您选择同意。",
     "section5_heading": "5. 数据保留与您的权利",
-    "section5_body": "我们会在合理必要的期限内保留表单提交内容与项目记录,以交付服务、维护业务档案并履行法律义务。您可以随时通过 <strong>636-426-0289</strong> 或 <strong>dylan@lit-solutions.tech</strong> 联系我们,要求查阅、更正或删除您的信息。",
+    "section5_body": "我们会在合理必要的期限内保留表单提交内容与项目记录,以交付服务、维护业务档案并履行法律义务。您可以随时通过 <strong>804-309-0968</strong> 或 <strong>dylan@lit-solutions.tech</strong> 联系我们,要求查阅、更正或删除您的信息。",
     "section6_heading": "6. 安全性",
     "section6_body": "本网站完全通过 HTTPS 提供服务。我们不存储银行卡数据。表单数据通过 Netlify 的基础设施传输与存储,并采取了合理的技术保障措施。",
     "section7_heading": "7. 儿童隐私",
@@ -834,7 +834,7 @@
     "section8_heading": "8. 政策变更",
     "section8_body": "我们可能会不时更新本政策。您使用本网站或提交表单时生效的版本,适用于该次使用行为。",
     "section9_heading": "9. 联系方式",
-    "section9_body": "如对本政策有任何疑问,请通过 <strong>636-426-0289</strong> 或 <strong>dylan@lit-solutions.tech</strong> 联系 Little Technical Solutions LLC。另请参阅我们的<a href=\"terms.html\" data-i18n=\"footer.terms\">条款与条件</a>。",
+    "section9_body": "如对本政策有任何疑问,请通过 <strong>804-309-0968</strong> 或 <strong>dylan@lit-solutions.tech</strong> 联系 Little Technical Solutions LLC。另请参阅我们的<a href=\"terms.html\" data-i18n=\"footer.terms\">条款与条件</a>。",
     "section1_item4": "<strong>客户账户。</strong>如果您创建账户，我们会存储您的姓名、电子邮箱地址、语言偏好以及经过安全哈希处理的密码——我们不会以可读形式查看或存储您的实际密码。",
     "section1_item5": "<strong>文档、消息、收藏夹与通知。</strong>一旦您拥有账户，我们会存储与您账户共享的文档（如发票或收据）、与我们工作人员往来消息的内容、您保存的收藏项目，以及与账户相关的通知——所有这些信息均与您的账户绑定，仅您本人及经授权的工作人员可见。",
     "section1_item6": "<strong>IP 地址。</strong>我们会记录与表单提交、账户登录及其他账户操作相关的 IP 地址。此信息用于防止滥用行为（例如限制单个访问者在短时间内可发出的请求数量），并与相关咨询或账户活动一并存储。"
@@ -1062,7 +1062,7 @@
     "type2_title": "项目启动通话",
     "type2_desc": "适用于网站与企业IT项目 — 一次专注的通话,用于确定项目范围、时间安排与后续步骤。",
     "cta_h2": "更希望直接致电?",
-    "cta_contact_desc": "致电 <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal); text-decoration:underline;\">636-426-0289</a>,发送邮件至 <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal); text-decoration:underline;\">dylan@lit-solutions.tech</a>,或使用我们的完整项目表单获取详细报价。",
+    "cta_contact_desc": "致电 <a href=\"tel:+18043090968\" style=\"color:var(--accent-teal); text-decoration:underline;\">804-309-0968</a>,发送邮件至 <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal); text-decoration:underline;\">dylan@lit-solutions.tech</a>,或使用我们的完整项目表单获取详细报价。",
     "cta_intake": "申请服务",
     "form_heading": "申请时间",
     "form_intro": "这只是申请一个时间——在我们回复之前不算确认,通常会在一个工作日内回复。",
@@ -1529,7 +1529,7 @@
     "reset_request_heading": "重置密码",
     "reset_request_email_label": "邮箱",
     "reset_request_submit": "发送重置链接",
-    "reset_request_contact_note": "没收到邮件？请检查垃圾邮件文件夹，或致电 <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> 或发邮件至 <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a>,我们会帮您重新登录。",
+    "reset_request_contact_note": "没收到邮件？请检查垃圾邮件文件夹，或致电 <a href=\"tel:+18043090968\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">804-309-0968</a> 或发邮件至 <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a>,我们会帮您重新登录。",
     "reset_heading": "设置新密码",
     "reset_new_password_label": "新密码",
     "reset_submit": "更新密码",
@@ -1655,7 +1655,7 @@
     "related_all_articles": "所有文章"
   },
   "forms": {
-    "not_connected_yet": "此功能尚未连接。请致电 636-426-0289 或发送邮件至 dylan@lit-solutions.tech。",
+    "not_connected_yet": "此功能尚未连接。请致电 804-309-0968 或发送邮件至 dylan@lit-solutions.tech。",
     "missing_field_fallback": "必填字段"
   },
   "newsletter": {

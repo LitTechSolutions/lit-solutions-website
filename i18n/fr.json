@@ -199,7 +199,7 @@
     "q1_question": "Quelles régions desservez-vous?",
     "q1_answer": "La réparation d'ordinateurs, la réseautique et les interventions de cybersécurité sur place sont offertes en personne à Montross, Colonial Beach, King George et Dahlgren, en Virginie. La conception de sites Web, c'est différent — c'est entièrement à distance, donc nous acceptons des clients pour des sites Web partout aux États-Unis. Consultez notre <a href=\"service-area.html\">page Zone de service</a> pour le détail complet.",
     "q2_question": "Comment puis-je commencer?",
-    "q2_answer": "Appelez au <a href=\"tel:+16364260289\">636-426-0289</a>, écrivez à <a href=\"mailto:dylan@lit-solutions.tech\">dylan@lit-solutions.tech</a>, ou remplissez notre <a href=\"intake.html\">formulaire de projet</a> — nous répondons habituellement le jour ouvrable même.",
+    "q2_answer": "Appelez au <a href=\"tel:+18043090968\">804-309-0968</a>, écrivez à <a href=\"mailto:dylan@lit-solutions.tech\">dylan@lit-solutions.tech</a>, ou remplissez notre <a href=\"intake.html\">formulaire de projet</a> — nous répondons habituellement le jour ouvrable même.",
     "q3_question": "Signez-vous un contrat?",
     "q3_answer": "Oui — nos <a href=\"terms.html\" data-i18n=\"footer.terms\">Modalités et conditions</a> couvrent les modalités de paiement, les annulations, la propriété et tout le reste, en langage clair, avant le début de tout projet.",
     "cat2_website": "Projets de sites Web",
@@ -619,7 +619,7 @@
     "error_logo_too_large": "Le fichier de logo est trop volumineux -- veuillez utiliser un fichier de moins de 4 Mo.",
     "error_photos_max": "Veuillez joindre au maximum {{max}} photos.",
     "error_photo_too_large": "La photo « {{name}} » est trop volumineuse -- veuillez utiliser des fichiers de moins de 4 Mo chacun.",
-    "error_generic_submit": "Une erreur est survenue lors de l'envoi de votre projet -- veuillez appeler au 636-426-0289 ou écrire directement à dylan@lit-solutions.tech.",
+    "error_generic_submit": "Une erreur est survenue lors de l'envoi de votre projet -- veuillez appeler au 804-309-0968 ou écrire directement à dylan@lit-solutions.tech.",
     "preview_additional_pages_blurb": "Une nouvelle page pour {{biz}}, prête pour votre contenu.",
     "preview_blog_headline": "5 questions les plus fréquentes des clients de {{biz}}",
     "preview_blog_posted": "Publié cette semaine",
@@ -651,7 +651,7 @@
     "preview_default_business_name": "votre entreprise",
     "status_sending_quote": "Envoi de votre demande d'estimation...",
     "done_message_quick_only": "Bien reçu -- nous vous contacterons selon le moyen de contact que vous avez choisi. Si vous préférez ajouter les détails de votre projet dès maintenant, vous pouvez toujours entamer une nouvelle demande de Concepteur de site Web.",
-    "error_pdf_unavailable": "Nous n'avons pas pu générer votre résumé PDF, donc votre demande n'a pas été envoyée. Actualisez la page et réessayez, ou appelez le 636-426-0289 / écrivez à dylan@lit-solutions.tech directement.",
+    "error_pdf_unavailable": "Nous n'avons pas pu générer votre résumé PDF, donc votre demande n'a pas été envoyée. Actualisez la page et réessayez, ou appelez le 804-309-0968 / écrivez à dylan@lit-solutions.tech directement.",
     "chip_all_categories": "Tout",
     "feature_count_one": "1 fonctionnalité sélectionnée",
     "feature_count_many": "{{count}} fonctionnalités sélectionnées"
@@ -776,7 +776,7 @@
     "section3_li5": "Un paiement en retard peut entraîner la suspension des services continus (comme l'aide à l'hébergement de site Web ou le soutien TI mensuel) jusqu'à ce que le compte soit remis à jour.",
     "section4_heading": "4. Annulations, remboursements et rétrofacturations",
     "section4_p1": "Comme les projets à prix fixe (comme la conception de sites Web) débutent par la planification, la conception, la mise en place, la configuration et un travail personnalisé immédiatement après le paiement, votre paiement peut devenir partiellement ou entièrement non remboursable une fois les travaux amorcés. Tout remboursement se limite aux travaux non encore exécutés et est déterminé de bonne foi par Little Technical Solutions LLC en fonction du travail accompli et des frais engagés. Si vous annulez avant le début de tout travail, votre paiement peut être remboursé à notre entière discrétion, moins les frais de transaction déjà engagés.",
-    "section4_p2": "Les travaux terminés et livrés (y compris, sans s'y limiter, les sites Web achevés, les réparations terminées et les installations complétées) ne sont pas remboursables. Si vous estimez qu'un travail n'a pas été réalisé conformément à l'entente, vous devez communiquer directement avec nous au <strong>636-426-0289</strong> ou à <strong>dylan@lit-solutions.tech</strong> dans les 7 jours suivant l'achèvement afin que nous puissions régler la situation directement.",
+    "section4_p2": "Les travaux terminés et livrés (y compris, sans s'y limiter, les sites Web achevés, les réparations terminées et les installations complétées) ne sont pas remboursables. Si vous estimez qu'un travail n'a pas été réalisé conformément à l'entente, vous devez communiquer directement avec nous au <strong>804-309-0968</strong> ou à <strong>dylan@lit-solutions.tech</strong> dans les 7 jours suivant l'achèvement afin que nous puissions régler la situation directement.",
     "section4_p3": "<strong>Vous acceptez de communiquer avec nous et de tenter de résoudre directement tout différend de facturation avant d'entamer une rétrofacturation, une contestation ou un renversement auprès de votre banque, de l'émetteur de votre carte ou de Square.</strong> Le fait d'entamer une rétrofacturation pour des services réellement rendus, sans avoir d'abord tenté de régler la question avec nous, peut être considéré comme frauduleux et poursuivi dans toute la mesure permise par la loi, y compris le recouvrement du montant contesté, des frais de recouvrement et des honoraires d'avocat raisonnables. Nous conservons tous les registres de communications, la portée du projet et les travaux livrés afin de contester les différends injustifiés.",
     "section5_heading": "5. Responsabilités du client",
     "section5_intro": "Vous déclarez et garantissez que :",
@@ -807,7 +807,7 @@
     "section16_heading": "16. Divisibilité",
     "section16_body": "Si une disposition des présentes Modalités est jugée inapplicable, les autres dispositions demeureront pleinement en vigueur.",
     "section17_heading": "17. Contact",
-    "section17_body": "Toute question au sujet des présentes Modalités peut être adressée à Little Technical Solutions LLC au <strong>636-426-0289</strong> ou à <strong>dylan@lit-solutions.tech</strong>."
+    "section17_body": "Toute question au sujet des présentes Modalités peut être adressée à Little Technical Solutions LLC au <strong>804-309-0968</strong> ou à <strong>dylan@lit-solutions.tech</strong>."
   },
   "privacy": {
     "hero_eyebrow": "Juridique",
@@ -826,7 +826,7 @@
     "section4_heading": "4. Témoins et suivi",
     "section4_body": "Ce site ne dépose aucun témoin publicitaire ou de suivi de tiers. L'avis sur les témoins que vous voyez peut-être lors de votre première visite est un avis de transparence, et non une adhésion au suivi — il n'y a rien de non essentiel à accepter au-delà des analyses décrites ci-dessus, qui ne recueillent aucune donnée personnelle.",
     "section5_heading": "5. Conservation des données et vos droits",
-    "section5_body": "Nous conservons les soumissions de formulaires et les dossiers de projet aussi longtemps que raisonnablement nécessaire pour livrer le service, tenir nos registres d'affaires et respecter nos obligations légales. Vous pouvez demander l'accès à vos renseignements, leur correction ou leur suppression en tout temps en communiquant avec nous au <strong>636-426-0289</strong> ou à <strong>dylan@lit-solutions.tech</strong>.",
+    "section5_body": "Nous conservons les soumissions de formulaires et les dossiers de projet aussi longtemps que raisonnablement nécessaire pour livrer le service, tenir nos registres d'affaires et respecter nos obligations légales. Vous pouvez demander l'accès à vos renseignements, leur correction ou leur suppression en tout temps en communiquant avec nous au <strong>804-309-0968</strong> ou à <strong>dylan@lit-solutions.tech</strong>.",
     "section6_heading": "6. Sécurité",
     "section6_body": "Ce site est entièrement servi via HTTPS. Nous ne conservons aucune donnée de carte de paiement. Les données de formulaire sont transmises et stockées par l'infrastructure de Netlify, avec des mesures de protection technique raisonnables.",
     "section7_heading": "7. Confidentialité des enfants",
@@ -834,7 +834,7 @@
     "section8_heading": "8. Modifications de cette politique",
     "section8_body": "Nous pouvons mettre à jour cette politique de temps à autre. La version en vigueur au moment où vous utilisez ce site ou soumettez un formulaire régit cette utilisation.",
     "section9_heading": "9. Contact",
-    "section9_body": "Toute question au sujet de cette politique peut être adressée à Little Technical Solutions LLC au <strong>636-426-0289</strong> ou à <strong>dylan@lit-solutions.tech</strong>. Consultez également nos <a href=\"terms.html\" data-i18n=\"footer.terms\">Modalités et conditions</a>.",
+    "section9_body": "Toute question au sujet de cette politique peut être adressée à Little Technical Solutions LLC au <strong>804-309-0968</strong> ou à <strong>dylan@lit-solutions.tech</strong>. Consultez également nos <a href=\"terms.html\" data-i18n=\"footer.terms\">Modalités et conditions</a>.",
     "section1_item4": "<strong>Comptes clients.</strong> Si vous créez un compte, nous conservons votre nom, votre adresse e-mail, votre préférence de langue et un mot de passe haché de manière sécurisée — nous ne voyons ni ne conservons jamais votre mot de passe réel sous une forme lisible.",
     "section1_item5": "<strong>Documents, messages, favoris et notifications.</strong> Une fois que vous disposez d'un compte, nous conservons les documents (tels que factures ou reçus) partagés avec votre compte, le contenu des messages échangés avec notre équipe, les éléments que vous enregistrez en favoris, ainsi que les notifications liées au compte — le tout rattaché à votre compte et visible uniquement par vous et le personnel autorisé.",
     "section1_item6": "<strong>Adresses IP.</strong> Nous enregistrons l'adresse IP associée à l'envoi de formulaires, aux connexions au compte et à d'autres actions liées au compte. Cette information sert à prévenir les abus (par exemple, limiter le nombre de requêtes qu'un même visiteur peut effectuer en peu de temps) et est conservée avec la demande ou l'activité de compte correspondante."
@@ -1062,7 +1062,7 @@
     "type2_title": "Appel de démarrage de projet",
     "type2_desc": "Pour les projets de sites Web et de TI d'entreprise — un appel ciblé pour établir la portée, l'échéancier et les prochaines étapes.",
     "cta_h2": "Vous préférez simplement appeler ?",
-    "cta_contact_desc": "Appelez le <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal); text-decoration:underline;\">636-426-0289</a>, écrivez à <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal); text-decoration:underline;\">dylan@lit-solutions.tech</a>, ou utilisez notre formulaire de projet complet pour un devis détaillé.",
+    "cta_contact_desc": "Appelez le <a href=\"tel:+18043090968\" style=\"color:var(--accent-teal); text-decoration:underline;\">804-309-0968</a>, écrivez à <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal); text-decoration:underline;\">dylan@lit-solutions.tech</a>, ou utilisez notre formulaire de projet complet pour un devis détaillé.",
     "cta_intake": "Demander un service",
     "form_heading": "Demander un créneau",
     "form_intro": "Ceci demande un créneau — il n'est pas confirmé tant que nous n'avons pas répondu, généralement sous un jour ouvré.",
@@ -1529,7 +1529,7 @@
     "reset_request_heading": "Réinitialiser votre mot de passe",
     "reset_request_email_label": "Courriel",
     "reset_request_submit": "Envoyer le lien de réinitialisation",
-    "reset_request_contact_note": "Vous n'avez pas reçu l'e-mail ? Vérifiez votre dossier spam, ou appelez au <a href=\"tel:+16364260289\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">636-426-0289</a> ou écrivez à <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a> et nous vous aiderons à retrouver l'accès.",
+    "reset_request_contact_note": "Vous n'avez pas reçu l'e-mail ? Vérifiez votre dossier spam, ou appelez au <a href=\"tel:+18043090968\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">804-309-0968</a> ou écrivez à <a href=\"mailto:dylan@lit-solutions.tech\" style=\"color:var(--accent-teal-text); text-decoration:underline;\">dylan@lit-solutions.tech</a> et nous vous aiderons à retrouver l'accès.",
     "reset_heading": "Définir un nouveau mot de passe",
     "reset_new_password_label": "Nouveau mot de passe",
     "reset_submit": "Mettre à jour le mot de passe",
@@ -1655,7 +1655,7 @@
     "related_all_articles": "Tous les articles"
   },
   "forms": {
-    "not_connected_yet": "Ce n'est pas encore connecté. Appelez le 636-426-0289 ou écrivez à dylan@lit-solutions.tech.",
+    "not_connected_yet": "Ce n'est pas encore connecté. Appelez le 804-309-0968 ou écrivez à dylan@lit-solutions.tech.",
     "missing_field_fallback": "Un champ obligatoire"
   },
   "newsletter": {

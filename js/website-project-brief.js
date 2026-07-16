@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
     submitBtn: document.getElementById('wdSubmitBtn'),
   };
 
-  const INVALID_TEXT = "We couldn't reopen this project worksheet. Your original quote request may still have been received. Please contact Little Technical Solutions at 636-426-0289 or dylan@lit-solutions.tech.";
+  const INVALID_TEXT = "We couldn't reopen this project worksheet. Your original quote request may still have been received. Please contact Little Technical Solutions at 804-309-0968 or dylan@lit-solutions.tech.";
 
   function showState(name) {
     ['loading', 'invalid', 'form', 'done'].forEach((key) => {
@@ -383,7 +383,7 @@ document.addEventListener('DOMContentLoaded', () => {
       doc = null;
     }
     if (!doc) {
-      if (els.formStatus) els.formStatus.textContent = "We couldn't generate your PDF summary, so we didn't send your submission. Please refresh the page and try again, or call 636-426-0289 / email dylan@lit-solutions.tech directly.";
+      if (els.formStatus) els.formStatus.textContent = "We couldn't generate your PDF summary, so we didn't send your submission. Please refresh the page and try again, or call 804-309-0968 / email dylan@lit-solutions.tech directly.";
       els.submitBtn.disabled = false;
       return;
     }
@@ -434,7 +434,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (els.formStatus) {
         els.formStatus.textContent = err.message && err.message !== 'Failed to fetch'
           ? err.message
-          : 'Something went wrong sending your project -- please call 636-426-0289 or email dylan@lit-solutions.tech directly.';
+          : 'Something went wrong sending your project -- please call 804-309-0968 or email dylan@lit-solutions.tech directly.';
       }
       els.submitBtn.disabled = false;
     }

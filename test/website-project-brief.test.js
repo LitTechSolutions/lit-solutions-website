@@ -146,7 +146,7 @@ test("no resume token at all (direct navigation, or an already-spent link) shows
   assert.equal(window.document.getElementById("wpbForm").hidden, true);
   assert.equal(
     window.document.getElementById("wpbInvalidMessage").textContent,
-    "We couldn't reopen this project worksheet. Your original quote request may still have been received. Please contact Little Technical Solutions at 636-426-0289 or dylan@lit-solutions.tech."
+    "We couldn't reopen this project worksheet. Your original quote request may still have been received. Please contact Little Technical Solutions at 804-309-0968 or dylan@lit-solutions.tech."
   );
 });
 
@@ -157,7 +157,7 @@ test("a token the server rejects (expired/wrong/already used) shows the same exa
   assert.equal(window.document.getElementById("wpbInvalid").hidden, false);
   assert.equal(
     window.document.getElementById("wpbInvalidMessage").textContent,
-    "We couldn't reopen this project worksheet. Your original quote request may still have been received. Please contact Little Technical Solutions at 636-426-0289 or dylan@lit-solutions.tech."
+    "We couldn't reopen this project worksheet. Your original quote request may still have been received. Please contact Little Technical Solutions at 804-309-0968 or dylan@lit-solutions.tech."
   );
 });
 

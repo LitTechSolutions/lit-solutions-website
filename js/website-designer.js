@@ -1367,7 +1367,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch((err) => {
           quickFormStatus.textContent = err.message && err.message !== 'Failed to fetch'
             ? err.message
-            : tDyn('error_generic_submit', 'Something went wrong sending your project -- please call 636-426-0289 or email dylan@lit-solutions.tech directly.');
+            : tDyn('error_generic_submit', 'Something went wrong sending your project -- please call 804-309-0968 or email dylan@lit-solutions.tech directly.');
           submitBtn.disabled = false;
         });
     });

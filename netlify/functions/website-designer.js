@@ -316,7 +316,7 @@ async function handleResumeRequest(body, ip) {
   // regardless of rate limit, so this mainly guards against casual lead-id
   // enumeration/probing rather than a realistic brute force.
   if (await rateLimited("website-designer-resume", ip, 20, 3600)) {
-    return json(429, { error: "Too many attempts. Please try again later, or call 636-426-0289 / email dylan@lit-solutions.tech directly." });
+    return json(429, { error: "Too many attempts. Please try again later, or call 804-309-0968 / email dylan@lit-solutions.tech directly." });
   }
 
   const { quickLeadId, token } = body;
@@ -524,7 +524,7 @@ exports.handler = async (event) => {
   if (body.stage === "resume") return handleResumeRequest(body, ip);
 
   if (await rateLimited("website-designer", ip, 8, 3600)) {
-    return json(429, { error: "Too many submissions. Please call 636-426-0289 or email dylan@lit-solutions.tech directly." });
+    return json(429, { error: "Too many submissions. Please call 804-309-0968 or email dylan@lit-solutions.tech directly." });
   }
 
   return body.stage === "quick" ? handleQuickSubmission(body, ip) : handleFullSubmission(body, ip);
