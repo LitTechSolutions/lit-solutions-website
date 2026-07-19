@@ -1846,9 +1846,20 @@ textarea{ resize: vertical; }
 .wd-price-ticker-savings{ display:block; font-size:.7rem; font-weight:700; color: var(--accent-teal); }
 .wd-price-ticker-note{ display:block; font-size:.68rem; color: rgba(245,245,244,0.65); }
 
+.wd-cost-breakdown{ background: var(--paper-alt); border:1px solid var(--line); border-radius: var(--radius); padding:1rem 1.2rem; }
+.wd-cost-row{ display:flex; justify-content:space-between; gap:.5rem; font-size:.82rem; padding:.4rem 0; border-bottom:1px solid var(--line); }
+.wd-cost-row:last-child{ border-bottom:none; }
+.wd-cost-row--base{ font-weight:700; }
+.wd-cost-row--divider{ border-bottom:none; padding-bottom:0; font-family: var(--font-display); font-size:.7rem; text-transform:uppercase; letter-spacing:.04em; color: var(--ink-faint); }
+.wd-cost-row--quote strong{ color: var(--accent-orange-text); }
+.wd-cost-row--discount span, .wd-cost-row--discount strong{ color: var(--accent-teal-text); font-weight:700; }
+
 /* The quote step's own price recap -- the sticky price bar already shows
    this number, but it's easy to lose track of on a longer scroll, so it's
-   restated clearly right above the submit button too. */
+   restated clearly right above the submit button too. .wd-cost-breakdown
+   is declared above (not just anywhere earlier) specifically so this
+   block's .wd-quote-recap-breakdown override -- same specificity, same
+   element -- reliably wins the cascade instead of losing to source order. */
 .wd-quote-recap{
   background: var(--navy-deep); color: var(--on-dark); border-radius: var(--radius);
   padding:1.4rem 1.5rem; text-align:center; margin-bottom:1.5rem;
@@ -1873,14 +1884,6 @@ textarea{ resize: vertical; }
 .wd-heroes-toggle--inline{ margin: 1.5rem 0; }
 
 .wd-pdf-error{ color: var(--error-text); font-size:.8rem; font-weight:600; margin-top:.6rem; }
-
-.wd-cost-breakdown{ background: var(--paper-alt); border:1px solid var(--line); border-radius: var(--radius); padding:1rem 1.2rem; }
-.wd-cost-row{ display:flex; justify-content:space-between; gap:.5rem; font-size:.82rem; padding:.4rem 0; border-bottom:1px solid var(--line); }
-.wd-cost-row:last-child{ border-bottom:none; }
-.wd-cost-row--base{ font-weight:700; }
-.wd-cost-row--divider{ border-bottom:none; padding-bottom:0; font-family: var(--font-display); font-size:.7rem; text-transform:uppercase; letter-spacing:.04em; color: var(--ink-faint); }
-.wd-cost-row--quote strong{ color: var(--accent-orange-text); }
-.wd-cost-row--discount span, .wd-cost-row--discount strong{ color: var(--accent-teal-text); font-weight:700; }
 
 .wd-done-card{ text-align:center; padding:2.5rem; max-width:520px; margin:2rem auto 0; }
 .wd-done-card h2{ margin-bottom:.75rem; }

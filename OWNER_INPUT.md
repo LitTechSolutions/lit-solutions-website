@@ -29,6 +29,15 @@ surrounding change.
   Armour that homepage placement is also fine (verbal confirmation via
   Dylan, not a new signed document) before the same verbatim quote/
   attribution was added to `index.html`'s hero section.
+- **De-duplicated (2026-07-19):** Dylan also added this same testimonial
+  through the admin panel (the CMS-managed path `js/cms.js`'s
+  `mountTestimonials()` reads from), which meant `testimonials.html`
+  briefly showed it twice -- once hardcoded in static HTML, once rendered
+  from admin content. Removed the static copy; the admin-entered one
+  (already covering the identical approved wording/attribution) is now
+  the sole source for that page. The homepage hero placement (`index.html`)
+  is unaffected -- it's a separate, deliberate placement, not fed by this
+  CMS mechanism, so it still needs its own hardcoded copy.
 
 ## 2. Armour Wireless Solutions portfolio case-study detail — RESOLVED
 
