@@ -160,6 +160,47 @@
   color: var(--notice-text-strong);
 }
 
+/* Hub pages (Project / Your Website / Billing) and the customer
+   Overview's shortcut grid -- a grid of clickable destination tiles,
+   the "browse, don't hunt a list" alternative used for grouping
+   read-only/reference screens instead of more flat sidebar links. */
+.hub-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-4);
+}
+
+.hub-tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  background: var(--paper-alt);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-5);
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.hub-tile:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-orange);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+.hub-tile__title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--ink);
+}
+.hub-tile__desc {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hub-tile {
+    transition: none;
+  }
+}
+
 .spinner {
   width: 22px;
   height: 22px;

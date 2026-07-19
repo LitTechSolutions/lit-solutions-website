@@ -1,8 +1,9 @@
 # Admin CMS + customer accounts setup (v1.18)
 
-This site has a sign-in-protected staff dashboard at `/admin.html` and a public
-customer portal at `/myaccount.html`, both backed by Netlify Functions +
-Netlify Blobs. This doc is the one-time setup checklist for both.
+This site has a sign-in-protected staff dashboard (the Care Hub, at
+`/care-hub/`) and a public customer portal at `/myaccount.html`, both backed
+by Netlify Functions + Netlify Blobs. This doc is the one-time setup
+checklist for both.
 
 ## 1. Install the dependency
 
@@ -124,60 +125,61 @@ self-service way to become `admin`, on purpose. To finish setup:
 
 ## 8. Sign in and use it
 
-Go to `https://yourdomain/admin.html#signin` (or click **Staff Sign In** in
+Go to `https://yourdomain/care-hub/login` (or click **Staff Sign In** in
 the footer of any page — it's deliberately not in the main navigation, since
-this is for you, not visitors). From the dashboard you can manage:
+this is for you, not visitors). From the sidebar you can manage:
 
-- **Blog Posts** — title, URL slug, category, date, excerpt, full article
-  body, and an optional featured photo. Saved posts show up on `blog.html`
-  automatically (newest first, above the 3 original articles) and get their
-  own page at `blog-post.html?slug=your-slug`.
-- **Portfolio** — title, description, optional photo. As soon as you add one,
-  it replaces the "still building it out" placeholder on `portfolio.html`.
-- **Gallery** — a plain photo grid at `gallery.html`, separate from Portfolio
-  (which is project write-ups). Photo and alt text are required; caption is
-  optional. Nothing shows on the public page until the first photo is added.
-- **Testimonials** — quote, author, role/company. Same pattern — the first
-  one you add replaces the honest placeholder on `testimonials.html`.
+- **Site Content** — Blog Posts, Portfolio, Testimonials, and Gallery, each
+  its own tab in one screen. Blog Posts take a title, URL slug, category,
+  date, excerpt, full article body, and an optional featured photo — saved
+  posts show up on `blog.html` automatically (newest first, above the 3
+  original articles) and get their own page at
+  `blog-post.html?slug=your-slug`. Portfolio (title, description, optional
+  photo) replaces the "still building it out" placeholder on
+  `portfolio.html` as soon as you add one. Gallery is a plain photo grid at
+  `gallery.html`, separate from Portfolio (which is project write-ups) —
+  photo and alt text are required, caption is optional, and nothing shows
+  on the public page until the first photo is added. Testimonials (quote,
+  author, role/company) follows the same pattern — the first one you add
+  replaces the honest placeholder on `testimonials.html`.
 - **Image Library** — a running list of everything you've uploaded, for
-  reference. You don't need to use this directly; each item's own form has
-  its own photo upload built in.
-- **Customers** — an inbox of every customer conversation (newest first,
-  with unread counts), a lookup box to pull up any customer by email, and
-  from there: upload documents for them (title, type, amount, status, date,
-  notes, optional PDF/image attachment), read/reply to their messages, and
-  send a one-off **notification** (e.g. "Appointment rescheduled") for
-  anything that doesn't need a back-and-forth reply. Uploading a document
-  also raises a notification automatically. See "Customer accounts" below
-  for the customer side of this.
-- **Account Settings** — change your own login email or password, right
-  from the dashboard (each requires your current password, and signs you
-  out afterward so you sign back in with the new credentials). This is the
+  reference. You don't need to use this directly; each item's own form in
+  Site Content has its own photo upload built in.
+- **Customer Support** — an inbox of every customer conversation (newest
+  first, with unread counts), a lookup box to pull up any customer by
+  email, and from there: upload documents for them (title, type, amount,
+  status, date, notes, optional PDF/image attachment), read/reply to their
+  messages, and send a one-off **notification** (e.g. "Appointment
+  rescheduled") for anything that doesn't need a back-and-forth reply.
+  Uploading a document also raises a notification automatically. See
+  "Customer accounts" below for the customer side of this.
+- **Account** — change your own login email or password, right from the
+  sidebar (each requires your current password, and signs you out
+  afterward so you sign back in with the new credentials). This is the
   normal way to update your login going forward — you only need the
   Netlify Blobs dashboard for the one-time initial promotion to admin in
   step 7 above.
 
-Everything saves immediately and is live on the site the moment you click
-**Save changes** — no rebuild, no redeploy.
+Everything saves immediately and is live on the site the moment you save —
+no rebuild, no redeploy.
 
 ## Customer accounts (myaccount.html)
 
 Separate from your own staff login, customers can create their own accounts:
 
-1. Anyone can register at `myaccount.html#register` — open to the public
-   (unlike `admin.html`'s registration form, which only you should ever use).
+1. Anyone can register at `myaccount.html#register` — open to the public.
    New accounts default to role `customer` and have no admin/staff access,
    ever, regardless of how they signed up.
 2. They have to verify their email (see step 4 above) before they can sign
    in at all — this is the main anti-bot measure for open registration.
 3. **Documents.** To attach an invoice, receipt, or other document to a
    customer, they need to have registered (and verified) first. Go to
-   **Customers** in `admin.html`, look them up by email, and upload. They
-   see it — with a download link for any attached file — at
+   **Customer Support** in the Care Hub, look them up by email, and upload.
+   They see it — with a download link for any attached file — at
    `myaccount.html#dashboard`.
 4. **Messages.** Customers can message you from `myaccount.html#messages`.
-   You'll see it in the **Customers** inbox in `admin.html` (and get an
-   email if you set `ADMIN_NOTIFY_EMAIL`), and can reply from the same
+   You'll see it in the **Customer Support** inbox in the Care Hub (and get
+   an email if you set `ADMIN_NOTIFY_EMAIL`), and can reply from the same
    lookup panel — it's a real back-and-forth thread, not a one-off contact
    form. This is separate from the existing Contact page form, which is
    still there for anonymous visitors who don't want to create an account.
@@ -203,12 +205,13 @@ interface, and was verified directly (see `CHANGES-v1.15.md` through
 
 ## Forgot your password?
 
-`admin.html#reset-request` (staff) or `myaccount.html#reset-request`
+`/care-hub/reset-password` (staff/admin) or `myaccount.html#reset-request`
 (customers) generates a reset token, but automatic email delivery only
 works if you completed step 4 above. Without it, find the token yourself:
 Netlify dashboard > **Blobs** > `tokens` store (most recent key with
-`"type":"password-reset"`), then open `admin.html#reset?token=<that token>`
-or `myaccount.html#reset?token=<that token>`. A customer who can't do this
+`"type":"password-reset"`), then open
+`/care-hub/reset-password?token=<that token>` or
+`myaccount.html#reset?token=<that token>`. A customer who can't do this
 themselves will need to call or email you.
 
 ## Known limitations, honestly

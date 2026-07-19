@@ -32,6 +32,7 @@ const SAMPLE_RESUME_DATA = {
   bundleSavings: 0,
   optionalSelected: [{ title: "Blog / News section", price: 150 }],
   customRequest: "",
+  selectedBundles: [{ name: "Forms & Communication", price: 587 }],
 };
 
 // See test/website-designer-pdf.test.js for why this awaits the single
@@ -235,6 +236,53 @@ test("full submission: sends quickLeadId + resumeToken, a valid PDF attachment, 
   // cleared once the submission the token authorized has actually succeeded.
   assert.equal(window.sessionStorage.getItem("lts-wpb-resume"), null);
   assert.equal(window.sessionStorage.getItem(`lts-wpb-draft-${FAKE_LEAD_ID}`), null);
+});
+
+// Regression for a pre-existing gap: pdfPayload() never included
+// selectedBundles at all, so the worksheet's own full-submission PDF always
+// rendered "(none selected)" for bundles (and was missing their price-
+// breakdown rows) even when the customer had picked real bundles on
+// website-designer.html -- the totals were still correct, just the bundle
+// line items were silently dropped. Fixed by having the "resume" endpoint
+// return selectedBundles (already computed client-side at quick-submission
+// time) so the worksheet never has to re-derive bundle names/prices itself.
+test("full submission: the resumed selectedBundles reach both the PDF payload and the outbound network request, not just the totals", async () => {
+  const { window, capturedRequests } = loadWorksheetPage({ hash: resumeHash() });
+  await wait(150);
+
+  let capturedPdfData = null;
+  const realBuild = window.LTS_WD_PDF.buildWebsiteDesignerPdf;
+  window.LTS_WD_PDF.buildWebsiteDesignerPdf = (data) => {
+    capturedPdfData = data;
+    return realBuild(data);
+  };
+
+  window.document.getElementById("wdBizDescription").value = "We repair residential plumbing.";
+  window.document.getElementById("wdBizIndustry").value = "Plumbing";
+  window.document.getElementById("wdServiceArea").value = "Montross, VA";
+  window.document.getElementById("wdServicesList").value = "Repairs\nInstalls";
+  window.document.getElementById("wdBriefStaff").value = "Jane -- Owner";
+  window.document.getElementById("wdBriefTestimonials").value = "Great work! -- Bob";
+  window.document.getElementById("wdBriefFaq").value = "Do you serve King George? | Yes.";
+  window.document.getElementById("wdBriefBlog").value = "5 signs you need a repipe";
+
+  window.document.getElementById("wdBriefForm").dispatchEvent(new window.Event("submit", { bubbles: true, cancelable: true }));
+  await wait(2500);
+
+  assert.ok(capturedPdfData, "expected buildWebsiteDesignerPdf to have been called");
+  assert.deepEqual(
+    capturedPdfData.selectedBundles,
+    SAMPLE_RESUME_DATA.selectedBundles,
+    "the PDF payload must carry the resumed lead's selected bundles, not silently drop them"
+  );
+
+  const fullReq = capturedRequests.find((r) => r.stage === "full");
+  assert.ok(fullReq, "expected a stage:\"full\" request to have been sent");
+  assert.deepEqual(
+    fullReq.selectedBundles,
+    SAMPLE_RESUME_DATA.selectedBundles,
+    "the full-submission network payload should carry selectedBundles through too, matching every other resumed pricing field (subtotal, bundledCategories, etc.)"
+  );
 });
 
 test("submitting with required fields missing is blocked client-side and never reaches the network as a full submission", async () => {

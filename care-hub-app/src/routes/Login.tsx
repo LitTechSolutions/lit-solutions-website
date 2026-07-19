@@ -79,6 +79,9 @@ export function Login() {
           <button type="submit" className="btn btn-primary btn-block" disabled={submitting}>
             {submitting ? strings.auth.signingIn : strings.auth.signIn}
           </button>
+          <button type="button" className="auth-card__toggle" onClick={() => navigate("/reset-password")}>
+            {strings.auth.forgotPassword}
+          </button>
         </form>
       </div>
     </div>

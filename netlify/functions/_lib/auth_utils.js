@@ -15,7 +15,19 @@ const { promisify } = require("util");
 const scrypt = promisify(crypto.scrypt);
 const { getJSON, setJSON } = require("./blob_store");
 
-const SESSION_TTL_SECONDS = 60 * 60 * 8; // 8 hours
+// 30 days, not a short work-session-style window: product requirement is
+// "a signed-in customer stays signed in until they explicitly sign out,"
+// not a timed logout. This is an absolute expiry from login time (see
+// createSession()), not a sliding one that resets on activity -- for a
+// customer-care portal (not a banking app), a long fixed window is a
+// simpler, lower-risk way to satisfy that requirement than threading a
+// refreshed Set-Cookie through every one of the ~30 authenticated
+// endpoints' own response construction would be. Tradeoff worth knowing:
+// a stolen/leaked lts_session cookie stays valid for up to 30 days
+// instead of 8 hours -- HttpOnly+Secure+SameSite=Lax already blocks the
+// common theft vectors (JS-based XSS, most CSRF), so this is judged an
+// acceptable, standard "remember me"-style duration, not a sliding window.
+const SESSION_TTL_SECONDS = 60 * 60 * 24 * 30; // 30 days
 const RESET_TOKEN_TTL_SECONDS = 60 * 30; // 30 minutes, single-use
 
 function getSecret() {

@@ -80,8 +80,8 @@ New blob store: **`referrals`**.
 - Key `referral:<id>` → `{ id, code, referrerUserId, refereeLabel, status: "pending"|"converted"|"rewarded", rewardAmount, createdAt, convertedAt }`.
 
 A separate small config record, store `content` (reuse the existing
-generic content store) with slug `referral-config` → `{ referrerReward, refereeDiscountPct, description }`, editable via a new tab in `admin.html` following the existing `makeListEditorView` pattern used for
-posts/portfolio/etc. (though this is a single-record editor, not a list).
+generic content store) with slug `referral-config` → `{ referrerReward, refereeDiscountPct, description }`, editable via a new Care Hub capability (`platform_admin`-gated, following `SiteContent.tsx`'s
+config-driven editor precedent, though this is a single-record editor, not a list).
 
 ## 6. Business Rules & Validation
 
@@ -112,9 +112,9 @@ posts/portfolio/etc. (though this is a single-record editor, not a list).
   more simply, `website-designer.js`/`intake.js` can call the same
   `record-referral` logic as a shared internal helper rather than an HTTP
   round-trip — implementation detail to decide when built).
-- `admin.html` — a small settings panel for reward terms, and a way to
-  mark a referral converted (could live in the existing "Customers" tab
-  referenced in `admin.html`'s nav).
+- The Care Hub — a small settings panel for reward terms, and a way to
+  mark a referral converted (could live in the existing Customer Support
+  capability).
 
 ## 8. Error Handling
 

@@ -7,6 +7,20 @@ const FUNCTIONS_BASE = "/.netlify/functions";
 
 export type QueryParams = Record<string, string | number | boolean | undefined | null>;
 
+// A non-React module can't call useAuth() directly -- this lets AuthContext
+// (the one place that owns top-level signed-in/signed-out state) subscribe
+// to "a request just discovered the session is gone," no matter which
+// route's own data fetch happened to be the one that noticed. Without
+// this, only the specific route whose own useApi() call 401s finds out --
+// RequireAuth's top-level state stays "signedIn" and keeps rendering
+// AppShell's nav/topbar around that route's own inline "sign in again"
+// prompt (the reported bug: a stale menu still showing above the sign-in
+// box). Registered once by AuthProvider; safe to call repeatedly.
+let onSessionExpired: (() => void) | null = null;
+export function registerSessionExpiredHandler(handler: (() => void) | null): void {
+  onSessionExpired = handler;
+}
+
 function buildQuery(params?: QueryParams): string {
   if (!params) return "";
   const usable = Object.entries(params).filter(([, v]) => v !== undefined && v !== null);
@@ -61,7 +75,10 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     ? (json as { error: string }).error
     : `Request failed (${response.status}).`);
 
-  if (response.status === 401) throw new SessionExpiredError(message, json);
+  if (response.status === 401) {
+    onSessionExpired?.();
+    throw new SessionExpiredError(message, json);
+  }
   if (response.status === 403) throw new ForbiddenError(message, json);
   if (response.status === 429) throw new RateLimitedError(message, json);
   throw new RequestError(message, response.status, json);

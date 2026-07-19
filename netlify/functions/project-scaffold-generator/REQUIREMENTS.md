@@ -17,9 +17,9 @@ serves "sell more websites" by making each one cheaper/faster to deliver.
 
 ## 2. Actors
 
-- **Dylan (admin)** — triggers scaffold generation from the lead detail
-  view in `admin.html` once a full-brief lead is ready to start; receives
-  the generated output.
+- **Dylan (admin)** — triggers scaffold generation from the Care Hub's
+  lead-detail view (see `leads-dashboard`, once built) once a full-brief
+  lead is ready to start; receives the generated output.
 
 ## 3. Functional Requirements
 
@@ -94,7 +94,7 @@ avoid confusion about whether this step has been done.
   at the site root, loaded client-side by `website-designer.js` — the
   function needs its own server-side read of the same files).
 - Reads from the same `leads` store `website-designer.js` writes to.
-- Triggered from a new button in `admin.html`'s lead-detail view (which
+- Triggered from a new button in the Care Hub's lead-detail view (which
   itself likely needs to exist first, per the `leads-dashboard` spec —
   these two are natural to build together).
 

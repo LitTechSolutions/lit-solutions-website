@@ -21,7 +21,7 @@ export function RequireAuth({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AppShell userName={state.user.name} onSignOut={signOut}>
+    <AppShell userName={state.user.name} role={state.user.role} onSignOut={signOut}>
       {children}
     </AppShell>
   );

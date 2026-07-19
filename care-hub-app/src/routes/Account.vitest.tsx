@@ -96,6 +96,19 @@ describe("Account", () => {
     expect(mocks.signOut).not.toHaveBeenCalled();
   });
 
+  it("saves a timezone chosen from the dropdown (not typed) without signing the user out", async () => {
+    mocks.get.mockResolvedValue(customerAccount());
+    mocks.updatePreferences.mockResolvedValue({ preferences: { timezone: "America/Chicago", emailNotifications: true } });
+    render(<Account />);
+    await screen.findByText(/jamie@example\.com/);
+
+    await userEvent.selectOptions(screen.getByLabelText(/timezone/i), "America/Chicago");
+    await userEvent.click(screen.getByRole("button", { name: /save preferences/i }));
+
+    expect(mocks.updatePreferences).toHaveBeenCalledWith({ timezone: "America/Chicago", emailNotifications: true });
+    expect(mocks.signOut).not.toHaveBeenCalled();
+  });
+
   it("signs the user out after a successful password change (server already revoked the session)", async () => {
     mocks.get.mockResolvedValue(customerAccount());
     mocks.updatePassword.mockResolvedValue({ message: "Password updated. Please sign in again." });

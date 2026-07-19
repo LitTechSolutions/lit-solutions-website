@@ -133,7 +133,7 @@
   </div>
   <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. All rights reserved.</p>
   <p class="footer-version"><a href="patch-notes.html">Website Version <span id="siteVersion">4.0.0</span></a></p>
-  <p class="footer-version"><a href="admin.html">Staff Sign In</a></p>
+  <p class="footer-version"><a href="/care-hub/login">Staff Sign In</a></p>
 </footer>
 
 <div id="cookie-banner" class="cookie-banner" hidden role="region" aria-label="Cookie notice">
@@ -188,6 +188,7 @@
         e.preventDefault();
         await api("auth-logout", { method: "POST" });
         state.user = null;
+        renderTabs();
         window.location.hash = "#signin";
       });
       refreshNotifBadge();
@@ -217,6 +218,24 @@
     state.user = r.ok ? r.body.user : null;
   }
 
+  // Care Hub (/care-hub/) is the newer, more capable customer portal --
+  // this page is the older/simpler one. A customer with a real
+  // organization membership is "enrolled" in Care Hub, so send them
+  // straight there instead of leaving them on this more basic account
+  // view. Checked after every fresh sign-in AND on a plain page load with
+  // an existing session, so it applies any time a customer lands here,
+  // not just once at login. Returns true if it navigated away (callers
+  // should stop rendering this page in that case).
+  async function maybeRedirectToCareHub() {
+    if (!state.user || state.user.role !== "customer") return false;
+    var r = await api("my-memberships");
+    if (r.ok && r.body && r.body.memberships && r.body.memberships.length > 0) {
+      window.location.href = "/care-hub/";
+      return true;
+    }
+    return false;
+  }
+
   var TYPE_LABEL = { invoice: "Invoice", receipt: "Receipt", paperwork: "Paperwork", other: "Other" };
   var STATUS_LABEL = { paid: "Paid", unpaid: "Unpaid", "n/a": "" };
 
@@ -240,6 +259,7 @@
         status.textContent = "Signed in.";
         status.className = "form-note";
         await loadSession();
+        if (await maybeRedirectToCareHub()) return;
         renderTabs();
         window.location.hash = "#dashboard";
       } else if (r.body && r.body.code === "unverified") {
@@ -666,7 +686,13 @@
   }
 
   window.addEventListener("hashchange", route);
-  loadSession().then(function () { renderTabs(); route(); }).catch(function () { renderTabs(); route(); });
+  loadSession()
+    .then(async function () {
+      if (await maybeRedirectToCareHub()) return;
+      renderTabs();
+      route();
+    })
+    .catch(function () { renderTabs(); route(); });
 })();
 </script>
 </body>

@@ -1,5 +1,7 @@
 # Authorization Model — Current State & Target Standards
 
+> **Status note (added 2026-07-19):** §1 is Session 0's (2026-07-14) discovery snapshot of the *pre-Care-Hub* system — the §3 gap analysis it feeds was substantially closed by Sessions 1–20: a real RBAC capability map (`src/policy/rbac.js`), organizations/memberships, and an audit trail (F008) are all built and live in `netlify/functions/`/`src/` today. Two concretely wrong facts as of this note: the session TTL below is no longer "8-hour" (`_lib/auth_utils.js`'s `SESSION_TTL_SECONDS` is 30 days as of 2026-07-19, so a signed-in customer stays signed in until they explicitly sign out), and "no organization entity" is no longer true (see `organizations.js`, `care-hub-app/src/routes/Organizations.tsx`). The "known rough edge" below about `admin.html`'s `loadSession()` is moot — that file was deleted entirely on 2026-07-19. See `ARCHITECTURE.md`'s status note and `DEV_INDEX.md` for the fuller picture, including an unresolved production question this document has no bearing on either way.
+
 ## 1. Current state (as inspected)
 
 - **Roles:** exactly three flat strings on the user record — `"customer"`, `"staff"`, `"admin"`. No membership/organization concept, no per-permission granularity. Most handlers treat `staff` and `admin` as equivalent (`session.role !== "admin" && session.role !== "staff"`), so there are really only **two effective privilege tiers** today.

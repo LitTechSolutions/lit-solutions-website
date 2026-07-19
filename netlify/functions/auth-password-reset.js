@@ -3,14 +3,15 @@
 // email their verification links (see _lib/verification.js -- this file
 // follows that exact pattern rather than a separate one).
 //
-// POST { action: "request", email, page? }
+// POST { action: "request", email }
 //   -> always 200 (doesn't reveal whether the email is registered), stores
-//      a single-use token and emails a {page}.html#reset?token=... link to
-//      the account (best-effort -- see _lib/email.js's no-op behavior when
-//      RESEND_API_KEY/EMAIL_FROM aren't configured). `page` is "myaccount"
-//      (default, customers) or "admin" (staff, via admin.html's own
-//      reset-request view) -- only those two values are accepted, so the
-//      link always lands on a real page in this site.
+//      a single-use token and emails a reset link to the account
+//      (best-effort -- see _lib/email.js's no-op behavior when
+//      RESEND_API_KEY/EMAIL_FROM aren't configured). The link destination
+//      is derived from the account's own stored role rather than a
+//      caller-supplied value: customers get myaccount.html's #reset view,
+//      admin/staff get the Care Hub's /reset-password route -- both land
+//      on the same { action: "confirm", token, newPassword } shape below.
 // POST { action: "confirm", token, newPassword }
 //   -> validates the token, sets the new password, revokes existing
 //      sessions (rotation on privilege change).
@@ -37,8 +38,9 @@ exports.handler = async (event) => {
     if (user) {
       const resetToken = createSingleUseToken("password-reset", user.id);
       await setJSON("tokens", resetToken, { type: "password-reset", userId: user.id, used: false });
-      const page = body.page === "admin" ? "admin" : "myaccount";
-      const link = `${siteOrigin(event)}/${page}.html#reset?token=${resetToken}`;
+      const link = user.role === "admin" || user.role === "staff"
+        ? `${siteOrigin(event)}/care-hub/reset-password?token=${resetToken}`
+        : `${siteOrigin(event)}/myaccount.html#reset?token=${resetToken}`;
       await sendEmail({
         to: user.email,
         subject: "Reset your password — Little Technical Solutions LLC",

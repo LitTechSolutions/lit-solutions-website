@@ -232,6 +232,45 @@ test("accepting the post-quote prompt opens the worksheet in a new tab via a URL
   assert.equal(capturedRequests.some((r) => r.stage === "full"), false);
 });
 
+// Regression: selectionPayload() always computed selectedBundles correctly
+// (the quick-quote PDF built on this page was never wrong), but the quick-
+// submission network payload omitted it entirely, so it never reached the
+// lead record -- meaning the standalone worksheet's later "resume" fetch
+// had no way to know which bundles were selected, and its own PDF always
+// showed "(none selected)". Confirms the field now makes it into the
+// outbound request that's actually persisted server-side.
+test("selecting a bundle includes it in the quick-submission payload's selectedBundles", async () => {
+  const { window, capturedRequests } = await loadDesignerPage();
+  selectStarterPackage(window);
+  await flush();
+
+  const tile = window.document.querySelector(".wd-bundle-tile");
+  assert.ok(tile, "expected at least one bundle tile to render for the starter catalog");
+  const checkbox = tile.querySelector(".wd-bundle-tile-checkbox");
+  checkbox.checked = true;
+  checkbox.dispatchEvent(new window.Event("change", { bubbles: true }));
+  await flush();
+
+  const expectedName = tile.querySelector(".wd-bundle-tile-name").textContent;
+  const expectedPrice = Number(tile.querySelector(".wd-bundle-tile-price").textContent.replace(/[^0-9.]/g, ""));
+
+  window.document.getElementById("wdBusinessName").value = "Riverside Plumbing";
+  window.document.getElementById("wdName").value = "Jane Doe";
+  window.document.getElementById("wdEmail").value = "jane@example.com";
+  window.document.getElementById("wdPhone").value = "555-0100";
+  window.document.getElementById("wdPreferredContact").value = "email";
+  window.document.getElementById("wdConsent").checked = true;
+  window.document.getElementById("wdQuickForm").dispatchEvent(new window.Event("submit", { bubbles: true, cancelable: true }));
+  await flush();
+
+  const quickSubmission = capturedRequests.find((r) => r.stage === "quick");
+  assert.ok(quickSubmission, "expected a stage:\"quick\" request to have been sent");
+  assert.ok(Array.isArray(quickSubmission.selectedBundles), "quick-submission payload must include selectedBundles so the backend can persist it for the worksheet's later PDF");
+  assert.equal(quickSubmission.selectedBundles.length, 1);
+  assert.equal(quickSubmission.selectedBundles[0].name, expectedName);
+  assert.equal(quickSubmission.selectedBundles[0].price, expectedPrice);
+});
+
 test("if the worksheet popup is blocked, a direct fallback link appears with the same URL", async () => {
   const { window } = await loadDesignerPage();
   selectStarterPackage(window);

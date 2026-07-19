@@ -1,5 +1,7 @@
 # Data Model — Current State & Target Standards
 
+> **Status note (added 2026-07-19):** §1 is Session 0's (2026-07-14) discovery snapshot of the Blobs schema *before* any Care Hub or Postgres work existed. One concrete correction: the `images`/`documents` stores' `dataUri`/`fileDataUri` fields below describe the pre-2026-07-16 design — both were migrated to Cloudinary-hosted files on 2026-07-16 (commit `31e303b`); Blobs now holds metadata plus a URL, not the raw file. The decided Postgres schema referenced elsewhere in this file is live against a real Neon database — see `migrations/` and `DEV_INDEX.md` (whose own status note covers what else has changed since this corpus stopped being updated, including an unresolved production question this document has no bearing on either way).
+
 ## 1. Current Netlify Blobs schema (as inspected)
 
 Wrapper: `netlify/functions/_lib/blob_store.js`, `@netlify/blobs` `getStore()`, `consistency: "strong"`.

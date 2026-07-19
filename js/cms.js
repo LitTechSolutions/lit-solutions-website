@@ -1,8 +1,9 @@
 // cms.js -- fetch-and-render for admin-editable content (blog posts,
 // portfolio items, testimonials) on the public pages. This is the
 // "small client-side fetch-and-override snippet" the accounts module
-// notes call for: admin.html saves structured JSON via content.js, and
-// this is what makes it show up on the static pages without a rebuild.
+// notes call for: the Care Hub's Site Content screen saves structured
+// JSON via content.js, and this is what makes it show up on the static
+// pages without a rebuild.
 //
 // Each render function degrades gracefully: if the content endpoint isn't
 // reachable (e.g. this site deployed without the accounts module, or

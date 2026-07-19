@@ -4,7 +4,7 @@
 // writes -- unlike content.js, nothing here needs extra access control
 // once uploaded, since the actual image data used on public pages gets
 // embedded directly into the post/portfolio/testimonial record at save
-// time (see admin.html).
+// time (see the Care Hub's Image Library and Site Content screens).
 //
 // Images are stored in Cloudinary (see _lib/cloudinary_store.js) using
 // ordinary public "upload" delivery -- these are meant to end up on

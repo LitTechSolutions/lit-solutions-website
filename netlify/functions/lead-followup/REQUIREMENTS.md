@@ -81,7 +81,7 @@ Extends existing **`leads`** records with:
 ```
 
 Sequence content/timing itself lives in a config record (store `content`,
-slug `followup-sequences`), editable via `admin.html`, so Dylan can tune
+slug `followup-sequences`), editable via the Care Hub, so Dylan can tune
 subject lines/timing/copy without a code deploy:
 ```
 {
@@ -113,7 +113,7 @@ subject lines/timing/copy without a code deploy:
   (`createSingleUseToken`, `verify`).
 - Surfaces send history in `leads-dashboard` (see that spec) rather than
   duplicating a UI here.
-- `admin.html` gains a small sequence-editor panel for
+- The Care Hub gains a small sequence-editor capability for
   `followup-sequences` content, following the existing generic
   single-record-editor pattern (same shape as the `referral-program` and
   `booking-scheduler` config records).

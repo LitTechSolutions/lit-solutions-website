@@ -15,7 +15,8 @@
 //   POST { stage: "quick", package, businessName, customerName, email, phone,
 //          preferredContact, subtotal, estimateTotal, heroesDiscount,
 //          bundledCategories: [category], bundleSavings,
-//          optionalSelected: [{title, price}], customRequest: string }
+//          optionalSelected: [{title, price}], customRequest: string,
+//          selectedBundles: [{name, price}] }
 //   201 { id, emailSent, resumeToken }
 //
 // STAGE "resume" -- sent by the worksheet page right after it opens, to
@@ -29,7 +30,8 @@
 //   POST { stage: "resume", quickLeadId, token }
 //   200 { quickLeadId, package, businessName, customerName, email, phone,
 //         preferredContact, subtotal, estimateTotal, heroesDiscount,
-//         bundledCategories, bundleSavings, optionalSelected, customRequest }
+//         bundledCategories, bundleSavings, optionalSelected, customRequest,
+//         selectedBundles }
 //   401 { error } -- invalid/expired/unknown (never distinguished)
 //
 // STAGE "full" -- sent only from the worksheet, once the customer completes
@@ -41,7 +43,8 @@
 //          customerName, email, phone, preferredContact, domain, notes,
 //          subtotal, estimateTotal, heroesDiscount, bundledCategories: [category],
 //          bundleSavings, optionalSelected: [{title, price}],
-//          customRequest: string, pdfBase64, pdfFilename,
+//          customRequest: string, selectedBundles: [{name, price}],
+//          pdfBase64, pdfFilename,
 //          brief: { description, industry, serviceArea, servicesList, brandColors,
 //                   styleReferences, addressHours, socialLinks, launchDate, desiredDomain,
 //                   staff, testimonials, faq, blog, gallery, pricing, booking, newsletter },
@@ -247,6 +250,7 @@ async function handleQuickSubmission(body, ip) {
     bundleSavings: Number(body.bundleSavings) || 0,
     optionalSelected: Array.isArray(body.optionalSelected) ? body.optionalSelected : [],
     customRequest: typeof body.customRequest === "string" ? body.customRequest.trim().slice(0, 2000) : "",
+    selectedBundles: Array.isArray(body.selectedBundles) ? body.selectedBundles : [],
     completedFull: false, createdAt: Date.now(), ip,
     resumeTokenHash: hashResumeToken(resumeToken),
     resumeTokenExpiresAt: Date.now() + RESUME_TOKEN_TTL_MS,
@@ -338,6 +342,7 @@ async function handleResumeRequest(body, ip) {
     bundleSavings: record.bundleSavings,
     optionalSelected: record.optionalSelected,
     customRequest: record.customRequest,
+    selectedBundles: record.selectedBundles || [],
   });
 }
 
@@ -349,7 +354,7 @@ async function handleFullSubmission(body, ip) {
   const {
     package: pkg, businessName, customerName, email, phone, preferredContact, domain, notes,
     subtotal, estimateTotal, heroesDiscount, bundledCategories, bundleSavings,
-    optionalSelected, customRequest, pdfBase64, pdfFilename,
+    optionalSelected, customRequest, selectedBundles, pdfBase64, pdfFilename,
     brief, logo, photos, quickLeadId, resumeToken,
   } = body;
 
@@ -418,6 +423,7 @@ async function handleFullSubmission(body, ip) {
     bundleSavings: Number(bundleSavings) || 0,
     optionalSelected: Array.isArray(optionalSelected) ? optionalSelected : [],
     customRequest: typeof customRequest === "string" ? customRequest.trim().slice(0, 2000) : "",
+    selectedBundles: Array.isArray(selectedBundles) ? selectedBundles : [],
     brief: cleanBrief, hasLogo: !!cleanLogo, photoCount: cleanPhotos.length,
     createdAt: Date.now(), ip,
   };

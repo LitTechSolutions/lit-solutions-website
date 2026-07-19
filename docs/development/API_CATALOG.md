@@ -1,5 +1,7 @@
 # API Catalog — Current Netlify Functions & Target Standards
 
+> **Status note (added 2026-07-19):** This is Session 0's (2026-07-14) inventory of the 12 functions that existed *before* any Care Hub code was written — it was never updated as the Care Hub added 25 more HTTP endpoints (`tickets.js`, `organizations.js`, `checklists.js`, `approvals.js`, `audit-log.js`, and 20 others — see `DEV_INDEX.md`'s "Source code" section for the full list) plus 3 MFA login-flow endpoints. The 12 below are still real and mostly unchanged, with one concrete correction: `admin-images.js` and `documents.js` now store files in Cloudinary rather than as base64 `dataUri`s in Blobs (moved 2026-07-16, commit `31e303b`) — Blobs now holds metadata plus a Cloudinary URL. `admin.html`, the original consumer of several of these, was deleted 2026-07-19; its capabilities are now Care Hub screens calling these same functions.
+
 ## 1. Implemented functions (12)
 
 | Function | Domain | Auth | Notes |

@@ -2,7 +2,7 @@
 
 ## 1. Overview & Goal
 
-A backend API (paired with a new `admin.html` view) that lists, filters,
+A backend API (paired with a new Care Hub capability) that lists, filters,
 and searches every lead across sources and stages, instead of requiring
 Dylan to dig through email or open Netlify Blobs records one at a time.
 This is the connective-tissue function: `website-designer`, `website-audit`,
@@ -89,10 +89,11 @@ should do the same with `source: "website-audit"` when built.
 - Reads `leads` (written by `website-designer.js`, and eventually
   `website-audit`), `bookings` (from `booking-scheduler`), and the
   follow-up fields on `leads` (from `lead-followup`).
-- `admin.html` — this is the natural home for a new "Leads" tab, likely
-  the most-used part of the whole admin panel once built, following the
-  existing `views.X` router pattern already used for
-  Posts/Portfolio/Testimonials/Gallery/Images/Customers/Account
+- The Care Hub — this is the natural home for a new "Leads" capability,
+  likely the most-used part of the whole admin experience once built,
+  following the existing `platform_admin`-gated route pattern
+  (`navAccess.ts`/`RequireRoute`) already used for Site Content/Image
+  Library/Customer Support
   Settings/Dashboard.
 - Depends on `website-designer.js` being updated to write a `source`
   field (§5) — a small, low-risk change to make alongside building this.

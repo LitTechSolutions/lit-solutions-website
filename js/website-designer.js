@@ -703,7 +703,7 @@ document.addEventListener('DOMContentLoaded', () => {
       submitBtn.disabled = true;
       quickFormStatus.textContent = tDyn('status_sending_quote', 'Sending your quote request...');
 
-      const { optionalSelected, customRequest, heroesDiscount, bundledCategories: bundled, bundleSavings } = selectionPayload();
+      const { optionalSelected, customRequest, heroesDiscount, bundledCategories: bundled, bundleSavings, selectedBundles } = selectionPayload();
       const customerName = document.getElementById('wdName').value;
       const email = document.getElementById('wdEmail').value;
       const phone = document.getElementById('wdPhone').value;
@@ -719,7 +719,7 @@ document.addEventListener('DOMContentLoaded', () => {
         heroesDiscount,
         bundledCategories: bundled,
         bundleSavings: Math.round(bundleSavings),
-        optionalSelected, customRequest,
+        optionalSelected, customRequest, selectedBundles,
       };
 
       fetch('/.netlify/functions/website-designer', {

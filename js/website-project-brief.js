@@ -314,7 +314,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function pdfPayload(resumeData, brief, notes) {
-    const optionalSum = (resumeData.optionalSelected || []).reduce((s, f) => s + (Number(f.price) || 0), 0);
     return {
       business: resumeData.businessName || 'Your business',
       customerName: resumeData.customerName || '',
@@ -329,6 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
       customRequest: resumeData.customRequest || '',
       bundledCategories: resumeData.bundledCategories || [],
       bundleSavings: resumeData.bundleSavings || 0,
+      selectedBundles: resumeData.selectedBundles || [],
       heroesDiscount: !!resumeData.heroesDiscount,
       heroesDiscountAmount: resumeData.heroesDiscount ? (resumeData.subtotal - resumeData.estimateTotal) : 0,
       subtotal: resumeData.subtotal,
@@ -408,6 +408,7 @@ document.addEventListener('DOMContentLoaded', () => {
       bundleSavings: resumeData.bundleSavings,
       optionalSelected: resumeData.optionalSelected,
       customRequest: resumeData.customRequest,
+      selectedBundles: resumeData.selectedBundles,
       pdfBase64, pdfFilename,
       brief, logo, photos,
     };

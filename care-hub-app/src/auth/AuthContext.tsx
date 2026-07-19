@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { api } from "../api/client";
+import { registerSessionExpiredHandler } from "../api/http";
 import { SessionExpiredError } from "../api/errors";
 import type { AuthenticatedUser } from "../api/types";
 
@@ -59,6 +60,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
+  }, []);
+
+  // Subscribes to "any request just discovered the session is gone,"
+  // regardless of which route's own data fetch was the one that noticed --
+  // see registerSessionExpiredHandler's own comment in api/http.ts. Without
+  // this, only that one route found out, so RequireAuth kept rendering the
+  // full AppShell (nav + topbar) around whatever that route showed for its
+  // own "expired" case -- a sign-in prompt nested under a stale menu.
+  // Flipping the top-level state here instead means RequireAuth swaps
+  // straight to its existing signedOut branch (a clean redirect to
+  // /login, no shell at all) the moment any request 401s.
+  useEffect(() => {
+    registerSessionExpiredHandler(() => setState({ status: "signedOut" }));
+    return () => registerSessionExpiredHandler(null);
   }, []);
 
   const setSignedIn = useCallback((user: AuthenticatedUser) => setState({ status: "signedIn", user }), []);

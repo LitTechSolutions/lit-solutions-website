@@ -31,7 +31,8 @@
 //   leads         : key = submission id (WD-...)   -> { package, businessName, customerName, email, phone,
 //                   (Website Designer submissions)      domain, notes, subtotal, estimateTotal,
 //                                                        heroesDiscount, bundledCategories, bundleSavings,
-//                                                        optionalSelected, customRequest, createdAt, ip }
+//                                                        optionalSelected, customRequest, selectedBundles,
+//                                                        createdAt, ip }
 
 const { getStore } = require("@netlify/blobs");
 

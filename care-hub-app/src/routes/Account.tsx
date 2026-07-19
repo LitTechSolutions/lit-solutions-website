@@ -204,6 +204,21 @@ function PasswordSection() {
   );
 }
 
+// Curated, not the full ~400-zone IANA list -- every customer this
+// business serves is in the US (see CLAUDE.md's service-area note), so a
+// short, real list of US zones is more usable than either free text or
+// an exhaustive global dropdown nobody needs to scroll through.
+const TIMEZONE_OPTIONS = [
+  { value: "", label: "Not set" },
+  { value: "America/New_York", label: "Eastern Time (New York)" },
+  { value: "America/Chicago", label: "Central Time (Chicago)" },
+  { value: "America/Denver", label: "Mountain Time (Denver)" },
+  { value: "America/Phoenix", label: "Mountain Time, no DST (Phoenix)" },
+  { value: "America/Los_Angeles", label: "Pacific Time (Los Angeles)" },
+  { value: "America/Anchorage", label: "Alaska Time (Anchorage)" },
+  { value: "Pacific/Honolulu", label: "Hawaii Time (Honolulu)" },
+];
+
 function PreferencesSection({ preferences, onSaved }: { preferences: AccountPreferences; onSaved: () => void }) {
   const [timezone, setTimezone] = useState(preferences.timezone);
   const [emailNotifications, setEmailNotifications] = useState(preferences.emailNotifications);
@@ -232,7 +247,13 @@ function PreferencesSection({ preferences, onSaved }: { preferences: AccountPref
       <h2 style={{ fontSize: "1.05rem", marginBottom: "var(--space-3)" }}>{strings.account.preferencesHeading}</h2>
       <div className="field">
         <label htmlFor="account-timezone">{strings.account.timezoneLabel}</label>
-        <input id="account-timezone" type="text" value={timezone} onChange={(e) => setTimezone(e.target.value)} />
+        <select id="account-timezone" value={timezone} onChange={(e) => setTimezone(e.target.value)}>
+          {TIMEZONE_OPTIONS.map((tz) => (
+            <option key={tz.value} value={tz.value}>
+              {tz.label}
+            </option>
+          ))}
+        </select>
       </div>
       <label style={{ display: "flex", alignItems: "center", gap: "var(--space-2)", marginTop: "var(--space-3)" }}>
         <input type="checkbox" checked={emailNotifications} onChange={(e) => setEmailNotifications(e.target.checked)} />

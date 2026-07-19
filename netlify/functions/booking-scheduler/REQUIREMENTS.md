@@ -129,8 +129,8 @@ New blob store: **`bookings`** — key = booking id (`BK-<id>`).
 ```
 
 New small config record (store `content`, slug `booking-availability`) —
-editable via `admin.html`, following the existing pattern used for other
-site content. **Confirmed real schedule: 07:00-19:00, every day of the
+editable via the Care Hub, following the existing Site Content pattern.
+**Confirmed real schedule: 07:00-19:00, every day of the
 week** (no day excluded):
 ```
 {
@@ -176,8 +176,8 @@ week** (no day excluded):
   hard dependency of the function, not an optional enhancement. Needs a
   Google Cloud project, Calendar API enabled, and credentials configured
   as Netlify environment variables before this can go live at all.
-- `admin.html` — new small "Booking availability" settings panel, and
-  ideally a simple upcoming-bookings list (could live alongside
+- The Care Hub — new small "Booking availability" settings capability,
+  and ideally a simple upcoming-bookings list (could live alongside
   `leads-dashboard`, since both are "what's coming up" admin views).
 
 ## 8. Error Handling

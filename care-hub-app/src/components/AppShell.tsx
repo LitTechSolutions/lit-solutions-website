@@ -1,11 +1,114 @@
 import type { ReactNode } from "react";
 import { NavLink } from "react-router-dom";
+import type { AuthenticatedUser } from "../api/types";
+import type { RouteKey } from "../auth/navAccess";
+import { canAccessRoute } from "../auth/navAccess";
 import { strings } from "../strings/en";
 
 export interface AppShellProps {
   children: ReactNode;
   userName?: string;
+  role: AuthenticatedUser["role"];
   onSignOut?: () => void | Promise<void>;
+}
+
+interface NavItem {
+  routeKey: RouteKey;
+  path: string;
+  label: string;
+}
+
+const WORK_ITEMS: NavItem[] = [
+  { routeKey: "tickets", path: "/tickets", label: strings.nav.tickets },
+  { routeKey: "checklists", path: "/checklists", label: strings.nav.checklists },
+  { routeKey: "scopeOfWork", path: "/scope-of-work", label: strings.nav.scopeOfWork },
+  { routeKey: "changeOrders", path: "/change-orders", label: strings.nav.changeOrders },
+  { routeKey: "approvals", path: "/approvals", label: strings.nav.approvals },
+  { routeKey: "workLog", path: "/work-log", label: strings.nav.workLog },
+  { routeKey: "itSupport", path: "/it-support", label: strings.nav.itSupport },
+  { routeKey: "activityTimeline", path: "/activity-timeline", label: strings.nav.activityTimeline },
+];
+
+const ACCOUNT_BILLING_ITEMS: NavItem[] = [
+  { routeKey: "serviceRecords", path: "/service-records", label: strings.nav.serviceRecords },
+  { routeKey: "websiteProfiles", path: "/website-profiles", label: strings.nav.websiteProfiles },
+  { routeKey: "subscriptions", path: "/subscriptions", label: strings.nav.subscriptions },
+  { routeKey: "technologyAssets", path: "/technology-assets", label: strings.nav.technologyAssets },
+  { routeKey: "entitlements", path: "/entitlements", label: strings.nav.entitlements },
+  { routeKey: "reminders", path: "/reminders", label: strings.nav.reminders },
+];
+
+const ADMIN_ITEMS: NavItem[] = [
+  { routeKey: "organizations", path: "/organizations", label: strings.nav.organizations },
+  { routeKey: "siteContent", path: "/site-content", label: strings.nav.siteContent },
+  { routeKey: "imageLibrary", path: "/image-library", label: strings.nav.imageLibrary },
+  { routeKey: "customerSupport", path: "/customer-support", label: strings.nav.customerSupport },
+  { routeKey: "templates", path: "/templates", label: strings.nav.templates },
+  { routeKey: "metrics", path: "/metrics", label: strings.nav.metrics },
+  { routeKey: "auditLog", path: "/audit-log", label: strings.nav.auditLog },
+];
+
+// Customer nav is deliberately flat and short, not a filtered-down copy of
+// the staff/admin groups above -- see navAccess.ts's header comment and
+// [[project_care_hub_buildout_complete]]-adjacent design notes. Tickets/
+// Checklists/Approvals are the things a customer actively does, kept as
+// direct one-click links; everything else customers only ever read (site
+// info, billing) is tucked behind three small hub pages instead of six
+// more flat links, and Activity Timeline's feed lives on the Dashboard
+// itself now rather than needing its own permanent nav slot.
+const CUSTOMER_ITEMS: NavItem[] = [
+  { routeKey: "tickets", path: "/tickets", label: strings.nav.tickets },
+  { routeKey: "checklists", path: "/checklists", label: strings.nav.checklists },
+  { routeKey: "approvals", path: "/approvals", label: strings.nav.approvals },
+  { routeKey: "project", path: "/project", label: strings.nav.project },
+  { routeKey: "yourWebsite", path: "/your-website", label: strings.nav.yourWebsite },
+  { routeKey: "billing", path: "/billing", label: strings.nav.billing },
+];
+
+function filterItems(items: NavItem[], role: AuthenticatedUser["role"]): NavItem[] {
+  return items.filter((item) => canAccessRoute(role, item.routeKey));
+}
+
+function NavList({ items }: { items: NavItem[] }) {
+  if (items.length === 0) return null;
+  return (
+    <ul className="app-sidebar__nav">
+      {items.map((item) => (
+        <li key={item.routeKey}>
+          <NavLink to={item.path} className="app-sidebar__link">
+            {item.label}
+          </NavLink>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function NavGroup({ label, items }: { label: string; items: NavItem[] }) {
+  if (items.length === 0) return null;
+  return (
+    <div className="app-sidebar__group">
+      <p className="app-sidebar__group-label">{label}</p>
+      <NavList items={items} />
+    </div>
+  );
+}
+
+// Every route in Work/Account & Billing/Admin has existed since the
+// original 24-capability build-out -- this stays the flat, exhaustive
+// layout platform_admin (and, minus the admin-only items, technician)
+// already use in production. Filtering by role here (rather than
+// hand-maintaining separate admin/staff lists) is what makes an
+// always-dead link like Organizations disappear for a technician account
+// without a second place to remember to update.
+function StaffOrAdminNav({ role }: { role: AuthenticatedUser["role"] }) {
+  return (
+    <>
+      <NavGroup label={strings.nav.groupWork} items={filterItems(WORK_ITEMS, role)} />
+      <NavGroup label={strings.nav.groupAccountBilling} items={filterItems(ACCOUNT_BILLING_ITEMS, role)} />
+      <NavGroup label={strings.nav.groupAdmin} items={filterItems(ADMIN_ITEMS, role)} />
+    </>
+  );
 }
 
 /**
@@ -16,7 +119,9 @@ export interface AppShellProps {
  * rendered once RequireAuth confirms a real signed-in session -- /login,
  * /mfa/enroll, and /mfa/verify never see this frame.
  */
-export function AppShell({ children, userName, onSignOut }: AppShellProps) {
+export function AppShell({ children, userName, role, onSignOut }: AppShellProps) {
+  const isCustomer = role === "customer";
+
   return (
     <div className="app-shell">
       <a className="skip-link" href="#main">
@@ -40,113 +145,7 @@ export function AppShell({ children, userName, onSignOut }: AppShellProps) {
           {strings.nav.dashboard}
         </NavLink>
 
-        <div className="app-sidebar__group">
-          <p className="app-sidebar__group-label">{strings.nav.groupWork}</p>
-          <ul className="app-sidebar__nav">
-            <li>
-              <NavLink to="/tickets" className="app-sidebar__link">
-                {strings.nav.tickets}
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/checklists" className="app-sidebar__link">
-                {strings.nav.checklists}
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/scope-of-work" className="app-sidebar__link">
-                {strings.nav.scopeOfWork}
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/change-orders" className="app-sidebar__link">
-                {strings.nav.changeOrders}
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/approvals" className="app-sidebar__link">
-                {strings.nav.approvals}
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/work-log" className="app-sidebar__link">
-                {strings.nav.workLog}
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/it-support" className="app-sidebar__link">
-                {strings.nav.itSupport}
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/activity-timeline" className="app-sidebar__link">
-                {strings.nav.activityTimeline}
-              </NavLink>
-            </li>
-          </ul>
-        </div>
-
-        <div className="app-sidebar__group">
-          <p className="app-sidebar__group-label">{strings.nav.groupAccountBilling}</p>
-          <ul className="app-sidebar__nav">
-            <li>
-              <NavLink to="/service-records" className="app-sidebar__link">
-                {strings.nav.serviceRecords}
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/website-profiles" className="app-sidebar__link">
-                {strings.nav.websiteProfiles}
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/subscriptions" className="app-sidebar__link">
-                {strings.nav.subscriptions}
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/technology-assets" className="app-sidebar__link">
-                {strings.nav.technologyAssets}
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/entitlements" className="app-sidebar__link">
-                {strings.nav.entitlements}
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/reminders" className="app-sidebar__link">
-                {strings.nav.reminders}
-              </NavLink>
-            </li>
-          </ul>
-        </div>
-
-        <div className="app-sidebar__group">
-          <p className="app-sidebar__group-label">{strings.nav.groupAdmin}</p>
-          <ul className="app-sidebar__nav">
-            <li>
-              <NavLink to="/organizations" className="app-sidebar__link">
-                {strings.nav.organizations}
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/templates" className="app-sidebar__link">
-                {strings.nav.templates}
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/metrics" className="app-sidebar__link">
-                {strings.nav.metrics}
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/audit-log" className="app-sidebar__link">
-                {strings.nav.auditLog}
-              </NavLink>
-            </li>
-          </ul>
-        </div>
+        {isCustomer ? <NavList items={CUSTOMER_ITEMS} /> : <StaffOrAdminNav role={role} />}
 
         <NavLink to="/account" className="app-sidebar__link">
           {strings.nav.account}

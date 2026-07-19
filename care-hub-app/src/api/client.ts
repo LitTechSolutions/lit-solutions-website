@@ -21,11 +21,19 @@ import type {
   ChecklistSubmission,
   CustomerChecklistView,
   StaffChecklistView,
+  ContentRecord,
+  ContentSlug,
+  CustomerDocument,
+  CustomerMessage,
+  DocumentType,
+  DocumentStatus,
   EntitlementUsageView,
   Invitation,
   ItSupportClassification,
+  LibraryImage,
   LineItem,
   LoginResult,
+  MessageInboxRow,
   MetricsSummary,
   MfaEnrollConfirmResult,
   MfaEnrollStartResult,
@@ -67,6 +75,10 @@ export const auth = {
     request<{ message: string }>("/mfa-manage", { method: "POST", body: { action: "disable", password } }),
   mfaReset: (password: string) =>
     request<{ message: string }>("/mfa-manage", { method: "POST", body: { action: "reset", password } }),
+  passwordResetRequest: (email: string) =>
+    request<{ message: string }>("/auth-password-reset", { method: "POST", body: { action: "request", email } }),
+  passwordResetConfirm: (token: string, newPassword: string) =>
+    request<{ message: string }>("/auth-password-reset", { method: "POST", body: { action: "confirm", token, newPassword } }),
 };
 
 // ---- F001 Organizations ----
@@ -303,6 +315,63 @@ export const auditLog = {
   }) => request<AuditLogPage>("/audit-log", { query: filters }),
 };
 
+// ---- Site content (existing pre-Care-Hub endpoint, reused as-is) --
+// migrated from admin.html, previously the only place any of this could
+// be managed. Reads are public/unauthenticated on the site itself
+// (blog.html etc. fetch this directly); writes are admin/staff only. ----
+export const content = {
+  get: <T = unknown>(slug: ContentSlug) => request<ContentRecord<T>>("/content", { query: { slug } }),
+  save: (slug: ContentSlug, data: unknown[]) => request<{ message: string }>("/content", { method: "POST", body: { slug, data } }),
+};
+
+// ---- Image library (existing pre-Care-Hub endpoint, reused as-is) ----
+export const imageLibrary = {
+  list: () => request<{ images: LibraryImage[] }>("/admin-images"),
+  upload: (dataUri: string, alt: string, caption?: string) =>
+    request<{ id: string; url: string; message: string }>("/admin-images", { method: "POST", body: { action: "upload", dataUri, alt, caption } }),
+  remove: (imageId: string) => request<{ message: string }>("/admin-images", { method: "POST", body: { action: "delete", imageId } }),
+};
+
+// ---- Customer documents (existing pre-Care-Hub endpoint, reused as-is)
+// -- also used by myaccount.html for a customer's own documents; this
+// client only covers the admin/staff side (lookup by customerEmail). ----
+export const customerDocuments = {
+  listForCustomer: (customerEmail: string) =>
+    request<{ customer: { name: string; email: string }; documents: CustomerDocument[] }>("/documents", { query: { customerEmail } }),
+  upload: (input: {
+    customerEmail: string;
+    title: string;
+    type: DocumentType;
+    amount?: string;
+    status?: DocumentStatus;
+    date?: string;
+    notes?: string;
+    fileDataUri?: string;
+    fileName?: string;
+  }) => request<{ id: string; message: string }>("/documents", { method: "POST", body: { action: "upload", ...input } }),
+  remove: (documentId: string) => request<{ message: string }>("/documents", { method: "POST", body: { action: "delete", documentId } }),
+};
+
+// ---- Customer messages (existing pre-Care-Hub endpoint, reused as-is)
+// -- also used by myaccount.html for a customer's own thread; this
+// client only covers the admin/staff side (inbox + reply). ----
+export const staffMessages = {
+  inbox: () => request<{ customers: MessageInboxRow[] }>("/messages", { query: { inbox: 1 } }),
+  threadFor: (customerEmail: string) =>
+    request<{ customer: { name: string; email: string }; messages: CustomerMessage[] }>("/messages", { query: { customerEmail } }),
+  sendTo: (customerEmail: string, body: string) =>
+    request<{ id: string; message: string }>("/messages", { method: "POST", body: { customerEmail, body } }),
+};
+
+// ---- Customer notifications (existing pre-Care-Hub endpoint, reused
+// as-is) -- this client only covers the admin/staff "send" side; a
+// customer's own inbox/mark-read actions have no Care Hub screen (no
+// admin.html equivalent existed for those either). ----
+export const staffNotifications = {
+  send: (userEmail: string, title: string, body: string, href?: string) =>
+    request<{ id: string; message: string }>("/notifications", { method: "POST", body: { action: "create", userEmail, title, body, href } }),
+};
+
 // ---- Account (existing pre-Care-Hub endpoint, reused as-is) ----
 // update-password/update-email revoke every session server-side and
 // clear the session cookie on success (account.js's own "rotate on
@@ -346,6 +415,11 @@ export const api = {
   templates,
   webhookEvents,
   auditLog,
+  content,
+  imageLibrary,
+  customerDocuments,
+  staffMessages,
+  staffNotifications,
 };
 
 export default api;

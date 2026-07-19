@@ -370,6 +370,91 @@ export interface AuditLogPage {
   nextCursor: string | null;
 }
 
+// ---- Site content (pre-Care-Hub content.js, reused as-is) -- field
+// shapes are taken from admin.html's own EDITORS config, since content.js
+// itself is schema-less (just stores whatever array it's given). ----
+export type ContentSlug = "blog-posts" | "portfolio-items" | "testimonials" | "gallery-images";
+export interface ContentRecord<T> {
+  data: T[];
+  updatedAt: number | null;
+}
+export interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  category: string;
+  date: string;
+  excerpt: string;
+  body: string;
+  imageDataUri: string;
+}
+export interface PortfolioItem {
+  id: string;
+  title: string;
+  description: string;
+  imageDataUri: string;
+}
+export interface Testimonial {
+  id: string;
+  quote: string;
+  author: string;
+  roleOrCompany: string;
+}
+export interface GalleryImage {
+  id: string;
+  imageDataUri: string;
+  altText: string;
+  caption: string;
+}
+
+// ---- Image library (pre-Care-Hub admin-images.js, reused as-is) ----
+export interface LibraryImage {
+  id: string;
+  url: string | null;
+  alt: string;
+  caption: string;
+  uploadedAt: number;
+}
+
+// ---- Customer documents (pre-Care-Hub documents.js, reused as-is) ----
+export type DocumentType = "invoice" | "receipt" | "paperwork" | "other";
+export type DocumentStatus = "paid" | "unpaid" | "n/a";
+export interface CustomerDocument {
+  id: string;
+  customerId: string;
+  customerEmail: string;
+  title: string;
+  type: DocumentType;
+  amount: string;
+  status: DocumentStatus;
+  date: string;
+  notes: string;
+  fileName: string;
+  uploadedBy: string;
+  uploadedAt: number;
+  fileUrl?: string | null;
+}
+
+// ---- Customer messages (pre-Care-Hub messages.js, reused as-is) ----
+export interface CustomerMessage {
+  id: string;
+  customerId: string;
+  customerEmail: string;
+  from: "customer" | "staff";
+  fromName: string;
+  body: string;
+  createdAt: number;
+  readByStaff: boolean;
+  readByCustomer: boolean;
+}
+export interface MessageInboxRow {
+  customerId: string;
+  customerEmail: string;
+  lastMessageAt: number;
+  lastMessageSnippet: string;
+  unreadCount: number;
+}
+
 // ---- Auth / session ----
 export interface AuthenticatedUser {
   id: string;

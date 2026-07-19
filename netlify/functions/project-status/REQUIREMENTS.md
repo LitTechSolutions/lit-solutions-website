@@ -16,7 +16,7 @@ now captures, and reduces "just checking in on my project" phone calls.
 - **Customer** with an account (existing `myaccount.html` auth) — views
   their own project(s) status, read-only.
 - **Dylan/staff** — advances a project's status as work actually
-  progresses, via `admin.html`.
+  progresses, via the Care Hub.
 
 ## 3. Functional Requirements
 
@@ -28,7 +28,7 @@ now captures, and reduces "just checking in on my project" phone calls.
    forward — hidden from the customer-facing stepper, shown only in the
    admin lead view.)
 3. Staff can advance (or, if made in error, move back) a lead's status
-   from a new panel in `admin.html`, alongside the existing lead detail
+   from a new panel in the Care Hub, alongside the existing lead detail
    (reuses the same `leads` store already populated by
    `website-designer.js` — no new store needed here, just a new field on
    existing records).
@@ -109,7 +109,7 @@ an empty `statusHistory` on record creation.
   uses for other notification types.
 - `myaccount.html` — new "My Projects" view added to that page's existing
   `views.X` router pattern (same pattern as Documents/Messages).
-- `admin.html` — extend the lead-viewing UI (currently leads are only
+- The Care Hub — add a lead-viewing capability (currently leads are only
   readable by pulling Netlify Blobs directly per the business review's
   own finding — this function is a prerequisite for `leads-dashboard`,
   or the two could be built together).
