@@ -288,16 +288,18 @@
 
   // Draws the fixed price-calculation block:
   //   Base package                         $1,299
-  //   Selected add-ons                      +$XXX
-  //   Bundle savings                         -$XX
+  //   Pages & Content bundle                +$578
+  //   Security & Privacy bundle             +$158
   //   Heroes Discount                        -$XX
   //   Estimated starting total            $X,XXX
+  // Each selected bundle is its own flat-price line -- there's no
+  // individual-feature or "before discount" line, since a bundle's price
+  // is just its price now (see js/website-designer.js's header comment).
   // Premium/custom-quote items are deliberately never part of this -- they
   // get their own separate table further down.
   function drawPriceSummary(doc, ctx, data) {
     const rows = [['Base package', fmtMoney(data.basePrice)]];
-    if (data.optionalSum) rows.push(['Selected add-ons', `+${fmtMoney(data.optionalSum)}`]);
-    if (data.bundleSavings) rows.push(['Bundle savings', `-${fmtMoney(data.bundleSavings)}`]);
+    (data.selectedBundles || []).forEach((b) => rows.push([`${b.name} bundle`, `+${fmtMoney(b.price)}`]));
     if (data.heroesDiscountAmount) rows.push(['Heroes Discount', `-${fmtMoney(data.heroesDiscountAmount)}`]);
 
     const height = rows.length * 6.5 + 14;
@@ -358,7 +360,7 @@
       ['Reference', data.reference],
       ['Generated', data.generatedDate],
       ['Package', data.packageLabel],
-      ['Selected features', String(data.optionalCount)],
+      ['Selected bundles', String((data.selectedBundles || []).length)],
       ['Premium requests', String(data.premiumCount)],
       ['Email', data.customerEmail || '(not given)'],
       ['Phone', data.customerPhone || '(not given)'],
@@ -370,11 +372,8 @@
     setText(doc, COLORS.emerald);
     doc.text(fmtMoney(data.total), PAGE_MARGIN, ctx.y + 8);
     ctx.y += 14;
-    if (data.bundleSavings || data.heroesDiscount) {
-      const parts = [];
-      if (data.bundleSavings) parts.push(`${fmtMoney(data.bundleSavings)} in bundle savings`);
-      if (data.heroesDiscount) parts.push('the American Heroes Discount (pending verification)');
-      drawWrappedText(doc, ctx, `Includes ${parts.join(' and ')}.`, { size: 9, color: COLORS.muted, gapAfter: 2 });
+    if (data.heroesDiscount) {
+      drawWrappedText(doc, ctx, 'Includes the American Heroes Discount (pending verification).', { size: 9, color: COLORS.muted, gapAfter: 2 });
     }
 
     drawNoticeBox(
@@ -390,6 +389,9 @@
   //    business, customerName, customerEmail, customerPhone, reference,
   //    generatedDate, packageLabel, basePrice, optionalSelected: [{title,price}],
   //    premiumSelected: [title], bundledCategories: [category], bundleSavings,
+  //    selectedBundles: [{name, price}] (the flat-priced bundles actually
+  //    shown/charged -- optionalSelected/bundledCategories/bundleSavings are
+  //    kept only for the backend's independent per-category cross-check),
   //    heroesDiscount, heroesDiscountAmount, subtotal, total,
   //    brief: { description, industry, serviceArea, servicesList, brandColors,
   //             styleReferences, addressHours, socialLinks, launchDate,
@@ -413,14 +415,13 @@
       generatedDate: data.generatedDate, logo,
     };
 
-    const optionalSum = (data.optionalSelected || []).reduce((s, f) => s + (Number(f.price) || 0), 0);
-    const optionalCount = (data.optionalSelected || []).length;
+    const selectedBundles = data.selectedBundles || [];
     const premiumCount = (data.premiumSelected || []).length;
 
     // ---- Page 1: cover ----
     drawCoverPage(doc, ctx, {
       ...data,
-      optionalCount, premiumCount,
+      premiumCount,
     });
 
     // ---- Page 2: pricing breakdown ----
@@ -430,25 +431,18 @@
     (data.includedCapabilities || []).forEach((cap) => drawWrappedText(doc, ctx, `• ${cap}`, { size: 9, color: COLORS.muted, gapAfter: 1.5 }));
 
     ctx.y += 2;
-    drawSectionTitle(doc, ctx, 'Selected add-ons');
-    if (!optionalCount) {
+    drawSectionTitle(doc, ctx, 'Selected bundles');
+    if (!selectedBundles.length) {
       drawWrappedText(doc, ctx, '(none selected)', { color: COLORS.muted });
     } else {
-      drawTableHeader(doc, ctx, 'Feature', 'Price');
-      (data.optionalSelected || []).forEach((f, i) => drawFeatureRow(doc, ctx, f.title, `+${fmtMoney(f.price)}`, { stripe: i % 2 === 1 }));
-    }
-
-    if ((data.bundledCategories || []).length) {
-      ctx.y += 2;
-      drawSectionTitle(doc, ctx, 'Bundle discounts applied (10% each)');
-      data.bundledCategories.forEach((cat) => drawWrappedText(doc, ctx, `• ${cat}`, { size: 9, gapAfter: 1.5 }));
+      drawTableHeader(doc, ctx, 'Bundle', 'Price');
+      selectedBundles.forEach((b, i) => drawFeatureRow(doc, ctx, b.name, `+${fmtMoney(b.price)}`, { stripe: i % 2 === 1 }));
     }
 
     ctx.y += 3;
     drawSectionTitle(doc, ctx, 'Price calculation');
     drawPriceSummary(doc, ctx, {
-      basePrice: data.basePrice, optionalSum,
-      bundleSavings: data.bundleSavings,
+      basePrice: data.basePrice, selectedBundles,
       heroesDiscountAmount: data.heroesDiscount ? data.heroesDiscountAmount : 0,
       total: data.total,
     });

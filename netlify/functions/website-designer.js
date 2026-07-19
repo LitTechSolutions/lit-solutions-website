@@ -109,7 +109,9 @@ const RESUME_INVALID = { error: "This link is invalid or has expired." };
 // between them for a static site with no build step.
 const HEROES_DISCOUNT_RATE = 0.15;
 const BUNDLE_DISCOUNT_RATE = 0.10;
-const BUNDLE_MIN_ITEMS = 2;
+const BUNDLE_MIN_ITEMS = 1; // every category in a purchased bundle counts, even a 1-item one --
+// there's no more "customer partially completes a category" concept once
+// bundles (not individual features) are the only way to buy on the frontend.
 const PRICE_MISMATCH_TOLERANCE = 2; // dollars -- absorbs float/rounding slack, not real discrepancies
 
 // Independently recomputes the expected subtotal/bundle-savings/total from

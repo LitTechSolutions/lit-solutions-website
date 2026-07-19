@@ -103,17 +103,17 @@
   --space-7: 48px;
   --focus-ring: 0 0 0 3px color-mix(in srgb, var(--accent-orange) 45%, transparent);
 
-  /* Website Designer mobile sticky estimate bar. --wd-mobile-bar-height
-     is a fallback for the very first paint -- js/website-designer.js
-     overwrites it on documentElement with the bar's real measured
-     offsetHeight (via ResizeObserver) as soon as it's visible, so this
-     stays correct as translated text wraps or the page is zoomed.
-     --wd-mobile-bar-gap is the deliberate minimum breathing room below
+  /* Website Designer sticky price bar (all viewport widths).
+     --wd-price-bar-height is a fallback for the very first paint --
+     js/website-designer.js overwrites it on documentElement with the
+     bar's real measured offsetHeight (via ResizeObserver) as soon as it's
+     visible, so this stays correct as text wraps or the page is zoomed.
+     --wd-price-bar-gap is the deliberate minimum breathing room below
      the bar -- anything anchored to the bottom (page padding, an open
      cookie banner) adds this on top of the real bar height rather than
      just touching it. */
-  --wd-mobile-bar-height: 4.75rem;
-  --wd-mobile-bar-gap: 16px;
+  --wd-price-bar-height: 4.75rem;
+  --wd-price-bar-gap: 16px;
 }
 
 *,*::before,*::after{ box-sizing: border-box; }
@@ -1754,153 +1754,14 @@ textarea{ resize: vertical; }
 }
 .wd-start-over:hover{ color: var(--accent-orange); }
 
-/* ---- Studio workspace: persistent two-column configurator, preview on
-   the left / options on the right, at every viewport width from 320px up
-   -- it never collapses to a single stacked column. Only the relative
-   share of the two columns changes with viewport width (see the
-   max-width:1199px/899px/599px overrides below); minmax(0, Nfr) is what
-   lets either column actually shrink that far without forcing a wider
-   intrinsic content size back onto the row and overflowing the page. */
-.wd-studio{
-  display:grid; grid-template-columns: minmax(0, 62fr) minmax(0, 38fr); gap:1.75rem; align-items:start;
-  margin-bottom: 2rem;
-}
-.wd-studio-preview{ min-width:0; }
-.wd-preview-disclaimer{
-  font-size:.76rem; color: var(--ink-faint); text-align:center; margin:.75rem 0 0; font-style:italic;
-}
+/* Single continuous column: package picker, then (once chosen) bundles,
+   custom add-ons, and the quote form -- all one scroll, matching Apple's
+   own product-configurator pattern (no side-by-side live preview, no
+   swapped steps once you're past package selection). */
+.wd-configurator{ max-width: 640px; margin: 0 auto 2rem; }
 
-/* ---- Mobile Customize/Live Preview mode switch --------------------------
-   Only relevant at or below 900px (see the max-width:900px block further
-   down, which is the only place that sets display:flex on this and hides
-   one of .wd-studio-preview/.wd-sidebar at a time) -- above that, both
-   columns show at once as normal and this tablist stays display:none, so
-   it never affects desktop layout. */
-.wd-mobile-mode-switch{
-  display:none; gap:.5rem; margin-bottom:1rem;
-  background: var(--paper-alt); border:1px solid var(--line); border-radius:999px; padding:.3rem;
-}
-.wd-mobile-mode-tab{
-  flex:1; display:flex; align-items:center; justify-content:center; gap:.4rem;
-  min-height:44px; border:none; border-radius:999px; background:none; cursor:pointer;
-  font-family: var(--font-display); font-size:.82rem; font-weight:700; color: var(--ink-soft);
-}
-.wd-mobile-mode-tab.is-active{ background: var(--navy-deep); color: var(--on-dark); }
-.wd-mobile-mode-tab:focus-visible{ outline:2px solid var(--accent-teal); outline-offset:2px; }
-.wd-mobile-mode-badge{
-  display:inline-block; font-size:.62rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em;
-  color:#fff; background: var(--accent-orange); border-radius:999px; padding:.1rem .4rem; line-height:1.3;
-}
-.wd-mobile-mode-badge[hidden]{ display:none; }
-
-.wd-preview-back-btn{
-  display:none; align-items:center; gap:.4rem; margin-bottom:.9rem;
-  background:none; border:none; padding:0; cursor:pointer;
-  font-family: var(--font-display); font-size:.82rem; font-weight:700; color: var(--accent-teal-text);
-}
-.wd-preview-back-btn::before{ content:"←"; }
-.wd-preview-back-btn:focus-visible{ outline:2px solid var(--accent-teal); outline-offset:2px; }
-
-/* Grid, not flex: the middle row (minmax(0, 1fr)) is a hard guarantee that
-   the scrollable feature list gets 100% of whatever space the header and
-   footer don't need -- down to and including 0 if they ever demand more
-   than the sidebar has, rather than a flex:1 child that can get squeezed to
-   almost nothing while flex-shrink:0 siblings hold their full size. Height
-   is declared twice on purpose: 82vh is the fallback for browsers without
-   dvh support, then 82dvh (dynamic viewport height) overrides it where
-   available, so mobile browser chrome showing/hiding doesn't change how
-   tall this box thinks it is. */
-.wd-sidebar{
-  display:grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; min-width:0;
-  background: var(--paper); border:1px solid var(--line); border-radius: calc(var(--radius) + 4px);
-  box-shadow: 0 14px 34px rgba(20,33,61,0.10);
-  position: sticky; top: 1.5rem;
-  height: 82vh; height: 82dvh; min-height: 520px; max-height: 860px;
-  overflow: hidden;
-}
-
-.wd-sidebar-header{
-  padding:.7rem 1.1rem .55rem; border-bottom:1px solid var(--line);
-  display:flex; flex-direction:column; gap:.5rem; min-width:0;
-}
-.wd-sidebar-scroll{
-  min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch;
-  padding:1.1rem 1.2rem;
-}
-.wd-sidebar-footer{
-  padding:.7rem .9rem; border-top:1px solid var(--line);
-  background: var(--paper-alt); display:flex; flex-direction:column; gap:.5rem;
-}
-
-.wd-main{ min-width:0; }
 .wd-panel{ display:none; }
 .wd-panel.is-active{ display:block; }
-
-/* ---- Feature tabs (Add-ons / Premium / Included) ---- */
-.wd-feature-tabs{ display:flex; gap:.35rem; min-width:0; }
-.wd-feature-tabs[hidden], .wd-feature-toolbar[hidden]{ display:none; }
-.wd-feature-tab{
-  flex:1; min-width:0; background: var(--paper-alt); border:1px solid var(--line); border-radius:999px;
-  padding:.36rem .5rem; font-family: var(--font-display); font-size:.76rem; font-weight:700;
-  color: var(--ink-soft); cursor:pointer; text-align:center; line-height:1.25; overflow-wrap:break-word;
-}
-.wd-feature-tab.is-active{ background: var(--navy-deep); color: var(--on-dark); border-color: var(--navy-deep); }
-.wd-feature-tab:focus-visible{ outline:2px solid var(--accent-teal); outline-offset:2px; }
-
-.wd-feature-toolbar{ display:flex; flex-direction:column; gap:.4rem; min-width:0; }
-.wd-feature-search{
-  display:flex; align-items:center; gap:.5rem; background: var(--paper-alt); border:1px solid var(--line);
-  border-radius:999px; padding:.4rem .8rem; color: var(--ink-faint); min-width:0;
-}
-.wd-feature-search input{
-  border:none; background:none; outline:none; flex:1; font-size:.85rem; color: var(--ink); min-width:0; width:0;
-}
-.wd-feature-search input::-webkit-search-cancel-button{ cursor:pointer; }
-/* Single horizontally-scrolling row instead of a wrapping, internally
-   vertically-scrolled block -- keeps the fixed header's height constant no
-   matter how many categories exist or how long their translated labels run,
-   while every chip stays reachable by dragging/swiping or by Tab (a
-   focused chip that's off-screen is auto-scrolled into view by the
-   browser, the same as any other overflow:auto container). The mask-image
-   fade signals there's more to scroll without needing a visible scrollbar;
-   .is-active keeps the same solid-fill treatment as before so the current
-   category stays obvious regardless of scroll position. */
-.wd-category-chips{
-  display:flex; flex-wrap:nowrap; gap:.4rem; overflow-x:auto; overflow-y:hidden; min-width:0;
-  padding-bottom:.2rem; -webkit-overflow-scrolling:touch; scrollbar-width:thin;
-  mask-image: linear-gradient(to right, transparent, black 12px, black calc(100% - 12px), transparent);
-}
-.wd-category-chip{
-  font-family: var(--font-display); font-size:.7rem; font-weight:600; color: var(--ink-soft); white-space:nowrap;
-  background: var(--paper-alt); border:1px solid var(--line); border-radius:999px; padding:.25rem .7rem;
-  cursor:pointer; flex-shrink:0;
-}
-.wd-category-chip.is-active{ background: var(--select-bg); color: var(--accent-teal-text); border-color: var(--accent-teal); }
-.wd-category-chip:focus-visible{ outline:2px solid var(--accent-teal); outline-offset:2px; }
-.wd-feature-empty-note{ font-size:.85rem; color: var(--ink-faint); text-align:center; padding:1.5rem 0; }
-
-.wd-feature-tab-panel[hidden]{ display:none; }
-.wd-price-ticker-count{ display:block; font-size:.7rem; color: rgba(245,245,244,0.65); margin-top:.2rem; }
-
-/* ---- Mobile sticky estimate bar (below 900px only, see media query) ----
-   bottom uses env(safe-area-inset-bottom) to float the whole bar clear of
-   a device's home indicator, rather than growing the bar's own box with
-   extra padding -- that way its measured height (used elsewhere via
-   --wd-mobile-bar-height) stays just its real content height, and the
-   safe-area inset is only ever accounted for once, in the shared
-   page-padding/cookie-banner calc()s below. */
-.wd-mobile-bar{
-  display:none; position:fixed; left:0; right:0; bottom: env(safe-area-inset-bottom, 0px); z-index:40;
-  align-items:center; justify-content:space-between; gap:1rem;
-  background: var(--paper); border-top:1px solid var(--line); box-shadow: 0 -6px 20px rgba(20,33,61,0.12);
-  padding:.75rem 1rem;
-}
-.wd-mobile-bar-info{ display:flex; flex-direction:column; min-width:0; }
-.wd-mobile-bar-amount{ font-family: var(--font-display); font-size:1.3rem; font-weight:700; color: var(--ink); line-height:1.1; }
-.wd-mobile-bar-meta{ display:flex; align-items:baseline; gap:.4rem; flex-wrap:wrap; }
-.wd-mobile-bar-label{ font-size:.7rem; color: var(--ink-faint); }
-.wd-mobile-bar-count{ font-size:.68rem; color: var(--ink-faint); }
-.wd-mobile-bar .btn{ flex-shrink:0; }
 
 .wd-section-title{ font-size:1.15rem; margin:2rem 0 .3rem; }
 .wd-note{ font-size:.85rem; color: var(--ink-soft); margin-bottom:1rem; }
@@ -1915,87 +1776,53 @@ textarea{ resize: vertical; }
 .wd-included-list li::before{ content:"✓"; position:absolute; left:0; color: var(--accent-teal-text); font-weight:700; }
 @media (max-width:600px){ .wd-included-list{ columns:1; } }
 
-/* Subtle elevation + hover lift -- previously flat (border only), which
-   read noticeably flatter than the sidebar/browser-preview/estimate cards
-   right next to it that already carry a shadow. Matches the lift amount
-   .btn-primary:hover already uses elsewhere, just gentler since this is a
-   much larger, always-visible surface, not a button. */
-.wd-category{
-  margin-bottom:1rem; border:1px solid var(--line); border-radius: var(--radius); overflow:hidden;
-  box-shadow: 0 1px 2px rgba(20,33,61,0.05); transition: box-shadow .2s ease, transform .2s ease, border-color .2s ease;
+/* ---- Bundle tiles: the only way to add priced features now -- each tile
+   is a whole group of related categories at one flat price (see
+   js/website-designer.js's BUNDLE_GROUPS). Selecting one is a single,
+   unambiguous action -- no per-feature checkboxes to manage, and no
+   "before/after discount" framing since the flat price is just the price. */
+.wd-bundle-grid{ display:flex; flex-direction:column; gap:.85rem; margin-bottom:1.5rem; }
+.wd-bundle-tile{
+  position:relative; display:flex; align-items:center; gap:1rem;
+  background: var(--paper); border:1px solid var(--line); border-radius: var(--radius);
+  padding:1.1rem 1.25rem; cursor:pointer;
+  box-shadow: 0 1px 2px rgba(20,33,61,0.05);
+  transition: box-shadow .2s ease, transform .2s ease, border-color .2s ease;
 }
-.wd-category:hover{ box-shadow: 0 6px 16px rgba(20,33,61,0.08); transform: translateY(-1px); border-color: var(--line-strong); }
-@media (prefers-reduced-motion: reduce){ .wd-category, .wd-category:hover{ transition:none; transform:none; } }
-
-/* collapsed-by-default category accordion */
-.wd-category-header{
-  width:100%; display:flex; align-items:center; justify-content:space-between; gap:.75rem;
-  background: var(--paper); border:none; padding:.9rem 1.1rem; cursor:pointer; text-align:left;
-  font-family: inherit; color: inherit; transition: background .15s ease;
-}
-.wd-category-header:hover{ background: var(--paper-alt); }
-.wd-category-header-main{ display:flex; flex-direction:column; gap:.2rem; min-width:0; }
-.wd-category-title{ font-family: var(--font-display); font-size:.8rem; font-weight:700; letter-spacing:.03em; text-transform:uppercase; color: var(--accent-teal-text); }
-.wd-category-summary{ font-size:.78rem; color: var(--ink-faint); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.wd-category-chevron{ width:18px; height:18px; flex-shrink:0; color: var(--ink-faint); transition: transform .18s ease; }
-.wd-category.is-open .wd-category-chevron{ transform: rotate(180deg); }
-.wd-category.is-open .wd-category-header{ border-bottom:1px solid var(--line); }
-
-.wd-category-panel{ padding:1rem 1.1rem 1.1rem; background: var(--paper-alt); }
-
-/* "select the whole category" bundle box -- a separate click target from the accordion toggle */
-.wd-bundle-box{
-  display:flex; flex-wrap:wrap; align-items:center; gap:.5rem .7rem; padding:.75rem 1.1rem; background: var(--select-bg);
-  border-top:1px solid var(--line); border-bottom:1px solid var(--line); cursor:pointer;
-  transition: box-shadow .15s ease;
-}
-.wd-bundle-box:not(.is-active):hover{ box-shadow: inset 0 0 0 1px var(--line-strong); }
-.wd-bundle-box input{ accent-color: var(--select-border); width:17px; height:17px; flex-shrink:0; }
-.wd-bundle-box-main{ display:flex; flex-direction:column; gap:.15rem; flex:1; min-width:0; font-size:.85rem; }
-.wd-bundle-box-price{ font-size:.76rem; color: var(--ink-soft); }
-.wd-bundle-box-price em{ font-style:normal; color: var(--accent-teal-text); font-weight:700; }
-.wd-bundle-now{ font-weight:700; color: var(--ink); }
-.wd-bundle-was{ color: var(--ink-faint); }
-.wd-bundle-box.is-active{ background: var(--select-bg); box-shadow: inset 0 0 0 1px var(--accent-teal); }
-.wd-bundle-savings-badge{
-  font-size:.72rem; font-weight:700; color: var(--accent-teal-text); background: var(--paper);
-  border:1px solid var(--accent-teal); border-radius:999px; padding:.3rem .7rem; flex-shrink:0;
-  max-width:100%; white-space:normal;
-}
-.wd-bundle-savings-badge.wd-pop-in{ animation: wd-pop .3s ease; }
+.wd-bundle-tile:hover{ box-shadow: 0 6px 16px rgba(20,33,61,0.08); transform: translateY(-1px); border-color: var(--line-strong); }
+.wd-bundle-tile.is-selected{ border-color: var(--select-border); box-shadow: inset 0 0 0 1px var(--select-border); background: var(--select-bg); }
+@media (prefers-reduced-motion: reduce){ .wd-bundle-tile, .wd-bundle-tile:hover{ transition:none; transform:none; } }
+.wd-bundle-tile-checkbox{ width:20px; height:20px; flex-shrink:0; accent-color: var(--select-border); }
+.wd-bundle-tile-main{ display:flex; flex-direction:column; gap:.2rem; flex:1; min-width:0; }
+.wd-bundle-tile-name{ font-family: var(--font-display); font-size:.95rem; font-weight:700; color: var(--ink); }
+.wd-bundle-tile-desc{ font-size:.78rem; color: var(--ink-faint); line-height:1.4; }
+.wd-bundle-tile-price{ font-family: var(--font-display); font-size:1.15rem; font-weight:700; color: var(--ink); flex-shrink:0; white-space:nowrap; }
 
 .wd-panel-actions{ display:flex; justify-content:space-between; gap:1rem; margin-top:2rem; padding-top:1.5rem; border-top:1px dashed var(--line); }
 
-/* Feature checkbox pills, scoped to the Website Designer sidebar: a grid
-   (checkbox / label / price) rather than the site-wide .checkbox-pill's
-   flex row, so a long translated feature name can wrap onto a second line
-   without ever pushing the price tag out past the row's own width or
-   letting the row escape its category's border. .checkbox-grid is shared
-   with other pages (e.g. intake.html), so it's overridden here scoped to
-   the sidebar only -- forced to a single column at every width, never the
-   site-wide default's 2-/3-column layout. */
-.wd-sidebar .checkbox-grid{
-  display:grid; grid-template-columns: minmax(0, 1fr); gap:.6rem; width:100%; min-width:0;
+/* ---- Custom Add-Ons: priority-S items, never priced, grouped under
+   their original category as a light label -- same mechanism as before (a
+   plain checkbox that flags interest without affecting the total), just a
+   flat list instead of a per-category accordion. */
+.wd-addon-list{ margin-bottom:1rem; }
+.wd-addon-group{ margin-bottom:1.1rem; }
+.wd-addon-group-title{
+  font-family: var(--font-display); font-size:.72rem; font-weight:700; letter-spacing:.05em;
+  text-transform:uppercase; color: var(--ink-faint); margin:0 0 .5rem;
 }
-.wd-sidebar .wd-feature-pill{
-  display:grid; grid-template-columns: auto minmax(0, 1fr) max-content; gap:.6rem;
-  align-items:center; width:100%; min-width:0; max-width:100%; min-height:44px; box-sizing:border-box;
+.wd-addon-row{
+  display:flex; align-items:center; gap:.6rem; width:100%; min-height:44px; box-sizing:border-box;
+  padding:.5rem .6rem; border-radius: var(--radius); cursor:pointer;
 }
-/* .checkbox-pill (site-wide, see above) already declares a border-color/
-   background transition but no :hover rule at all -- unchecked pills gave
-   zero feedback before a click landed. Scoped here rather than adding
-   :hover to the shared .checkbox-pill class itself, so intake.html and
-   anywhere else that reuses it are untouched. */
-.wd-sidebar .wd-feature-pill:not(:has(input:checked)):hover{ border-color: var(--line-strong); background: var(--paper-alt); }
-.wd-sidebar .wd-feature-pill-label{ min-width:0; overflow-wrap:anywhere; line-height:1.35; }
-.wd-sidebar .wd-price-tag{
+.wd-addon-row:hover{ background: var(--paper-alt); }
+.wd-addon-row-title{ flex:1; min-width:0; font-size:.85rem; color: var(--ink); overflow-wrap:anywhere; }
+.wd-price-tag{
   font-family: var(--font-display); font-size:.72rem; font-weight:700; color: var(--accent-teal-text);
-  background: var(--select-bg); border-radius:999px; padding:.15rem .55rem;
-  white-space:nowrap; justify-self:end;
+  background: var(--select-bg); border-radius:999px; padding:.15rem .55rem; white-space:nowrap; flex-shrink:0;
 }
-.wd-sidebar .wd-price-tag--quote{ color: var(--accent-orange-text); background:var(--notice-bg-strong); }
+.wd-price-tag--quote{ color: var(--accent-orange-text); background:var(--notice-bg-strong); }
 
-.wd-bizname-field{ display:flex; flex-direction:column; gap:.25rem; min-width:0; }
+.wd-bizname-field{ display:flex; flex-direction:column; gap:.25rem; min-width:0; margin-bottom:1.1rem; }
 .wd-bizname-field .wd-note{ margin:0; }
 .wd-bizname-field label{ font-family: var(--font-display); font-size:.7rem; font-weight:700; letter-spacing:.03em; text-transform:uppercase; color: var(--ink-faint); }
 .wd-bizname-field input{
@@ -2003,21 +1830,29 @@ textarea{ resize: vertical; }
   background: var(--paper); color: var(--ink); width:100%; box-sizing:border-box;
 }
 
-/* Compact persistent footer: a single dark card holding the estimate
-   (label/amount/note/count/savings, all stacked tight) beside the "Review &
-   submit" button -- side by side wherever the sidebar is wide enough for
-   both, per the same row-with-a-button pattern the mobile sticky bar
-   already uses. This whole card, plus its border-top spacing, is the
-   footer's entire content now (PDF download and the full itemized
-   breakdown both moved to the review step), which is what keeps its total
-   height in the ~90-130px range instead of the ~300px it hit when it also
-   carried the full cost breakdown and two full-width buttons. */
-.wd-footer-summary{
-  display:flex; align-items:center; justify-content:space-between; gap:.8rem;
-  background: var(--navy-deep); color: var(--on-dark); border-radius: var(--radius); padding:.7rem .9rem;
+/* ---- Sticky price bar: one persistent bottom bar at every viewport
+   width, replacing the old desktop sidebar-footer + separate mobile bar.
+   Fixed + centered via left:50%/translateX rather than a full-width
+   edge-to-edge bar, so it reads as a compact floating CTA card rather
+   than a second page-width toolbar. bottom uses env(safe-area-inset-bottom)
+   to float clear of a device's home indicator, rather than growing the
+   bar's own box with extra padding -- that way its measured height (used
+   elsewhere via --wd-price-bar-height) stays just its real content
+   height, and the safe-area inset is only ever accounted for once, in the
+   shared page-padding/cookie-banner calc()s below. */
+.wd-price-bar{
+  position:fixed; left:50%; transform:translateX(-50%); bottom: env(safe-area-inset-bottom, 0px); z-index:40;
+  width:min(100% - 2.5rem, 640px);
+  display:flex; align-items:center; justify-content:space-between; gap:1rem;
+  background: var(--navy-deep); color: var(--on-dark);
+  border-radius: var(--radius) var(--radius) 0 0;
+  box-shadow: 0 -6px 24px rgba(20,33,61,0.18);
+  padding:.85rem 1.1rem;
 }
-.wd-footer-summary-info{ display:flex; flex-direction:column; min-width:0; text-align:left; }
-.wd-footer-summary .btn{ flex-shrink:0; }
+.wd-price-bar[hidden]{ display:none; }
+.wd-price-bar-info{ display:flex; flex-direction:column; min-width:0; text-align:left; }
+.wd-price-bar .btn{ flex-shrink:0; }
+.wd-price-ticker-count{ display:block; font-size:.7rem; color: rgba(245,245,244,0.65); margin-top:.2rem; }
 .wd-price-ticker-label{ display:block; font-family: var(--font-display); font-size:.65rem; letter-spacing:.05em; text-transform:uppercase; color: var(--accent-teal); }
 .wd-price-ticker-amount{ display:block; font-family: var(--font-display); font-size:1.5rem; font-weight:700; line-height:1.15; transition: color .2s ease; }
 .wd-price-ticker-amount.wd-price-pulse{ animation: wd-pulse .4s ease; }
@@ -2025,10 +1860,9 @@ textarea{ resize: vertical; }
 .wd-price-ticker-savings{ display:block; font-size:.7rem; font-weight:700; color: var(--accent-teal); }
 .wd-price-ticker-note{ display:block; font-size:.68rem; color: rgba(245,245,244,0.65); }
 
-/* Step 3's own price recap -- the sidebar ticker already shows this, but
-   it can scroll out of view (or sit below the fold on mobile) by the time
-   someone reaches the quick-quote step, so the number is restated clearly
-   right above the submit button, not just implied by the sidebar. */
+/* The quote step's own price recap -- the sticky price bar already shows
+   this number, but it's easy to lose track of on a longer scroll, so it's
+   restated clearly right above the submit button too. */
 .wd-quote-recap{
   background: var(--navy-deep); color: var(--on-dark); border-radius: var(--radius);
   padding:1.4rem 1.5rem; text-align:center; margin-bottom:1.5rem;
@@ -2050,162 +1884,9 @@ textarea{ resize: vertical; }
 }
 .wd-heroes-toggle input{ accent-color: var(--select-border); width:15px; height:15px; flex-shrink:0; margin-top:.15rem; }
 .wd-heroes-toggle a{ color: var(--accent-teal-text); text-decoration:underline; }
-/* Lives at the end of the scrollable feature list now (not the persistent
-   footer) -- it no longer competes with the feature checkboxes for the
-   sidebar's fixed height, so that area gets its full share of room. A top
-   margin separates it from whichever panel happens to be showing above it. */
-.wd-heroes-toggle--inline{ margin-top:1.25rem; }
+.wd-heroes-toggle--inline{ margin: 1.5rem 0; }
 
 .wd-pdf-error{ color: var(--error-text); font-size:.8rem; font-weight:600; margin-top:.6rem; }
-
-.wd-browser{ background: var(--paper-alt); border:1px solid var(--line); border-radius: var(--radius); overflow:hidden; box-shadow: 0 10px 26px rgba(20,33,61,0.08); }
-.wd-browser-chrome{ display:flex; align-items:center; gap:.4rem; padding:.6rem .8rem; background: var(--paper); border-bottom:1px solid var(--line); }
-.wd-browser-dot{ width:8px; height:8px; border-radius:50%; background: var(--line-strong); display:inline-block; }
-.wd-browser-url{
-  margin-left:.6rem; font-family: var(--font-display); font-size:.72rem; color: var(--ink-faint);
-  background: var(--paper-alt); border:1px solid var(--line); border-radius:999px; padding:.2rem .7rem; flex:1;
-  min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
-}
-.wd-browser-viewport{ min-height:420px; max-height:76vh; overflow-y:auto; padding:1.2rem; }
-.wd-browser-empty{ text-align:center; padding:2.5rem 1rem; color: var(--ink-faint); }
-.wd-browser-empty-icon{ font-size:1.8rem; display:block; margin-bottom:.5rem; }
-.wd-browser-empty p{ font-size:.82rem; margin:0; }
-
-/* Non-visual/technical capabilities (backups, SEO, auth, analytics,
-   security...) get a small strip of tasteful indicator chips in the
-   browser chrome instead of a fake full-page content section -- they're
-   not something a visitor would ever see as its own page. */
-.wd-browser-capabilities{ display:flex; flex-wrap:wrap; gap:.35rem; padding:0 .8rem; }
-.wd-browser-capabilities:not(:empty){ padding:.5rem .8rem; border-bottom:1px solid var(--line); background: var(--paper-alt); }
-
-.wd-preview-base{ display:flex; flex-direction:column; gap:1.1rem; }
-.wd-preview-base[hidden]{ display:none; }
-
-.wd-preview-nav{ display:flex; flex-wrap:wrap; gap:.4rem; padding-bottom:.8rem; border-bottom:1px dashed var(--line); }
-.wd-preview-nav-pill{
-  font-size:.68rem; font-weight:600; color: var(--ink-soft); background: var(--paper); border:1px solid var(--line);
-  border-radius:999px; padding:.2rem .6rem; animation: wd-pop .25s ease;
-}
-.wd-preview-nav-pill--base{ background: var(--paper-alt); animation:none; }
-
-.wd-preview-hero-mock{
-  text-align:center; padding:1.6rem 1rem; border-radius: var(--radius);
-  background: linear-gradient(180deg, var(--select-bg), var(--paper));
-}
-.wd-preview-hero-mock-name{ font-family: var(--font-display); font-size:.72rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color: var(--accent-teal-text); margin-bottom:.5rem; }
-.wd-preview-hero-mock-headline{ font-size:1.15rem; font-weight:700; color: var(--ink); margin-bottom:.9rem; line-height:1.35; }
-.wd-preview-hero-mock-cta{
-  display:inline-block; font-family: var(--font-display); font-size:.78rem; font-weight:700; color: var(--on-dark);
-  background: var(--accent-orange); border-radius:999px; padding:.55rem 1.3rem;
-}
-
-.wd-preview-services-mock{ display:grid; grid-template-columns: repeat(3, 1fr); gap:.7rem; }
-.wd-preview-services-mock-item{
-  display:flex; flex-direction:column; align-items:center; gap:.5rem; text-align:center; font-size:.72rem;
-  color: var(--ink-soft); background: var(--paper); border:1px solid var(--line); border-radius: var(--radius);
-  padding:.9rem .5rem;
-}
-
-.wd-preview-about-mock{
-  font-size:.8rem; color: var(--ink-soft); text-align:center; padding:.9rem 1rem;
-  border:1px dashed var(--line); border-radius: var(--radius);
-}
-.wd-preview-about-mock p{ margin:0; }
-
-.wd-preview-footer-mock{
-  display:flex; align-items:center; justify-content:center; gap:.4rem; font-size:.72rem; color: var(--ink-faint);
-  padding-top:.9rem; border-top:1px solid var(--line);
-}
-.wd-preview-footer-mock-dot{ opacity:.5; }
-
-.wd-preview-sections{ display:flex; flex-direction:column; gap:.6rem; }
-.wd-preview-card{
-  display:flex; align-items:flex-start; gap:.6rem; background: var(--paper); border:1px solid var(--line);
-  border-radius: var(--radius); padding:.7rem .8rem; font-size:.8rem;
-  transition: opacity .22s ease, transform .22s ease, max-height .22s ease;
-  max-height:240px; opacity:1; transform: translateY(0) scale(1);
-}
-.wd-preview-card-icon{ font-size:1.2rem; line-height:1; flex-shrink:0; }
-.wd-preview-card-body{ display:flex; flex-direction:column; gap:.45rem; min-width:0; flex:1; }
-.wd-preview-card-body strong{ display:block; color: var(--ink); }
-.wd-preview-card-body p{ margin:0; color: var(--ink-soft); font-size:.76rem; }
-.wd-preview-card.wd-entering{ opacity:0; transform: translateY(10px) scale(.97); }
-.wd-preview-card.wd-leaving{ opacity:0; transform: translateY(-6px) scale(.96); max-height:0; padding-top:0; padding-bottom:0; margin:0; overflow:hidden; }
-@keyframes wd-pop{ 0%{ transform: scale(.7); opacity:0; } 60%{ transform: scale(1.08); opacity:1; } 100%{ transform: scale(1); } }
-
-/* ---- Mini mockup graphics inside preview cards -- CSS-only, no assets ---- */
-.wd-mock-page{ display:flex; flex-direction:column; gap:.3rem; }
-.wd-mock-page span{ display:block; height:7px; border-radius:3px; background: var(--line-strong); }
-.wd-mock-page span.wd-mock-line-short{ width:55%; }
-
-.wd-mock-blogcard{ display:flex; align-items:center; gap:.6rem; }
-.wd-mock-blogcard-text{ display:flex; flex-direction:column; gap:.2rem; min-width:0; }
-.wd-mock-blogcard-text b{ font-size:.76rem; color: var(--ink); font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.wd-mock-blogcard-text small{ font-size:.68rem; color: var(--ink-faint); }
-
-.wd-mock-swatch{ display:inline-block; width:34px; height:34px; border-radius:6px; flex-shrink:0; }
-.wd-mock-swatch--a{ background: var(--accent-teal); opacity:.55; }
-.wd-mock-swatch--b{ background: var(--accent-orange); opacity:.5; }
-.wd-mock-swatch--c{ background: var(--navy-deep); opacity:.35; }
-.wd-mock-swatch--d{ background: var(--accent-teal); opacity:.3; }
-
-.wd-mock-grid-4{ display:grid; grid-template-columns: repeat(4, 1fr); gap:.35rem; max-width:220px; }
-.wd-mock-grid-4 .wd-mock-swatch{ width:100%; height:28px; }
-
-.wd-mock-faq{ display:flex; flex-direction:column; gap:.35rem; }
-.wd-mock-faq-row{ display:flex; align-items:center; gap:.4rem; font-size:.75rem; color: var(--ink-soft); }
-.wd-mock-faq-plus{
-  width:16px; height:16px; border-radius:50%; background: var(--select-bg); color: var(--accent-teal-text);
-  font-weight:700; font-size:.7rem; display:flex; align-items:center; justify-content:center; flex-shrink:0;
-}
-
-.wd-mock-quote{ font-style:italic; font-size:.78rem; color: var(--ink-soft); }
-.wd-mock-stars{ color: var(--accent-orange); font-size:.85rem; letter-spacing:.1em; }
-
-.wd-mock-row{ display:flex; align-items:center; gap:.5rem; }
-.wd-mock-avatars .wd-mock-avatar{
-  width:30px; height:30px; border-radius:50%; background: var(--select-bg); color: var(--accent-teal-text);
-  display:flex; align-items:center; justify-content:center; font-size:.85rem;
-}
-
-.wd-mock-pricing .wd-mock-bar{
-  display:flex; align-items:flex-end; justify-content:center; width:32px; height:26px; border-radius:4px 4px 0 0;
-  background: var(--select-bg); color: var(--accent-teal-text); font-size:.65rem; font-weight:700; padding-bottom:.2rem;
-}
-.wd-mock-pricing .wd-mock-bar--tall{ height:38px; background: var(--accent-teal); color: var(--on-dark); opacity:.85; }
-
-.wd-mock-icons .wd-mock-icon-shape{ width:20px; height:20px; background: var(--accent-teal); opacity:.6; flex-shrink:0; }
-.wd-mock-icon-shape--circle{ border-radius:50%; }
-.wd-mock-icon-shape--square{ border-radius:4px; background: var(--accent-orange); }
-.wd-mock-icon-shape--diamond{ transform: rotate(45deg); border-radius:3px; }
-.wd-mock-icon-shape--dot{ border-radius:50%; width:12px; height:12px; align-self:center; background: var(--navy-deep); opacity:.4; }
-
-.wd-mock-sitemap{ display:flex; flex-direction:column; gap:.25rem; font-size:.76rem; color: var(--ink-soft); }
-.wd-mock-sitemap .wd-mock-indent{ padding-left:1rem; }
-
-.wd-mock-form{ display:flex; align-items:center; gap:.5rem; }
-.wd-mock-input{ flex:1; max-width:140px; height:22px; border-radius:5px; background: var(--paper-alt); border:1px solid var(--line-strong); }
-.wd-mock-btn{
-  font-size:.68rem; font-weight:700; color: var(--on-dark); background: var(--accent-orange);
-  border-radius:5px; padding:.3rem .6rem; flex-shrink:0;
-}
-
-.wd-mock-map{
-  position:relative; width:100%; max-width:180px; height:54px; border-radius:6px; overflow:hidden;
-  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
-  background-size:14px 14px; background-color: var(--paper-alt); border:1px solid var(--line);
-}
-.wd-mock-pin{ position:absolute; top:50%; left:50%; transform: translate(-50%,-60%); font-size:1.1rem; }
-
-.wd-mock-calendar{ display:grid; grid-template-columns: repeat(7, 1fr); gap:.25rem; max-width:180px; }
-.wd-mock-calendar span{ display:block; aspect-ratio:1; border-radius:3px; background: var(--select-bg); }
-.wd-mock-calendar-selected{ background: var(--accent-teal) !important; }
-
-.wd-badge-chip{
-  font-size:.68rem; font-weight:600; color: var(--accent-teal-text); background: var(--select-bg);
-  border:1px solid var(--select-border); border-radius:999px; padding:.25rem .65rem; animation: wd-pop .25s ease;
-}
-.wd-badge-chip--locked{ color: var(--accent-orange-text); background:var(--notice-bg-strong); border-color: var(--accent-orange); }
 
 .wd-cost-breakdown{ background: var(--paper-alt); border:1px solid var(--line); border-radius: var(--radius); padding:1rem 1.2rem; }
 .wd-cost-row{ display:flex; justify-content:space-between; gap:.5rem; font-size:.82rem; padding:.4rem 0; border-bottom:1px solid var(--line); }
@@ -2222,9 +1903,7 @@ textarea{ resize: vertical; }
 @media (max-width:920px){
   .wd-tool{ padding: 2rem 0 3.5rem; }
 
-  /* Horizontally-scrollable step tabs instead of wrapping/overflowing --
-     translated labels (15 languages) can run long enough to overflow a
-     narrow viewport otherwise. */
+  /* Horizontally-scrollable step tabs instead of wrapping/overflowing. */
   .wd-steps{
     flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch;
     padding-bottom:.35rem; margin-left:-4px; padding-left:4px;
@@ -2232,93 +1911,19 @@ textarea{ resize: vertical; }
   .wd-step{ flex-shrink:0; padding:.85rem .35rem; }
 
   /* Comfortable tap targets for the tool's checkboxes on touch devices. */
-  .wd-tool .checkbox-pill input,
-  .wd-heroes-toggle input,
-  .wd-bundle-box input{ width:20px; height:20px; }
-
-  /* 44px minimum interactive targets on touch devices. */
-  .wd-feature-tab{ min-height:44px; }
-  .wd-category-chip{ min-height:44px; padding-top:0; padding-bottom:0; display:inline-flex; align-items:center; }
+  .wd-tool .checkbox-pill input, .wd-heroes-toggle input{ width:20px; height:20px; }
 }
 
-/* ---- Studio responsive column proportions (900px and above only) -----
-   Preview stays on the left and options stay on the right, only the share
-   each column gets narrows as the viewport does -- down to 900px. Below
-   900px this stops being a two-column layout at all (see the
-   max-width:900px block below, which switches to the Customize/Live
-   Preview mode-switch instead of continuing to narrow the split into an
-   unusable sliver). */
-@media (max-width:1199px){
-  .wd-studio{ grid-template-columns: minmax(0, 52fr) minmax(0, 48fr); }
+/* padding-bottom on the body (via .has-price-bar, JS-set once a package is
+   chosen) keeps the real site footer and cookie notice from being covered
+   by the fixed price bar -- applies at every viewport width now, since the
+   bar itself is no longer mobile-only. Real bar height is synced by a
+   ResizeObserver in js/website-designer.js. */
+body.has-price-bar{
+  padding-bottom: calc(var(--wd-price-bar-height) + env(safe-area-inset-bottom, 0px) + var(--wd-price-bar-gap));
 }
-
-/* ---- 900px and below: full-width Customize / Live Preview mode switch --
-   Squeezing both columns side by side stopped being usable well before
-   phone width -- at 390px wide, a 40/60 split left ~97px for the preview
-   and ~225px for options, truncating tab labels and leaving ~257px of
-   actual vertical room for the feature list. Below 900px the two columns
-   stop being simultaneous: .wd-studio becomes a single full-width block,
-   the mode-switch tablist (hidden above 900px) appears, and JS
-   (js/website-designer.js, setMobileMode()) toggles a data-mobile-mode
-   attribute on #wdStudio that this stylesheet uses to show exactly one of
-   .wd-studio-preview / .wd-sidebar at a time -- both keep their normal
-   full internal markup, nothing is reduced to a thumbnail. */
-@media (max-width:900px){
-  .wd-studio{ display:block; }
-  .wd-mobile-mode-switch{ display:flex; }
-  .wd-studio[data-mobile-mode="customize"] .wd-studio-preview{ display:none; }
-  .wd-studio[data-mobile-mode="preview"] .wd-sidebar{ display:none; }
-  .wd-preview-back-btn{ display:inline-flex; }
-
-  /* Live Preview mode: full width now (not a squeezed side column), so the
-     browser frame gets real room -- but the purely decorative filler (3
-     fake service cards, a fake about blurb, a fake footer line) still
-     isn't part of the spec's "must include" list for this mode (frame,
-     business name/domain, nav, hero, selected sections, capability
-     indicators, back button), so it stays hidden in favor of keeping the
-     mode focused on what's actually functional. */
-  .wd-preview-services-mock, .wd-preview-about-mock, .wd-preview-footer-mock{ display:none; }
-
-  /* Customize mode: sidebar becomes the full-width primary view instead of
-     a sticky side column. Its own header/scroll/footer grid rows are kept
-     (compact header, one deliberate scrolling feature-list region per
-     the spec, rather than switching to page-level scroll and losing the
-     simple "scrollTop survives being hidden" trick that scroll-position
-     preservation across mode switches relies on) -- just resized to fill
-     real vertical room now that it isn't sharing the row with a preview
-     column. position:static instead of sticky: this is now the primary
-     mobile view, not a side panel racing the page's own scroll. */
-  .wd-sidebar{
-    position:static; height:70vh; height:70dvh; min-height:420px; max-height:720px;
-  }
-  /* One compact estimate control, not two: the sidebar's own desktop-style
-     footer card is replaced by the fixed .wd-mobile-bar below (same one
-     used site-wide at narrow widths already) so there's never a duplicate
-     price/CTA on screen at once. */
-  .wd-sidebar-footer{ display:none; }
-  .wd-mobile-bar.is-visible{ display:flex; }
-  /* padding-bottom on the body (via .has-mobile-bar, JS-set alongside the
-     bar) keeps the real site footer and cookie notice from being covered
-     by the fixed bar at the very bottom of the page -- same calc() used
-     the last time this bar was live: real bar height (synced by a
-     ResizeObserver in js/website-designer.js) plus the safe-area inset it
-     floats above, plus a deliberate minimum 16px breathing room. */
-  body.has-mobile-bar{
-    padding-bottom: calc(var(--wd-mobile-bar-height) + env(safe-area-inset-bottom, 0px) + var(--wd-mobile-bar-gap));
-  }
-  body.has-mobile-bar .cookie-banner{
-    margin-bottom: calc(var(--wd-mobile-bar-height) + env(safe-area-inset-bottom, 0px) + var(--wd-mobile-bar-gap));
-  }
-
-  /* Tighter padding throughout so more of the full-width column is actual
-     content instead of whitespace, without dropping below 44px on
-     anything tappable. */
-  .wd-sidebar-header{ padding:.6rem .8rem .5rem; }
-  .wd-sidebar-scroll{ padding:.8rem .9rem; }
-  .wd-category-header{ padding:.75rem .85rem; min-height:44px; }
-  .wd-category-panel{ padding:.8rem .85rem .9rem; }
-  .wd-feature-search{ padding:.4rem .7rem; }
-  .wd-bundle-box{ padding:.65rem .85rem; }
+body.has-price-bar .cookie-banner{
+  margin-bottom: calc(var(--wd-price-bar-height) + env(safe-area-inset-bottom, 0px) + var(--wd-price-bar-gap));
 }
 
 @media (max-width:600px){
@@ -2330,38 +1935,10 @@ textarea{ resize: vertical; }
   .page-hero{ padding: 1.75rem 0 1.25rem; }
   .page-hero h1{ font-size: clamp(1.5rem, 6vw, 1.9rem); }
   .wd-tool{ padding-top:1.25rem; }
-
-  .wd-preview-hero-mock{ padding:.9rem .6rem; }
-  .wd-preview-hero-mock-cta{ padding:.5rem 1.1rem; font-size:.74rem; }
-  .wd-browser-viewport{ padding:.6rem; }
-  .wd-sidebar-header{ padding:.55rem .7rem .45rem; }
-  .wd-sidebar-scroll{ padding:.7rem .75rem; }
-}
-
-/* Below ~400px there generally isn't room for checkbox + label + price
-   all on one row without crushing the label -- drop the price to its own
-   line under the label instead of shrinking any text. The checkbox column
-   spans both rows (grid-row via the "checkbox" area appearing in both
-   template rows) so it stays put beside the label, not centered across
-   the taller combined block. */
-@media (max-width:400px){
-  .wd-sidebar .wd-feature-pill{
-    grid-template-columns: auto minmax(0, 1fr);
-    grid-template-areas: "checkbox label" "checkbox price";
-    row-gap:.15rem;
-  }
-  .wd-sidebar .wd-feature-pill input{ grid-area: checkbox; align-self:start; margin-top:.15rem; }
-  .wd-sidebar .wd-feature-pill-label{ grid-area: label; }
-  .wd-sidebar .wd-price-tag{ grid-area: price; justify-self:start; }
 }
 
 @media (prefers-reduced-motion: reduce){
   .wd-price-ticker-amount.wd-price-pulse{ animation:none; }
-  .wd-preview-nav-pill, .wd-badge-chip{ animation:none; }
-  .wd-preview-card{ transition:none; }
-  .wd-preview-card.wd-entering, .wd-preview-card.wd-leaving{ opacity:1; transform:none; }
-  .wd-category-chevron{ transition:none; }
-  .wd-bundle-savings-badge.wd-pop-in{ animation:none; }
 }
 
 /* ---- website-project-brief.html (standalone worksheet, opened in a new
