@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const includedSummary = document.getElementById('wdIncludedSummary');
   const includedTitle = document.getElementById('wdIncludedTitle');
   const bundleTilesContainer = document.getElementById('wdBundleTiles');
-  const addOnsContainer = document.getElementById('wdCustomAddOns');
+  const customRequestEl = document.getElementById('wdCustomRequest');
   const quickForm = document.getElementById('wdQuickForm');
   const quickFormStatus = document.getElementById('wdQuickFormStatus');
   const doneMessageEl = document.getElementById('wdDoneMessage');
@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // catalog/form structure that's since changed.
   const WD_DRAFT_KEY = 'lts-wd-draft';
   const WD_DRAFT_VERSION = 3; // bumped: bundle-only selection model replaces individual-feature checkboxes
-  const QUICK_FORM_FIELD_IDS = ['wdBusinessName', 'wdName', 'wdEmail', 'wdPhone', 'wdPreferredContact'];
+  const QUICK_FORM_FIELD_IDS = ['wdBusinessName', 'wdName', 'wdEmail', 'wdPhone', 'wdPreferredContact', 'wdCustomRequest'];
   let saveDraftTimer = null;
 
   function collectFieldValues(ids) {
@@ -312,12 +312,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return cat ? cat.items.filter(i => i.priority === 'C').map(i => ({ ...i, category })) : [];
   }
 
-  function categorySItems(category) {
-    if (!state.catalog) return [];
-    const cat = state.catalog.categories.find(c => c.category === category);
-    return cat ? cat.items.filter(i => i.priority === 'S').map(i => ({ ...i, category })) : [];
-  }
-
   function groupCItems(group) {
     return group.categories.flatMap(categoryCItems);
   }
@@ -404,39 +398,6 @@ document.addEventListener('DOMContentLoaded', () => {
     saveDraft();
   }
 
-  // ---- Custom Add-Ons (priority-S items -- never priced, always "custom
-  // quote"; flags interest for the lead without affecting the total) ------
-
-  function renderCustomAddOns() {
-    addOnsContainer.innerHTML = '';
-    state.catalog.categories.forEach(cat => {
-      const items = categorySItems(cat.category);
-      if (!items.length) return;
-      const group = document.createElement('div');
-      group.className = 'wd-addon-group';
-      const heading = document.createElement('h3');
-      heading.className = 'wd-addon-group-title';
-      heading.textContent = tCatCategory(cat.category);
-      group.appendChild(heading);
-      items.forEach(i => {
-        const row = document.createElement('label');
-        row.className = 'wd-addon-row';
-        row.innerHTML = `
-          <input type="checkbox" data-priority="S" data-title="${escHtml(i.title)}" data-price="" data-category="${escHtml(cat.category)}" value="${escHtml(i.pdf_label)}">
-          <span class="wd-addon-row-title">${escHtml(tCatItem(i.title))}</span>
-          <span class="wd-price-tag wd-price-tag--quote">${escHtml(tDyn('cost_row_quote', 'Custom quote'))}</span>`;
-        row.querySelector('input').addEventListener('change', onAddOnToggle);
-        group.appendChild(row);
-      });
-      addOnsContainer.appendChild(group);
-    });
-  }
-
-  function onAddOnToggle() {
-    updatePriceAndBreakdown();
-    saveDraft();
-  }
-
   // ---- Pricing ------------------------------------------------------------
 
   function selectedInputs(priority) {
@@ -472,14 +433,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updatePriceAndBreakdown() {
-    const premiumSel = selectedInputs('S');
     const selectedGroups = selectedBundleGroups();
     const subtotal = computeSubtotal();
     const total = computeTotal();
     const heroes = heroesEligible();
     animatePrice(total);
 
-    const selectedCount = selectedGroups.length + premiumSel.length;
+    const selectedCount = selectedGroups.length;
     const countText = selectedCount === 1
       ? tDyn('feature_count_one', '1 item selected')
       : fillTemplate(tDyn('feature_count_many', '{{count}} items selected'), { count: selectedCount });
@@ -500,15 +460,9 @@ document.addEventListener('DOMContentLoaded', () => {
       priceSavingsEl.hidden = true;
     }
 
-    let note = heroes
+    priceNoteEl.textContent = heroes
       ? tDyn('note_starting_price_with_heroes', 'Starting price -- Heroes Discount applied (pending confirmation)')
       : tDyn('note_starting_price', 'Starting price');
-    if (premiumSel.length) {
-      note += premiumSel.length === 1
-        ? tDyn('note_excludes_one', ' -- excludes 1 custom-quote item')
-        : fillTemplate(tDyn('note_excludes_many', ' -- excludes {{count}} custom-quote items'), { count: premiumSel.length });
-    }
-    priceNoteEl.textContent = note;
 
     const baseLabel = tDyn(state.package === 'business' ? 'cost_row_base_business' : 'cost_row_base_starter', state.package === 'business' ? 'Business base' : 'Starter base');
     let html = `<div class="wd-cost-row wd-cost-row--base"><span>${escHtml(baseLabel)}</span><strong>${fmtMoney(state.basePrice)}</strong></div>`;
@@ -518,14 +472,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (heroes) {
       const heroesLabel = tDyn('cost_row_heroes', 'American Heroes Discount (15%, pending confirmation)');
       html += `<div class="wd-cost-row wd-cost-row--discount"><span>${escHtml(heroesLabel)}</span><strong>-${fmtMoney(subtotal - total)}</strong></div>`;
-    }
-    if (premiumSel.length) {
-      const quoteDividerLabel = tDyn('cost_row_quote_divider', 'Custom-quote add-ons');
-      const quoteLabel = tDyn('cost_row_quote', 'Custom quote');
-      html += `<div class="wd-cost-row wd-cost-row--divider"><span>${escHtml(quoteDividerLabel)}</span></div>`;
-      premiumSel.forEach(el => {
-        html += `<div class="wd-cost-row wd-cost-row--quote"><span>${escHtml(tCatItem(el.dataset.title))}</span><strong>${escHtml(quoteLabel)}</strong></div>`;
-      });
     }
     if (quoteRecapBreakdownEl) quoteRecapBreakdownEl.innerHTML = html;
     downloadBtn.hidden = false;
@@ -545,7 +491,6 @@ document.addEventListener('DOMContentLoaded', () => {
         state.basePrice = data.base_price;
         renderIncludedSummary();
         renderBundleTiles();
-        renderCustomAddOns();
         if (draft) applyDraft(draft);
         updatePriceAndBreakdown();
         if (!draft) saveDraft();
@@ -665,6 +610,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (state.package) updatePriceAndBreakdown();
     saveDraft();
   });
+  customRequestEl?.addEventListener('input', saveDraft);
 
   reviewSubmitBtn?.addEventListener('click', () => {
     const target = document.getElementById('wdStep3Heading');
@@ -681,7 +627,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const bundlesTotal = computeBundlesTotal();
     return {
       optionalSelected: selectedInputs('C').map(el => ({ title: el.dataset.title, price: Number(el.dataset.price) || 0 })),
-      premiumSelected: selectedInputs('S').map(el => el.dataset.title),
+      customRequest: (customRequestEl?.value || '').trim(),
       heroesDiscount: heroesEligible(),
       bundledCategories: bundledCategories(),
       // Derived from the same flat bundle prices shown on screen (not a
@@ -704,7 +650,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // js/website-project-brief.js, which builds its own richer payload once
   // the customer has filled that in on the worksheet).
   function pdfPayloadFromState() {
-    const { optionalSelected, premiumSelected, heroesDiscount, bundledCategories: bundled, bundleSavings, selectedBundles } = selectionPayload();
+    const { optionalSelected, customRequest, heroesDiscount, bundledCategories: bundled, bundleSavings, selectedBundles } = selectionPayload();
     const total = computeTotal();
     const subtotal = computeSubtotal();
     return {
@@ -717,7 +663,7 @@ document.addEventListener('DOMContentLoaded', () => {
       packageLabel: state.package === 'business' ? 'Business package -- $1,299 starting' : 'Starter package -- $699 starting',
       basePrice: state.basePrice,
       includedCapabilities: includedSummaryItems(state.package),
-      optionalSelected, premiumSelected,
+      optionalSelected, customRequest,
       bundledCategories: bundled, bundleSavings, selectedBundles,
       heroesDiscount, heroesDiscountAmount: heroesDiscount ? subtotal - total : 0,
       subtotal, total,
@@ -757,7 +703,7 @@ document.addEventListener('DOMContentLoaded', () => {
       submitBtn.disabled = true;
       quickFormStatus.textContent = tDyn('status_sending_quote', 'Sending your quote request...');
 
-      const { optionalSelected, premiumSelected, heroesDiscount, bundledCategories: bundled, bundleSavings } = selectionPayload();
+      const { optionalSelected, customRequest, heroesDiscount, bundledCategories: bundled, bundleSavings } = selectionPayload();
       const customerName = document.getElementById('wdName').value;
       const email = document.getElementById('wdEmail').value;
       const phone = document.getElementById('wdPhone').value;
@@ -773,7 +719,7 @@ document.addEventListener('DOMContentLoaded', () => {
         heroesDiscount,
         bundledCategories: bundled,
         bundleSavings: Math.round(bundleSavings),
-        optionalSelected, premiumSelected,
+        optionalSelected, customRequest,
       };
 
       fetch('/.netlify/functions/website-designer', {

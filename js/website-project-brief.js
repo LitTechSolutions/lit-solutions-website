@@ -49,22 +49,21 @@ document.addEventListener('DOMContentLoaded', () => {
     pricing: ['Pricing page'],
     booking: ['Online Booking Request Form'],
     newsletter: ['Newsletter signup'],
-    sms: ['SMS / text notifications'],
   };
   // Conditional sections that are actually required (carry a "*" in their
   // label) once triggered -- gallery/newsletter stay optional even when shown.
-  const REQUIRED_CONDITIONAL_KEYS = ['staff', 'testimonials', 'faq', 'blog', 'pricing', 'booking', 'sms'];
+  const REQUIRED_CONDITIONAL_KEYS = ['staff', 'testimonials', 'faq', 'blog', 'pricing', 'booking'];
   const ALWAYS_REQUIRED_IDS = ['wdBizDescription', 'wdBizIndustry', 'wdServiceArea', 'wdServicesList'];
   const CONDITIONAL_FIELD_IDS = {
     staff: 'wdBriefStaff', testimonials: 'wdBriefTestimonials', faq: 'wdBriefFaq', blog: 'wdBriefBlog',
     gallery: 'wdBriefGallery', pricing: 'wdBriefPricing', booking: 'wdBriefBooking',
-    newsletter: 'wdBriefNewsletter', sms: 'wdBriefSms',
+    newsletter: 'wdBriefNewsletter',
   };
   const DRAFT_FIELD_IDS = [
     'wdDomain', 'wdDesiredDomain', 'wdBizDescription', 'wdBizIndustry', 'wdServiceArea', 'wdServicesList',
     'wdBrandColors', 'wdStyleReferences', 'wdAddressHours', 'wdSocialLinks', 'wdLaunchDate', 'wdNotes',
     'wdBriefStaff', 'wdBriefTestimonials', 'wdBriefFaq', 'wdBriefBlog', 'wdBriefGallery',
-    'wdBriefPricing', 'wdBriefBooking', 'wdBriefNewsletter', 'wdBriefSms',
+    'wdBriefPricing', 'wdBriefBooking', 'wdBriefNewsletter',
   ];
 
   const els = {
@@ -201,8 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function briefKeyActive(key, resumeData) {
     if ((CONTENT_BRIEF_ALWAYS_INCLUDED[resumeData.package] || []).includes(key)) return true;
     const titles = CONTENT_BRIEF_TRIGGER_TITLES[key] || [];
-    const selectedTitles = (resumeData.optionalSelected || []).map((f) => f.title)
-      .concat(resumeData.premiumSelected || []);
+    const selectedTitles = (resumeData.optionalSelected || []).map((f) => f.title);
     return selectedTitles.some((t) => titles.includes(t));
   }
 
@@ -243,7 +241,6 @@ document.addEventListener('DOMContentLoaded', () => {
       pricing: briefKeyActive('pricing', resumeData) ? fieldVal('wdBriefPricing') : '',
       booking: briefKeyActive('booking', resumeData) ? fieldVal('wdBriefBooking') : '',
       newsletter: briefKeyActive('newsletter', resumeData) ? fieldVal('wdBriefNewsletter') : '',
-      sms: briefKeyActive('sms', resumeData) ? fieldVal('wdBriefSms') : '',
     };
   }
 
@@ -329,7 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
       basePrice: BASE_PRICES[resumeData.package] || 0,
       includedCapabilities: INCLUDED_SUMMARY[resumeData.package] || [],
       optionalSelected: resumeData.optionalSelected || [],
-      premiumSelected: resumeData.premiumSelected || [],
+      customRequest: resumeData.customRequest || '',
       bundledCategories: resumeData.bundledCategories || [],
       bundleSavings: resumeData.bundleSavings || 0,
       heroesDiscount: !!resumeData.heroesDiscount,
@@ -410,7 +407,7 @@ document.addEventListener('DOMContentLoaded', () => {
       bundledCategories: resumeData.bundledCategories,
       bundleSavings: resumeData.bundleSavings,
       optionalSelected: resumeData.optionalSelected,
-      premiumSelected: resumeData.premiumSelected,
+      customRequest: resumeData.customRequest,
       pdfBase64, pdfFilename,
       brief, logo, photos,
     };

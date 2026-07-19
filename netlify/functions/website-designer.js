@@ -15,7 +15,7 @@
 //   POST { stage: "quick", package, businessName, customerName, email, phone,
 //          preferredContact, subtotal, estimateTotal, heroesDiscount,
 //          bundledCategories: [category], bundleSavings,
-//          optionalSelected: [{title, price}], premiumSelected: [title] }
+//          optionalSelected: [{title, price}], customRequest: string }
 //   201 { id, emailSent, resumeToken }
 //
 // STAGE "resume" -- sent by the worksheet page right after it opens, to
@@ -29,7 +29,7 @@
 //   POST { stage: "resume", quickLeadId, token }
 //   200 { quickLeadId, package, businessName, customerName, email, phone,
 //         preferredContact, subtotal, estimateTotal, heroesDiscount,
-//         bundledCategories, bundleSavings, optionalSelected, premiumSelected }
+//         bundledCategories, bundleSavings, optionalSelected, customRequest }
 //   401 { error } -- invalid/expired/unknown (never distinguished)
 //
 // STAGE "full" -- sent only from the worksheet, once the customer completes
@@ -41,10 +41,10 @@
 //          customerName, email, phone, preferredContact, domain, notes,
 //          subtotal, estimateTotal, heroesDiscount, bundledCategories: [category],
 //          bundleSavings, optionalSelected: [{title, price}],
-//          premiumSelected: [title], pdfBase64, pdfFilename,
+//          customRequest: string, pdfBase64, pdfFilename,
 //          brief: { description, industry, serviceArea, servicesList, brandColors,
 //                   styleReferences, addressHours, socialLinks, launchDate, desiredDomain,
-//                   staff, testimonials, faq, blog, gallery, pricing, booking, newsletter, sms },
+//                   staff, testimonials, faq, blog, gallery, pricing, booking, newsletter },
 //          logo: {filename, content} | null, photos: [{filename, content}] }
 //
 // `brief` is the content actually needed to start building (not just scope/
@@ -184,7 +184,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const BRIEF_CONTENT_LABELS = {
   staff: "Team/staff", testimonials: "Testimonials", faq: "FAQ", blog: "Blog topics",
   gallery: "Gallery/portfolio", pricing: "Pricing", booking: "Booking details",
-  newsletter: "Newsletter platform", sms: "SMS notifications",
+  newsletter: "Newsletter platform",
 };
 
 // The client only ever sends raw base64 content + a filename (no MIME type,
@@ -246,7 +246,7 @@ async function handleQuickSubmission(body, ip) {
     bundledCategories: Array.isArray(body.bundledCategories) ? body.bundledCategories : [],
     bundleSavings: Number(body.bundleSavings) || 0,
     optionalSelected: Array.isArray(body.optionalSelected) ? body.optionalSelected : [],
-    premiumSelected: Array.isArray(body.premiumSelected) ? body.premiumSelected : [],
+    customRequest: typeof body.customRequest === "string" ? body.customRequest.trim().slice(0, 2000) : "",
     completedFull: false, createdAt: Date.now(), ip,
     resumeTokenHash: hashResumeToken(resumeToken),
     resumeTokenExpiresAt: Date.now() + RESUME_TOKEN_TTL_MS,
@@ -257,9 +257,6 @@ async function handleQuickSubmission(body, ip) {
 
   const optionalRows = record.optionalSelected.length
     ? record.optionalSelected.map((f) => `<li>${esc(f.title)} -- $${Number(f.price) || 0}</li>`).join("")
-    : "<li>(none)</li>";
-  const premiumRows = record.premiumSelected.length
-    ? record.premiumSelected.map((t) => `<li>${esc(t)} -- custom quote</li>`).join("")
     : "<li>(none)</li>";
 
   const html = `
@@ -281,14 +278,12 @@ async function handleQuickSubmission(body, ip) {
         ? ` <span style="color:#0A7A6D;">(subtotal $${record.subtotal.toLocaleString()}, less 15% American Heroes Discount -- pending verification)</span>`
         : ""
     }</p>
-    ${record.bundledCategories.length
-      ? `<p><strong>Category bundles applied (10% each):</strong> ${esc(record.bundledCategories.join(", "))} -- saving $${record.bundleSavings.toLocaleString()}</p>`
+    <p><strong>Selected features</strong> (grouped into bundles on the customer's screen, priced individually here for scoping):</p>
+    <ul>${optionalRows}</ul>
+    ${record.customRequest
+      ? `<p><strong>Additional request (custom quote):</strong><br>${esc(record.customRequest)}</p>`
       : ""
     }
-    <p><strong>Optional features selected:</strong></p>
-    <ul>${optionalRows}</ul>
-    <p><strong>Premium add-ons requested (custom quote):</strong></p>
-    <ul>${premiumRows}</ul>
     <p style="color:#666;font-size:.85rem;">Submitted ${new Date(record.createdAt).toLocaleString("en-US")} from IP ${esc(ip)}.
     Full record saved in Netlify Blobs under "leads" / ${esc(id)}.</p>
   `;
@@ -342,7 +337,7 @@ async function handleResumeRequest(body, ip) {
     bundledCategories: record.bundledCategories,
     bundleSavings: record.bundleSavings,
     optionalSelected: record.optionalSelected,
-    premiumSelected: record.premiumSelected,
+    customRequest: record.customRequest,
   });
 }
 
@@ -354,7 +349,7 @@ async function handleFullSubmission(body, ip) {
   const {
     package: pkg, businessName, customerName, email, phone, preferredContact, domain, notes,
     subtotal, estimateTotal, heroesDiscount, bundledCategories, bundleSavings,
-    optionalSelected, premiumSelected, pdfBase64, pdfFilename,
+    optionalSelected, customRequest, pdfBase64, pdfFilename,
     brief, logo, photos, quickLeadId, resumeToken,
   } = body;
 
@@ -380,7 +375,7 @@ async function handleFullSubmission(body, ip) {
     launchDate: briefField(rawBrief.launchDate), desiredDomain: briefField(rawBrief.desiredDomain),
     staff: briefField(rawBrief.staff), testimonials: briefField(rawBrief.testimonials), faq: briefField(rawBrief.faq),
     blog: briefField(rawBrief.blog), gallery: briefField(rawBrief.gallery), pricing: briefField(rawBrief.pricing),
-    booking: briefField(rawBrief.booking), newsletter: briefField(rawBrief.newsletter), sms: briefField(rawBrief.sms),
+    booking: briefField(rawBrief.booking), newsletter: briefField(rawBrief.newsletter),
   };
   if (!cleanBrief.description) return json(400, { error: "A description of your business is required." });
   if (!cleanBrief.industry) return json(400, { error: "Your industry/type of business is required." });
@@ -422,7 +417,7 @@ async function handleFullSubmission(body, ip) {
     bundledCategories: Array.isArray(bundledCategories) ? bundledCategories : [],
     bundleSavings: Number(bundleSavings) || 0,
     optionalSelected: Array.isArray(optionalSelected) ? optionalSelected : [],
-    premiumSelected: Array.isArray(premiumSelected) ? premiumSelected : [],
+    customRequest: typeof customRequest === "string" ? customRequest.trim().slice(0, 2000) : "",
     brief: cleanBrief, hasLogo: !!cleanLogo, photoCount: cleanPhotos.length,
     createdAt: Date.now(), ip,
   };
@@ -435,9 +430,6 @@ async function handleFullSubmission(body, ip) {
 
   const optionalRows = record.optionalSelected.length
     ? record.optionalSelected.map((f) => `<li>${esc(f.title)} -- $${Number(f.price) || 0}</li>`).join("")
-    : "<li>(none)</li>";
-  const premiumRows = record.premiumSelected.length
-    ? record.premiumSelected.map((t) => `<li>${esc(t)} -- custom quote</li>`).join("")
     : "<li>(none)</li>";
 
   const briefOptionalRows = [
@@ -481,14 +473,12 @@ async function handleFullSubmission(body, ip) {
         ? ` <span style="color:#0A7A6D;">(subtotal $${record.subtotal.toLocaleString()}, less 15% American Heroes Discount -- pending verification)</span>`
         : ""
     }</p>
-    ${record.bundledCategories.length
-      ? `<p><strong>Category bundles applied (10% each):</strong> ${esc(record.bundledCategories.join(", "))} -- saving $${record.bundleSavings.toLocaleString()}</p>`
+    <p><strong>Selected features</strong> (grouped into bundles on the customer's screen, priced individually here for scoping):</p>
+    <ul>${optionalRows}</ul>
+    ${record.customRequest
+      ? `<p><strong>Additional request (custom quote):</strong><br>${esc(record.customRequest)}</p>`
       : ""
     }
-    <p><strong>Optional features selected:</strong></p>
-    <ul>${optionalRows}</ul>
-    <p><strong>Premium add-ons requested (custom quote):</strong></p>
-    <ul>${premiumRows}</ul>
     ${contentDetailRows ? `<h3>Content details</h3>${contentDetailRows}` : ""}
     <p><strong>Notes:</strong> ${esc(record.notes) || "(none)"}</p>
     <p style="color:#666;font-size:.85rem;">Submitted ${new Date(record.createdAt).toLocaleString("en-US")} from IP ${esc(ip)}.

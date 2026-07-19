@@ -1800,27 +1800,13 @@ textarea{ resize: vertical; }
 
 .wd-panel-actions{ display:flex; justify-content:space-between; gap:1rem; margin-top:2rem; padding-top:1.5rem; border-top:1px dashed var(--line); }
 
-/* ---- Custom Add-Ons: priority-S items, never priced, grouped under
-   their original category as a light label -- same mechanism as before (a
-   plain checkbox that flags interest without affecting the total), just a
-   flat list instead of a per-category accordion. */
-.wd-addon-list{ margin-bottom:1rem; }
-.wd-addon-group{ margin-bottom:1.1rem; }
-.wd-addon-group-title{
-  font-family: var(--font-display); font-size:.72rem; font-weight:700; letter-spacing:.05em;
-  text-transform:uppercase; color: var(--ink-faint); margin:0 0 .5rem;
+.wd-field{ display:flex; flex-direction:column; gap:.35rem; margin-bottom:1.5rem; }
+.wd-field label{ font-family: var(--font-display); font-size:.85rem; font-weight:600; color: var(--ink); }
+.wd-field textarea{
+  font: inherit; font-size:.9rem; padding:.65rem .8rem; border-radius: var(--radius);
+  border:1px solid var(--select-border); background: var(--paper); color: var(--ink);
+  width:100%; box-sizing:border-box; resize:vertical;
 }
-.wd-addon-row{
-  display:flex; align-items:center; gap:.6rem; width:100%; min-height:44px; box-sizing:border-box;
-  padding:.5rem .6rem; border-radius: var(--radius); cursor:pointer;
-}
-.wd-addon-row:hover{ background: var(--paper-alt); }
-.wd-addon-row-title{ flex:1; min-width:0; font-size:.85rem; color: var(--ink); overflow-wrap:anywhere; }
-.wd-price-tag{
-  font-family: var(--font-display); font-size:.72rem; font-weight:700; color: var(--accent-teal-text);
-  background: var(--select-bg); border-radius:999px; padding:.15rem .55rem; white-space:nowrap; flex-shrink:0;
-}
-.wd-price-tag--quote{ color: var(--accent-orange-text); background:var(--notice-bg-strong); }
 
 .wd-bizname-field{ display:flex; flex-direction:column; gap:.25rem; min-width:0; margin-bottom:1.1rem; }
 .wd-bizname-field .wd-note{ margin:0; }

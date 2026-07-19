@@ -31,7 +31,7 @@ const SAMPLE_RESUME_DATA = {
   bundledCategories: [],
   bundleSavings: 0,
   optionalSelected: [{ title: "Blog / News section", price: 150 }],
-  premiumSelected: [],
+  customRequest: "",
 };
 
 // See test/website-designer-pdf.test.js for why this awaits the single

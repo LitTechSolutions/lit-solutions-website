@@ -8,8 +8,9 @@
 //
 // This intentionally produces an *illustrative starting estimate*, never
 // anything that reads like a contract or a final quote -- every page
-// carries a footer line saying so, and premium/custom-quote items are
-// always shown separately from, and never folded into, the estimated total.
+// carries a footer line saying so, and any free-text "anything else?"
+// request is always shown separately from, and never folded into, the
+// estimated total.
 (function (global) {
   'use strict';
 
@@ -295,8 +296,8 @@
   // Each selected bundle is its own flat-price line -- there's no
   // individual-feature or "before discount" line, since a bundle's price
   // is just its price now (see js/website-designer.js's header comment).
-  // Premium/custom-quote items are deliberately never part of this -- they
-  // get their own separate table further down.
+  // A free-text "anything else?" request is deliberately never part of
+  // this -- it gets its own separate section further down, if given.
   function drawPriceSummary(doc, ctx, data) {
     const rows = [['Base package', fmtMoney(data.basePrice)]];
     (data.selectedBundles || []).forEach((b) => rows.push([`${b.name} bundle`, `+${fmtMoney(b.price)}`]));
@@ -361,7 +362,6 @@
       ['Generated', data.generatedDate],
       ['Package', data.packageLabel],
       ['Selected bundles', String((data.selectedBundles || []).length)],
-      ['Premium requests', String(data.premiumCount)],
       ['Email', data.customerEmail || '(not given)'],
       ['Phone', data.customerPhone || '(not given)'],
     ]);
@@ -388,15 +388,17 @@
   //  {
   //    business, customerName, customerEmail, customerPhone, reference,
   //    generatedDate, packageLabel, basePrice, optionalSelected: [{title,price}],
-  //    premiumSelected: [title], bundledCategories: [category], bundleSavings,
-  //    selectedBundles: [{name, price}] (the flat-priced bundles actually
-  //    shown/charged -- optionalSelected/bundledCategories/bundleSavings are
-  //    kept only for the backend's independent per-category cross-check),
-  //    heroesDiscount, heroesDiscountAmount, subtotal, total,
+  //    customRequest: string (free-text "anything else?" field -- never
+  //    priced, always a separate follow-up quote), bundledCategories:
+  //    [category], bundleSavings, selectedBundles: [{name, price}] (the
+  //    flat-priced bundles actually shown/charged -- optionalSelected/
+  //    bundledCategories/bundleSavings are kept only for the backend's
+  //    independent per-category cross-check), heroesDiscount,
+  //    heroesDiscountAmount, subtotal, total,
   //    brief: { description, industry, serviceArea, servicesList, brandColors,
   //             styleReferences, addressHours, socialLinks, launchDate,
   //             desiredDomain, staff, testimonials, faq, blog, gallery,
-  //             pricing, booking, newsletter, sms },
+  //             pricing, booking, newsletter },
   //    notes,
   //  }
   async function buildWebsiteDesignerPdf(data) {
@@ -416,13 +418,9 @@
     };
 
     const selectedBundles = data.selectedBundles || [];
-    const premiumCount = (data.premiumSelected || []).length;
 
     // ---- Page 1: cover ----
-    drawCoverPage(doc, ctx, {
-      ...data,
-      premiumCount,
-    });
+    drawCoverPage(doc, ctx, data);
 
     // ---- Page 2: pricing breakdown ----
     newPage(doc, ctx);
@@ -446,14 +444,13 @@
       heroesDiscountAmount: data.heroesDiscount ? data.heroesDiscountAmount : 0,
       total: data.total,
     });
-    drawNoticeBox(doc, ctx, 'Premium / custom-quote items below are NOT included in the estimated starting total -- each is scoped and priced individually with you.', 'info');
 
-    // ---- Page 3+: premium requests, business brief, notes, next steps ----
-    if (premiumCount) {
+    // ---- Page 3+: additional request, business brief, notes, next steps ----
+    if (data.customRequest) {
       ctx.y += 2;
-      drawSectionTitle(doc, ctx, 'Premium custom-quote requests');
-      drawTableHeader(doc, ctx, 'Item', 'Pricing');
-      data.premiumSelected.forEach((title, i) => drawFeatureRow(doc, ctx, title, 'Custom quote', { stripe: i % 2 === 1, amountColor: COLORS.indigo }));
+      drawSectionTitle(doc, ctx, 'Additional request');
+      drawWrappedText(doc, ctx, data.customRequest, { size: 9.5, gapAfter: 2 });
+      drawNoticeBox(doc, ctx, "The request above isn't included in the estimated starting total -- we'll scope and price it separately.", 'info');
     }
 
     const brief = data.brief || {};
@@ -476,7 +473,6 @@
       ['Pricing to display', brief.pricing],
       ['Booking details', brief.booking],
       ['Newsletter platform', brief.newsletter],
-      ['SMS notifications', brief.sms],
     ].filter(([, v]) => v && String(v).trim());
 
     if (briefFields.length) {
