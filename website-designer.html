@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>
-(function(){
-  try{
-    var saved = localStorage.getItem('lts-theme');
-    var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    document.documentElement.setAttribute('data-theme', theme);
-  }catch(e){}
-})();
-</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Website Designer — Little Technical Solutions LLC</title>
@@ -24,43 +15,12 @@
 <meta name="twitter:card" content="summary">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Little Technical Solutions LLC","image":"https://lit-solutions.tech/assets/logo-full.png","telephone":"+18043090968","email":"dylan@lit-solutions.tech","url":"https://lit-solutions.tech/","priceRange":"$$","areaServed":[{"@type":"City","name":"Montross, VA"},{"@type":"City","name":"Colonial Beach, VA"},{"@type":"City","name":"King George, VA"},{"@type":"City","name":"Dahlgren, VA"}],"sameAs":["https://www.facebook.com/profile.php?id=61591618750945","https://www.google.com/search?q=Little+Technical+Solutions+LLC&stick=H4sIAAAAAAAA_-NgU1IxqDA0N0s1sUgyT0yxTE1NTLMyqEg2sTRLNTZOTTS1NDIzSUxaxCrnk1lSkpOqEJKanJGXmZyYoxCcn1NakpmfV6zg4-MMAGRkPw5JAAAA&hl=en&mat=CWEgdKX6xe4RElcBa0lj_4PsrYDUx2O2vFBpnokVltXIVrcy43xjezZrcYTprxRsgJGT1ATelPpH5ss3Sn-4VrXJHi_xxw10Eq_jzvWCxQfPf2G4feie7XZe-MJ3uWuSvN4&authuser=0"]}</script>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <link rel="icon" type="image/png" href="assets/favicon.png">
 </head>
 <body>
 
-<a class="skip-link" href="#main" data-i18n="a11y.skip_to_content">Skip to content</a>
-<div class="lang-bar">
-  <div class="wrap lang-bar-inner">
-    <div class="nav-dropdown">
-      <button type="button" class="nav-dropdown-toggle lang-dropdown-toggle" aria-haspopup="listbox" aria-expanded="false" aria-controls="langMenu" aria-label="Choose language" data-i18n-attr-aria-label="header.choose_language">
-        <span id="langCurrentLabel">ENG</span>
-        <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
-      </button>
-      <div class="nav-dropdown-menu lang-dropdown-menu" id="langMenu" role="listbox">
-        <button type="button" class="lang-option is-active" data-lang="en">English <span class="lang-code">ENG</span></button>
-        <button type="button" class="lang-option" data-lang="es">Español <span class="lang-code">ESP</span></button>
-        <button type="button" class="lang-option" data-lang="fr">Français <span class="lang-code">FRA</span></button>
-        <button type="button" class="lang-option" data-lang="zh">中文 <span class="lang-code">ZH</span></button>
-        <button type="button" class="lang-option" data-lang="ja">日本語 <span class="lang-code">JPN</span></button>
-        <button type="button" class="lang-option" data-lang="vi">Tiếng Việt <span class="lang-code">VIE</span></button>
-        <button type="button" class="lang-option" data-lang="tl">Filipino <span class="lang-code">FIL</span></button>
-        <button type="button" class="lang-option" data-lang="ar">العربية <span class="lang-code">ARA</span></button>
-        <button type="button" class="lang-option" data-lang="ko">한국어 <span class="lang-code">KOR</span></button>
-        <button type="button" class="lang-option" data-lang="de">Deutsch <span class="lang-code">GER</span></button>
-        <button type="button" class="lang-option" data-lang="ht">Kreyòl Ayisyen <span class="lang-code">HAT</span></button>
-        <button type="button" class="lang-option" data-lang="pt">Português <span class="lang-code">POR</span></button>
-        <button type="button" class="lang-option" data-lang="ru">Русский <span class="lang-code">RUS</span></button>
-        <button type="button" class="lang-option" data-lang="it">Italiano <span class="lang-code">ITA</span></button>
-        <button type="button" class="lang-option" data-lang="pl">Polski <span class="lang-code">POL</span></button>
-        <button type="button" class="lang-option" data-lang="hi">हिन्दी <span class="lang-code">HIN</span></button>
-      </div>
-    </div>
-  </div>
-</div>
+<a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header" id="siteHeader">
   <div class="wrap header-inner">
     <a href="index.html" class="logo" aria-label="Little Technical Solutions LLC — home">
@@ -74,46 +34,42 @@
     </a>
 
     <nav class="main-nav" id="mainNav" aria-label="Primary">
-      <a href="index.html" data-i18n="nav.home">Home</a>
+      <a href="index.html">Home</a>
       <div class="nav-dropdown">
         <button type="button" class="nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="servicesDropdown">
-          <span data-i18n="nav.services">Services</span>
+          <span>Services</span>
           <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
         </button>
         <div class="nav-dropdown-menu" id="servicesDropdown">
-          <a href="services.html" data-i18n="nav.services_all">All Services</a>
-          <a href="service-website.html" data-i18n="nav.service_website">Website Design &amp; Development</a>
-          <a href="service-computer.html" data-i18n="nav.service_computer">Computer Repair</a>
-          <a href="service-networking.html" data-i18n="nav.service_networking">Networking</a>
-          <a href="service-cybersecurity.html" data-i18n="nav.service_cybersecurity">Cybersecurity</a>
-          <a href="service-business-it.html" data-i18n="nav.service_business_it">Small Business IT</a>
-          <a href="pricing.html" data-i18n="nav.pricing">Pricing</a>
+          <a href="services.html">All Services</a>
+          <a href="service-website.html">Website Design &amp; Development</a>
+          <a href="service-computer.html">Computer Repair</a>
+          <a href="service-networking.html">Networking</a>
+          <a href="service-cybersecurity.html">Cybersecurity</a>
+          <a href="service-business-it.html">Small Business IT</a>
+          <a href="pricing.html">Pricing</a>
         </div>
       </div>
-      <a href="website-designer.html" data-i18n="nav.website_designer">Website Designer</a>
-      <a href="about.html" data-i18n="nav.about">About</a>
-      <a href="contact.html" data-i18n="nav.contact">Contact</a>
+      <a href="website-designer.html">Website Designer</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
     </nav>
 
     <div class="header-actions">
-      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode" data-i18n-attr-aria-label="header.toggle_dark_mode" data-i18n-attr-title="header.toggle_dark_mode">
-        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-      </button>
-      <a href="search.html" class="search-toggle" aria-label="Search this site" title="Search this site" data-i18n-attr-aria-label="header.search_site" data-i18n-attr-title="header.search_site">
+      <a href="search.html" class="search-toggle" aria-label="Search this site" title="Search this site">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-3.8-3.8"/></svg>
       </a>
-      <a href="myaccount.html" class="search-toggle" aria-label="Client Sign In" title="Client Sign In" data-i18n-attr-aria-label="header.my_account" data-i18n-attr-title="header.my_account">
+      <a href="myaccount.html" class="search-toggle" aria-label="Client Sign In" title="Client Sign In">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </a>
       <a href="tel:+18043090968" class="phone-link">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         804-309-0968
       </a>
-      <a href="intake.html" class="btn btn-primary btn-small" data-i18n="header.get_quote">Request Service</a>
+      <a href="intake.html" class="btn btn-primary btn-small">Request Service</a>
     </div>
 
-    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu" data-i18n-attr-aria-label="header.toggle_menu">
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu">
       <span></span><span></span><span></span>
     </button>
   </div>
@@ -121,9 +77,9 @@
 <main id="main">
   <section class="page-hero">
     <div class="wrap">
-      <p class="eyebrow" data-i18n="wd.hero_eyebrow">Website Designer</p>
-      <h1 data-i18n="wd.hero_h1">Design your website. See your price. In minutes.</h1>
-      <p class="section-lede" data-i18n="wd.hero_lede">Pick a package, check off the features you want, and submit your project. This gives us a running starting estimate as you go -- your final quote is always confirmed by us before any work begins.</p>
+      <p class="eyebrow">Website Designer</p>
+      <h1>Design your website. See your price. In minutes.</h1>
+      <p class="section-lede">Pick a package, check off the features you want, and submit your project. This gives us a running starting estimate as you go -- your final quote is always confirmed by us before any work begins.</p>
     </div>
   </section>
 
@@ -134,35 +90,35 @@
           <span class="launch-banner-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z"/></svg>
           </span>
-          <span class="wd-launch-summary-text" data-i18n="wd.launch_banner_summary">Launch pricing and available discounts</span>
+          <span class="wd-launch-summary-text">Launch pricing and available discounts</span>
           <svg class="wd-launch-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
         </summary>
-        <p data-i18n-html="wd.launch_banner"><strong>Launch special:</strong> the prices in this tool are introductory rates for our first 25 customers as we get Little Technical Solutions LLC off the ground. Once we hit that milestone, pricing moves to our standard published rates -- but the <strong>bundle discount</strong> and <strong>American Heroes Discount</strong> are permanent and will still apply. All current discounts stack.</p>
+        <p><strong>Launch special:</strong> the prices in this tool are introductory rates for our first 25 customers as we get Little Technical Solutions LLC off the ground. Once we hit that milestone, pricing moves to our standard published rates -- but the <strong>bundle discount</strong> and <strong>American Heroes Discount</strong> are permanent and will still apply. All current discounts stack.</p>
       </details>
 
       <div class="wd-steps-row">
-        <div class="wd-steps" role="tablist" aria-label="Website designer steps" data-i18n-attr-aria-label="wd.steps_aria_label">
-          <button type="button" class="wd-step is-active" data-step="1" aria-current="step" data-i18n="wd.step1_label">1. Package</button>
-          <button type="button" class="wd-step" data-step="2" disabled data-i18n="wd.step2_label">2. Features</button>
-          <button type="button" class="wd-step" data-step="3" disabled data-i18n="wd.step3_label">3. Get your quote</button>
+        <div class="wd-steps" role="tablist" aria-label="Website designer steps">
+          <button type="button" class="wd-step is-active" data-step="1" aria-current="step">1. Package</button>
+          <button type="button" class="wd-step" data-step="2" disabled>2. Features</button>
+          <button type="button" class="wd-step" data-step="3" disabled>3. Get your quote</button>
         </div>
-        <button type="button" class="wd-start-over" id="wdStartOver" hidden data-i18n="wd.start_over">Start over</button>
+        <button type="button" class="wd-start-over" id="wdStartOver" hidden>Start over</button>
       </div>
 
       <div class="wd-studio" id="wdStudio" data-mobile-mode="customize">
 
-        <div class="wd-mobile-mode-switch" role="tablist" aria-label="Website view" data-i18n-attr-aria-label="wd.mobile_mode_switch_aria_label">
+        <div class="wd-mobile-mode-switch" role="tablist" aria-label="Website view">
           <button type="button" class="wd-mobile-mode-tab is-active" id="wdModeTabCustomize" role="tab" aria-selected="true" aria-controls="wdSidebar" data-mobile-mode="customize">
-            <span data-i18n="wd.mobile_mode_customize">Customize</span>
+            <span>Customize</span>
           </button>
           <button type="button" class="wd-mobile-mode-tab" id="wdModeTabPreview" role="tab" aria-selected="false" tabindex="-1" aria-controls="wdStudioPreview" data-mobile-mode="preview">
-            <span data-i18n="wd.mobile_mode_preview">Live Preview</span>
-            <span class="wd-mobile-mode-badge" id="wdPreviewUpdatedBadge" hidden data-i18n="wd.preview_updated_badge">Updated</span>
+            <span>Live Preview</span>
+            <span class="wd-mobile-mode-badge" id="wdPreviewUpdatedBadge" hidden>Updated</span>
           </button>
         </div>
 
         <div class="wd-studio-preview" id="wdStudioPreview" aria-label="Live preview of your website">
-          <button type="button" class="wd-preview-back-btn" id="wdPreviewBackBtn" data-i18n="wd.preview_back_to_customize">Back to Customize</button>
+          <button type="button" class="wd-preview-back-btn" id="wdPreviewBackBtn">Back to Customize</button>
           <div class="wd-browser" id="wdBrowser">
             <div class="wd-browser-chrome">
               <span class="wd-browser-dot"></span><span class="wd-browser-dot"></span><span class="wd-browser-dot"></span>
@@ -172,58 +128,58 @@
             <div class="wd-browser-viewport" id="wdBrowserViewport">
               <div class="wd-browser-empty" id="wdBrowserEmpty">
                 <span class="wd-browser-empty-icon">🌱</span>
-                <p data-i18n="wd.browser_empty_text">Your website will grow here as you build it.</p>
+                <p>Your website will grow here as you build it.</p>
               </div>
               <div class="wd-preview-base" id="wdPreviewBase" hidden>
                 <nav class="wd-preview-nav" id="wdPreviewNav">
-                  <span class="wd-preview-nav-pill wd-preview-nav-pill--base" data-i18n="wd.preview_nav_home">Home</span>
-                  <span class="wd-preview-nav-pill wd-preview-nav-pill--base" data-i18n="wd.preview_nav_services">Services</span>
-                  <span class="wd-preview-nav-pill wd-preview-nav-pill--base" data-i18n="wd.preview_nav_about">About</span>
-                  <span class="wd-preview-nav-pill wd-preview-nav-pill--base" data-i18n="wd.preview_nav_contact">Contact</span>
+                  <span class="wd-preview-nav-pill wd-preview-nav-pill--base">Home</span>
+                  <span class="wd-preview-nav-pill wd-preview-nav-pill--base">Services</span>
+                  <span class="wd-preview-nav-pill wd-preview-nav-pill--base">About</span>
+                  <span class="wd-preview-nav-pill wd-preview-nav-pill--base">Contact</span>
                 </nav>
                 <div class="wd-preview-hero-mock">
                   <p class="wd-preview-hero-mock-name" id="wdPreviewHeroName">Your business</p>
-                  <p class="wd-preview-hero-mock-headline" id="wdPreviewHeroHeadline" data-i18n="wd.preview_hero_headline">Quality service, done right the first time.</p>
-                  <span class="wd-preview-hero-mock-cta" data-i18n="wd.preview_hero_cta">Get a Free Quote</span>
+                  <p class="wd-preview-hero-mock-headline" id="wdPreviewHeroHeadline">Quality service, done right the first time.</p>
+                  <span class="wd-preview-hero-mock-cta">Get a Free Quote</span>
                 </div>
                 <div class="wd-preview-services-mock">
-                  <div class="wd-preview-services-mock-item"><span class="wd-mock-icon-shape wd-mock-icon-shape--circle"></span><span data-i18n="wd.preview_service1">Service one</span></div>
-                  <div class="wd-preview-services-mock-item"><span class="wd-mock-icon-shape wd-mock-icon-shape--square"></span><span data-i18n="wd.preview_service2">Service two</span></div>
-                  <div class="wd-preview-services-mock-item"><span class="wd-mock-icon-shape wd-mock-icon-shape--diamond"></span><span data-i18n="wd.preview_service3">Service three</span></div>
+                  <div class="wd-preview-services-mock-item"><span class="wd-mock-icon-shape wd-mock-icon-shape--circle"></span><span>Service one</span></div>
+                  <div class="wd-preview-services-mock-item"><span class="wd-mock-icon-shape wd-mock-icon-shape--square"></span><span>Service two</span></div>
+                  <div class="wd-preview-services-mock-item"><span class="wd-mock-icon-shape wd-mock-icon-shape--diamond"></span><span>Service three</span></div>
                 </div>
                 <div class="wd-preview-sections" id="wdPreviewSections"></div>
                 <div class="wd-preview-about-mock">
-                  <p data-i18n="wd.preview_about_text">Locally owned and trusted -- straightforward pricing and real people who answer the phone.</p>
+                  <p>Locally owned and trusted -- straightforward pricing and real people who answer the phone.</p>
                 </div>
                 <div class="wd-preview-footer-mock">
                   <span id="wdPreviewFooterName">Your business</span>
                   <span class="wd-preview-footer-mock-dot">&middot;</span>
-                  <span data-i18n="wd.preview_footer_contact">Contact</span>
+                  <span>Contact</span>
                 </div>
               </div>
             </div>
           </div>
-          <p class="wd-preview-disclaimer" data-i18n="wd.preview_disclaimer">Interactive concept preview — final design is customized for your business.</p>
+          <p class="wd-preview-disclaimer">Interactive concept preview — final design is customized for your business.</p>
         </div>
 
         <div class="wd-sidebar" id="wdSidebar">
 
           <div class="wd-sidebar-header">
             <div class="wd-bizname-field">
-              <label for="wdBusinessName" data-i18n="wd.bizname_label">Your business name</label>
-              <input type="text" id="wdBusinessName" name="business_name" form="wdQuickForm" placeholder="e.g. Riverside Plumbing" autocomplete="organization" required data-i18n-attr-placeholder="wd.bizname_placeholder">
+              <label for="wdBusinessName">Your business name</label>
+              <input type="text" id="wdBusinessName" name="business_name" form="wdQuickForm" placeholder="e.g. Riverside Plumbing" autocomplete="organization" required>
             </div>
 
-            <div class="wd-feature-tabs" role="tablist" id="wdFeatureTabs" aria-label="Feature categories" data-i18n-attr-aria-label="wd.feature_tabs_aria_label" hidden>
-              <button type="button" class="wd-feature-tab is-active" data-feature-tab="addons" role="tab" aria-selected="true" aria-controls="wdOptionalCategories" data-i18n="wd.tab_addons">Add-ons</button>
-              <button type="button" class="wd-feature-tab" data-feature-tab="premium" role="tab" aria-selected="false" aria-controls="wdPremiumCategories" data-i18n="wd.tab_premium">Premium</button>
-              <button type="button" class="wd-feature-tab" data-feature-tab="included" role="tab" aria-selected="false" aria-controls="wdIncludedPanel" data-i18n="wd.tab_included">Included</button>
+            <div class="wd-feature-tabs" role="tablist" id="wdFeatureTabs" aria-label="Feature categories" hidden>
+              <button type="button" class="wd-feature-tab is-active" data-feature-tab="addons" role="tab" aria-selected="true" aria-controls="wdOptionalCategories">Add-ons</button>
+              <button type="button" class="wd-feature-tab" data-feature-tab="premium" role="tab" aria-selected="false" aria-controls="wdPremiumCategories">Premium</button>
+              <button type="button" class="wd-feature-tab" data-feature-tab="included" role="tab" aria-selected="false" aria-controls="wdIncludedPanel">Included</button>
             </div>
 
             <div class="wd-feature-toolbar" id="wdFeatureToolbar" hidden>
               <div class="wd-feature-search">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-3.8-3.8"/></svg>
-                <input type="search" id="wdFeatureSearch" data-i18n-attr-placeholder="wd.feature_search_placeholder" placeholder="Search features...">
+                <input type="search" id="wdFeatureSearch" placeholder="Search features..." aria-label="Search features">
               </div>
               <div class="wd-category-chips" id="wdCategoryChips"></div>
             </div>
@@ -235,40 +191,40 @@
 
           <!-- Step 1: package selection -->
           <div class="wd-panel is-active" id="wdStep1" data-panel="1">
-            <p class="wd-illustrative-note" data-i18n="wd.step1_illustrative_note">Example estimate only -- final scope and price are confirmed by us after you submit.</p>
+            <p class="wd-illustrative-note">Example estimate only -- final scope and price are confirmed by us after you submit.</p>
             <div class="package-grid">
               <div class="package-card" data-package="starter">
-                <h2 data-i18n="wd.starter_title">Starter</h2>
-                <p class="package-card-tagline" data-i18n="wd.starter_tagline">A clean, professional site that gets you found and gets you contacted.</p>
+                <h2>Starter</h2>
+                <p class="package-card-tagline">A clean, professional site that gets you found and gets you contacted.</p>
                 <div class="package-price">
                   <span class="package-price-now">$699</span>
                 </div>
-                <p class="package-price-note" data-i18n="wd.starter_price_note">Starting price. Up to 5 pages.</p>
+                <p class="package-price-note">Starting price. Up to 5 pages.</p>
                 <ul class="package-features">
-                  <li data-i18n="wd.starter_feature1">Custom design matched to your brand</li>
-                  <li data-i18n="wd.starter_feature2">Mobile-responsive on every device</li>
-                  <li data-i18n="wd.starter_feature3">Contact form with spam protection</li>
-                  <li data-i18n="wd.starter_feature4">Basic SEO (titles, descriptions, sitemap)</li>
-                  <li data-i18n="wd.starter_feature5">Accessibility &amp; performance basics</li>
+                  <li>Custom design matched to your brand</li>
+                  <li>Mobile-responsive on every device</li>
+                  <li>Contact form with spam protection</li>
+                  <li>Basic SEO (titles, descriptions, sitemap)</li>
+                  <li>Accessibility &amp; performance basics</li>
                 </ul>
-                <button type="button" class="btn btn-primary" data-choose-package="starter" data-i18n="wd.starter_cta">Design a Starter site</button>
+                <button type="button" class="btn btn-primary" data-choose-package="starter">Design a Starter site</button>
               </div>
               <div class="package-card package-card--business" data-package="business">
-                <span class="package-badge" data-i18n="wd.business_badge">Most capability</span>
-                <h2 data-i18n="wd.business_title">Business</h2>
-                <p class="package-card-tagline" data-i18n="wd.business_tagline">A full site with the tools to actually run leads, bookings, and content through it.</p>
+                <span class="package-badge">Most capability</span>
+                <h2>Business</h2>
+                <p class="package-card-tagline">A full site with the tools to actually run leads, bookings, and content through it.</p>
                 <div class="package-price">
                   <span class="package-price-now">$1,299</span>
                 </div>
-                <p class="package-price-note" data-i18n="wd.business_price_note">Starting price. Up to 10 pages.</p>
+                <p class="package-price-note">Starting price. Up to 10 pages.</p>
                 <ul class="package-features">
-                  <li data-i18n="wd.business_feature1">Everything in Starter</li>
-                  <li data-i18n="wd.business_feature2">Advanced contact / quote-request form</li>
-                  <li data-i18n="wd.business_feature3">Booking / consultation scheduling</li>
-                  <li data-i18n="wd.business_feature4">Testimonials, FAQ &amp; blog pages</li>
-                  <li class="is-extra" data-i18n="wd.business_feature5">Optional accounts, search &amp; personalization</li>
+                  <li>Everything in Starter</li>
+                  <li>Advanced contact / quote-request form</li>
+                  <li>Booking / consultation scheduling</li>
+                  <li>Testimonials, FAQ &amp; blog pages</li>
+                  <li class="is-extra">Optional accounts, search &amp; personalization</li>
                 </ul>
-                <button type="button" class="btn btn-primary" data-choose-package="business" data-i18n="wd.business_cta">Design a Business site</button>
+                <button type="button" class="btn btn-primary" data-choose-package="business">Design a Business site</button>
               </div>
             </div>
           </div>
@@ -277,26 +233,26 @@
           <div class="wd-panel" id="wdStep2" data-panel="2">
 
             <div class="wd-feature-tab-panel" id="wdOptionalCategoriesPanel" data-feature-panel="addons">
-              <h2 class="wd-section-title" data-i18n="wd.optional_features_title">Optional features</h2>
-              <p class="wd-note" data-i18n="wd.optional_features_note">Check anything you'd like added. We'll confirm the final scope and price with you.</p>
+              <h2 class="wd-section-title">Optional features</h2>
+              <p class="wd-note">Check anything you'd like added. We'll confirm the final scope and price with you.</p>
               <div id="wdOptionalCategories"></div>
             </div>
 
             <div class="wd-feature-tab-panel" id="wdPremiumCategoriesPanel" data-feature-panel="premium" hidden>
-              <h2 class="wd-section-title" data-i18n-html="wd.premium_addons_title">Premium add-ons <span class="wd-note-inline">(custom quote)</span></h2>
-              <p class="wd-note" data-i18n="wd.premium_addons_note">Bigger capabilities, scoped and priced separately -- check anything you'd like a quote for.</p>
+              <h2 class="wd-section-title">Premium add-ons <span class="wd-note-inline">(custom quote)</span></h2>
+              <p class="wd-note">Bigger capabilities, scoped and priced separately -- check anything you'd like a quote for.</p>
               <div id="wdPremiumCategories"></div>
             </div>
 
             <div class="wd-feature-tab-panel" id="wdIncludedPanel" data-feature-panel="included" hidden>
               <div class="card wd-included-card">
-                <h2 id="wdIncludedTitle" data-i18n="wd.included_title">Included in your package</h2>
-                <p class="wd-note" data-i18n="wd.included_note">These come standard -- nothing to select.</p>
+                <h2 id="wdIncludedTitle">Included in your package</h2>
+                <p class="wd-note">These come standard -- nothing to select.</p>
                 <div id="wdIncludedSummary" class="wd-included-summary"></div>
               </div>
             </div>
 
-            <p class="wd-feature-empty-note" id="wdFeatureEmptyNote" hidden data-i18n="wd.feature_search_empty">No features match your search.</p>
+            <p class="wd-feature-empty-note" id="wdFeatureEmptyNote" hidden>No features match your search.</p>
 
             <!-- Scrolls with the rest of the feature list -- only ever
                  shown during feature selection, never in the persistent
@@ -304,55 +260,55 @@
                  steps. -->
             <label class="wd-heroes-toggle wd-heroes-toggle--inline">
               <input type="checkbox" id="wdHeroesDiscount">
-              <span data-i18n-html="wd.heroes_toggle_text">I self-attest that I qualify for the <a href="heroes-pricing.html" target="_blank" rel="noopener">American Heroes Discount</a> (15% off one-time work) &mdash; eligibility is confirmed with you directly before your final price is set</span>
+              <span>I self-attest that I qualify for the <a href="heroes-pricing.html" target="_blank" rel="noopener">American Heroes Discount</a> (15% off one-time work) &mdash; eligibility is confirmed with you directly before your final price is set</span>
             </label>
 
             <div class="wd-panel-actions">
-              <button type="button" class="btn btn-ghost" data-back="1" data-i18n="wd.step2_back">Back</button>
-              <button type="button" class="btn btn-primary" data-next="3" data-i18n="wd.step2_continue">Continue</button>
+              <button type="button" class="btn btn-ghost" data-back="1">Back</button>
+              <button type="button" class="btn btn-primary" data-next="3">Continue</button>
             </div>
           </div>
 
           <!-- Step 3: clear price recap + quick contact capture (no long form yet) -->
           <div class="wd-panel" id="wdStep3" data-panel="3">
-            <h2 class="wd-section-title" id="wdStep3Heading" tabindex="-1" data-i18n="wd.step3_title">Get your quote</h2>
-            <p class="wd-note" data-i18n="wd.step3_note">Just your contact info -- no long form required. We'll follow up, and you can add full project details now or later.</p>
+            <h2 class="wd-section-title" id="wdStep3Heading" tabindex="-1">Get your quote</h2>
+            <p class="wd-note">Just your contact info -- no long form required. We'll follow up, and you can add full project details now or later.</p>
 
             <div class="card wd-quote-recap">
-              <span class="wd-quote-recap-label" data-i18n="wd.quote_recap_label">Your estimate</span>
+              <span class="wd-quote-recap-label">Your estimate</span>
               <span class="wd-quote-recap-amount" id="wdQuoteRecapAmount">$0</span>
-              <span class="wd-quote-recap-note" data-i18n="wd.quote_recap_note">Starting price -- confirmed by us before any work begins.</span>
+              <span class="wd-quote-recap-note">Starting price -- confirmed by us before any work begins.</span>
               <div class="wd-cost-breakdown wd-quote-recap-breakdown" id="wdQuoteRecapBreakdown" aria-label="Itemized estimate"></div>
             </div>
 
             <button type="button" class="btn btn-ghost btn-block" id="wdDownloadPdf" hidden>Download summary (PDF)</button>
-            <p class="wd-pdf-error" id="wdPdfError" role="alert" hidden data-i18n="wd.pdf_init_error">The PDF summary tool didn't load correctly. You can still submit your project -- we'll follow up directly -- or refresh the page to try again.</p>
+            <p class="wd-pdf-error" id="wdPdfError" role="alert" hidden>The PDF summary tool didn't load correctly. You can still submit your project -- we'll follow up directly -- or refresh the page to try again.</p>
 
             <form id="wdQuickForm">
               <p class="visually-hidden"><label>Don't fill this out: <input name="wd-bot-field" id="wdHoneypot"></label></p>
 
               <div class="form-row form-row--split">
                 <div>
-                  <label for="wdName" data-i18n="wd.form_name_label">Your name *</label>
+                  <label for="wdName">Your name *</label>
                   <input type="text" id="wdName" name="customer_name" required>
                 </div>
                 <div>
-                  <label for="wdEmail" data-i18n="wd.form_email_label">Email *</label>
+                  <label for="wdEmail">Email *</label>
                   <input type="email" id="wdEmail" name="email" required>
                 </div>
               </div>
               <div class="form-row form-row--split">
                 <div>
-                  <label for="wdPhone" data-i18n="wd.form_phone_label">Phone *</label>
+                  <label for="wdPhone">Phone *</label>
                   <input type="tel" id="wdPhone" name="phone" required>
                 </div>
                 <div>
-                  <label for="wdPreferredContact" data-i18n="wd.form_preferred_contact_label">Preferred contact method *</label>
+                  <label for="wdPreferredContact">Preferred contact method *</label>
                   <select id="wdPreferredContact" name="preferred_contact" required>
-                    <option value="" data-i18n="wd.form_preferred_contact_placeholder">Choose one</option>
-                    <option value="phone" data-i18n="wd.form_preferred_contact_phone">Phone call</option>
-                    <option value="text" data-i18n="wd.form_preferred_contact_text">Text message</option>
-                    <option value="email" data-i18n="wd.form_preferred_contact_email">Email</option>
+                    <option value="">Choose one</option>
+                    <option value="phone">Phone call</option>
+                    <option value="text">Text message</option>
+                    <option value="email">Email</option>
                   </select>
                 </div>
               </div>
@@ -360,13 +316,13 @@
               <div class="form-row form-row--checkbox-trigger">
                 <label class="checkbox-pill">
                   <input type="checkbox" id="wdConsent" name="privacy_ack" value="Yes" required>
-                  <span data-i18n-html="wd.consent_text">I understand this is a starting estimate, not a final quote, and I agree to be contacted about my project. See our <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</span>
+                  <span>I understand this is a starting estimate, not a final quote, and I agree to be contacted about my project. See our <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</span>
                 </label>
               </div>
 
               <div class="wd-panel-actions">
-                <button type="button" class="btn btn-ghost" data-back="2" data-i18n="wd.step3_back">Back</button>
-                <button type="submit" class="btn btn-primary" id="wdQuickSubmitBtn" data-i18n="wd.step3_submit">Get my quote</button>
+                <button type="button" class="btn btn-ghost" data-back="2">Back</button>
+                <button type="submit" class="btn btn-primary" id="wdQuickSubmitBtn">Get my quote</button>
               </div>
               <p class="form-status" role="status" id="wdQuickFormStatus"></p>
             </form>
@@ -375,16 +331,16 @@
           <!-- Prompt shown right after the quick quote is sent -->
           <div class="wd-panel" id="wdStepPrompt" data-panel="prompt">
             <div class="card wd-done-card">
-              <h2 id="wdStepPromptHeading" tabindex="-1" data-i18n="wd.prompt_title">Want to finish your project details now?</h2>
-              <p data-i18n="wd.prompt_message">The more we know up front, the faster we can start once you're ready -- but it's completely optional. We'll follow up either way using the contact method you picked.</p>
+              <h2 id="wdStepPromptHeading" tabindex="-1">Want to finish your project details now?</h2>
+              <p>The more we know up front, the faster we can start once you're ready -- but it's completely optional. We'll follow up either way using the contact method you picked.</p>
               <div class="wd-panel-actions">
-                <button type="button" class="btn btn-ghost" data-prompt-choice="no" data-i18n="wd.prompt_no">Not right now</button>
-                <button type="button" class="btn btn-primary" id="wdPromptYesBtn" data-i18n="wd.prompt_yes">Yes, open project worksheet</button>
+                <button type="button" class="btn btn-ghost" data-prompt-choice="no">Not right now</button>
+                <button type="button" class="btn btn-primary" id="wdPromptYesBtn">Yes, open project worksheet</button>
               </div>
-              <p class="wd-note" data-i18n="wd.prompt_new_tab_note">This opens a separate project details worksheet in a new browser tab -- your quote request has already been sent either way.</p>
+              <p class="wd-note">This opens a separate project details worksheet in a new browser tab -- your quote request has already been sent either way.</p>
               <p class="wd-note wd-fallback-link" id="wdWorksheetFallback" hidden>
-                <span data-i18n="wd.prompt_popup_blocked">Your browser blocked the new tab.</span>
-                <a href="#" id="wdWorksheetFallbackLink" target="_blank" rel="noopener" data-i18n="wd.prompt_open_link">Open your project worksheet</a>
+                <span>Your browser blocked the new tab.</span>
+                <a href="#" id="wdWorksheetFallbackLink" target="_blank" rel="noopener">Open your project worksheet</a>
               </p>
             </div>
           </div>
@@ -392,11 +348,11 @@
           <!-- Shown after the worksheet tab has been opened -->
           <div class="wd-panel" id="wdStepWorksheetOpened" data-panel="worksheet-opened">
             <div class="card wd-done-card">
-              <h2 id="wdStepWorksheetOpenedHeading" tabindex="-1" data-i18n="wd.worksheet_opened_title">Your project worksheet opened in a new tab.</h2>
-              <p data-i18n="wd.worksheet_opened_message">Your quote request has already been received. Finish the worksheet whenever you're ready -- it stays open in that tab.</p>
+              <h2 id="wdStepWorksheetOpenedHeading" tabindex="-1">Your project worksheet opened in a new tab.</h2>
+              <p>Your quote request has already been received. Finish the worksheet whenever you're ready -- it stays open in that tab.</p>
               <div class="wd-panel-actions">
-                <button type="button" class="btn btn-ghost" id="wdFinishLaterBtn" data-i18n="wd.finish_later">Finish later</button>
-                <button type="button" class="btn btn-primary" id="wdOpenWorksheetAgainBtn" data-i18n="wd.open_worksheet_again">Open worksheet again</button>
+                <button type="button" class="btn btn-ghost" id="wdFinishLaterBtn">Finish later</button>
+                <button type="button" class="btn btn-primary" id="wdOpenWorksheetAgainBtn">Open worksheet again</button>
               </div>
             </div>
           </div>
@@ -404,10 +360,10 @@
           <!-- Confirmation -->
           <div class="wd-panel" id="wdStepDone" data-panel="done">
             <div class="card wd-done-card">
-              <h2 id="wdStepDoneHeading" tabindex="-1" data-i18n="wd.done_title">Thanks -- we've got it.</h2>
-              <p id="wdDoneMessage" data-i18n="wd.done_message">Your project request has been sent. We typically respond within one business day with next steps and a firm quote.</p>
-              <p class="wd-note"><span data-i18n="wd.done_reference_label">Submission reference:</span> <strong id="wdSubmissionId"></strong></p>
-              <a href="index.html" class="btn btn-ghost" data-i18n="wd.done_back_home">Back to home</a>
+              <h2 id="wdStepDoneHeading" tabindex="-1">Thanks -- we've got it.</h2>
+              <p id="wdDoneMessage">Your project request has been sent. We typically respond within one business day with next steps and a firm quote.</p>
+              <p class="wd-note"><span>Submission reference:</span> <strong id="wdSubmissionId"></strong></p>
+              <a href="index.html" class="btn btn-ghost">Back to home</a>
             </div>
           </div>
 
@@ -418,13 +374,13 @@
           <div class="wd-sidebar-footer" id="wdSidebarFooter">
             <div class="wd-footer-summary">
               <div class="wd-footer-summary-info" aria-live="polite" aria-atomic="true">
-                <span class="wd-price-ticker-label" data-i18n="wd.price_ticker_label">Your estimate</span>
+                <span class="wd-price-ticker-label">Your estimate</span>
                 <span class="wd-price-ticker-amount" id="wdPriceAmount">$0</span>
-                <span class="wd-price-ticker-note" id="wdPriceNote" data-i18n="wd.price_ticker_note_default">Choose a package to begin</span>
+                <span class="wd-price-ticker-note" id="wdPriceNote">Choose a package to begin</span>
                 <span class="wd-price-ticker-count" id="wdFeatureCount" hidden></span>
                 <span class="wd-price-ticker-savings" id="wdPriceSavings" hidden></span>
               </div>
-              <button type="button" class="btn btn-primary" id="wdReviewSubmitBtn" hidden data-i18n="wd.review_submit_btn">Review &amp; submit</button>
+              <button type="button" class="btn btn-primary" id="wdReviewSubmitBtn" hidden>Review &amp; submit</button>
             </div>
           </div>
 
@@ -436,11 +392,11 @@
         <div class="wd-mobile-bar-info" aria-live="polite" aria-atomic="true">
           <span class="wd-mobile-bar-amount" id="wdMobileBarAmount">$0</span>
           <span class="wd-mobile-bar-meta">
-            <span class="wd-mobile-bar-label" data-i18n="wd.mobile_bar_label">starting estimate</span>
+            <span class="wd-mobile-bar-label">starting estimate</span>
             <span class="wd-mobile-bar-count" id="wdMobileBarCount" hidden></span>
           </span>
         </div>
-        <button type="button" class="btn btn-primary" id="wdMobileReviewBtn" data-i18n="wd.review_submit_btn">Review &amp; submit</button>
+        <button type="button" class="btn btn-primary" id="wdMobileReviewBtn">Review &amp; submit</button>
       </div>
     </div>
   </section>
@@ -452,57 +408,56 @@
     <div class="footer-brand">
       <img src="assets/logo-icon.png" alt="Little Technical Solutions LLC" width="36" height="36" class="footer-logo">
       <span class="logo-line1">Little Technical Solutions LLC</span>
-      <p data-i18n="footer.tagline">Websites, computers, networks, and security — handled by one call.</p>
+      <p>Websites, computers, networks, and security — handled by one call.</p>
     </div>
     <nav class="footer-nav" aria-label="Footer">
-      <a href="index.html" data-i18n="nav.home">Home</a>
-      <a href="services.html" data-i18n="nav.services">Services</a>
-      <a href="website-designer.html" data-i18n="nav.website_designer">Website Designer</a>
-      <a href="pricing.html" data-i18n="nav.pricing">Pricing</a>
-      <a href="heroes-pricing.html" data-i18n="nav.heroes_discount">Heroes Discount</a>
-      <a href="about.html" data-i18n="nav.about">About</a>
-      <a href="team.html" data-i18n="nav.team">Our Team</a>
-      <a href="service-area.html" data-i18n="nav.service_area">Service Area</a>
-      <a href="faq.html" data-i18n="nav.faq">FAQ</a>
-      <a href="blog.html" data-i18n="nav.blog">Blog</a>
-      <a href="payment.html" data-i18n="nav.payments">Payments</a>
-      <a href="contact.html" data-i18n="nav.contact">Contact</a>
-      <a href="intake.html" data-i18n="footer.new_client_form">New Client Form</a>
-      <a href="search.html" data-i18n="footer.search">Search</a>
-      <a href="sitemap.html" data-i18n="footer.sitemap">Sitemap</a>
-      <a href="privacy.html" data-i18n="footer.privacy_policy">Privacy Policy</a>
-      <a href="terms.html" data-i18n="footer.terms">Terms &amp; Conditions</a>
-      <a href="patch-notes.html" data-i18n="footer.patch_notes">Website Updates</a>
-      <a href="#" id="manageConsentLink" data-i18n="footer.cookie_notice">Cookie Notice</a>
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="website-designer.html">Website Designer</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="heroes-pricing.html">Heroes Discount</a>
+      <a href="about.html">About</a>
+      <a href="team.html">Our Team</a>
+      <a href="service-area.html">Service Area</a>
+      <a href="faq.html">FAQ</a>
+      <a href="blog.html">Blog</a>
+      <a href="payment.html">Payments</a>
+      <a href="contact.html">Contact</a>
+      <a href="intake.html">New Client Form</a>
+      <a href="search.html">Search</a>
+      <a href="sitemap.html">Sitemap</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms &amp; Conditions</a>
+      <a href="patch-notes.html">Website Updates</a>
+      <a href="#" id="manageConsentLink">Cookie Notice</a>
     </nav>
     <nav class="footer-social" aria-label="Social">
       <a href="https://www.facebook.com/profile.php?id=61591618750945" rel="noopener" target="_blank" aria-label="Little Technical Solutions LLC on Facebook">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>
-        <span data-i18n="footer.facebook">Facebook</span>
+        <span>Facebook</span>
       </a>
       <a href="https://www.google.com/search?q=Little+Technical+Solutions+LLC&stick=H4sIAAAAAAAA_-NgU1IxqDA0N0s1sUgyT0yxTE1NTLMyqEg2sTRLNTZOTTS1NDIzSUxaxCrnk1lSkpOqEJKanJGXmZyYoxCcn1NakpmfV6zg4-MMAGRkPw5JAAAA&hl=en&mat=CWEgdKX6xe4RElcBa0lj_4PsrYDUx2O2vFBpnokVltXIVrcy43xjezZrcYTprxRsgJGT1ATelPpH5ss3Sn-4VrXJHi_xxw10Eq_jzvWCxQfPf2G4feie7XZe-MJ3uWuSvN4&authuser=0" rel="noopener" target="_blank" aria-label="Little Technical Solutions LLC on Google">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 12.23c0-.75-.07-1.47-.19-2.18H12v4.13h5.4a4.6 4.6 0 0 1-2 3.02v2.5h3.24c1.9-1.75 3-4.32 3-7.47z"/><path d="M12 22c2.7 0 4.97-.9 6.63-2.44l-3.24-2.5c-.9.6-2.05.96-3.39.96-2.6 0-4.8-1.76-5.6-4.12H3.05v2.58A10 10 0 0 0 12 22z"/><path d="M6.4 13.9a6 6 0 0 1 0-3.8V7.52H3.05a10 10 0 0 0 0 8.96l3.35-2.58z"/><path d="M12 6.08c1.47 0 2.79.5 3.83 1.5l2.87-2.87A10 10 0 0 0 3.05 7.52L6.4 10.1c.8-2.36 3-4.02 5.6-4.02z"/></svg>
-        <span data-i18n="footer.find_google">Find us on Google</span>
+        <span>Find us on Google</span>
       </a>
     </nav>
   </div>
-  <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span data-i18n="footer.rights">All rights reserved.</span></p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version <span id="siteVersion">3.2.2</span></a></p>
-  <p class="footer-version"><a href="admin.html" data-i18n="footer.staff_signin">Staff Sign In</a></p>
+  <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span>All rights reserved.</span></p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version <span id="siteVersion">4.0.0</span></a></p>
+  <p class="footer-version"><a href="admin.html">Staff Sign In</a></p>
 </footer>
 
 <div id="cookie-banner" class="cookie-banner" hidden role="region" aria-label="Cookie notice">
   <div class="wrap cookie-banner-inner">
-    <p data-i18n-html="cookie.text">We use Netlify Analytics (cookie-free, privacy-respecting) to see site traffic, plus a small amount of local storage for things like your dark/light mode choice. Nothing here is used for advertising or sold to anyone. See our <a href="privacy.html" data-i18n="footer.privacy_policy">Privacy Policy</a>.</p>
+    <p>We use Netlify Analytics (cookie-free, privacy-respecting) to see site traffic. Nothing here is used for advertising or sold to anyone. See our <a href="privacy.html">Privacy Policy</a>.</p>
     <div class="cookie-banner-actions">
-      <button type="button" class="btn btn-primary btn-small" data-consent="dismiss" data-i18n="cookie.accept">Got it</button>
+      <button type="button" class="btn btn-primary btn-small" data-consent="dismiss">Got it</button>
     </div>
   </div>
 </div>
 
 <script src="assets/vendor/jspdf/jspdf.umd.min.js"></script>
 <script src="js/website-designer-pdf.js"></script>
-<script src="js/i18n.js"></script>
 <script src="js/main.js"></script>
 <script src="js/site-version.js"></script>
 <script src="js/website-designer.js"></script>

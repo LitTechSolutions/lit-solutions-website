@@ -1,8 +1,8 @@
 // Static consistency check for heroes-pricing.html (F016, closing out the
 // remaining half of F035): every "was $X / now $Y" pair on that page is
-// hand-typed prose (translated into 16 languages via data-i18n-html), not
-// computed -- so nothing catches it if a price changes on pricing.html but
-// the matching Heroes Discount row is never updated to match. This test
+// hand-typed prose, not computed -- so nothing catches it if a price
+// changes on pricing.html but the matching Heroes Discount row is never
+// updated to match. This test
 // re-derives the expected discounted price from the "was" price and the
 // documented rate (15% one-time, 5% on the two items explicitly marked
 // "5% off" in their own label) and asserts it against what's actually
@@ -29,9 +29,9 @@ function parsePricedItems(source) {
     const wasMatch = li.match(WAS_RE);
     const nowMatch = li.match(NOW_RE);
     if (!wasMatch || !nowMatch) continue; // e.g. items with no price-was (nothing to cross-check)
-    const nameMatch = li.match(/data-i18n(?:-html)?="(heroes\.\w+_name)"/);
+    const nameMatch = li.match(/class="price-item-name">([^<]+)/);
     items.push({
-      key: nameMatch ? nameMatch[1] : li.slice(0, 60),
+      key: nameMatch ? nameMatch[1].trim() : li.slice(0, 60),
       was: Number(wasMatch[1].replace(/,/g, "")),
       now: Number(nowMatch[1].replace(/,/g, "")),
       isRecurring: /5% off/.test(li),

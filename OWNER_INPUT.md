@@ -23,6 +23,12 @@ surrounding change.
   the site's existing "has real content" wording, translated into all
   15 languages, and verified live rendering matches the approved
   document exactly.
+- **Homepage extension (2026-07-19):** the original signed consent form
+  scoped publication to "the testimonials page and portfolio page" only
+  and didn't mention the homepage. Dylan confirmed directly with Bill
+  Armour that homepage placement is also fine (verbal confirmation via
+  Dylan, not a new signed document) before the same verbatim quote/
+  attribution was added to `index.html`'s hero section.
 
 ## 2. Armour Wireless Solutions portfolio case-study detail — RESOLVED
 

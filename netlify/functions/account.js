@@ -9,20 +9,15 @@
 //
 // GET                                                    -> { user: { id, name, email, role, preferences } }
 // POST { action: "update-name", newName }
-// POST { action: "update-preferences", preferences: { language?, timezone?, emailNotifications? } }
+// POST { action: "update-preferences", preferences: { timezone?, emailNotifications? } }
 // POST { action: "update-password", currentPassword, newPassword }
 // POST { action: "update-email", currentPassword, newEmail }
 
 const { readCookie, getSession, verifyPassword, hashPassword, revokeAllSessionsForUser, clearSessionCookie, json, rateLimited } = require("./_lib/auth_utils");
 const { getJSON, setJSON, deleteKey, store } = require("./_lib/blob_store");
 
-// Matches js/i18n.js's LANGS list exactly -- this codebase supports all 16
-// of these site-wide, so the account preference must accept all 16 too
-// (previously stuck at just the first 4, predating the i18n expansion).
-const VALID_LANGUAGES = ["en", "es", "fr", "zh", "ja", "vi", "tl", "ar", "ko", "de", "ht", "pt", "ru", "it", "pl", "hi"];
-
 function withDefaultPreferences(preferences) {
-  return Object.assign({ language: "en", timezone: "", emailNotifications: true }, preferences || {});
+  return Object.assign({ timezone: "", emailNotifications: true }, preferences || {});
 }
 
 async function findUserRecord(userId) {
@@ -72,10 +67,6 @@ exports.handler = async (event) => {
   if (body.action === "update-preferences") {
     const incoming = body.preferences || {};
     const prefs = withDefaultPreferences(user.preferences);
-    if (incoming.language !== undefined) {
-      if (!VALID_LANGUAGES.includes(incoming.language)) return json(400, { error: `language must be one of: ${VALID_LANGUAGES.join(", ")}` });
-      prefs.language = incoming.language;
-    }
     if (incoming.timezone !== undefined) prefs.timezone = String(incoming.timezone).slice(0, 60);
     if (incoming.emailNotifications !== undefined) prefs.emailNotifications = !!incoming.emailNotifications;
     user.preferences = prefs;

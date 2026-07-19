@@ -1,10 +1,7 @@
-// English-only for this release (owner decision #1: "Do not localize
-// the Care Hub into all 16 languages yet. Build it in English with
-// localization-ready string organization.") -- every user-facing string
-// lives in this one namespaced object, keyed the same way the public
-// site's js/i18n.js dictionaries are (dot-path-able sections), so a
-// future i18n pass can lift this into a real per-language dictionary
-// file without hunting down inline JSX text throughout the app. Do not
+// English-only, permanently (the public site's 16-language i18n system
+// was removed entirely in the v25 redesign) -- every user-facing string
+// still lives in this one namespaced object, keyed in dot-path-able
+// sections, so copy is never hunted down inline across the app. Do not
 // put user-facing copy directly in a component -- add it here and
 // import it instead.
 export const strings = {
@@ -509,7 +506,6 @@ export const strings = {
     passwordSubmit: "Update password",
     signOutNotice: "For your security, that signs you out everywhere -- sign in again with your new credentials.",
     preferencesHeading: "Preferences",
-    languageLabel: "Language",
     timezoneLabel: "Timezone (optional, e.g. America/New_York)",
     emailNotificationsLabel: "Email me about new tickets, checklist updates, and messages",
     preferencesSubmit: "Save preferences",

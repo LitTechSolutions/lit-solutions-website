@@ -1,30 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>
-(function(){
-  try{
-    var saved = localStorage.getItem('lts-theme');
-    var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    document.documentElement.setAttribute('data-theme', theme);
-  }catch(e){}
-})();
-</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Staff Sign In — Little Technical Solutions LLC</title>
 <meta name="robots" content="noindex, nofollow">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <link rel="icon" type="image/png" href="assets/favicon.png">
 <style>
   /* Admin-only additions -- not part of the public design system in
      css/style.css, kept here so this stays a single self-contained file. */
   .admin-header{ background: var(--navy-deep); color:#fff; }
-  .admin-header-inner{ display:flex; align-items:center; justify-content:space-between; padding: 1.1rem 0; }
+  .admin-header-inner{ display:flex; align-items:center; justify-content:space-between; padding-top: 1.1rem; padding-bottom: 1.1rem; }
   .admin-header a.logo-link{ display:flex; align-items:center; gap:.6rem; color:#fff; font-family:var(--font-display); font-weight:600; }
   .admin-header a.logo-link img{ width:30px; height:30px; }
   .admin-header-actions{ display:flex; align-items:center; gap:1.25rem; font-size:.88rem; }
@@ -56,10 +44,10 @@
   .admin-field-hint{ font-size:.78rem; color: var(--ink-faint); font-weight:400; margin-top:.2rem; }
   .status{ font-size:.85rem; font-weight:600; margin-top:.75rem; min-height:1.2em; }
   .status.ok{ color: var(--accent-teal-text); }
-  .status.error{ color: var(--accent-orange-text); }
+  .status.error{ color: var(--error-text); }
   .status.pending{ color: var(--ink-soft); font-weight:500; font-style:italic; }
   .status a.linklike{ font-weight:600; font-style:normal; margin-left:.4rem; }
-  a.linklike{ color: var(--accent-teal-text); cursor:pointer; text-decoration:underline; font-size:.85rem; }
+  a.linklike{ color: var(--accent-orange-text); cursor:pointer; text-decoration:underline; font-size:.85rem; }
 </style>
 </head>
 <body>

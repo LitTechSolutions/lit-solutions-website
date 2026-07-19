@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>
-(function(){
-  try{
-    var saved = localStorage.getItem('lts-theme');
-    var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    document.documentElement.setAttribute('data-theme', theme);
-  }catch(e){}
-})();
-</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cybersecurity — Little Technical Solutions LLC</title>
@@ -25,43 +16,12 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Little Technical Solutions LLC","image":"https://lit-solutions.tech/assets/logo-full.png","telephone":"+18043090968","email":"dylan@lit-solutions.tech","url":"https://lit-solutions.tech/","priceRange":"$$","areaServed":[{"@type":"City","name":"Montross, VA"},{"@type":"City","name":"Colonial Beach, VA"},{"@type":"City","name":"King George, VA"},{"@type":"City","name":"Dahlgren, VA"}],"sameAs":["https://www.facebook.com/profile.php?id=61591618750945","https://www.google.com/search?q=Little+Technical+Solutions+LLC&stick=H4sIAAAAAAAA_-NgU1IxqDA0N0s1sUgyT0yxTE1NTLMyqEg2sTRLNTZOTTS1NDIzSUxaxCrnk1lSkpOqEJKanJGXmZyYoxCcn1NakpmfV6zg4-MMAGRkPw5JAAAA&hl=en&mat=CWEgdKX6xe4RElcBa0lj_4PsrYDUx2O2vFBpnokVltXIVrcy43xjezZrcYTprxRsgJGT1ATelPpH5ss3Sn-4VrXJHi_xxw10Eq_jzvWCxQfPf2G4feie7XZe-MJ3uWuSvN4&authuser=0"]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Service","name":"Cybersecurity","description":"Most breaches start with a weak password or no MFA. We lock down the basics that stop the majority of real-world attacks.","url":"https://lit-solutions.tech/service-cybersecurity.html","provider":{"@type":"LocalBusiness","name":"Little Technical Solutions LLC","telephone":"+18043090968","email":"dylan@lit-solutions.tech","url":"https://lit-solutions.tech/"},"areaServed":[{"@type":"City","name":"Montross, VA"},{"@type":"City","name":"Colonial Beach, VA"},{"@type":"City","name":"King George, VA"},{"@type":"City","name":"Dahlgren, VA"}]}</script>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <link rel="icon" type="image/png" href="assets/favicon.png">
 </head>
 <body>
 
-<a class="skip-link" href="#main" data-i18n="a11y.skip_to_content">Skip to content</a>
-<div class="lang-bar">
-  <div class="wrap lang-bar-inner">
-    <div class="nav-dropdown">
-      <button type="button" class="nav-dropdown-toggle lang-dropdown-toggle" aria-haspopup="listbox" aria-expanded="false" aria-controls="langMenu" aria-label="Choose language" data-i18n-attr-aria-label="header.choose_language">
-        <span id="langCurrentLabel">ENG</span>
-        <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
-      </button>
-      <div class="nav-dropdown-menu lang-dropdown-menu" id="langMenu" role="listbox">
-        <button type="button" class="lang-option is-active" data-lang="en">English <span class="lang-code">ENG</span></button>
-        <button type="button" class="lang-option" data-lang="es">Español <span class="lang-code">ESP</span></button>
-        <button type="button" class="lang-option" data-lang="fr">Français <span class="lang-code">FRA</span></button>
-        <button type="button" class="lang-option" data-lang="zh">中文 <span class="lang-code">ZH</span></button>
-        <button type="button" class="lang-option" data-lang="ja">日本語 <span class="lang-code">JPN</span></button>
-        <button type="button" class="lang-option" data-lang="vi">Tiếng Việt <span class="lang-code">VIE</span></button>
-        <button type="button" class="lang-option" data-lang="tl">Filipino <span class="lang-code">FIL</span></button>
-        <button type="button" class="lang-option" data-lang="ar">العربية <span class="lang-code">ARA</span></button>
-        <button type="button" class="lang-option" data-lang="ko">한국어 <span class="lang-code">KOR</span></button>
-        <button type="button" class="lang-option" data-lang="de">Deutsch <span class="lang-code">GER</span></button>
-        <button type="button" class="lang-option" data-lang="ht">Kreyòl Ayisyen <span class="lang-code">HAT</span></button>
-        <button type="button" class="lang-option" data-lang="pt">Português <span class="lang-code">POR</span></button>
-        <button type="button" class="lang-option" data-lang="ru">Русский <span class="lang-code">RUS</span></button>
-        <button type="button" class="lang-option" data-lang="it">Italiano <span class="lang-code">ITA</span></button>
-        <button type="button" class="lang-option" data-lang="pl">Polski <span class="lang-code">POL</span></button>
-        <button type="button" class="lang-option" data-lang="hi">हिन्दी <span class="lang-code">HIN</span></button>
-      </div>
-    </div>
-  </div>
-</div>
+<a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header" id="siteHeader">
   <div class="wrap header-inner">
     <a href="index.html" class="logo" aria-label="Little Technical Solutions LLC — home">
@@ -75,46 +35,42 @@
     </a>
 
     <nav class="main-nav" id="mainNav" aria-label="Primary">
-      <a href="index.html" data-i18n="nav.home">Home</a>
+      <a href="index.html">Home</a>
       <div class="nav-dropdown">
         <button type="button" class="nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="servicesDropdown">
-          <span data-i18n="nav.services">Services</span>
+          <span>Services</span>
           <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
         </button>
         <div class="nav-dropdown-menu" id="servicesDropdown">
-          <a href="services.html" data-i18n="nav.services_all">All Services</a>
-          <a href="service-website.html" data-i18n="nav.service_website">Website Design &amp; Development</a>
-          <a href="service-computer.html" data-i18n="nav.service_computer">Computer Repair</a>
-          <a href="service-networking.html" data-i18n="nav.service_networking">Networking</a>
-          <a href="service-cybersecurity.html" data-i18n="nav.service_cybersecurity">Cybersecurity</a>
-          <a href="service-business-it.html" data-i18n="nav.service_business_it">Small Business IT</a>
-          <a href="pricing.html" data-i18n="nav.pricing">Pricing</a>
+          <a href="services.html">All Services</a>
+          <a href="service-website.html">Website Design &amp; Development</a>
+          <a href="service-computer.html">Computer Repair</a>
+          <a href="service-networking.html">Networking</a>
+          <a href="service-cybersecurity.html">Cybersecurity</a>
+          <a href="service-business-it.html">Small Business IT</a>
+          <a href="pricing.html">Pricing</a>
         </div>
       </div>
-      <a href="website-designer.html" data-i18n="nav.website_designer">Website Designer</a>
-      <a href="about.html" data-i18n="nav.about">About</a>
-      <a href="contact.html" data-i18n="nav.contact">Contact</a>
+      <a href="website-designer.html">Website Designer</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
     </nav>
 
     <div class="header-actions">
-      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode" data-i18n-attr-aria-label="header.toggle_dark_mode" data-i18n-attr-title="header.toggle_dark_mode">
-        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-      </button>
-      <a href="search.html" class="search-toggle" aria-label="Search this site" title="Search this site" data-i18n-attr-aria-label="header.search_site" data-i18n-attr-title="header.search_site">
+      <a href="search.html" class="search-toggle" aria-label="Search this site" title="Search this site">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-3.8-3.8"/></svg>
       </a>
-      <a href="myaccount.html" class="search-toggle" aria-label="Client Sign In" title="Client Sign In" data-i18n-attr-aria-label="header.my_account" data-i18n-attr-title="header.my_account">
+      <a href="myaccount.html" class="search-toggle" aria-label="Client Sign In" title="Client Sign In">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </a>
       <a href="tel:+18043090968" class="phone-link">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         804-309-0968
       </a>
-      <a href="intake.html" class="btn btn-primary btn-small" data-i18n="header.get_quote">Request Service</a>
+      <a href="intake.html" class="btn btn-primary btn-small">Request Service</a>
     </div>
 
-    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu" data-i18n-attr-aria-label="header.toggle_menu">
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu">
       <span></span><span></span><span></span>
     </button>
   </div>
@@ -123,13 +79,13 @@
   <section class="service-detail-hero">
     <div class="wrap service-detail-hero-inner">
       <div>
-        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html" data-i18n="service_cybersecurity.breadcrumb_home">Home</a><span class="sep">/</span><a href="services.html" data-i18n="nav.services">Services</a><span class="sep">/</span><span aria-current="page" data-i18n="service_cybersecurity.breadcrumb_current">Cybersecurity</span></nav>
-        <p class="eyebrow" data-i18n="service_cybersecurity.hero_eyebrow">SEC-04</p>
-        <h1 data-i18n="service_cybersecurity.hero_h1">Cybersecurity</h1>
-        <p class="section-lede" data-i18n="service_cybersecurity.hero_lede">Most breaches start with a weak password or no MFA. We lock down the basics that stop the majority of real-world attacks.</p>
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span class="sep">/</span><a href="services.html">Services</a><span class="sep">/</span><span aria-current="page">Cybersecurity</span></nav>
+        <p class="eyebrow">SEC-04</p>
+        <h1>Cybersecurity</h1>
+        <p class="section-lede">Most breaches start with a weak password or no MFA. We lock down the basics that stop the majority of real-world attacks.</p>
         <div class="hero-actions">
-          <a href="intake.html" class="btn btn-primary" data-i18n="service_cybersecurity.hero_cta_quote">Request Service</a>
-          <a href="pricing.html" class="btn btn-ghost" style="border-color:rgba(238,241,245,0.35); color:#fff;" data-i18n="service_cybersecurity.hero_cta_pricing">See Pricing</a>
+          <a href="intake.html" class="btn btn-primary">Request Service</a>
+          <a href="pricing.html" class="btn btn-ghost" style="border-color:rgba(238,241,245,0.35); color:#fff;">See Pricing</a>
         </div>
       </div>
       <div class="service-detail-icon"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6z"/></svg></div>
@@ -137,30 +93,30 @@
   </section>
 
   <nav class="page-toc wrap" aria-label="On this page">
-    <a href="#whats-included" data-i18n="service_cybersecurity.toc_whats_included">What&#39;s included</a>
-    <a href="#full-list" data-i18n="service_cybersecurity.toc_full_list">Full service list</a>
-    <a href="#process" data-i18n="service_cybersecurity.toc_process">How it works</a>
-    <a href="#faqs" data-i18n="service_cybersecurity.toc_faqs">FAQs</a>
+    <a href="#whats-included">What's included</a>
+    <a href="#full-list">Full service list</a>
+    <a href="#process">How it works</a>
+    <a href="#faqs">FAQs</a>
   </nav>
 
   <section class="why" id="whats-included">
     <div class="wrap why-inner">
       <div class="why-copy">
-        <p class="eyebrow" data-i18n="service_cybersecurity.included_eyebrow">What's included</p>
-        <h2 data-i18n="service_cybersecurity.included_h2">Everything under Cybersecurity</h2>
+        <p class="eyebrow">What's included</p>
+        <h2>Everything under Cybersecurity</h2>
       </div>
       <div class="why-grid">
         <div class="why-card reveal">
-          <h3 data-i18n="service_cybersecurity.included_card1_title">Built on real training</h3>
-          <p data-i18n="service_cybersecurity.included_card1_desc">Founder Dylan Little holds a B.S. in Cybersecurity Technology from University of Maryland Global Campus.</p>
+          <h3>Built on real training</h3>
+          <p>Founder Dylan Little holds a B.S. in Cybersecurity Technology from University of Maryland Global Campus.</p>
         </div>
         <div class="why-card reveal">
-          <h3 data-i18n="service_cybersecurity.included_card2_title">Practical, not theoretical</h3>
-          <p data-i18n="service_cybersecurity.included_card2_desc">We focus on the handful of changes that actually reduce your real-world risk.</p>
+          <h3>Practical, not theoretical</h3>
+          <p>We focus on the handful of changes that actually reduce your real-world risk.</p>
         </div>
         <div class="why-card reveal">
-          <h3 data-i18n="service_cybersecurity.included_card3_title">No fear-mongering</h3>
-          <p data-i18n="service_cybersecurity.included_card3_desc">Plain-language security reviews — what's actually at risk, and what to do about it.</p>
+          <h3>No fear-mongering</h3>
+          <p>Plain-language security reviews — what's actually at risk, and what to do about it.</p>
         </div>
       </div>
     </div>
@@ -169,41 +125,41 @@
   <section class="alt-bg" id="full-list">
     <div class="wrap">
       <header class="section-head">
-        <p class="eyebrow" data-i18n="service_cybersecurity.full_list_eyebrow">Full service list</p>
-        <h2 data-i18n="service_cybersecurity.full_list_h2">What we handle under SEC-04</h2>
+        <p class="eyebrow">Full service list</p>
+        <h2>What we handle under SEC-04</h2>
       </header>
       <ul class="ul-columns" style="max-width:800px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:.6rem 2rem;">
-            <li data-i18n="service_cybersecurity.full_list_item1">Security consultations</li>
-            <li data-i18n="service_cybersecurity.full_list_item2">Password manager setup</li>
-            <li data-i18n="service_cybersecurity.full_list_item3">Multi-factor authentication (MFA) setup</li>
-            <li data-i18n="service_cybersecurity.full_list_item4">Security best practices training</li>
-            <li data-i18n="service_cybersecurity.full_list_item5">Home & small business security reviews</li>
+            <li>Security consultations</li>
+            <li>Password manager setup</li>
+            <li>Multi-factor authentication (MFA) setup</li>
+            <li>Security best practices training</li>
+            <li>Home &amp; small business security reviews</li>
       </ul>
-      <p style="text-align:center; margin-top:2rem; font-size:.9rem; color:var(--ink-soft);" data-i18n-html="service_cybersecurity.full_list_pricing_note">Security services start at $45–$99. See the <a href="pricing.html">full pricing page</a> for details.</p>
+      <p style="text-align:center; margin-top:2rem; font-size:.9rem; color:var(--ink-soft);">Security services start at $45–$99. See the <a href="pricing.html">full pricing page</a> for details.</p>
     </div>
   </section>
 
   <section class="how" id="process">
     <div class="wrap">
       <header class="section-head">
-        <p class="eyebrow" data-i18n="service_cybersecurity.process_eyebrow">How it works</p>
-        <h2 data-i18n="service_cybersecurity.process_h2">The process</h2>
+        <p class="eyebrow">How it works</p>
+        <h2>The process</h2>
       </header>
       <ol class="steps">
         <li class="reveal" style="transition-delay:0.0s">
           <span class="step-num">1</span>
-          <h3 data-i18n="service_cybersecurity.process_step1_title">Review</h3>
-          <p data-i18n="service_cybersecurity.process_step1_desc">We assess your current setup — accounts, devices, and network — for the highest-risk gaps.</p>
+          <h3>Review</h3>
+          <p>We assess your current setup — accounts, devices, and network — for the highest-risk gaps.</p>
         </li>
         <li class="reveal" style="transition-delay:0.08s">
           <span class="step-num">2</span>
-          <h3 data-i18n="service_cybersecurity.process_step2_title">Harden</h3>
-          <p data-i18n="service_cybersecurity.process_step2_desc">Password manager and MFA setup across your key accounts.</p>
+          <h3>Harden</h3>
+          <p>Password manager and MFA setup across your key accounts.</p>
         </li>
         <li class="reveal" style="transition-delay:0.16s">
           <span class="step-num">3</span>
-          <h3 data-i18n="service_cybersecurity.process_step3_title">Train</h3>
-          <p data-i18n="service_cybersecurity.process_step3_desc">A short, plain-language walkthrough of the habits that actually matter.</p>
+          <h3>Train</h3>
+          <p>A short, plain-language walkthrough of the habits that actually matter.</p>
         </li>
       </ol>
     </div>
@@ -212,17 +168,17 @@
   <section id="faqs">
     <div class="wrap">
       <header class="section-head">
-        <p class="eyebrow" data-i18n="service_cybersecurity.faqs_eyebrow">Questions</p>
-        <h2 data-i18n="service_cybersecurity.faqs_h2">Cybersecurity FAQs</h2>
+        <p class="eyebrow">Questions</p>
+        <h2>Cybersecurity FAQs</h2>
       </header>
       <div class="faq-list">
         <details class="faq-item">
-          <summary data-i18n="service_cybersecurity.faq1_question">I'm not a business — is this just for companies?</summary>
-          <div class="faq-answer"><p data-i18n="service_cybersecurity.faq1_answer">No — home and small business security reviews are both available, starting at $99.</p></div>
+          <summary>I'm not a business — is this just for companies?</summary>
+          <div class="faq-answer"><p>No — home and small business security reviews are both available, starting at $99.</p></div>
         </details>
         <details class="faq-item">
-          <summary data-i18n="service_cybersecurity.faq2_question">What's MFA setup include?</summary>
-          <div class="faq-answer"><p data-i18n="service_cybersecurity.faq2_answer">Configuring multi-factor authentication on your important accounts (email, banking, business logins) so a stolen password alone isn't enough to get in.</p></div>
+          <summary>What's MFA setup include?</summary>
+          <div class="faq-answer"><p>Configuring multi-factor authentication on your important accounts (email, banking, business logins) so a stolen password alone isn't enough to get in.</p></div>
         </details>
       </div>
     </div>
@@ -231,21 +187,21 @@
   <section class="alt-bg">
     <div class="wrap">
       <header class="section-head">
-        <p class="eyebrow" data-i18n="service_cybersecurity.related_eyebrow">Related</p>
-        <h2 data-i18n="service_cybersecurity.related_h2">Other services</h2>
+        <p class="eyebrow">Related</p>
+        <h2>Other services</h2>
       </header>
       <div class="related-services-grid">
         <a href="service-website.html" class="related-service-card reveal">
-          <h3 data-i18n="service_cybersecurity.related_card1_title">Website Services</h3>
+          <h3>Website Services</h3>
         </a>
         <a href="service-computer.html" class="related-service-card reveal">
-          <h3 data-i18n="service_cybersecurity.related_card2_title">Computer Services</h3>
+          <h3>Computer Services</h3>
         </a>
         <a href="service-networking.html" class="related-service-card reveal">
-          <h3 data-i18n="service_cybersecurity.related_card3_title">Networking</h3>
+          <h3>Networking</h3>
         </a>
         <a href="service-business-it.html" class="related-service-card reveal">
-          <h3 data-i18n="service_cybersecurity.related_card4_title">Small Business IT</h3>
+          <h3>Small Business IT</h3>
         </a>
       </div>
     </div>
@@ -254,8 +210,8 @@
   <section>
     <div class="wrap">
       <div class="pricing-cta reveal">
-        <h2 data-i18n="service_cybersecurity.cta_h2">Ready to get started with Cybersecurity?</h2>
-        <a href="intake.html" class="btn btn-primary" style="margin-top:.5rem;" data-i18n="service_cybersecurity.cta_button">Request Service</a>
+        <h2>Ready to get started with Cybersecurity?</h2>
+        <a href="intake.html" class="btn btn-primary" style="margin-top:.5rem;">Request Service</a>
       </div>
     </div>
   </section>
@@ -267,55 +223,54 @@
     <div class="footer-brand">
       <img src="assets/logo-icon.png" alt="Little Technical Solutions LLC" width="36" height="36" class="footer-logo">
       <span class="logo-line1">Little Technical Solutions LLC</span>
-      <p data-i18n="footer.tagline">Websites, computers, networks, and security — handled by one call.</p>
+      <p>Websites, computers, networks, and security — handled by one call.</p>
     </div>
     <nav class="footer-nav" aria-label="Footer">
-      <a href="index.html" data-i18n="nav.home">Home</a>
-      <a href="services.html" data-i18n="nav.services">Services</a>
-      <a href="website-designer.html" data-i18n="nav.website_designer">Website Designer</a>
-      <a href="pricing.html" data-i18n="nav.pricing">Pricing</a>
-      <a href="heroes-pricing.html" data-i18n="nav.heroes_discount">Heroes Discount</a>
-      <a href="about.html" data-i18n="nav.about">About</a>
-      <a href="team.html" data-i18n="nav.team">Our Team</a>
-      <a href="service-area.html" data-i18n="nav.service_area">Service Area</a>
-      <a href="faq.html" data-i18n="nav.faq">FAQ</a>
-      <a href="blog.html" data-i18n="nav.blog">Blog</a>
-      <a href="payment.html" data-i18n="nav.payments">Payments</a>
-      <a href="contact.html" data-i18n="nav.contact">Contact</a>
-      <a href="intake.html" data-i18n="footer.new_client_form">New Client Form</a>
-      <a href="search.html" data-i18n="footer.search">Search</a>
-      <a href="sitemap.html" data-i18n="footer.sitemap">Sitemap</a>
-      <a href="privacy.html" data-i18n="footer.privacy_policy">Privacy Policy</a>
-      <a href="terms.html" data-i18n="footer.terms">Terms &amp; Conditions</a>
-      <a href="patch-notes.html" data-i18n="footer.patch_notes">Website Updates</a>
-      <a href="#" id="manageConsentLink" data-i18n="footer.cookie_notice">Cookie Notice</a>
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="website-designer.html">Website Designer</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="heroes-pricing.html">Heroes Discount</a>
+      <a href="about.html">About</a>
+      <a href="team.html">Our Team</a>
+      <a href="service-area.html">Service Area</a>
+      <a href="faq.html">FAQ</a>
+      <a href="blog.html">Blog</a>
+      <a href="payment.html">Payments</a>
+      <a href="contact.html">Contact</a>
+      <a href="intake.html">New Client Form</a>
+      <a href="search.html">Search</a>
+      <a href="sitemap.html">Sitemap</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms &amp; Conditions</a>
+      <a href="patch-notes.html">Website Updates</a>
+      <a href="#" id="manageConsentLink">Cookie Notice</a>
     </nav>
     <nav class="footer-social" aria-label="Social">
       <a href="https://www.facebook.com/profile.php?id=61591618750945" rel="noopener" target="_blank" aria-label="Little Technical Solutions LLC on Facebook">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>
-        <span data-i18n="footer.facebook">Facebook</span>
+        <span>Facebook</span>
       </a>
       <a href="https://www.google.com/search?q=Little+Technical+Solutions+LLC&stick=H4sIAAAAAAAA_-NgU1IxqDA0N0s1sUgyT0yxTE1NTLMyqEg2sTRLNTZOTTS1NDIzSUxaxCrnk1lSkpOqEJKanJGXmZyYoxCcn1NakpmfV6zg4-MMAGRkPw5JAAAA&hl=en&mat=CWEgdKX6xe4RElcBa0lj_4PsrYDUx2O2vFBpnokVltXIVrcy43xjezZrcYTprxRsgJGT1ATelPpH5ss3Sn-4VrXJHi_xxw10Eq_jzvWCxQfPf2G4feie7XZe-MJ3uWuSvN4&authuser=0" rel="noopener" target="_blank" aria-label="Little Technical Solutions LLC on Google">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 12.23c0-.75-.07-1.47-.19-2.18H12v4.13h5.4a4.6 4.6 0 0 1-2 3.02v2.5h3.24c1.9-1.75 3-4.32 3-7.47z"/><path d="M12 22c2.7 0 4.97-.9 6.63-2.44l-3.24-2.5c-.9.6-2.05.96-3.39.96-2.6 0-4.8-1.76-5.6-4.12H3.05v2.58A10 10 0 0 0 12 22z"/><path d="M6.4 13.9a6 6 0 0 1 0-3.8V7.52H3.05a10 10 0 0 0 0 8.96l3.35-2.58z"/><path d="M12 6.08c1.47 0 2.79.5 3.83 1.5l2.87-2.87A10 10 0 0 0 3.05 7.52L6.4 10.1c.8-2.36 3-4.02 5.6-4.02z"/></svg>
-        <span data-i18n="footer.find_google">Find us on Google</span>
+        <span>Find us on Google</span>
       </a>
     </nav>
   </div>
-  <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span data-i18n="footer.rights">All rights reserved.</span></p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version <span id="siteVersion">3.2.2</span></a></p>
-  <p class="footer-version"><a href="admin.html" data-i18n="footer.staff_signin">Staff Sign In</a></p>
+  <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span>All rights reserved.</span></p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version <span id="siteVersion">4.0.0</span></a></p>
+  <p class="footer-version"><a href="admin.html">Staff Sign In</a></p>
 </footer>
 
 <div id="cookie-banner" class="cookie-banner" hidden role="region" aria-label="Cookie notice">
   <div class="wrap cookie-banner-inner">
-    <p data-i18n-html="cookie.text">We use Netlify Analytics (cookie-free, privacy-respecting) to see site traffic, plus a small amount of local storage for things like your dark/light mode choice. Nothing here is used for advertising or sold to anyone. See our <a href="privacy.html" data-i18n="footer.privacy_policy">Privacy Policy</a>.</p>
+    <p>We use Netlify Analytics (cookie-free, privacy-respecting) to see site traffic. Nothing here is used for advertising or sold to anyone. See our <a href="privacy.html">Privacy Policy</a>.</p>
     <div class="cookie-banner-actions">
-      <button type="button" class="btn btn-primary btn-small" data-consent="dismiss" data-i18n="cookie.accept">Got it</button>
+      <button type="button" class="btn btn-primary btn-small" data-consent="dismiss">Got it</button>
     </div>
   </div>
 </div>
 
-<script src="js/i18n.js"></script>
 <script src="js/main.js"></script>
 <script src="js/site-version.js"></script>
 </body>

@@ -37,7 +37,7 @@ function customerAccount() {
       email: "jamie@example.com",
       role: "customer" as const,
       verified: true,
-      preferences: { language: "en", timezone: "", emailNotifications: true },
+      preferences: { timezone: "", emailNotifications: true },
     },
   };
 }
@@ -50,7 +50,7 @@ function adminAccount() {
       email: "dylan@lit-solutions.tech",
       role: "admin" as const,
       verified: true,
-      preferences: { language: "en", timezone: "", emailNotifications: true },
+      preferences: { timezone: "", emailNotifications: true },
     },
   };
 }

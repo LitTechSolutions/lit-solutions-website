@@ -11,25 +11,6 @@ import { UnauthorizedState } from "../components/states/UnauthorizedState";
 import { SessionExpiredState } from "../components/states/SessionExpiredState";
 import type { AccountPreferences, AuthenticatedUser } from "../api/types";
 
-const LANGUAGES: [string, string][] = [
-  ["en", "English"],
-  ["es", "Español"],
-  ["fr", "Français"],
-  ["zh", "中文"],
-  ["ja", "日本語"],
-  ["vi", "Tiếng Việt"],
-  ["tl", "Filipino"],
-  ["ar", "العربية"],
-  ["ko", "한국어"],
-  ["de", "Deutsch"],
-  ["ht", "Kreyòl Ayisyen"],
-  ["pt", "Português"],
-  ["ru", "Русский"],
-  ["it", "Italiano"],
-  ["pl", "Polski"],
-  ["hi", "हिन्दी"],
-];
-
 function SignInAgain() {
   return <SessionExpiredState onSignInAgain={() => window.location.assign("/care-hub/login")} />;
 }
@@ -224,7 +205,6 @@ function PasswordSection() {
 }
 
 function PreferencesSection({ preferences, onSaved }: { preferences: AccountPreferences; onSaved: () => void }) {
-  const [language, setLanguage] = useState(preferences.language);
   const [timezone, setTimezone] = useState(preferences.timezone);
   const [emailNotifications, setEmailNotifications] = useState(preferences.emailNotifications);
   const [saving, setSaving] = useState(false);
@@ -237,7 +217,7 @@ function PreferencesSection({ preferences, onSaved }: { preferences: AccountPref
     setError(null);
     setStatus(null);
     try {
-      await api.account.updatePreferences({ language, timezone, emailNotifications });
+      await api.account.updatePreferences({ timezone, emailNotifications });
       setStatus(strings.account.saved);
       onSaved();
     } catch (err) {
@@ -250,16 +230,6 @@ function PreferencesSection({ preferences, onSaved }: { preferences: AccountPref
   return (
     <form className="card" style={{ marginTop: "var(--space-4)" }} onSubmit={handleSubmit}>
       <h2 style={{ fontSize: "1.05rem", marginBottom: "var(--space-3)" }}>{strings.account.preferencesHeading}</h2>
-      <div className="field">
-        <label htmlFor="account-language">{strings.account.languageLabel}</label>
-        <select id="account-language" value={language} onChange={(e) => setLanguage(e.target.value)}>
-          {LANGUAGES.map(([code, label]) => (
-            <option key={code} value={code}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </div>
       <div className="field">
         <label htmlFor="account-timezone">{strings.account.timezoneLabel}</label>
         <input id="account-timezone" type="text" value={timezone} onChange={(e) => setTimezone(e.target.value)} />

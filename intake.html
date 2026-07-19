@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>
-(function(){
-  try{
-    var saved = localStorage.getItem('lts-theme');
-    var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    document.documentElement.setAttribute('data-theme', theme);
-  }catch(e){}
-})();
-</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>New Client Intake Form — Little Technical Solutions LLC</title>
@@ -24,44 +15,12 @@
 <meta name="twitter:card" content="summary">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Little Technical Solutions LLC","image":"https://lit-solutions.tech/assets/logo-full.png","telephone":"+18043090968","email":"dylan@lit-solutions.tech","url":"https://lit-solutions.tech/","priceRange":"$$","areaServed":[{"@type":"City","name":"Montross, VA"},{"@type":"City","name":"Colonial Beach, VA"},{"@type":"City","name":"King George, VA"},{"@type":"City","name":"Dahlgren, VA"}],"sameAs":["https://www.facebook.com/profile.php?id=61591618750945","https://www.google.com/search?q=Little+Technical+Solutions+LLC&stick=H4sIAAAAAAAA_-NgU1IxqDA0N0s1sUgyT0yxTE1NTLMyqEg2sTRLNTZOTTS1NDIzSUxaxCrnk1lSkpOqEJKanJGXmZyYoxCcn1NakpmfV6zg4-MMAGRkPw5JAAAA&hl=en&mat=CWEgdKX6xe4RElcBa0lj_4PsrYDUx2O2vFBpnokVltXIVrcy43xjezZrcYTprxRsgJGT1ATelPpH5ss3Sn-4VrXJHi_xxw10Eq_jzvWCxQfPf2G4feie7XZe-MJ3uWuSvN4&authuser=0"]}</script>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <link rel="icon" type="image/png" href="assets/favicon.png">
 </head>
 <body>
 
-<a class="skip-link" href="#main" data-i18n="a11y.skip_to_content">Skip to content</a>
-<div class="lang-bar">
-  <div class="wrap lang-bar-inner">
-    <div class="nav-dropdown">
-      <button type="button" class="nav-dropdown-toggle lang-dropdown-toggle" aria-haspopup="listbox" aria-expanded="false" aria-controls="langMenu" aria-label="Choose language" data-i18n-attr-aria-label="header.choose_language">
-        <span id="langCurrentLabel">ENG</span>
-        <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
-      </button>
-      <div class="nav-dropdown-menu lang-dropdown-menu" id="langMenu" role="listbox">
-        <button type="button" class="lang-option is-active" data-lang="en">English <span class="lang-code">ENG</span></button>
-        <button type="button" class="lang-option" data-lang="es">Español <span class="lang-code">ESP</span></button>
-        <button type="button" class="lang-option" data-lang="fr">Français <span class="lang-code">FRA</span></button>
-        <button type="button" class="lang-option" data-lang="zh">中文 <span class="lang-code">ZH</span></button>
-        <button type="button" class="lang-option" data-lang="ja">日本語 <span class="lang-code">JPN</span></button>
-        <button type="button" class="lang-option" data-lang="vi">Tiếng Việt <span class="lang-code">VIE</span></button>
-        <button type="button" class="lang-option" data-lang="tl">Filipino <span class="lang-code">FIL</span></button>
-        <button type="button" class="lang-option" data-lang="ar">العربية <span class="lang-code">ARA</span></button>
-        <button type="button" class="lang-option" data-lang="ko">한국어 <span class="lang-code">KOR</span></button>
-        <button type="button" class="lang-option" data-lang="de">Deutsch <span class="lang-code">GER</span></button>
-        <button type="button" class="lang-option" data-lang="ht">Kreyòl Ayisyen <span class="lang-code">HAT</span></button>
-        <button type="button" class="lang-option" data-lang="pt">Português <span class="lang-code">POR</span></button>
-        <button type="button" class="lang-option" data-lang="ru">Русский <span class="lang-code">RUS</span></button>
-        <button type="button" class="lang-option" data-lang="it">Italiano <span class="lang-code">ITA</span></button>
-        <button type="button" class="lang-option" data-lang="pl">Polski <span class="lang-code">POL</span></button>
-        <button type="button" class="lang-option" data-lang="hi">हिन्दी <span class="lang-code">HIN</span></button>
-      </div>
-    </div>
-  </div>
-</div>
-
+<a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header" id="siteHeader">
   <div class="wrap header-inner">
     <a href="index.html" class="logo" aria-label="Little Technical Solutions LLC — home">
@@ -75,46 +34,42 @@
     </a>
 
     <nav class="main-nav" id="mainNav" aria-label="Primary">
-      <a href="index.html" data-i18n="nav.home">Home</a>
+      <a href="index.html">Home</a>
       <div class="nav-dropdown">
         <button type="button" class="nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="servicesDropdown">
-          <span data-i18n="nav.services">Services</span>
+          <span>Services</span>
           <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
         </button>
         <div class="nav-dropdown-menu" id="servicesDropdown">
-          <a href="services.html" data-i18n="nav.services_all">All Services</a>
-          <a href="service-website.html" data-i18n="nav.service_website">Website Design &amp; Development</a>
-          <a href="service-computer.html" data-i18n="nav.service_computer">Computer Repair</a>
-          <a href="service-networking.html" data-i18n="nav.service_networking">Networking</a>
-          <a href="service-cybersecurity.html" data-i18n="nav.service_cybersecurity">Cybersecurity</a>
-          <a href="service-business-it.html" data-i18n="nav.service_business_it">Small Business IT</a>
-          <a href="pricing.html" data-i18n="nav.pricing">Pricing</a>
+          <a href="services.html">All Services</a>
+          <a href="service-website.html">Website Design &amp; Development</a>
+          <a href="service-computer.html">Computer Repair</a>
+          <a href="service-networking.html">Networking</a>
+          <a href="service-cybersecurity.html">Cybersecurity</a>
+          <a href="service-business-it.html">Small Business IT</a>
+          <a href="pricing.html">Pricing</a>
         </div>
       </div>
-      <a href="website-designer.html" data-i18n="nav.website_designer">Website Designer</a>
-      <a href="about.html" data-i18n="nav.about">About</a>
-      <a href="contact.html" data-i18n="nav.contact">Contact</a>
+      <a href="website-designer.html">Website Designer</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
     </nav>
 
     <div class="header-actions">
-      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode" data-i18n-attr-aria-label="header.toggle_dark_mode" data-i18n-attr-title="header.toggle_dark_mode">
-        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-      </button>
-      <a href="search.html" class="search-toggle" aria-label="Search this site" title="Search this site" data-i18n-attr-aria-label="header.search_site" data-i18n-attr-title="header.search_site">
+      <a href="search.html" class="search-toggle" aria-label="Search this site" title="Search this site">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-3.8-3.8"/></svg>
       </a>
-      <a href="myaccount.html" class="search-toggle" aria-label="Client Sign In" title="Client Sign In" data-i18n-attr-aria-label="header.my_account" data-i18n-attr-title="header.my_account">
+      <a href="myaccount.html" class="search-toggle" aria-label="Client Sign In" title="Client Sign In">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </a>
       <a href="tel:+18043090968" class="phone-link">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         804-309-0968
       </a>
-      <a href="intake.html" class="btn btn-primary btn-small" data-i18n="header.get_quote">Request Service</a>
+      <a href="intake.html" class="btn btn-primary btn-small">Request Service</a>
     </div>
 
-    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu" data-i18n-attr-aria-label="header.toggle_menu">
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu">
       <span></span><span></span><span></span>
     </button>
   </div>
@@ -123,9 +78,9 @@
 <main id="main">
   <section class="intake-hero">
     <div class="wrap">
-      <p class="eyebrow" data-i18n="intake.hero_eyebrow">New client intake</p>
-      <h1 data-i18n="intake.hero_h1">Tell us what you need.</h1>
-      <p class="section-lede" data-i18n="intake.hero_lede">Every field needs an answer before submitting — if something doesn't apply to you, just type N/A. Parts 3 and 4 only apply if you check the relevant boxes, and will expand automatically when you do.</p>
+      <p class="eyebrow">New client intake</p>
+      <h1>Tell us what you need.</h1>
+      <p class="section-lede">Every field needs an answer before submitting — if something doesn't apply to you, just type N/A. Parts 3 and 4 only apply if you check the relevant boxes, and will expand automatically when you do.</p>
     </div>
   </section>
 
@@ -139,70 +94,70 @@
 
         <div class="form-instructions">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v4M12 17h.01M12 3l9 4.5v5c0 5-3.5 9-9 10-5.5-1-9-5-9-10v-5z"/></svg>
-          <span data-i18n-html="intake.form_instructions">Every field below needs an answer before you can submit. If a question doesn't apply to you or you're not sure, just type <strong>N/A</strong>. Parts 3 and 4 only need to be filled out if you check the boxes that apply to them below; otherwise, feel free to skip past them (you can still open them to look, no pressure to fill them in). Section 5 at the very bottom is optional.</span>
+          <span>Every field below needs an answer before you can submit. If a question doesn't apply to you or you're not sure, just type <strong>N/A</strong>. Parts 3 and 4 only need to be filled out if you check the boxes that apply to them below; otherwise, feel free to skip past them (you can still open them to look, no pressure to fill them in). Section 5 at the very bottom is optional.</span>
         </div>
 
         <div class="intake-block">
-          <h2 class="intake-block-title" data-i18n-html="intake.block1_title"><span class="intake-block-num">1</span> Contact Information</h2>
+          <h2 class="intake-block-title"><span class="intake-block-num">1</span> Contact Information</h2>
 
           <div class="form-row form-row--split">
             <div>
-              <label for="full_name" data-i18n="intake.form_full_name_label">Full Name *</label>
+              <label for="full_name">Full Name *</label>
               <input type="text" id="full_name" name="full_name" autocomplete="name" required data-required="always">
             </div>
             <div>
-              <label for="business_name" data-i18n="intake.form_business_name_label">Business / Organization</label>
+              <label for="business_name">Business / Organization</label>
               <input type="text" id="business_name" name="business_name" autocomplete="organization" data-required="always">
             </div>
           </div>
 
           <div class="form-row form-row--split">
             <div>
-              <label for="email" data-i18n="intake.form_email_label">Email Address *</label>
+              <label for="email">Email Address *</label>
               <input type="email" id="email" name="email" autocomplete="email" required data-required="always">
             </div>
             <div>
-              <label for="phone" data-i18n="intake.form_phone_label">Phone Number *</label>
+              <label for="phone">Phone Number *</label>
               <input type="tel" id="phone" name="phone" autocomplete="tel" required data-required="always">
             </div>
           </div>
 
           <div class="form-row form-row--split">
             <div>
-              <label for="address_city" data-i18n="intake.form_address_city_label">Service Address or City</label>
+              <label for="address_city">Service Address or City</label>
               <input type="text" id="address_city" name="address_city" data-required="always">
             </div>
             <div>
-              <label for="referral_source" data-i18n="intake.form_referral_source_label">How did you hear about us?</label>
+              <label for="referral_source">How did you hear about us?</label>
               <input type="text" id="referral_source" name="referral_source" data-required="always">
             </div>
           </div>
 
           <div class="form-row" data-required="always" data-label="Preferred contact method">
-            <label data-i18n="intake.form_contact_method_label">Preferred contact method</label>
+            <label>Preferred contact method</label>
             <div class="radio-row">
-              <label class="radio-pill" data-i18n-html="intake.contact_method_phone"><input type="radio" name="contact_method" value="Phone Call"> Phone Call</label>
-              <label class="radio-pill" data-i18n-html="intake.contact_method_text"><input type="radio" name="contact_method" value="Text Message"> Text Message</label>
-              <label class="radio-pill" data-i18n-html="intake.contact_method_email"><input type="radio" name="contact_method" value="Email"> Email</label>
-              <label class="radio-pill" data-i18n-html="intake.contact_method_none"><input type="radio" name="contact_method" value="No preference"> No preference</label>
+              <label class="radio-pill"><input type="radio" name="contact_method" value="Phone Call"> Phone Call</label>
+              <label class="radio-pill"><input type="radio" name="contact_method" value="Text Message"> Text Message</label>
+              <label class="radio-pill"><input type="radio" name="contact_method" value="Email"> Email</label>
+              <label class="radio-pill"><input type="radio" name="contact_method" value="No preference"> No preference</label>
             </div>
           </div>
 
           <div class="form-row" data-required="always" data-label="Best time to reach you">
-            <label data-i18n="intake.form_best_time_label">Best time to reach you</label>
+            <label>Best time to reach you</label>
             <div class="radio-row">
-              <label class="radio-pill" data-i18n-html="intake.best_time_1"><input type="radio" name="best_time" value="7:00–9:00 AM"> 7:00–9:00 AM</label>
-              <label class="radio-pill" data-i18n-html="intake.best_time_2"><input type="radio" name="best_time" value="9:00–11:00 AM"> 9:00–11:00 AM</label>
-              <label class="radio-pill" data-i18n-html="intake.best_time_3"><input type="radio" name="best_time" value="11:00 AM–1:00 PM"> 11:00 AM–1:00 PM</label>
-              <label class="radio-pill" data-i18n-html="intake.best_time_4"><input type="radio" name="best_time" value="1:00–3:00 PM"> 1:00–3:00 PM</label>
-              <label class="radio-pill" data-i18n-html="intake.best_time_5"><input type="radio" name="best_time" value="3:00–5:00 PM"> 3:00–5:00 PM</label>
-              <label class="radio-pill" data-i18n-html="intake.best_time_6"><input type="radio" name="best_time" value="5:00–7:00 PM"> 5:00–7:00 PM</label>
-              <label class="radio-pill" data-i18n-html="intake.best_time_none"><input type="radio" name="best_time" value="No preference"> No preference</label>
+              <label class="radio-pill"><input type="radio" name="best_time" value="7:00–9:00 AM"> 7:00–9:00 AM</label>
+              <label class="radio-pill"><input type="radio" name="best_time" value="9:00–11:00 AM"> 9:00–11:00 AM</label>
+              <label class="radio-pill"><input type="radio" name="best_time" value="11:00 AM–1:00 PM"> 11:00 AM–1:00 PM</label>
+              <label class="radio-pill"><input type="radio" name="best_time" value="1:00–3:00 PM"> 1:00–3:00 PM</label>
+              <label class="radio-pill"><input type="radio" name="best_time" value="3:00–5:00 PM"> 3:00–5:00 PM</label>
+              <label class="radio-pill"><input type="radio" name="best_time" value="5:00–7:00 PM"> 5:00–7:00 PM</label>
+              <label class="radio-pill"><input type="radio" name="best_time" value="No preference"> No preference</label>
             </div>
           </div>
 
           <div class="form-row form-row--checkbox-trigger">
-            <label class="checkbox-pill" data-i18n-html="intake.gov_contracting_trigger_label">
+            <label class="checkbox-pill">
               <input type="checkbox" id="govContractingTrigger" name="gov_contracting_interest" value="Yes">
               This inquiry involves government contracting (I may need to display UEI, NAICS codes, SAM.gov info, or certifications)
             </label>
@@ -210,18 +165,18 @@
         </div>
 
         <div class="intake-block">
-          <h2 class="intake-block-title" data-i18n-html="intake.block2_title"><span class="intake-block-num">2</span> What do you need help with?</h2>
+          <h2 class="intake-block-title"><span class="intake-block-num">2</span> What do you need help with?</h2>
           <div class="checkbox-grid" data-required="always" data-label="Services needed">
-            <label class="checkbox-pill" data-i18n-html="intake.service_website"><input type="checkbox" id="websiteServicesTrigger" name="services" value="Website Services"> Website Services</label>
-            <label class="checkbox-pill" data-i18n-html="intake.service_computer"><input type="checkbox" name="services" value="Computer Services"> Computer Services</label>
-            <label class="checkbox-pill" data-i18n-html="intake.service_networking"><input type="checkbox" name="services" value="Networking"> Networking</label>
-            <label class="checkbox-pill" data-i18n-html="intake.service_cybersecurity"><input type="checkbox" name="services" value="Cybersecurity"> Cybersecurity</label>
-            <label class="checkbox-pill" data-i18n-html="intake.service_business_it"><input type="checkbox" name="services" value="Small Business IT"> Small Business IT</label>
-            <label class="checkbox-pill" data-i18n-html="intake.service_not_sure"><input type="checkbox" name="services" value="Not sure yet"> Not sure yet</label>
+            <label class="checkbox-pill"><input type="checkbox" id="websiteServicesTrigger" name="services" value="Website Services"> Website Services</label>
+            <label class="checkbox-pill"><input type="checkbox" name="services" value="Computer Services"> Computer Services</label>
+            <label class="checkbox-pill"><input type="checkbox" name="services" value="Networking"> Networking</label>
+            <label class="checkbox-pill"><input type="checkbox" name="services" value="Cybersecurity"> Cybersecurity</label>
+            <label class="checkbox-pill"><input type="checkbox" name="services" value="Small Business IT"> Small Business IT</label>
+            <label class="checkbox-pill"><input type="checkbox" name="services" value="Not sure yet"> Not sure yet</label>
           </div>
 
           <div class="form-row" style="margin-top:1.25rem">
-            <label for="general_notes" data-i18n="intake.form_general_notes_label">Briefly describe what you need</label>
+            <label for="general_notes">Briefly describe what you need</label>
             <textarea id="general_notes" name="general_notes" rows="4" data-required="always"></textarea>
           </div>
         </div>
@@ -230,10 +185,10 @@
           <button type="button" class="intake-block-toggle" id="websiteBlockToggle" aria-expanded="false" aria-controls="websiteBlockContent">
             <span class="intake-block-toggle-left">
               <span class="intake-block-num">3</span>
-              <span class="intake-block-title-text" data-i18n="intake.block3_title_text">Website Project Details</span>
+              <span class="intake-block-title-text">Website Project Details</span>
             </span>
             <span class="intake-block-toggle-right">
-              <span class="intake-block-status" id="websiteBlockStatus" data-i18n="intake.block3_status_default">Required only if you checked "Website Services" above</span>
+              <span class="intake-block-status" id="websiteBlockStatus">Required only if you checked "Website Services" above</span>
               <svg class="intake-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
             </span>
           </button>
@@ -241,86 +196,86 @@
             <div class="intake-block-content-inner">
 
           <div class="form-row">
-            <label for="current_website" data-i18n="intake.form_current_website_label">Do you already have a website? If yes, what's the URL?</label>
+            <label for="current_website">Do you already have a website? If yes, what's the URL?</label>
             <input type="text" id="current_website" name="current_website" data-required="website">
           </div>
 
           <div class="form-row">
-            <label for="requested_domain" data-i18n="intake.form_requested_domain_label">What domain should the new site be built for? (e.g. yourbusiness.com — doesn't need to be registered yet)</label>
+            <label for="requested_domain">What domain should the new site be built for? (e.g. yourbusiness.com — doesn't need to be registered yet)</label>
             <input type="text" id="requested_domain" name="requested_domain" data-required="website">
           </div>
 
           <div class="form-row">
-            <label for="business_description" data-i18n="intake.form_business_description_label">What does your business do? (one or two sentences)</label>
+            <label for="business_description">What does your business do? (one or two sentences)</label>
             <textarea id="business_description" name="business_description" rows="2" data-required="website"></textarea>
           </div>
 
           <div class="form-row">
-            <label for="target_customers" data-i18n="intake.form_target_customers_label">Who are your typical customers?</label>
+            <label for="target_customers">Who are your typical customers?</label>
             <input type="text" id="target_customers" name="target_customers" data-required="website">
           </div>
 
           <div class="form-row">
-            <label for="must_have_pages" data-i18n="intake.form_must_have_pages_label">What pages or sections do you need? (e.g. Home, Services, About, Contact, Gallery, Booking)</label>
+            <label for="must_have_pages">What pages or sections do you need? (e.g. Home, Services, About, Contact, Gallery, Booking)</label>
             <textarea id="must_have_pages" name="must_have_pages" rows="2" data-required="website"></textarea>
           </div>
 
           <div class="form-row">
-            <label for="must_have_features" data-i18n="intake.form_must_have_features_label">Any must-have features? (e.g. contact form, online booking, photo gallery, store)</label>
+            <label for="must_have_features">Any must-have features? (e.g. contact form, online booking, photo gallery, store)</label>
             <textarea id="must_have_features" name="must_have_features" rows="2" data-required="website"></textarea>
           </div>
 
           <div class="form-row">
-            <label for="style_preference" data-i18n="intake.form_style_preference_label">Colors, style, or mood you want (e.g. bold and modern, clean and professional, rustic)</label>
+            <label for="style_preference">Colors, style, or mood you want (e.g. bold and modern, clean and professional, rustic)</label>
             <input type="text" id="style_preference" name="style_preference" data-required="website">
           </div>
 
           <div class="form-row">
-            <label for="inspiration_sites" data-i18n="intake.form_inspiration_sites_label">Any websites you like the look of? (share URLs if possible)</label>
+            <label for="inspiration_sites">Any websites you like the look of? (share URLs if possible)</label>
             <input type="text" id="inspiration_sites" name="inspiration_sites" data-required="website">
           </div>
 
           <div class="form-row">
-            <label for="existing_content" data-i18n="intake.form_existing_content_label">Any existing content we should reuse or reference? (e.g. LinkedIn page, brochure text, previous website copy, company statement)</label>
+            <label for="existing_content">Any existing content we should reuse or reference? (e.g. LinkedIn page, brochure text, previous website copy, company statement)</label>
             <textarea id="existing_content" name="existing_content" rows="2" data-required="website"></textarea>
           </div>
 
           <div class="form-row">
-            <label for="photos_imagery" data-i18n="intake.form_photos_imagery_label">Any photos or images you'd like included? Describe them or note where we can get them.</label>
+            <label for="photos_imagery">Any photos or images you'd like included? Describe them or note where we can get them.</label>
             <textarea id="photos_imagery" name="photos_imagery" rows="2" data-required="website"></textarea>
           </div>
 
           <div class="form-row form-row--split3">
             <div data-required="website" data-label="Do you have a logo?">
-              <label data-i18n="intake.form_has_logo_label">Do you have a logo?</label>
+              <label>Do you have a logo?</label>
               <div class="radio-row">
-                <label class="radio-pill" data-i18n-html="intake.has_logo_yes"><input type="radio" name="has_logo" value="Yes"> Yes</label>
-                <label class="radio-pill" data-i18n-html="intake.has_logo_need_one"><input type="radio" name="has_logo" value="Need one"> Need one</label>
+                <label class="radio-pill"><input type="radio" name="has_logo" value="Yes"> Yes</label>
+                <label class="radio-pill"><input type="radio" name="has_logo" value="Need one"> Need one</label>
               </div>
             </div>
             <div data-required="website" data-label="Is content ready?">
-              <label data-i18n="intake.form_has_content_label">Is content ready?</label>
+              <label>Is content ready?</label>
               <div class="radio-row">
-                <label class="radio-pill" data-i18n-html="intake.has_content_ready"><input type="radio" name="has_content" value="Ready"> Ready</label>
-                <label class="radio-pill" data-i18n-html="intake.has_content_need_help"><input type="radio" name="has_content" value="Need help"> Need help</label>
+                <label class="radio-pill"><input type="radio" name="has_content" value="Ready"> Ready</label>
+                <label class="radio-pill"><input type="radio" name="has_content" value="Need help"> Need help</label>
               </div>
             </div>
             <div data-required="website" data-label="Own a domain?">
-              <label data-i18n="intake.form_has_domain_label">Own a domain?</label>
+              <label>Own a domain?</label>
               <div class="radio-row">
-                <label class="radio-pill" data-i18n-html="intake.has_domain_yes"><input type="radio" name="has_domain" value="Yes"> Yes</label>
-                <label class="radio-pill" data-i18n-html="intake.has_domain_need_help"><input type="radio" name="has_domain" value="Need help"> Need help</label>
+                <label class="radio-pill"><input type="radio" name="has_domain" value="Yes"> Yes</label>
+                <label class="radio-pill"><input type="radio" name="has_domain" value="Need help"> Need help</label>
               </div>
             </div>
           </div>
 
           <div class="form-row form-row--split">
             <div>
-              <label for="timeline" data-i18n="intake.form_timeline_label">Target timeline</label>
+              <label for="timeline">Target timeline</label>
               <input type="text" id="timeline" name="timeline" data-required="website">
             </div>
             <div>
-              <label for="budget_range" data-i18n="intake.form_budget_range_label">Budget range</label>
+              <label for="budget_range">Budget range</label>
               <input type="text" id="budget_range" name="budget_range" data-required="website">
             </div>
           </div>
@@ -333,40 +288,40 @@
           <button type="button" class="intake-block-toggle" id="govBlockToggle" aria-expanded="false" aria-controls="govBlockContent">
             <span class="intake-block-toggle-left">
               <span class="intake-block-num">4</span>
-              <span class="intake-block-title-text" data-i18n="intake.block4_title_text">Government Contracting Info</span>
+              <span class="intake-block-title-text">Government Contracting Info</span>
             </span>
             <span class="intake-block-toggle-right">
-              <span class="intake-block-status" id="govBlockStatus" data-i18n="intake.block4_status_default">Required only if you checked the government contracting box above</span>
+              <span class="intake-block-status" id="govBlockStatus">Required only if you checked the government contracting box above</span>
               <svg class="intake-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
             </span>
           </button>
           <div class="intake-block-content" id="govBlockContent">
             <div class="intake-block-content-inner">
 
-          <p class="pay-block-copy" data-i18n="intake.gov_intro_copy">If your site needs to display contracting credentials for government or DoD-facing partners, fill out what applies below.</p>
+          <p class="pay-block-copy">If your site needs to display contracting credentials for government or DoD-facing partners, fill out what applies below.</p>
 
           <div class="form-row form-row--split">
             <div>
-              <label for="uei_number" data-i18n="intake.form_uei_label">UEI (Unique Entity ID)</label>
+              <label for="uei_number">UEI (Unique Entity ID)</label>
               <input type="text" id="uei_number" name="uei_number" data-required="govcontract">
             </div>
             <div>
-              <label for="naics_codes" data-i18n="intake.form_naics_label">NAICS code(s)</label>
+              <label for="naics_codes">NAICS code(s)</label>
               <input type="text" id="naics_codes" name="naics_codes" data-required="govcontract">
             </div>
           </div>
 
           <div class="form-row">
-            <label for="sam_gov_info" data-i18n="intake.form_sam_gov_label">What SAM.gov information should be public on the site?</label>
+            <label for="sam_gov_info">What SAM.gov information should be public on the site?</label>
             <textarea id="sam_gov_info" name="sam_gov_info" rows="2" data-required="govcontract"></textarea>
           </div>
 
           <div class="form-row">
-            <label for="certifications" data-i18n="intake.form_certifications_label">Relevant certifications (e.g. SDVOSB, 8(a), HUBZone, WOSB)</label>
+            <label for="certifications">Relevant certifications (e.g. SDVOSB, 8(a), HUBZone, WOSB)</label>
             <input type="text" id="certifications" name="certifications" data-required="govcontract">
           </div>
 
-          <p class="gov-info-note" data-i18n-html="intake.gov_sensitive_note">
+          <p class="gov-info-note">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
             Please don't include your Tax ID, SSN, or other sensitive identifiers here — we'll never publish those on your site, and this form isn't a secure place to send them.
           </p>
@@ -376,14 +331,14 @@
         </div>
 
         <div class="intake-block">
-          <h2 class="intake-block-title" data-i18n-html="intake.block5_title"><span class="intake-block-num">5</span> Anything else we should know? <span class="intake-block-optional">(optional)</span></h2>
+          <h2 class="intake-block-title"><span class="intake-block-num">5</span> Anything else we should know? <span class="intake-block-optional">(optional)</span></h2>
           <div class="form-row">
             <textarea id="additional_notes" name="additional_notes" rows="4"></textarea>
           </div>
         </div>
 
         <p class="form-note form-note--missing" id="missingFieldsNote" role="alert" aria-live="assertive"></p>
-        <button type="submit" class="btn btn-primary btn-block" data-i18n="intake.form_submit">Submit Request</button>
+        <button type="submit" class="btn btn-primary btn-block">Submit Request</button>
         <p class="form-note" id="formNote" role="status" aria-live="polite"></p>
       </form>
     </div>
@@ -395,55 +350,54 @@
     <div class="footer-brand">
       <img src="assets/logo-icon.png" alt="Little Technical Solutions LLC" width="36" height="36" class="footer-logo">
       <span class="logo-line1">Little Technical Solutions LLC</span>
-      <p data-i18n="footer.tagline">Websites, computers, networks, and security — handled by one call.</p>
+      <p>Websites, computers, networks, and security — handled by one call.</p>
     </div>
     <nav class="footer-nav" aria-label="Footer">
-      <a href="index.html" data-i18n="nav.home">Home</a>
-      <a href="services.html" data-i18n="nav.services">Services</a>
-      <a href="website-designer.html" data-i18n="nav.website_designer">Website Designer</a>
-      <a href="pricing.html" data-i18n="nav.pricing">Pricing</a>
-      <a href="heroes-pricing.html" data-i18n="nav.heroes_discount">Heroes Discount</a>
-      <a href="about.html" data-i18n="nav.about">About</a>
-      <a href="team.html" data-i18n="nav.team">Our Team</a>
-      <a href="service-area.html" data-i18n="nav.service_area">Service Area</a>
-      <a href="faq.html" data-i18n="nav.faq">FAQ</a>
-      <a href="blog.html" data-i18n="nav.blog">Blog</a>
-      <a href="payment.html" data-i18n="nav.payments">Payments</a>
-      <a href="contact.html" data-i18n="nav.contact">Contact</a>
-      <a href="intake.html" data-i18n="footer.new_client_form">New Client Form</a>
-      <a href="search.html" data-i18n="footer.search">Search</a>
-      <a href="sitemap.html" data-i18n="footer.sitemap">Sitemap</a>
-      <a href="privacy.html" data-i18n="footer.privacy_policy">Privacy Policy</a>
-      <a href="terms.html" data-i18n="footer.terms">Terms &amp; Conditions</a>
-      <a href="patch-notes.html" data-i18n="footer.patch_notes">Website Updates</a>
-      <a href="#" id="manageConsentLink" data-i18n="footer.cookie_notice">Cookie Notice</a>
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="website-designer.html">Website Designer</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="heroes-pricing.html">Heroes Discount</a>
+      <a href="about.html">About</a>
+      <a href="team.html">Our Team</a>
+      <a href="service-area.html">Service Area</a>
+      <a href="faq.html">FAQ</a>
+      <a href="blog.html">Blog</a>
+      <a href="payment.html">Payments</a>
+      <a href="contact.html">Contact</a>
+      <a href="intake.html">New Client Form</a>
+      <a href="search.html">Search</a>
+      <a href="sitemap.html">Sitemap</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms &amp; Conditions</a>
+      <a href="patch-notes.html">Website Updates</a>
+      <a href="#" id="manageConsentLink">Cookie Notice</a>
     </nav>
     <nav class="footer-social" aria-label="Social">
       <a href="https://www.facebook.com/profile.php?id=61591618750945" rel="noopener" target="_blank" aria-label="Little Technical Solutions LLC on Facebook">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>
-        <span data-i18n="footer.facebook">Facebook</span>
+        <span>Facebook</span>
       </a>
       <a href="https://www.google.com/search?q=Little+Technical+Solutions+LLC&stick=H4sIAAAAAAAA_-NgU1IxqDA0N0s1sUgyT0yxTE1NTLMyqEg2sTRLNTZOTTS1NDIzSUxaxCrnk1lSkpOqEJKanJGXmZyYoxCcn1NakpmfV6zg4-MMAGRkPw5JAAAA&hl=en&mat=CWEgdKX6xe4RElcBa0lj_4PsrYDUx2O2vFBpnokVltXIVrcy43xjezZrcYTprxRsgJGT1ATelPpH5ss3Sn-4VrXJHi_xxw10Eq_jzvWCxQfPf2G4feie7XZe-MJ3uWuSvN4&authuser=0" rel="noopener" target="_blank" aria-label="Little Technical Solutions LLC on Google">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 12.23c0-.75-.07-1.47-.19-2.18H12v4.13h5.4a4.6 4.6 0 0 1-2 3.02v2.5h3.24c1.9-1.75 3-4.32 3-7.47z"/><path d="M12 22c2.7 0 4.97-.9 6.63-2.44l-3.24-2.5c-.9.6-2.05.96-3.39.96-2.6 0-4.8-1.76-5.6-4.12H3.05v2.58A10 10 0 0 0 12 22z"/><path d="M6.4 13.9a6 6 0 0 1 0-3.8V7.52H3.05a10 10 0 0 0 0 8.96l3.35-2.58z"/><path d="M12 6.08c1.47 0 2.79.5 3.83 1.5l2.87-2.87A10 10 0 0 0 3.05 7.52L6.4 10.1c.8-2.36 3-4.02 5.6-4.02z"/></svg>
-        <span data-i18n="footer.find_google">Find us on Google</span>
+        <span>Find us on Google</span>
       </a>
     </nav>
   </div>
-  <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span data-i18n="footer.rights">All rights reserved.</span></p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version <span id="siteVersion">3.2.2</span></a></p>
-  <p class="footer-version"><a href="admin.html" data-i18n="footer.staff_signin">Staff Sign In</a></p>
+  <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span>All rights reserved.</span></p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version <span id="siteVersion">4.0.0</span></a></p>
+  <p class="footer-version"><a href="admin.html">Staff Sign In</a></p>
 </footer>
 
 <div id="cookie-banner" class="cookie-banner" hidden role="region" aria-label="Cookie notice">
   <div class="wrap cookie-banner-inner">
-    <p data-i18n-html="cookie.text">We use Netlify Analytics (cookie-free, privacy-respecting) to see site traffic, plus a small amount of local storage for things like your dark/light mode choice. Nothing here is used for advertising or sold to anyone. See our <a href="privacy.html" data-i18n="footer.privacy_policy">Privacy Policy</a>.</p>
+    <p>We use Netlify Analytics (cookie-free, privacy-respecting) to see site traffic. Nothing here is used for advertising or sold to anyone. See our <a href="privacy.html">Privacy Policy</a>.</p>
     <div class="cookie-banner-actions">
-      <button type="button" class="btn btn-primary btn-small" data-consent="dismiss" data-i18n="cookie.accept">Got it</button>
+      <button type="button" class="btn btn-primary btn-small" data-consent="dismiss">Got it</button>
     </div>
   </div>
 </div>
 
-<script src="js/i18n.js"></script>
 <script src="js/main.js"></script>
 <script src="js/site-version.js"></script>
 <script src="js/intake.js"></script>

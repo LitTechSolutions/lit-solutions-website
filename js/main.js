@@ -1,23 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-  // Same t()-with-English-fallback pattern js/cms.js, js/website-designer.js,
-  // and js/intake.js already use for JS-generated text that data-i18n's
-  // static-HTML pass never touches.
-  function tt(path, fallback) {
-    return window.LTS_I18N ? window.LTS_I18N.t(path, fallback) : fallback;
-  }
-
-  // Dark/light mode toggle
-  const themeToggle = document.getElementById('themeToggle');
-  if (themeToggle) {
-    themeToggle.addEventListener('click', () => {
-      const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-      const next = current === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      try { localStorage.setItem('lts-theme', next); } catch (e) {}
-    });
-  }
-
   // Footer year
   const yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
@@ -127,21 +109,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }, { rootMargin: '-45% 0px -45% 0px' });
     sections.forEach(sec => spyObserver.observe(sec));
-  }
-
-  // Hero diagram parallax tilt
-  const heroDiagram = document.querySelector('.hero-diagram');
-  const heroSection = document.querySelector('.hero');
-  if (heroDiagram && heroSection && !prefersReducedMotion && window.matchMedia('(min-width: 861px)').matches) {
-    heroSection.addEventListener('mousemove', (e) => {
-      const rect = heroSection.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5;
-      const y = (e.clientY - rect.top) / rect.height - 0.5;
-      heroDiagram.style.transform = `rotateY(${x * 10}deg) rotateX(${-y * 10}deg)`;
-    });
-    heroSection.addEventListener('mouseleave', () => {
-      heroDiagram.style.transform = 'rotateY(0deg) rotateX(0deg)';
-    });
   }
 
   // Expandable service ticket cards
@@ -319,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
       const msg = link.dataset.notConnectedMsg ||
-        tt('forms.not_connected_yet', "This isn't connected yet. Please call 804-309-0968 or email dylan@lit-solutions.tech.");
+        "This isn't connected yet. Please call 804-309-0968 or email dylan@lit-solutions.tech.";
       alert(msg);
     });
   });
@@ -420,7 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
           field.setAttribute('aria-invalid', 'true');
           if (missingNote && missingNote.id) field.setAttribute('aria-describedby', missingNote.id);
           const label = simpleContactForm.querySelector(`label[for="${field.id}"]`);
-          missing.push(label ? label.textContent.trim() : tt('forms.missing_field_fallback', 'A required field'));
+          missing.push(label ? label.textContent.trim() : 'A required field');
           if (!firstBadEl) firstBadEl = field;
         }
       });
@@ -429,7 +396,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (missing.length) {
         if (missingNote) {
-          const intro = tt('contact.missing_fields_intro', 'Please fill in the following:');
+          const intro = 'Please fill in the following:';
           missingNote.innerHTML = `<strong>${intro}</strong><ul>${missing.map(m => `<li>${m}</li>`).join('')}</ul>`;
           missingNote.classList.add('is-visible');
         }
@@ -439,20 +406,20 @@ document.addEventListener('DOMContentLoaded', () => {
       if (missingNote) missingNote.classList.remove('is-visible');
 
       const formData = new FormData(simpleContactForm);
-      if (statusEl) { statusEl.textContent = tt('contact.status_sending', 'Sending…'); statusEl.classList.remove('form-note--error'); }
+      if (statusEl) { statusEl.textContent = 'Sending…'; statusEl.classList.remove('form-note--error'); }
       fetch('/', { method: 'POST', body: formData })
         .then(res => {
           if (statusEl) {
             statusEl.textContent = res.ok
-              ? tt('contact.status_success', "Thanks — we'll follow up within one business day.")
-              : tt('contact.status_error', 'Something went wrong. Please call or email us directly.');
+              ? "Thanks — we'll follow up within one business day."
+              : 'Something went wrong. Please call or email us directly.';
             statusEl.classList.toggle('form-note--error', !res.ok);
           }
           if (res.ok) simpleContactForm.reset();
         })
         .catch(() => {
           if (statusEl) {
-            statusEl.textContent = tt('contact.status_error', 'Something went wrong. Please call or email us directly.');
+            statusEl.textContent = 'Something went wrong. Please call or email us directly.';
             statusEl.classList.add('form-note--error');
           }
         });
@@ -493,7 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ok) markValid(field);
         else {
           const label = bookingRequestForm.querySelector(`label[for="${field.id}"]`);
-          markInvalid(field, label ? label.textContent.trim() : tt('forms.missing_field_fallback', 'A required field'));
+          markInvalid(field, label ? label.textContent.trim() : 'A required field');
         }
       });
 
@@ -512,9 +479,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!hasEmail && !hasPhone) {
         markFieldOnly(email);
         markFieldOnly(phone);
-        missing.push(tt('booking.form_contact_hint', 'Enter at least one — email or phone.'));
+        missing.push('Enter at least one — email or phone.');
       } else if (!emailValid) {
-        markInvalid(email, tt('booking.form_email_label', 'Email'));
+        markInvalid(email, 'Email');
         markValid(phone);
       } else {
         markValid(email);
@@ -523,7 +490,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const timeChecked = bookingRequestForm.querySelector('input[name="preferred_time"]:checked');
       if (!timeChecked) {
-        missing.push(tt('booking.form_time_label', 'Preferred time'));
+        missing.push('Preferred time');
         if (!firstBadEl) firstBadEl = bookingRequestForm.querySelector('input[name="preferred_time"]');
       }
 
@@ -532,7 +499,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (missing.length) {
         if (missingNote) {
-          const intro = tt('contact.missing_fields_intro', 'Please fill in the following:');
+          const intro = 'Please fill in the following:';
           missingNote.innerHTML = `<strong>${intro}</strong><ul>${missing.map(m => `<li>${m}</li>`).join('')}</ul>`;
           missingNote.classList.add('is-visible');
         }
@@ -542,20 +509,20 @@ document.addEventListener('DOMContentLoaded', () => {
       if (missingNote) missingNote.classList.remove('is-visible');
 
       const formData = new FormData(bookingRequestForm);
-      if (statusEl) { statusEl.textContent = tt('contact.status_sending', 'Sending…'); statusEl.classList.remove('form-note--error'); }
+      if (statusEl) { statusEl.textContent = 'Sending…'; statusEl.classList.remove('form-note--error'); }
       fetch('/', { method: 'POST', body: formData })
         .then(res => {
           if (statusEl) {
             statusEl.textContent = res.ok
-              ? tt('booking.status_success', "Thanks — we'll confirm your requested time within one business day.")
-              : tt('contact.status_error', 'Something went wrong. Please call or email us directly.');
+              ? "Thanks — we'll confirm your requested time within one business day."
+              : 'Something went wrong. Please call or email us directly.';
             statusEl.classList.toggle('form-note--error', !res.ok);
           }
           if (res.ok) bookingRequestForm.reset();
         })
         .catch(() => {
           if (statusEl) {
-            statusEl.textContent = tt('contact.status_error', 'Something went wrong. Please call or email us directly.');
+            statusEl.textContent = 'Something went wrong. Please call or email us directly.';
             statusEl.classList.add('form-note--error');
           }
         });
@@ -576,15 +543,15 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(res => {
           if (statusEl) {
             statusEl.textContent = res.ok
-              ? tt('newsletter.status_success', "You're on the list — thanks for signing up!")
-              : tt('newsletter.status_error', 'Something went wrong. Please try again or email dylan@lit-solutions.tech.');
+              ? "You're on the list — thanks for signing up!"
+              : 'Something went wrong. Please try again or email dylan@lit-solutions.tech.';
             statusEl.classList.toggle('is-error', !res.ok);
           }
           if (res.ok) form.reset();
         })
         .catch(() => {
           if (statusEl) {
-            statusEl.textContent = tt('newsletter.status_error', 'Something went wrong. Please try again or email dylan@lit-solutions.tech.');
+            statusEl.textContent = 'Something went wrong. Please try again or email dylan@lit-solutions.tech.';
             statusEl.classList.add('is-error');
           }
         });

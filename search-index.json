@@ -3,7 +3,7 @@
     "title": "Home",
     "href": "index.html",
     "scope": "Pages",
-    "excerpt": "Websites, computer repair, networking, cybersecurity, and small business IT \u2014 one call for everything."
+    "excerpt": "Websites, computer repair, networking, cybersecurity, and small business IT — one call for everything."
   },
   {
     "title": "About Us",
@@ -33,13 +33,13 @@
     "title": "Testimonials",
     "href": "testimonials.html",
     "scope": "Company",
-    "excerpt": "We're a new business \u2014 here's what you can verify in the meantime."
+    "excerpt": "We're a new business — here's what you can verify in the meantime."
   },
   {
     "title": "Services",
     "href": "services.html",
     "scope": "Services",
-    "excerpt": "Five categories, one technician \u2014 website, computer, network, security, and business IT services."
+    "excerpt": "Five categories, one technician — website, computer, network, security, and business IT services."
   },
   {
     "title": "Website Services",
@@ -114,22 +114,10 @@
     "excerpt": "Practical, jargon-free articles on websites, cybersecurity, and networking."
   },
   {
-    "title": "5 Signs Your Small Business Website Needs a Redesign",
-    "href": "5-signs-your-website-needs-a-redesign.html",
+    "title": "We Redesigned Our Website",
+    "href": "we-redesigned-our-website.html",
     "scope": "Resources",
-    "excerpt": "If your site is quietly costing you customers, it's usually one of these five problems."
-  },
-  {
-    "title": "Why Every Small Business Should Use a Password Manager",
-    "href": "why-small-businesses-need-a-password-manager.html",
-    "scope": "Resources",
-    "excerpt": "The single highest-impact, lowest-cost security upgrade most small businesses haven't made."
-  },
-  {
-    "title": "Wi-Fi Dead Zones: What's Actually Causing Them",
-    "href": "wifi-dead-zones-explained.html",
-    "scope": "Resources",
-    "excerpt": "It's rarely your internet plan. Here's what's usually really going on."
+    "excerpt": "The whole site and the Care Hub customer portal just got a full visual redesign. Here's what changed and why."
   },
   {
     "title": "Booking",

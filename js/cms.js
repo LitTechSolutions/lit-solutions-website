@@ -16,36 +16,20 @@
     });
   }
 
-  // Same pattern website-designer.js uses for its own generated content:
-  // window.LTS_I18N.t() looks up the visitor's current language with an
-  // English fallback, and re-runs on language switch.
-  function tt(path, fallback) {
-    return window.LTS_I18N ? window.LTS_I18N.t(path, fallback) : fallback;
-  }
-
   // Once a testimonials/portfolio page actually has real items, the static
   // "we're new, nothing here yet" hero headline (still true for the static
   // HTML default) reads as contradictory sitting right above real proof
-  // otherwise. Swaps it for "has content" copy instead, and takes over
-  // from the static data-i18n mechanism for these two elements from here
-  // on (removing data-i18n so a later language switch doesn't stomp the
-  // swap back to the "nothing here yet" copy).
-  function swapHeroForHasContent(h1Selector, ledeSelector, prefix, h1Fallback, ledeFallback) {
+  // otherwise. Swaps it for "has content" copy instead.
+  function swapHeroForHasContent(h1Selector, ledeSelector, h1Text, ledeText) {
     if (!h1Selector && !ledeSelector) return;
     var h1 = h1Selector && document.querySelector(h1Selector);
     var lede = ledeSelector && document.querySelector(ledeSelector);
-    function render() {
-      if (h1) { h1.removeAttribute("data-i18n"); h1.textContent = tt(prefix + ".hero_h1_hascontent", h1Fallback); }
-      if (lede) { lede.removeAttribute("data-i18n"); lede.textContent = tt(prefix + ".hero_lede_hascontent", ledeFallback); }
-    }
-    render();
-    document.addEventListener("lts:langchange", render);
+    if (h1) h1.textContent = h1Text;
+    if (lede) lede.textContent = ledeText;
   }
 
-  // Meta descriptions are plain static HTML with no i18n hook (js/i18n.js
-  // never touches <meta> tags), so once a page actually has real content
-  // the static "nothing here yet" description is just replaced with a
-  // fixed English string, same as everything else meta descriptions do.
+  // Once a page actually has real content, the static "nothing here yet"
+  // meta description is just replaced with a fixed English string.
   function updateMetaDescription(text) {
     var desc = document.querySelector('meta[name="description"]');
     if (desc) desc.setAttribute("content", text);
@@ -220,7 +204,7 @@
     if (!items.length) return;
     var placeholder = document.querySelector(placeholderSelector);
     if (placeholder) placeholder.style.display = "none";
-    swapHeroForHasContent(heroH1Selector, heroLedeSelector, "portfolio",
+    swapHeroForHasContent(heroH1Selector, heroLedeSelector,
       "Recent work", "Real projects we've built for real clients -- see the details below.");
     updateMetaDescription("See real projects we've built for real clients -- before/after examples, screenshots, and project details.");
     var mount = document.querySelector(gridMountSelector);
@@ -252,7 +236,7 @@
     if (!items.length) return;
     var placeholder = document.querySelector(placeholderSelector);
     if (placeholder) placeholder.style.display = "none";
-    swapHeroForHasContent(heroH1Selector, heroLedeSelector, "testimonials",
+    swapHeroForHasContent(heroH1Selector, heroLedeSelector,
       "What our customers are saying", "Real feedback from real projects -- not stock quotes, not stand-ins.");
     updateMetaDescription("Real reviews from real clients -- see what people are saying about working with Little Technical Solutions LLC.");
     var mount = document.querySelector(gridMountSelector);

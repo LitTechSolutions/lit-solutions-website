@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>
-(function(){
-  try{
-    var saved = localStorage.getItem('lts-theme');
-    var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    document.documentElement.setAttribute('data-theme', theme);
-  }catch(e){}
-})();
-</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Terms &amp; Conditions — Little Technical Solutions LLC</title>
@@ -24,44 +15,12 @@
 <meta name="twitter:card" content="summary">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Little Technical Solutions LLC","image":"https://lit-solutions.tech/assets/logo-full.png","telephone":"+18043090968","email":"dylan@lit-solutions.tech","url":"https://lit-solutions.tech/","priceRange":"$$","areaServed":[{"@type":"City","name":"Montross, VA"},{"@type":"City","name":"Colonial Beach, VA"},{"@type":"City","name":"King George, VA"},{"@type":"City","name":"Dahlgren, VA"}],"sameAs":["https://www.facebook.com/profile.php?id=61591618750945","https://www.google.com/search?q=Little+Technical+Solutions+LLC&stick=H4sIAAAAAAAA_-NgU1IxqDA0N0s1sUgyT0yxTE1NTLMyqEg2sTRLNTZOTTS1NDIzSUxaxCrnk1lSkpOqEJKanJGXmZyYoxCcn1NakpmfV6zg4-MMAGRkPw5JAAAA&hl=en&mat=CWEgdKX6xe4RElcBa0lj_4PsrYDUx2O2vFBpnokVltXIVrcy43xjezZrcYTprxRsgJGT1ATelPpH5ss3Sn-4VrXJHi_xxw10Eq_jzvWCxQfPf2G4feie7XZe-MJ3uWuSvN4&authuser=0"]}</script>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <link rel="icon" type="image/png" href="assets/favicon.png">
 </head>
 <body>
 
-<a class="skip-link" href="#main" data-i18n="a11y.skip_to_content">Skip to content</a>
-<div class="lang-bar">
-  <div class="wrap lang-bar-inner">
-    <div class="nav-dropdown">
-      <button type="button" class="nav-dropdown-toggle lang-dropdown-toggle" aria-haspopup="listbox" aria-expanded="false" aria-controls="langMenu" aria-label="Choose language" data-i18n-attr-aria-label="header.choose_language">
-        <span id="langCurrentLabel">ENG</span>
-        <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
-      </button>
-      <div class="nav-dropdown-menu lang-dropdown-menu" id="langMenu" role="listbox">
-        <button type="button" class="lang-option is-active" data-lang="en">English <span class="lang-code">ENG</span></button>
-        <button type="button" class="lang-option" data-lang="es">Español <span class="lang-code">ESP</span></button>
-        <button type="button" class="lang-option" data-lang="fr">Français <span class="lang-code">FRA</span></button>
-        <button type="button" class="lang-option" data-lang="zh">中文 <span class="lang-code">ZH</span></button>
-        <button type="button" class="lang-option" data-lang="ja">日本語 <span class="lang-code">JPN</span></button>
-        <button type="button" class="lang-option" data-lang="vi">Tiếng Việt <span class="lang-code">VIE</span></button>
-        <button type="button" class="lang-option" data-lang="tl">Filipino <span class="lang-code">FIL</span></button>
-        <button type="button" class="lang-option" data-lang="ar">العربية <span class="lang-code">ARA</span></button>
-        <button type="button" class="lang-option" data-lang="ko">한국어 <span class="lang-code">KOR</span></button>
-        <button type="button" class="lang-option" data-lang="de">Deutsch <span class="lang-code">GER</span></button>
-        <button type="button" class="lang-option" data-lang="ht">Kreyòl Ayisyen <span class="lang-code">HAT</span></button>
-        <button type="button" class="lang-option" data-lang="pt">Português <span class="lang-code">POR</span></button>
-        <button type="button" class="lang-option" data-lang="ru">Русский <span class="lang-code">RUS</span></button>
-        <button type="button" class="lang-option" data-lang="it">Italiano <span class="lang-code">ITA</span></button>
-        <button type="button" class="lang-option" data-lang="pl">Polski <span class="lang-code">POL</span></button>
-        <button type="button" class="lang-option" data-lang="hi">हिन्दी <span class="lang-code">HIN</span></button>
-      </div>
-    </div>
-  </div>
-</div>
-
+<a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header" id="siteHeader">
   <div class="wrap header-inner">
     <a href="index.html" class="logo" aria-label="Little Technical Solutions LLC — home">
@@ -75,46 +34,42 @@
     </a>
 
     <nav class="main-nav" id="mainNav" aria-label="Primary">
-      <a href="index.html" data-i18n="nav.home">Home</a>
+      <a href="index.html">Home</a>
       <div class="nav-dropdown">
         <button type="button" class="nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="servicesDropdown">
-          <span data-i18n="nav.services">Services</span>
+          <span>Services</span>
           <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
         </button>
         <div class="nav-dropdown-menu" id="servicesDropdown">
-          <a href="services.html" data-i18n="nav.services_all">All Services</a>
-          <a href="service-website.html" data-i18n="nav.service_website">Website Design &amp; Development</a>
-          <a href="service-computer.html" data-i18n="nav.service_computer">Computer Repair</a>
-          <a href="service-networking.html" data-i18n="nav.service_networking">Networking</a>
-          <a href="service-cybersecurity.html" data-i18n="nav.service_cybersecurity">Cybersecurity</a>
-          <a href="service-business-it.html" data-i18n="nav.service_business_it">Small Business IT</a>
-          <a href="pricing.html" data-i18n="nav.pricing">Pricing</a>
+          <a href="services.html">All Services</a>
+          <a href="service-website.html">Website Design &amp; Development</a>
+          <a href="service-computer.html">Computer Repair</a>
+          <a href="service-networking.html">Networking</a>
+          <a href="service-cybersecurity.html">Cybersecurity</a>
+          <a href="service-business-it.html">Small Business IT</a>
+          <a href="pricing.html">Pricing</a>
         </div>
       </div>
-      <a href="website-designer.html" data-i18n="nav.website_designer">Website Designer</a>
-      <a href="about.html" data-i18n="nav.about">About</a>
-      <a href="contact.html" data-i18n="nav.contact">Contact</a>
+      <a href="website-designer.html">Website Designer</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
     </nav>
 
     <div class="header-actions">
-      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode" data-i18n-attr-aria-label="header.toggle_dark_mode" data-i18n-attr-title="header.toggle_dark_mode">
-        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-      </button>
-      <a href="search.html" class="search-toggle" aria-label="Search this site" title="Search this site" data-i18n-attr-aria-label="header.search_site" data-i18n-attr-title="header.search_site">
+      <a href="search.html" class="search-toggle" aria-label="Search this site" title="Search this site">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-3.8-3.8"/></svg>
       </a>
-      <a href="myaccount.html" class="search-toggle" aria-label="Client Sign In" title="Client Sign In" data-i18n-attr-aria-label="header.my_account" data-i18n-attr-title="header.my_account">
+      <a href="myaccount.html" class="search-toggle" aria-label="Client Sign In" title="Client Sign In">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </a>
       <a href="tel:+18043090968" class="phone-link">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         804-309-0968
       </a>
-      <a href="intake.html" class="btn btn-primary btn-small" data-i18n="header.get_quote">Request Service</a>
+      <a href="intake.html" class="btn btn-primary btn-small">Request Service</a>
     </div>
 
-    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu" data-i18n-attr-aria-label="header.toggle_menu">
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu">
       <span></span><span></span><span></span>
     </button>
   </div>
@@ -124,9 +79,9 @@
 
   <section class="intake-hero">
     <div class="wrap">
-      <p class="eyebrow" data-i18n="terms.hero_eyebrow">Legal</p>
-      <h1 data-i18n="terms.hero_h1">Terms &amp; Conditions</h1>
-      <p class="section-lede" data-i18n="terms.hero_lede">Last updated: July 2026. Please read these terms carefully before purchasing any service from Little Technical Solutions LLC.</p>
+      <p class="eyebrow">Legal</p>
+      <h1>Terms &amp; Conditions</h1>
+      <p class="section-lede">Last updated: July 2026. Please read these terms carefully before purchasing any service from Little Technical Solutions LLC.</p>
     </div>
   </section>
 
@@ -134,78 +89,76 @@
     <div class="wrap">
       <div class="legal-doc">
 
-        <p class="form-notice"><strong>Language notice:</strong> This legal document is currently provided in English only. Other site navigation may appear in your selected language, but unreviewed translations are not used for binding legal text.</p>
+        <h2>1. Agreement to Terms</h2>
+        <p>These Terms &amp; Conditions ("Terms") form a binding agreement between you ("Client," "you") and Little Technical Solutions LLC ("we," "us," "our," "the Company"), a Virginia limited liability company. By requesting a quote, submitting a project form, scheduling service, or making a payment, you acknowledge that you have read, understood, and agree to be bound by these Terms. If you do not agree, do not use our services or submit payment.</p>
 
-        <h2 data-i18n="terms.section1_heading">1. Agreement to Terms</h2>
-        <p data-i18n="terms.section1_body">These Terms &amp; Conditions ("Terms") form a binding agreement between you ("Client," "you") and Little Technical Solutions LLC ("we," "us," "our," "the Company"), a Virginia limited liability company. By requesting a quote, submitting a project form, scheduling service, or making a payment, you acknowledge that you have read, understood, and agree to be bound by these Terms. If you do not agree, do not use our services or submit payment.</p>
+        <h2>2. Services</h2>
+        <p>Little Technical Solutions LLC provides website design and development, computer repair, networking, cybersecurity, and small business IT services ("Services") as described on our website. Specific scope, deliverables, and pricing for any given job are confirmed with you individually before work begins. Prices published on our website are starting points for typical jobs and are not binding quotes for atypical, complex, or larger-scope work.</p>
 
-        <h2 data-i18n="terms.section2_heading">2. Services</h2>
-        <p data-i18n="terms.section2_body">Little Technical Solutions LLC provides website design and development, computer repair, networking, cybersecurity, and small business IT services ("Services") as described on our website. Specific scope, deliverables, and pricing for any given job are confirmed with you individually before work begins. Prices published on our website are starting points for typical jobs and are not binding quotes for atypical, complex, or larger-scope work.</p>
-
-        <h2 data-i18n="terms.section3_heading">3. Payment Terms</h2>
-        <p data-i18n="terms.section3_intro">Payment is processed securely through Square, via our website's payment page at lit-solutions.tech/payment. We do not collect, view, or store your payment card information. All payments require agreeing to these Terms via the checkbox on that page before the payment button will work. Unless otherwise agreed in writing:</p>
+        <h2>3. Payment Terms</h2>
+        <p>Payment is processed securely through Square, via our website's payment page at lit-solutions.tech/payment. We do not collect, view, or store your payment card information. All payments require agreeing to these Terms via the checkbox on that page before the payment button will work. Unless otherwise agreed in writing:</p>
         <ul>
-          <li data-i18n="terms.section3_li1">Fixed-price services (such as website packages) require full payment before work begins. We do not use a deposit-plus-balance structure &mdash; the full project amount is due upfront, before any work is authorized to start.</li>
-          <li data-i18n="terms.section3_li2">Hourly and diagnostic-based services are billed upon completion of work, unless a different schedule is specified on your invoice.</li>
-          <li data-i18n="terms.section3_li3">All prices are in U.S. dollars. You are responsible for any taxes applicable to your purchase.</li>
-          <li data-i18n="terms.section3_li4">Payment is due upon receipt of invoice unless a different due date is specified.</li>
-          <li data-i18n="terms.section3_li5">Late payments may result in suspension of ongoing services (such as website hosting assistance or monthly IT support) until the account is brought current.</li>
+          <li>Fixed-price services (such as website packages) require full payment before work begins. We do not use a deposit-plus-balance structure &mdash; the full project amount is due upfront, before any work is authorized to start.</li>
+          <li>Hourly and diagnostic-based services are billed upon completion of work, unless a different schedule is specified on your invoice.</li>
+          <li>All prices are in U.S. dollars. You are responsible for any taxes applicable to your purchase.</li>
+          <li>Payment is due upon receipt of invoice unless a different due date is specified.</li>
+          <li>Late payments may result in suspension of ongoing services (such as website hosting assistance or monthly IT support) until the account is brought current.</li>
         </ul>
 
-        <h2 data-i18n="terms.section4_heading">4. Cancellations, Refunds &amp; Chargebacks</h2>
-        <p data-i18n="terms.section4_p1">Because fixed-price project work (such as website design) begins with planning, design, setup, configuration, and custom labor immediately after payment, your payment may become partially or fully non-refundable once work has commenced. Any refund is limited to work not yet performed and is determined by Little Technical Solutions LLC in good faith based on completed labor and incurred costs. If you cancel before any work has begun, your payment may be refunded at our sole discretion, less any transaction fees already incurred.</p>
-        <p data-i18n-html="terms.section4_p2">Completed, delivered work (including but not limited to finished websites, completed repairs, and completed installations) is non-refundable. If you believe work was not completed as agreed, you must contact us directly at <strong>804-309-0968</strong> or <strong>dylan@lit-solutions.tech</strong> within 7 days of completion so we can address the issue directly.</p>
-        <p data-i18n-html="terms.section4_p3"><strong>You agree to contact us and attempt to resolve any billing dispute directly before initiating a chargeback, dispute, or reversal with your bank, card issuer, or Square.</strong> Initiating a chargeback for services that were actually rendered, without first attempting to resolve the matter with us, may be treated as fraudulent and pursued to the fullest extent permitted by law, including recovery of the disputed amount, collection costs, and reasonable attorney's fees. We retain all records of communications, project scope, and delivered work to contest unwarranted disputes.</p>
+        <h2>4. Cancellations, Refunds &amp; Chargebacks</h2>
+        <p>Because fixed-price project work (such as website design) begins with planning, design, setup, configuration, and custom labor immediately after payment, your payment may become partially or fully non-refundable once work has commenced. Any refund is limited to work not yet performed and is determined by Little Technical Solutions LLC in good faith based on completed labor and incurred costs. If you cancel before any work has begun, your payment may be refunded at our sole discretion, less any transaction fees already incurred.</p>
+        <p>Completed, delivered work (including but not limited to finished websites, completed repairs, and completed installations) is non-refundable. If you believe work was not completed as agreed, you must contact us directly at <strong>804-309-0968</strong> or <strong>dylan@lit-solutions.tech</strong> within 7 days of completion so we can address the issue directly.</p>
+        <p><strong>You agree to contact us and attempt to resolve any billing dispute directly before initiating a chargeback, dispute, or reversal with your bank, card issuer, or Square.</strong> Initiating a chargeback for services that were actually rendered, without first attempting to resolve the matter with us, may be treated as fraudulent and pursued to the fullest extent permitted by law, including recovery of the disputed amount, collection costs, and reasonable attorney's fees. We retain all records of communications, project scope, and delivered work to contest unwarranted disputes.</p>
 
-        <h2 data-i18n="terms.section5_heading">5. Client Responsibilities</h2>
-        <p data-i18n="terms.section5_intro">You represent and warrant that:</p>
+        <h2>5. Client Responsibilities</h2>
+        <p>You represent and warrant that:</p>
         <ul>
-          <li data-i18n="terms.section5_li1">You are the lawful owner of, or have obtained express permission to authorize service on, any device, network, account, or system you ask us to work on.</li>
-          <li data-i18n="terms.section5_li2">Any content, images, text, logos, or materials you provide for website work are either owned by you or properly licensed for your use, and do not infringe any third party's rights.</li>
-          <li data-i18n="terms.section5_li3">Information you provide to us (including on the project intake form) is accurate and complete to the best of your knowledge.</li>
-          <li data-i18n="terms.section5_li4">You are responsible for backing up your own data before any computer, network, or website service begins. While we take reasonable care, we are not responsible for data loss during repair, migration, or configuration work, except where caused by our gross negligence or willful misconduct.</li>
+          <li>You are the lawful owner of, or have obtained express permission to authorize service on, any device, network, account, or system you ask us to work on.</li>
+          <li>Any content, images, text, logos, or materials you provide for website work are either owned by you or properly licensed for your use, and do not infringe any third party's rights.</li>
+          <li>Information you provide to us (including on the project intake form) is accurate and complete to the best of your knowledge.</li>
+          <li>You are responsible for backing up your own data before any computer, network, or website service begins. While we take reasonable care, we are not responsible for data loss during repair, migration, or configuration work, except where caused by our gross negligence or willful misconduct.</li>
         </ul>
 
-        <h2 data-i18n="terms.section6_heading">6. No Guarantee of Outcome</h2>
-        <p data-i18n="terms.section6_body">Technology services inherently involve uncertainty. We will use reasonable skill and care consistent with industry standards, but we do not guarantee that any specific issue will be fully resolved, that hardware will be recoverable, that a device will function like new, or that a website will achieve any particular ranking, traffic, or business outcome. Diagnostic time and labor already performed are billable regardless of whether an issue is ultimately resolved, except where we are unable to perform the service at all due to our own fault.</p>
+        <h2>6. No Guarantee of Outcome</h2>
+        <p>Technology services inherently involve uncertainty. We will use reasonable skill and care consistent with industry standards, but we do not guarantee that any specific issue will be fully resolved, that hardware will be recoverable, that a device will function like new, or that a website will achieve any particular ranking, traffic, or business outcome. Diagnostic time and labor already performed are billable regardless of whether an issue is ultimately resolved, except where we are unable to perform the service at all due to our own fault.</p>
 
-        <h2 data-i18n="terms.section7_heading">7. Limitation of Liability</h2>
-        <p data-i18n="terms.section7_body">To the maximum extent permitted by law, Little Technical Solutions LLC's total liability for any claim arising out of or relating to our Services — whether in contract, tort, negligence, or otherwise — shall not exceed the total amount you paid us for the specific service giving rise to the claim. We are not liable for indirect, incidental, consequential, special, or punitive damages, including but not limited to lost profits, lost data, or business interruption, even if we have been advised of the possibility of such damages.</p>
+        <h2>7. Limitation of Liability</h2>
+        <p>To the maximum extent permitted by law, Little Technical Solutions LLC's total liability for any claim arising out of or relating to our Services — whether in contract, tort, negligence, or otherwise — shall not exceed the total amount you paid us for the specific service giving rise to the claim. We are not liable for indirect, incidental, consequential, special, or punitive damages, including but not limited to lost profits, lost data, or business interruption, even if we have been advised of the possibility of such damages.</p>
 
-        <h2 data-i18n="terms.section8_heading">8. Third-Party Costs &amp; Services</h2>
-        <p data-i18n="terms.section8_body">Some services involve third-party products or subscriptions not billed through us, including but not limited to domain registration fees, Google Workspace or Microsoft 365 subscriptions, hosting fees, hardware components, and software licenses. You are responsible for these costs directly with the applicable third party unless explicitly stated otherwise in your quote. We are not responsible for the acts, omissions, pricing changes, or service interruptions of third-party providers.</p>
+        <h2>8. Third-Party Costs &amp; Services</h2>
+        <p>Some services involve third-party products or subscriptions not billed through us, including but not limited to domain registration fees, Google Workspace or Microsoft 365 subscriptions, hosting fees, hardware components, and software licenses. You are responsible for these costs directly with the applicable third party unless explicitly stated otherwise in your quote. We are not responsible for the acts, omissions, pricing changes, or service interruptions of third-party providers.</p>
 
-        <h2 data-i18n="terms.section9_heading">9. Website Ownership &amp; Hosting</h2>
-        <p data-i18n="terms.section9_body">Upon full payment for a website project, you own the final website files and design delivered to you, excluding any third-party licensed assets (such as stock photography, fonts, or plugins), which remain subject to their original licenses. We are not responsible for maintaining, updating, or securing a website after delivery unless you have a separate, active maintenance agreement with us.</p>
+        <h2>9. Website Ownership &amp; Hosting</h2>
+        <p>Upon full payment for a website project, you own the final website files and design delivered to you, excluding any third-party licensed assets (such as stock photography, fonts, or plugins), which remain subject to their original licenses. We are not responsible for maintaining, updating, or securing a website after delivery unless you have a separate, active maintenance agreement with us.</p>
 
-        <h2 data-i18n="terms.section10_heading">10. American Heroes Discount Terms</h2>
-        <p data-i18n="terms.section10_body">The American Heroes Discount is offered at our sole discretion to active duty military, veterans, teachers, first responders, doctors, TSA agents, police, firefighters, and Virginia-based Federal Firearms License (FFL) holders who provide valid proof of eligibility. Documents such as a DD-214, Leave and Earnings Statement (LES), employment verification letter, or current FFL may be submitted by email. Federal government-issued ID cards (including military ID/CAC, veteran ID card, and TSA credentials) must be verified in person &mdash; consistent with 18 U.S.C. &sect; 701, we do not accept and will not request a photograph, scan, or copy of these cards. We reserve the right to verify eligibility, deny, or revoke the discount at any time if proof cannot be confirmed or is found to be inaccurate. Misrepresenting eligibility for this discount, under any category, may be treated as fraud.</p>
+        <h2>10. American Heroes Discount Terms</h2>
+        <p>The American Heroes Discount is offered at our sole discretion to active duty military, veterans, teachers, first responders, doctors, TSA agents, police, firefighters, and Virginia-based Federal Firearms License (FFL) holders who provide valid proof of eligibility. Documents such as a DD-214, Leave and Earnings Statement (LES), employment verification letter, or current FFL may be submitted by email. Federal government-issued ID cards (including military ID/CAC, veteran ID card, and TSA credentials) must be verified in person &mdash; consistent with 18 U.S.C. &sect; 701, we do not accept and will not request a photograph, scan, or copy of these cards. We reserve the right to verify eligibility, deny, or revoke the discount at any time if proof cannot be confirmed or is found to be inaccurate. Misrepresenting eligibility for this discount, under any category, may be treated as fraud.</p>
 
-        <h2 data-i18n="terms.section11_heading">11. Confidentiality &amp; Data</h2>
-        <p data-i18n="terms.section11_body">We will take reasonable precautions to protect any personal or business information you share with us in the course of providing Services. We do not sell your personal information. We may need to access accounts, files, or systems to perform requested work; you authorize such access solely for the purpose of completing the agreed-upon Services.</p>
+        <h2>11. Confidentiality &amp; Data</h2>
+        <p>We will take reasonable precautions to protect any personal or business information you share with us in the course of providing Services. We do not sell your personal information. We may need to access accounts, files, or systems to perform requested work; you authorize such access solely for the purpose of completing the agreed-upon Services.</p>
 
-        <h2 data-i18n="terms.section12_heading">12. Indemnification</h2>
-        <p data-i18n="terms.section12_body">You agree to indemnify and hold harmless Little Technical Solutions LLC, its owner, and any subcontractors from any claims, damages, losses, or expenses (including reasonable attorney's fees) arising from: (a) your breach of these Terms; (b) content or materials you provided that infringe a third party's rights; (c) your unauthorized use of any device, account, or system serviced by us; or (d) fraudulent or bad-faith conduct, including unwarranted payment disputes for services actually rendered.</p>
+        <h2>12. Indemnification</h2>
+        <p>You agree to indemnify and hold harmless Little Technical Solutions LLC, its owner, and any subcontractors from any claims, damages, losses, or expenses (including reasonable attorney's fees) arising from: (a) your breach of these Terms; (b) content or materials you provided that infringe a third party's rights; (c) your unauthorized use of any device, account, or system serviced by us; or (d) fraudulent or bad-faith conduct, including unwarranted payment disputes for services actually rendered.</p>
 
-        <h2 data-i18n="terms.section13_heading">13. Force Majeure</h2>
-        <p data-i18n="terms.section13_body">We are not liable for delays or failure to perform due to causes beyond our reasonable control, including but not limited to acts of God, severe weather, power or internet outages, third-party service outages, or other circumstances outside our control.</p>
+        <h2>13. Force Majeure</h2>
+        <p>We are not liable for delays or failure to perform due to causes beyond our reasonable control, including but not limited to acts of God, severe weather, power or internet outages, third-party service outages, or other circumstances outside our control.</p>
 
-        <h2 data-i18n="terms.section14_heading">14. Governing Law &amp; Disputes</h2>
-        <p data-i18n="terms.section14_body">These Terms are governed by the laws of the Commonwealth of Virginia, without regard to conflict-of-law principles. Any dispute arising from these Terms or our Services shall be resolved in the state or federal courts located in Virginia, and you consent to the jurisdiction of those courts.</p>
+        <h2>14. Governing Law &amp; Disputes</h2>
+        <p>These Terms are governed by the laws of the Commonwealth of Virginia, without regard to conflict-of-law principles. Any dispute arising from these Terms or our Services shall be resolved in the state or federal courts located in Virginia, and you consent to the jurisdiction of those courts.</p>
 
-        <h2 data-i18n="terms.section15_heading">15. Changes to These Terms</h2>
-        <p data-i18n="terms.section15_body">We may update these Terms from time to time. The version in effect at the time you submit payment or request service governs that transaction. Continued use of our Services after changes are posted constitutes acceptance of the updated Terms.</p>
+        <h2>15. Changes to These Terms</h2>
+        <p>We may update these Terms from time to time. The version in effect at the time you submit payment or request service governs that transaction. Continued use of our Services after changes are posted constitutes acceptance of the updated Terms.</p>
 
-        <h2 data-i18n="terms.section16_heading">16. Severability</h2>
-        <p data-i18n="terms.section16_body">If any provision of these Terms is found unenforceable, the remaining provisions will continue in full force and effect.</p>
+        <h2>16. Severability</h2>
+        <p>If any provision of these Terms is found unenforceable, the remaining provisions will continue in full force and effect.</p>
 
-        <h2 data-i18n="terms.section17_heading">17. Contact</h2>
-        <p data-i18n-html="terms.section17_body">Questions about these Terms can be directed to Little Technical Solutions LLC at <strong>804-309-0968</strong> or <strong>dylan@lit-solutions.tech</strong>.</p>
+        <h2>17. Contact</h2>
+        <p>Questions about these Terms can be directed to Little Technical Solutions LLC at <strong>804-309-0968</strong> or <strong>dylan@lit-solutions.tech</strong>.</p>
 
-        <h2 data-i18n="terms.section18_heading">18. Care Hub Accounts</h2>
-        <p data-i18n="terms.section18_p1">If we provide you with access to the Care Hub, our customer/staff account portal, the following additional terms apply. The Care Hub is invitation-only — you cannot self-register, and your account is created by us or by an administrator within your organization. Submitting a ticket, checklist answer, or other request through the Care Hub does not by itself create or modify any service agreement, scope of work, or pricing between you and Little Technical Solutions LLC; those remain governed by whatever separate engagement, quote, or scope-of-work document applies to your organization. The Care Hub is a communication and tracking tool for that underlying relationship, not a replacement for it.</p>
-        <p data-i18n="terms.section18_p2">You are responsible for keeping your Care Hub login credentials confidential and for all activity under your account. Accounts belong to an organization and carry a role (owner, member, read-only, or our staff) that determines what data within that organization the account can see and change; you agree not to attempt to access another organization's data, share your credentials, probe or attack the platform's security, or use the Care Hub in any way that violates applicable law. Administrator accounts are required to enable two-factor authentication, and we may suspend or terminate any account that violates these Terms or poses a security risk to the platform or to other organizations' data.</p>
-        <p data-i18n="terms.section18_p3">You retain ownership of the files, messages, and information you submit through the Care Hub. You grant us the right to store, process, and display that content back to you and to our staff solely to provide the service. If your organization's relationship with Little Technical Solutions LLC ends, your Care Hub account access ends with it, subject to the data retention periods described in our <a href="privacy.html" data-i18n="footer.privacy_policy">Privacy Policy</a>. Sections 6 (No Guarantee of Outcome), 7 (Limitation of Liability), 12 (Indemnification), and 14 (Governing Law &amp; Disputes) of these Terms apply in full to your use of the Care Hub, in addition to the Care Hub-specific terms in this section.</p>
+        <h2>18. Care Hub Accounts</h2>
+        <p>If we provide you with access to the Care Hub, our customer/staff account portal, the following additional terms apply. The Care Hub is invitation-only — you cannot self-register, and your account is created by us or by an administrator within your organization. Submitting a ticket, checklist answer, or other request through the Care Hub does not by itself create or modify any service agreement, scope of work, or pricing between you and Little Technical Solutions LLC; those remain governed by whatever separate engagement, quote, or scope-of-work document applies to your organization. The Care Hub is a communication and tracking tool for that underlying relationship, not a replacement for it.</p>
+        <p>You are responsible for keeping your Care Hub login credentials confidential and for all activity under your account. Accounts belong to an organization and carry a role (owner, member, read-only, or our staff) that determines what data within that organization the account can see and change; you agree not to attempt to access another organization's data, share your credentials, probe or attack the platform's security, or use the Care Hub in any way that violates applicable law. Administrator accounts are required to enable two-factor authentication, and we may suspend or terminate any account that violates these Terms or poses a security risk to the platform or to other organizations' data.</p>
+        <p>You retain ownership of the files, messages, and information you submit through the Care Hub. You grant us the right to store, process, and display that content back to you and to our staff solely to provide the service. If your organization's relationship with Little Technical Solutions LLC ends, your Care Hub account access ends with it, subject to the data retention periods described in our <a href="privacy.html">Privacy Policy</a>. Sections 6 (No Guarantee of Outcome), 7 (Limitation of Liability), 12 (Indemnification), and 14 (Governing Law &amp; Disputes) of these Terms apply in full to your use of the Care Hub, in addition to the Care Hub-specific terms in this section.</p>
 
       </div>
     </div>
@@ -218,55 +171,54 @@
     <div class="footer-brand">
       <img src="assets/logo-icon.png" alt="Little Technical Solutions LLC" width="36" height="36" class="footer-logo">
       <span class="logo-line1">Little Technical Solutions LLC</span>
-      <p data-i18n="footer.tagline">Websites, computers, networks, and security — handled by one call.</p>
+      <p>Websites, computers, networks, and security — handled by one call.</p>
     </div>
     <nav class="footer-nav" aria-label="Footer">
-      <a href="index.html" data-i18n="nav.home">Home</a>
-      <a href="services.html" data-i18n="nav.services">Services</a>
-      <a href="website-designer.html" data-i18n="nav.website_designer">Website Designer</a>
-      <a href="pricing.html" data-i18n="nav.pricing">Pricing</a>
-      <a href="heroes-pricing.html" data-i18n="nav.heroes_discount">Heroes Discount</a>
-      <a href="about.html" data-i18n="nav.about">About</a>
-      <a href="team.html" data-i18n="nav.team">Our Team</a>
-      <a href="service-area.html" data-i18n="nav.service_area">Service Area</a>
-      <a href="faq.html" data-i18n="nav.faq">FAQ</a>
-      <a href="blog.html" data-i18n="nav.blog">Blog</a>
-      <a href="payment.html" data-i18n="nav.payments">Payments</a>
-      <a href="contact.html" data-i18n="nav.contact">Contact</a>
-      <a href="intake.html" data-i18n="footer.new_client_form">New Client Form</a>
-      <a href="search.html" data-i18n="footer.search">Search</a>
-      <a href="sitemap.html" data-i18n="footer.sitemap">Sitemap</a>
-      <a href="privacy.html" data-i18n="footer.privacy_policy">Privacy Policy</a>
-      <a href="terms.html" data-i18n="footer.terms">Terms &amp; Conditions</a>
-      <a href="patch-notes.html" data-i18n="footer.patch_notes">Website Updates</a>
-      <a href="#" id="manageConsentLink" data-i18n="footer.cookie_notice">Cookie Notice</a>
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="website-designer.html">Website Designer</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="heroes-pricing.html">Heroes Discount</a>
+      <a href="about.html">About</a>
+      <a href="team.html">Our Team</a>
+      <a href="service-area.html">Service Area</a>
+      <a href="faq.html">FAQ</a>
+      <a href="blog.html">Blog</a>
+      <a href="payment.html">Payments</a>
+      <a href="contact.html">Contact</a>
+      <a href="intake.html">New Client Form</a>
+      <a href="search.html">Search</a>
+      <a href="sitemap.html">Sitemap</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms &amp; Conditions</a>
+      <a href="patch-notes.html">Website Updates</a>
+      <a href="#" id="manageConsentLink">Cookie Notice</a>
     </nav>
     <nav class="footer-social" aria-label="Social">
       <a href="https://www.facebook.com/profile.php?id=61591618750945" rel="noopener" target="_blank" aria-label="Little Technical Solutions LLC on Facebook">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>
-        <span data-i18n="footer.facebook">Facebook</span>
+        <span>Facebook</span>
       </a>
       <a href="https://www.google.com/search?q=Little+Technical+Solutions+LLC&stick=H4sIAAAAAAAA_-NgU1IxqDA0N0s1sUgyT0yxTE1NTLMyqEg2sTRLNTZOTTS1NDIzSUxaxCrnk1lSkpOqEJKanJGXmZyYoxCcn1NakpmfV6zg4-MMAGRkPw5JAAAA&hl=en&mat=CWEgdKX6xe4RElcBa0lj_4PsrYDUx2O2vFBpnokVltXIVrcy43xjezZrcYTprxRsgJGT1ATelPpH5ss3Sn-4VrXJHi_xxw10Eq_jzvWCxQfPf2G4feie7XZe-MJ3uWuSvN4&authuser=0" rel="noopener" target="_blank" aria-label="Little Technical Solutions LLC on Google">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 12.23c0-.75-.07-1.47-.19-2.18H12v4.13h5.4a4.6 4.6 0 0 1-2 3.02v2.5h3.24c1.9-1.75 3-4.32 3-7.47z"/><path d="M12 22c2.7 0 4.97-.9 6.63-2.44l-3.24-2.5c-.9.6-2.05.96-3.39.96-2.6 0-4.8-1.76-5.6-4.12H3.05v2.58A10 10 0 0 0 12 22z"/><path d="M6.4 13.9a6 6 0 0 1 0-3.8V7.52H3.05a10 10 0 0 0 0 8.96l3.35-2.58z"/><path d="M12 6.08c1.47 0 2.79.5 3.83 1.5l2.87-2.87A10 10 0 0 0 3.05 7.52L6.4 10.1c.8-2.36 3-4.02 5.6-4.02z"/></svg>
-        <span data-i18n="footer.find_google">Find us on Google</span>
+        <span>Find us on Google</span>
       </a>
     </nav>
   </div>
-  <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span data-i18n="footer.rights">All rights reserved.</span></p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version <span id="siteVersion">3.2.2</span></a></p>
-  <p class="footer-version"><a href="admin.html" data-i18n="footer.staff_signin">Staff Sign In</a></p>
+  <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span>All rights reserved.</span></p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version <span id="siteVersion">4.0.0</span></a></p>
+  <p class="footer-version"><a href="admin.html">Staff Sign In</a></p>
 </footer>
 
 <div id="cookie-banner" class="cookie-banner" hidden role="region" aria-label="Cookie notice">
   <div class="wrap cookie-banner-inner">
-    <p data-i18n-html="cookie.text">We use Netlify Analytics (cookie-free, privacy-respecting) to see site traffic, plus a small amount of local storage for things like your dark/light mode choice. Nothing here is used for advertising or sold to anyone. See our <a href="privacy.html" data-i18n="footer.privacy_policy">Privacy Policy</a>.</p>
+    <p>We use Netlify Analytics (cookie-free, privacy-respecting) to see site traffic. Nothing here is used for advertising or sold to anyone. See our <a href="privacy.html">Privacy Policy</a>.</p>
     <div class="cookie-banner-actions">
-      <button type="button" class="btn btn-primary btn-small" data-consent="dismiss" data-i18n="cookie.accept">Got it</button>
+      <button type="button" class="btn btn-primary btn-small" data-consent="dismiss">Got it</button>
     </div>
   </div>
 </div>
 
-<script src="js/i18n.js"></script>
 <script src="js/main.js"></script>
 <script src="js/site-version.js"></script>
 </body>

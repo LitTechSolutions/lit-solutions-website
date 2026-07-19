@@ -107,8 +107,8 @@
   color: var(--ink);
 }
 .app-sidebar__link[aria-current="page"] {
-  background: var(--select-bg);
-  color: var(--accent-teal-text);
+  background: var(--paper);
+  color: var(--accent-orange-text);
 }
 
 .app-main {

@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>
-(function(){
-  try{
-    var saved = localStorage.getItem('lts-theme');
-    var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    document.documentElement.setAttribute('data-theme', theme);
-  }catch(e){}
-})();
-</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>American Heroes Discount — Little Technical Solutions LLC</title>
@@ -24,44 +15,12 @@
 <meta name="twitter:card" content="summary">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Little Technical Solutions LLC","image":"https://lit-solutions.tech/assets/logo-full.png","telephone":"+18043090968","email":"dylan@lit-solutions.tech","url":"https://lit-solutions.tech/","priceRange":"$$","areaServed":[{"@type":"City","name":"Montross, VA"},{"@type":"City","name":"Colonial Beach, VA"},{"@type":"City","name":"King George, VA"},{"@type":"City","name":"Dahlgren, VA"}],"sameAs":["https://www.facebook.com/profile.php?id=61591618750945","https://www.google.com/search?q=Little+Technical+Solutions+LLC&stick=H4sIAAAAAAAA_-NgU1IxqDA0N0s1sUgyT0yxTE1NTLMyqEg2sTRLNTZOTTS1NDIzSUxaxCrnk1lSkpOqEJKanJGXmZyYoxCcn1NakpmfV6zg4-MMAGRkPw5JAAAA&hl=en&mat=CWEgdKX6xe4RElcBa0lj_4PsrYDUx2O2vFBpnokVltXIVrcy43xjezZrcYTprxRsgJGT1ATelPpH5ss3Sn-4VrXJHi_xxw10Eq_jzvWCxQfPf2G4feie7XZe-MJ3uWuSvN4&authuser=0"]}</script>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <link rel="icon" type="image/png" href="assets/favicon.png">
 </head>
 <body>
 
-<a class="skip-link" href="#main" data-i18n="a11y.skip_to_content">Skip to content</a>
-<div class="lang-bar">
-  <div class="wrap lang-bar-inner">
-    <div class="nav-dropdown">
-      <button type="button" class="nav-dropdown-toggle lang-dropdown-toggle" aria-haspopup="listbox" aria-expanded="false" aria-controls="langMenu" aria-label="Choose language" data-i18n-attr-aria-label="header.choose_language">
-        <span id="langCurrentLabel">ENG</span>
-        <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
-      </button>
-      <div class="nav-dropdown-menu lang-dropdown-menu" id="langMenu" role="listbox">
-        <button type="button" class="lang-option is-active" data-lang="en">English <span class="lang-code">ENG</span></button>
-        <button type="button" class="lang-option" data-lang="es">Español <span class="lang-code">ESP</span></button>
-        <button type="button" class="lang-option" data-lang="fr">Français <span class="lang-code">FRA</span></button>
-        <button type="button" class="lang-option" data-lang="zh">中文 <span class="lang-code">ZH</span></button>
-        <button type="button" class="lang-option" data-lang="ja">日本語 <span class="lang-code">JPN</span></button>
-        <button type="button" class="lang-option" data-lang="vi">Tiếng Việt <span class="lang-code">VIE</span></button>
-        <button type="button" class="lang-option" data-lang="tl">Filipino <span class="lang-code">FIL</span></button>
-        <button type="button" class="lang-option" data-lang="ar">العربية <span class="lang-code">ARA</span></button>
-        <button type="button" class="lang-option" data-lang="ko">한국어 <span class="lang-code">KOR</span></button>
-        <button type="button" class="lang-option" data-lang="de">Deutsch <span class="lang-code">GER</span></button>
-        <button type="button" class="lang-option" data-lang="ht">Kreyòl Ayisyen <span class="lang-code">HAT</span></button>
-        <button type="button" class="lang-option" data-lang="pt">Português <span class="lang-code">POR</span></button>
-        <button type="button" class="lang-option" data-lang="ru">Русский <span class="lang-code">RUS</span></button>
-        <button type="button" class="lang-option" data-lang="it">Italiano <span class="lang-code">ITA</span></button>
-        <button type="button" class="lang-option" data-lang="pl">Polski <span class="lang-code">POL</span></button>
-        <button type="button" class="lang-option" data-lang="hi">हिन्दी <span class="lang-code">HIN</span></button>
-      </div>
-    </div>
-  </div>
-</div>
-
+<a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header" id="siteHeader">
   <div class="wrap header-inner">
     <a href="index.html" class="logo" aria-label="Little Technical Solutions LLC — home">
@@ -75,46 +34,42 @@
     </a>
 
     <nav class="main-nav" id="mainNav" aria-label="Primary">
-      <a href="index.html" data-i18n="nav.home">Home</a>
+      <a href="index.html">Home</a>
       <div class="nav-dropdown">
         <button type="button" class="nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="servicesDropdown">
-          <span data-i18n="nav.services">Services</span>
+          <span>Services</span>
           <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
         </button>
         <div class="nav-dropdown-menu" id="servicesDropdown">
-          <a href="services.html" data-i18n="nav.services_all">All Services</a>
-          <a href="service-website.html" data-i18n="nav.service_website">Website Design &amp; Development</a>
-          <a href="service-computer.html" data-i18n="nav.service_computer">Computer Repair</a>
-          <a href="service-networking.html" data-i18n="nav.service_networking">Networking</a>
-          <a href="service-cybersecurity.html" data-i18n="nav.service_cybersecurity">Cybersecurity</a>
-          <a href="service-business-it.html" data-i18n="nav.service_business_it">Small Business IT</a>
-          <a href="pricing.html" data-i18n="nav.pricing">Pricing</a>
+          <a href="services.html">All Services</a>
+          <a href="service-website.html">Website Design &amp; Development</a>
+          <a href="service-computer.html">Computer Repair</a>
+          <a href="service-networking.html">Networking</a>
+          <a href="service-cybersecurity.html">Cybersecurity</a>
+          <a href="service-business-it.html">Small Business IT</a>
+          <a href="pricing.html">Pricing</a>
         </div>
       </div>
-      <a href="website-designer.html" data-i18n="nav.website_designer">Website Designer</a>
-      <a href="about.html" data-i18n="nav.about">About</a>
-      <a href="contact.html" data-i18n="nav.contact">Contact</a>
+      <a href="website-designer.html">Website Designer</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
     </nav>
 
     <div class="header-actions">
-      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode" data-i18n-attr-aria-label="header.toggle_dark_mode" data-i18n-attr-title="header.toggle_dark_mode">
-        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-      </button>
-      <a href="search.html" class="search-toggle" aria-label="Search this site" title="Search this site" data-i18n-attr-aria-label="header.search_site" data-i18n-attr-title="header.search_site">
+      <a href="search.html" class="search-toggle" aria-label="Search this site" title="Search this site">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-3.8-3.8"/></svg>
       </a>
-      <a href="myaccount.html" class="search-toggle" aria-label="Client Sign In" title="Client Sign In" data-i18n-attr-aria-label="header.my_account" data-i18n-attr-title="header.my_account">
+      <a href="myaccount.html" class="search-toggle" aria-label="Client Sign In" title="Client Sign In">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </a>
       <a href="tel:+18043090968" class="phone-link">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         804-309-0968
       </a>
-      <a href="intake.html" class="btn btn-primary btn-small" data-i18n="header.get_quote">Request Service</a>
+      <a href="intake.html" class="btn btn-primary btn-small">Request Service</a>
     </div>
 
-    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu" data-i18n-attr-aria-label="header.toggle_menu">
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu">
       <span></span><span></span><span></span>
     </button>
   </div>
@@ -124,13 +79,13 @@
 
   <section class="intake-hero">
     <div class="wrap">
-      <span class="vet-badge" data-i18n-html="heroes.badge_label">
+      <span class="vet-badge">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z"/></svg>
         American Heroes Discount
       </span>
-      <h1 data-i18n="heroes.hero_h1">Thank you for everything you do.</h1>
-      <p class="section-lede" data-i18n="heroes.hero_lede">Little Technical Solutions LLC is veteran-owned, and we like taking care of the people who take care of everyone else. Active duty military, veterans, teachers, first responders, doctors, TSA agents, police, firefighters, and Virginia FFL holders all get 15% off nearly every service we offer &mdash; no fine print games, just a straightforward discount as a thank-you.</p>
-      <button type="button" class="do-i-qualify-btn" id="doIQualifyBtn" data-i18n-html="heroes.qualify_btn">
+      <h1>Thank you for everything you do.</h1>
+      <p class="section-lede">Little Technical Solutions LLC is veteran-owned, and we like taking care of the people who take care of everyone else. Active duty military, veterans, teachers, first responders, doctors, TSA agents, police, firefighters, and Virginia FFL holders all get 15% off nearly every service we offer — no fine print games, just a straightforward discount as a thank-you.</p>
+      <button type="button" class="do-i-qualify-btn" id="doIQualifyBtn">
         Do I qualify?
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
       </button>
@@ -144,110 +99,110 @@
         <span class="launch-banner-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z"/></svg>
         </span>
-        <p data-i18n-html="heroes.launch_banner_text"><strong>Launch special:</strong> these discounted rates are calculated from our introductory launch pricing, available for our first 25 customers as we get the business off the ground. Once we hit that milestone, the American Heroes Discount will apply to our standard published rates instead.</p>
+        <p><strong>Launch special:</strong> these discounted rates are calculated from our introductory launch pricing, available for our first 25 customers as we get the business off the ground. Once we hit that milestone, the American Heroes Discount will apply to our standard published rates instead.</p>
       </div>
 
       <div class="hero-groups" id="heroGroups">
-        <h2 class="hero-groups-title" data-i18n="heroes.groups_title">Who qualifies</h2>
-        <p class="hero-groups-subtitle" data-i18n="heroes.groups_subtitle">Tap a category to see a quick thank-you and exactly what we need to verify your status.</p>
+        <h2 class="hero-groups-title">Who qualifies</h2>
+        <p class="hero-groups-subtitle">Tap a category to see a quick thank-you and exactly what we need to verify your status.</p>
         <div class="hero-groups-grid">
 
           <button type="button" class="hero-group-item" aria-expanded="false">
             <span class="hero-group-head">
-              <strong data-i18n="heroes.group1_title">Active Duty Military</strong>
+              <strong>Active Duty Military</strong>
               <svg class="hero-group-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
             </span>
             <span class="hero-group-detail">
-              <span class="hero-group-thanks" data-i18n="heroes.group1_thanks">Thank you for your active service &mdash; you keep the rest of us safe while you're away from home.</span>
-              <span class="hero-group-verify" data-i18n-html="heroes.group1_verify"><strong>To verify:</strong> Military ID (CAC) shown in person only, or current LES by email.</span>
+              <span class="hero-group-thanks">Thank you for your active service — you keep the rest of us safe while you're away from home.</span>
+              <span class="hero-group-verify"><strong>To verify:</strong> Military ID (CAC) shown in person only, or current LES by email.</span>
             </span>
           </button>
 
           <button type="button" class="hero-group-item" aria-expanded="false">
             <span class="hero-group-head">
-              <strong data-i18n="heroes.group2_title">Veterans</strong>
+              <strong>Veterans</strong>
               <svg class="hero-group-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
             </span>
             <span class="hero-group-detail">
-              <span class="hero-group-thanks" data-i18n="heroes.group2_thanks">Thank you for your service. We're a veteran-owned business ourselves, and we don't forget where we came from.</span>
-              <span class="hero-group-verify" data-i18n-html="heroes.group2_verify"><strong>To verify:</strong> DD-214 by email, or veteran ID/CAC shown in person.</span>
+              <span class="hero-group-thanks">Thank you for your service. We're a veteran-owned business ourselves, and we don't forget where we came from.</span>
+              <span class="hero-group-verify"><strong>To verify:</strong> DD-214 by email, or veteran ID/CAC shown in person.</span>
             </span>
           </button>
 
           <button type="button" class="hero-group-item" aria-expanded="false">
             <span class="hero-group-head">
-              <strong data-i18n="heroes.group3_title">Teachers</strong>
+              <strong>Teachers</strong>
               <svg class="hero-group-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
             </span>
             <span class="hero-group-detail">
-              <span class="hero-group-thanks" data-i18n="heroes.group3_thanks">Thank you for shaping the next generation, usually with far less support than the job deserves.</span>
-              <span class="hero-group-verify" data-i18n-html="heroes.group3_verify"><strong>To verify:</strong> Employment verification letter by email, or school ID shown in person.</span>
+              <span class="hero-group-thanks">Thank you for shaping the next generation, usually with far less support than the job deserves.</span>
+              <span class="hero-group-verify"><strong>To verify:</strong> Employment verification letter by email, or school ID shown in person.</span>
             </span>
           </button>
 
           <button type="button" class="hero-group-item" aria-expanded="false">
             <span class="hero-group-head">
-              <strong data-i18n="heroes.group4_title">First Responders</strong>
+              <strong>First Responders</strong>
               <svg class="hero-group-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
             </span>
             <span class="hero-group-detail">
-              <span class="hero-group-thanks" data-i18n="heroes.group4_thanks">Thank you for running toward emergencies most people run away from.</span>
-              <span class="hero-group-verify" data-i18n-html="heroes.group4_verify"><strong>To verify:</strong> Employment verification letter by email, or agency ID shown in person.</span>
+              <span class="hero-group-thanks">Thank you for running toward emergencies most people run away from.</span>
+              <span class="hero-group-verify"><strong>To verify:</strong> Employment verification letter by email, or agency ID shown in person.</span>
             </span>
           </button>
 
           <button type="button" class="hero-group-item" aria-expanded="false">
             <span class="hero-group-head">
-              <strong data-i18n="heroes.group5_title">Doctors</strong>
+              <strong>Doctors</strong>
               <svg class="hero-group-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
             </span>
             <span class="hero-group-detail">
-              <span class="hero-group-thanks" data-i18n="heroes.group5_thanks">Thank you for the long hours and hard calls that keep our community healthy.</span>
-              <span class="hero-group-verify" data-i18n-html="heroes.group5_verify"><strong>To verify:</strong> Active medical license number (we verify it directly), or hospital/practice ID shown in person.</span>
+              <span class="hero-group-thanks">Thank you for the long hours and hard calls that keep our community healthy.</span>
+              <span class="hero-group-verify"><strong>To verify:</strong> Active medical license number (we verify it directly), or hospital/practice ID shown in person.</span>
             </span>
           </button>
 
           <button type="button" class="hero-group-item" aria-expanded="false">
             <span class="hero-group-head">
-              <strong data-i18n="heroes.group6_title">TSA Agents</strong>
+              <strong>TSA Agents</strong>
               <svg class="hero-group-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
             </span>
             <span class="hero-group-detail">
-              <span class="hero-group-thanks" data-i18n="heroes.group6_thanks">Thank you for the often-thankless work of keeping air travel safe for all of us.</span>
-              <span class="hero-group-verify" data-i18n-html="heroes.group6_verify"><strong>To verify:</strong> TSA-issued employee ID shown in person only.</span>
+              <span class="hero-group-thanks">Thank you for the often-thankless work of keeping air travel safe for all of us.</span>
+              <span class="hero-group-verify"><strong>To verify:</strong> TSA-issued employee ID shown in person only.</span>
             </span>
           </button>
 
           <button type="button" class="hero-group-item" aria-expanded="false">
             <span class="hero-group-head">
-              <strong data-i18n="heroes.group7_title">Police</strong>
+              <strong>Police</strong>
               <svg class="hero-group-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
             </span>
             <span class="hero-group-detail">
-              <span class="hero-group-thanks" data-i18n="heroes.group7_thanks">Thank you for putting yourself between our community and danger, every single shift.</span>
-              <span class="hero-group-verify" data-i18n-html="heroes.group7_verify"><strong>To verify:</strong> Employment verification letter by email, or department badge/ID shown in person.</span>
+              <span class="hero-group-thanks">Thank you for putting yourself between our community and danger, every single shift.</span>
+              <span class="hero-group-verify"><strong>To verify:</strong> Employment verification letter by email, or department badge/ID shown in person.</span>
             </span>
           </button>
 
           <button type="button" class="hero-group-item" aria-expanded="false">
             <span class="hero-group-head">
-              <strong data-i18n="heroes.group8_title">Firefighters</strong>
+              <strong>Firefighters</strong>
               <svg class="hero-group-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
             </span>
             <span class="hero-group-detail">
-              <span class="hero-group-thanks" data-i18n="heroes.group8_thanks">Thank you for risking everything &mdash; career or volunteer &mdash; to protect lives and property.</span>
-              <span class="hero-group-verify" data-i18n-html="heroes.group8_verify"><strong>To verify:</strong> Employment verification letter by email, or department ID shown in person.</span>
+              <span class="hero-group-thanks">Thank you for risking everything — career or volunteer — to protect lives and property.</span>
+              <span class="hero-group-verify"><strong>To verify:</strong> Employment verification letter by email, or department ID shown in person.</span>
             </span>
           </button>
 
           <button type="button" class="hero-group-item" aria-expanded="false">
             <span class="hero-group-head">
-              <strong data-i18n-html="heroes.group9_title">FFL Holders <small>(Virginia)</small></strong>
+              <strong>FFL Holders <small>(Virginia)</small></strong>
               <svg class="hero-group-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
             </span>
             <span class="hero-group-detail">
-              <span class="hero-group-thanks" data-i18n="heroes.group9_thanks">Thank you for operating responsibly in a heavily regulated industry that serves lawful gun owners in our community.</span>
-              <span class="hero-group-verify" data-i18n-html="heroes.group9_verify"><strong>To verify:</strong> Copy of current Federal Firearms License showing a Virginia premise address, by email.</span>
+              <span class="hero-group-thanks">Thank you for operating responsibly in a heavily regulated industry that serves lawful gun owners in our community.</span>
+              <span class="hero-group-verify"><strong>To verify:</strong> Copy of current Federal Firearms License showing a Virginia premise address, by email.</span>
             </span>
           </button>
 
@@ -256,10 +211,10 @@
 
       <div class="price-note" style="background:#EEF9F6; border-color:#BFE6DC; color:#0E5C46;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 12l2 2 4-4M12 3l8 4v5c0 5-3.5 9-8 10-4.5-1-8-5-8-10V7z"/></svg>
-        <p data-i18n-html="heroes.eligibility_note">
+        <p>
           <strong>Proof of eligibility required.</strong><br>
           Documents (DD-214, LES, or an employment verification letter): email a copy along with your project form.<br>
-          Federal ID cards (military ID/CAC, veteran ID card, TSA credential, etc.): we verify these in person only &mdash; we can't accept a photo, scan, or copy, since federal law (18 U.S.C. &sect; 701) prohibits reproducing military and other federal government ID cards.<br>
+          Federal ID cards (military ID/CAC, veteran ID card, TSA credential, etc.): we verify these in person only — we can't accept a photo, scan, or copy, since federal law (18 U.S.C. § 701) prohibits reproducing military and other federal government ID cards.<br>
           We verify once; you get the discount on every job after that.
         </p>
       </div>
@@ -268,22 +223,22 @@
         <button class="price-block-head" type="button" aria-expanded="false">
           <span class="price-block-head-left">
             <span class="ticket-code">WEB&#8209;01</span>
-          <h2 data-i18n="heroes.web_block_title">Website Services</h2>
+          <h2>Website Services</h2>
           </span>
           <span class="price-block-toggle">
-            <span class="price-block-count" data-i18n="heroes.web_block_count">7 services</span>
+            <span class="price-block-count">7 services</span>
             <svg class="price-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
           </span>
         </button>
         <div class="price-list-wrap">
           <ul class="price-list">
-          <li><span class="price-item-name" data-i18n-html="heroes.web_item1_name">Starter website <small>(up to 5 pages)</small></span><span class="price-item-value" data-i18n-html="heroes.web_item1_value"><s class="price-was">$699</s> Starting at $594</span></li>
-          <li><span class="price-item-name" data-i18n-html="heroes.web_item2_name">Business website <small>(custom features, booking, etc.)</small></span><span class="price-item-value" data-i18n-html="heroes.web_item2_value"><s class="price-was">$1,299</s> Starting at $1,104</span></li>
-          <li><span class="price-item-name" data-i18n="heroes.web_item3_name">Website redesign</span><span class="price-item-value" data-i18n-html="heroes.web_item3_value"><s class="price-was">$599</s> Starting at $509</span></li>
-          <li><span class="price-item-name" data-i18n-html="heroes.web_item4_name">Domain registration &amp; DNS setup <small>(our labor fee &mdash; registrar cost separate)</small></span><span class="price-item-value" data-i18n-html="heroes.web_item4_value"><s class="price-was">$39</s> Starting at $33</span></li>
-          <li><span class="price-item-name" data-i18n-html="heroes.web_item5_name">Business email setup <small>(our labor fee &mdash; subscription billed by Google/Microsoft)</small></span><span class="price-item-value" data-i18n-html="heroes.web_item5_value"><s class="price-was">$59</s> Starting at $50</span></li>
-          <li><span class="price-item-name" data-i18n="heroes.web_item6_name">Basic SEO optimization</span><span class="price-item-value" data-i18n-html="heroes.web_item6_value"><s class="price-was">$99</s> Starting at $84</span></li>
-          <li><span class="price-item-name" data-i18n-html="heroes.web_item7_name">Ongoing maintenance &amp; hosting assistance <small>(5% off &mdash; see note below)</small></span><span class="price-item-value" data-i18n-html="heroes.web_item7_value"><s class="price-was">$39/mo</s> $37/mo</span></li>
+          <li><span class="price-item-name">Starter website <small>(up to 5 pages)</small></span><span class="price-item-value"><s class="price-was">$699</s> Starting at $594</span></li>
+          <li><span class="price-item-name">Business website <small>(custom features, booking, etc.)</small></span><span class="price-item-value"><s class="price-was">$1,299</s> Starting at $1,104</span></li>
+          <li><span class="price-item-name">Website redesign</span><span class="price-item-value"><s class="price-was">$599</s> Starting at $509</span></li>
+          <li><span class="price-item-name">Domain registration & DNS setup <small>(our labor fee — registrar cost separate)</small></span><span class="price-item-value"><s class="price-was">$39</s> Starting at $33</span></li>
+          <li><span class="price-item-name">Business email setup <small>(our labor fee — subscription billed by Google/Microsoft)</small></span><span class="price-item-value"><s class="price-was">$59</s> Starting at $50</span></li>
+          <li><span class="price-item-name">Basic SEO optimization</span><span class="price-item-value"><s class="price-was">$99</s> Starting at $84</span></li>
+          <li><span class="price-item-name">Ongoing maintenance & hosting assistance <small>(5% off — see note below)</small></span><span class="price-item-value"><s class="price-was">$39/mo</s> $37/mo</span></li>
         </ul>
         </div>
       </div>
@@ -292,21 +247,21 @@
         <button class="price-block-head" type="button" aria-expanded="false">
           <span class="price-block-head-left">
             <span class="ticket-code">PC&#8209;02</span>
-          <h2 data-i18n="heroes.pc_block_title">Computer Services</h2>
+          <h2>Computer Services</h2>
           </span>
           <span class="price-block-toggle">
-            <span class="price-block-count" data-i18n="heroes.pc_block_count">6 services</span>
+            <span class="price-block-count">6 services</span>
             <svg class="price-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
           </span>
         </button>
         <div class="price-list-wrap">
           <ul class="price-list">
-          <li><span class="price-item-name" data-i18n="heroes.pc_item1_name">Diagnostic</span><span class="price-item-value price-item-free" data-i18n="heroes.pc_item1_value">Free</span></li>
-          <li><span class="price-item-name" data-i18n="heroes.pc_item2_name">Computer repair &amp; troubleshooting</span><span class="price-item-value" data-i18n-html="heroes.pc_item2_value"><s class="price-was">$59/hr</s> $50/hr <small>(1-hr min)</small></span></li>
-          <li><span class="price-item-name" data-i18n="heroes.pc_item3_name">Virus &amp; malware removal</span><span class="price-item-value" data-i18n-html="heroes.pc_item3_value"><s class="price-was">$79</s> Starting at $67</span></li>
-          <li><span class="price-item-name" data-i18n="heroes.pc_item4_name">Operating system install / upgrade</span><span class="price-item-value" data-i18n-html="heroes.pc_item4_value"><s class="price-was">$69</s> Starting at $59</span></li>
-          <li><span class="price-item-name" data-i18n-html="heroes.pc_item5_name">Custom PC build <small>(labor only &mdash; parts always at cost)</small></span><span class="price-item-value" data-i18n-html="heroes.pc_item5_value"><s class="price-was">$120</s> Starting at $102 <small>+ parts</small></span></li>
-          <li><span class="price-item-name" data-i18n="heroes.pc_item6_name">Data backup &amp; recovery assistance</span><span class="price-item-value" data-i18n-html="heroes.pc_item6_value"><s class="price-was">$69</s> Starting at $59</span></li>
+          <li><span class="price-item-name">Diagnostic</span><span class="price-item-value price-item-free">Free</span></li>
+          <li><span class="price-item-name">Computer repair &amp; troubleshooting</span><span class="price-item-value"><s class="price-was">$59/hr</s> $50/hr <small>(1-hr min)</small></span></li>
+          <li><span class="price-item-name">Virus &amp; malware removal</span><span class="price-item-value"><s class="price-was">$79</s> Starting at $67</span></li>
+          <li><span class="price-item-name">Operating system install / upgrade</span><span class="price-item-value"><s class="price-was">$69</s> Starting at $59</span></li>
+          <li><span class="price-item-name">Custom PC build <small>(labor only — parts always at cost)</small></span><span class="price-item-value"><s class="price-was">$120</s> Starting at $102 <small>+ parts</small></span></li>
+          <li><span class="price-item-name">Data backup &amp; recovery assistance</span><span class="price-item-value"><s class="price-was">$69</s> Starting at $59</span></li>
         </ul>
         </div>
       </div>
@@ -315,21 +270,21 @@
         <button class="price-block-head" type="button" aria-expanded="false">
           <span class="price-block-head-left">
             <span class="ticket-code">NET&#8209;03</span>
-          <h2 data-i18n="heroes.net_block_title">Networking</h2>
+          <h2>Networking</h2>
           </span>
           <span class="price-block-toggle">
-            <span class="price-block-count" data-i18n="heroes.net_block_count">6 services</span>
+            <span class="price-block-count">6 services</span>
             <svg class="price-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
           </span>
         </button>
         <div class="price-list-wrap">
           <ul class="price-list">
-          <li><span class="price-item-name" data-i18n="heroes.net_item1_name">Home Wi-Fi setup &amp; optimization</span><span class="price-item-value" data-i18n-html="heroes.net_item1_value"><s class="price-was">$79</s> Starting at $67</span></li>
-          <li><span class="price-item-name" data-i18n="heroes.net_item2_name">Router &amp; modem configuration</span><span class="price-item-value" data-i18n-html="heroes.net_item2_value"><s class="price-was">$49</s> Starting at $42</span></li>
-          <li><span class="price-item-name" data-i18n-html="heroes.net_item3_name">Mesh Wi-Fi installation <small>(labor only &mdash; hardware always at cost)</small></span><span class="price-item-value" data-i18n-html="heroes.net_item3_value"><s class="price-was">$119</s> Starting at $101 <small>+ hardware</small></span></li>
-          <li><span class="price-item-name" data-i18n="heroes.net_item4_name">Printer &amp; device networking</span><span class="price-item-value" data-i18n-html="heroes.net_item4_value"><s class="price-was">$49</s> Starting at $42</span></li>
-          <li><span class="price-item-name" data-i18n="heroes.net_item5_name">Small office network setup</span><span class="price-item-value" data-i18n-html="heroes.net_item5_value"><s class="price-was">$149</s> Starting at $127</span></li>
-          <li><span class="price-item-name" data-i18n="heroes.net_item6_name">Network troubleshooting</span><span class="price-item-value" data-i18n-html="heroes.net_item6_value"><s class="price-was">$59</s> Starting at $50</span></li>
+          <li><span class="price-item-name">Home Wi-Fi setup &amp; optimization</span><span class="price-item-value"><s class="price-was">$79</s> Starting at $67</span></li>
+          <li><span class="price-item-name">Router &amp; modem configuration</span><span class="price-item-value"><s class="price-was">$49</s> Starting at $42</span></li>
+          <li><span class="price-item-name">Mesh Wi-Fi installation <small>(labor only — hardware always at cost)</small></span><span class="price-item-value"><s class="price-was">$119</s> Starting at $101 <small>+ hardware</small></span></li>
+          <li><span class="price-item-name">Printer &amp; device networking</span><span class="price-item-value"><s class="price-was">$49</s> Starting at $42</span></li>
+          <li><span class="price-item-name">Small office network setup</span><span class="price-item-value"><s class="price-was">$149</s> Starting at $127</span></li>
+          <li><span class="price-item-name">Network troubleshooting</span><span class="price-item-value"><s class="price-was">$59</s> Starting at $50</span></li>
         </ul>
         </div>
       </div>
@@ -338,20 +293,20 @@
         <button class="price-block-head" type="button" aria-expanded="false">
           <span class="price-block-head-left">
             <span class="ticket-code">SEC&#8209;04</span>
-          <h2 data-i18n="heroes.sec_block_title">Cybersecurity</h2>
+          <h2>Cybersecurity</h2>
           </span>
           <span class="price-block-toggle">
-            <span class="price-block-count" data-i18n="heroes.sec_block_count">5 services</span>
+            <span class="price-block-count">5 services</span>
             <svg class="price-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
           </span>
         </button>
         <div class="price-list-wrap">
           <ul class="price-list">
-          <li><span class="price-item-name" data-i18n="heroes.sec_item1_name">Security consultation</span><span class="price-item-value" data-i18n-html="heroes.sec_item1_value"><s class="price-was">$69</s> Starting at $59</span></li>
-          <li><span class="price-item-name" data-i18n="heroes.sec_item2_name">Password manager setup</span><span class="price-item-value" data-i18n-html="heroes.sec_item2_value"><s class="price-was">$45</s> Starting at $38</span></li>
-          <li><span class="price-item-name" data-i18n="heroes.sec_item3_name">Multi-factor authentication (MFA) setup</span><span class="price-item-value" data-i18n-html="heroes.sec_item3_value"><s class="price-was">$45</s> Starting at $38</span></li>
-          <li><span class="price-item-name" data-i18n="heroes.sec_item4_name">Security best practices training</span><span class="price-item-value" data-i18n-html="heroes.sec_item4_value"><s class="price-was">$59</s> Starting at $50</span></li>
-          <li><span class="price-item-name" data-i18n="heroes.sec_item5_name">Home &amp; small business security review</span><span class="price-item-value" data-i18n-html="heroes.sec_item5_value"><s class="price-was">$99</s> Starting at $84</span></li>
+          <li><span class="price-item-name">Security consultation</span><span class="price-item-value"><s class="price-was">$69</s> Starting at $59</span></li>
+          <li><span class="price-item-name">Password manager setup</span><span class="price-item-value"><s class="price-was">$45</s> Starting at $38</span></li>
+          <li><span class="price-item-name">Multi-factor authentication (MFA) setup</span><span class="price-item-value"><s class="price-was">$45</s> Starting at $38</span></li>
+          <li><span class="price-item-name">Security best practices training</span><span class="price-item-value"><s class="price-was">$59</s> Starting at $50</span></li>
+          <li><span class="price-item-name">Home &amp; small business security review</span><span class="price-item-value"><s class="price-was">$99</s> Starting at $84</span></li>
         </ul>
         </div>
       </div>
@@ -360,40 +315,40 @@
         <button class="price-block-head" type="button" aria-expanded="false">
           <span class="price-block-head-left">
             <span class="ticket-code">BIZ&#8209;05</span>
-          <h2 data-i18n="heroes.biz_block_title">Small Business IT</h2>
+          <h2>Small Business IT</h2>
           </span>
           <span class="price-block-toggle">
-            <span class="price-block-count" data-i18n="heroes.biz_block_count">6 services</span>
+            <span class="price-block-count">6 services</span>
             <svg class="price-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
           </span>
         </button>
         <div class="price-list-wrap">
           <ul class="price-list price-list--columns">
-          <li><span class="price-item-name" data-i18n="heroes.biz_item1_name">Technology consulting</span><span class="price-item-value" data-i18n-html="heroes.biz_item1_value"><s class="price-was">$59/hr</s> $50/hr</span></li>
-          <li><span class="price-item-name" data-i18n="heroes.biz_item2_name">Computer &amp; workstation setup</span><span class="price-item-value" data-i18n-html="heroes.biz_item2_value"><s class="price-was">$49</s> $42/device</span></li>
-          <li><span class="price-item-name" data-i18n="heroes.biz_item3_name">Office printer &amp; scanner setup</span><span class="price-item-value" data-i18n-html="heroes.biz_item3_value"><s class="price-was">$59</s> $50</span></li>
-          <li><span class="price-item-name" data-i18n="heroes.biz_item4_name">Email migration &amp; setup</span><span class="price-item-value" data-i18n-html="heroes.biz_item4_value"><s class="price-was">$79</s> $67</span></li>
-          <li><span class="price-item-name" data-i18n-html="heroes.biz_item5_name">Domain management <small>(our labor fee)</small></span><span class="price-item-value" data-i18n-html="heroes.biz_item5_value"><s class="price-was">$39</s> $33</span></li>
-          <li><span class="price-item-name" data-i18n-html="heroes.biz_item6_name">Ongoing IT support <small>(5% off &mdash; see note below)</small></span><span class="price-item-value" data-i18n-html="heroes.biz_item6_value"><s class="price-was">$79/mo</s> $75/mo</span></li>
+          <li><span class="price-item-name">Technology consulting</span><span class="price-item-value"><s class="price-was">$59/hr</s> $50/hr</span></li>
+          <li><span class="price-item-name">Computer &amp; workstation setup</span><span class="price-item-value"><s class="price-was">$49</s> $42/device</span></li>
+          <li><span class="price-item-name">Office printer &amp; scanner setup</span><span class="price-item-value"><s class="price-was">$59</s> $50</span></li>
+          <li><span class="price-item-name">Email migration &amp; setup</span><span class="price-item-value"><s class="price-was">$79</s> $67</span></li>
+          <li><span class="price-item-name">Domain management <small>(our labor fee)</small></span><span class="price-item-value"><s class="price-was">$39</s> $33</span></li>
+          <li><span class="price-item-name">Ongoing IT support <small>(5% off — see note below)</small></span><span class="price-item-value"><s class="price-was">$79/mo</s> $75/mo</span></li>
         </ul>
         </div>
       </div>
 
       <div class="price-note">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
-        <p data-i18n-html="heroes.pricing_note">
+        <p>
           <strong>One-time services:</strong> 15% off our standard starting price, shown above.<br>
-          <strong>Recurring monthly services</strong> (ongoing IT support, website maintenance): 5% off, reflecting that these prices already run close to our actual cost of keeping your systems running &mdash; server and infrastructure costs behind these plans aren't discounted.<br>
+          <strong>Recurring monthly services</strong> (ongoing IT support, website maintenance): 5% off, reflecting that these prices already run close to our actual cost of keeping your systems running — server and infrastructure costs behind these plans aren't discounted.<br>
           <strong>Parts and hardware</strong> (PC build components, mesh Wi-Fi units, etc.) are always billed at cost, with no markup and no discount, regardless of eligibility.<br>
-          <strong>Domain registration and business email setup</strong> prices reflect only our labor &mdash; registrar fees and Google/Microsoft subscription costs are billed to you directly by those providers, not through us.<br>
-          Prices shown here are starting points for typical jobs. We don't take payment on this page &mdash; once we've verified your eligibility, we'll confirm your exact discounted total and send you to our <a href="payment.html">payment page</a> to pay it.
+          <strong>Domain registration and business email setup</strong> prices reflect only our labor — registrar fees and Google/Microsoft subscription costs are billed to you directly by those providers, not through us.<br>
+          Prices shown here are starting points for typical jobs. We don't take payment on this page — once we've verified your eligibility, we'll confirm your exact discounted total and send you to our <a href="payment.html">payment page</a> to pay it.
         </p>
       </div>
 
       <div class="pricing-cta">
-        <h2 data-i18n="heroes.cta_h2">Ready to get started?</h2>
-        <p data-i18n="heroes.cta_p">Fill out our project form and mention which category applies to you &mdash; we'll verify your eligibility, confirm your discounted price, and follow up with next steps for payment.</p>
-        <a href="intake.html" class="btn btn-primary" data-i18n="heroes.cta_button">Request Service</a>
+        <h2>Ready to get started?</h2>
+        <p>Fill out our project form and mention which category applies to you — we'll verify your eligibility, confirm your discounted price, and follow up with next steps for payment.</p>
+        <a href="intake.html" class="btn btn-primary">Request Service</a>
       </div>
 
     </div>
@@ -406,55 +361,54 @@
     <div class="footer-brand">
       <img src="assets/logo-icon.png" alt="Little Technical Solutions LLC" width="36" height="36" class="footer-logo">
       <span class="logo-line1">Little Technical Solutions LLC</span>
-      <p data-i18n="footer.tagline">Websites, computers, networks, and security — handled by one call.</p>
+      <p>Websites, computers, networks, and security — handled by one call.</p>
     </div>
     <nav class="footer-nav" aria-label="Footer">
-      <a href="index.html" data-i18n="nav.home">Home</a>
-      <a href="services.html" data-i18n="nav.services">Services</a>
-      <a href="website-designer.html" data-i18n="nav.website_designer">Website Designer</a>
-      <a href="pricing.html" data-i18n="nav.pricing">Pricing</a>
-      <a href="heroes-pricing.html" data-i18n="nav.heroes_discount">Heroes Discount</a>
-      <a href="about.html" data-i18n="nav.about">About</a>
-      <a href="team.html" data-i18n="nav.team">Our Team</a>
-      <a href="service-area.html" data-i18n="nav.service_area">Service Area</a>
-      <a href="faq.html" data-i18n="nav.faq">FAQ</a>
-      <a href="blog.html" data-i18n="nav.blog">Blog</a>
-      <a href="payment.html" data-i18n="nav.payments">Payments</a>
-      <a href="contact.html" data-i18n="nav.contact">Contact</a>
-      <a href="intake.html" data-i18n="footer.new_client_form">New Client Form</a>
-      <a href="search.html" data-i18n="footer.search">Search</a>
-      <a href="sitemap.html" data-i18n="footer.sitemap">Sitemap</a>
-      <a href="privacy.html" data-i18n="footer.privacy_policy">Privacy Policy</a>
-      <a href="terms.html" data-i18n="footer.terms">Terms &amp; Conditions</a>
-      <a href="patch-notes.html" data-i18n="footer.patch_notes">Website Updates</a>
-      <a href="#" id="manageConsentLink" data-i18n="footer.cookie_notice">Cookie Notice</a>
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="website-designer.html">Website Designer</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="heroes-pricing.html">Heroes Discount</a>
+      <a href="about.html">About</a>
+      <a href="team.html">Our Team</a>
+      <a href="service-area.html">Service Area</a>
+      <a href="faq.html">FAQ</a>
+      <a href="blog.html">Blog</a>
+      <a href="payment.html">Payments</a>
+      <a href="contact.html">Contact</a>
+      <a href="intake.html">New Client Form</a>
+      <a href="search.html">Search</a>
+      <a href="sitemap.html">Sitemap</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms &amp; Conditions</a>
+      <a href="patch-notes.html">Website Updates</a>
+      <a href="#" id="manageConsentLink">Cookie Notice</a>
     </nav>
     <nav class="footer-social" aria-label="Social">
       <a href="https://www.facebook.com/profile.php?id=61591618750945" rel="noopener" target="_blank" aria-label="Little Technical Solutions LLC on Facebook">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>
-        <span data-i18n="footer.facebook">Facebook</span>
+        <span>Facebook</span>
       </a>
       <a href="https://www.google.com/search?q=Little+Technical+Solutions+LLC&stick=H4sIAAAAAAAA_-NgU1IxqDA0N0s1sUgyT0yxTE1NTLMyqEg2sTRLNTZOTTS1NDIzSUxaxCrnk1lSkpOqEJKanJGXmZyYoxCcn1NakpmfV6zg4-MMAGRkPw5JAAAA&hl=en&mat=CWEgdKX6xe4RElcBa0lj_4PsrYDUx2O2vFBpnokVltXIVrcy43xjezZrcYTprxRsgJGT1ATelPpH5ss3Sn-4VrXJHi_xxw10Eq_jzvWCxQfPf2G4feie7XZe-MJ3uWuSvN4&authuser=0" rel="noopener" target="_blank" aria-label="Little Technical Solutions LLC on Google">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 12.23c0-.75-.07-1.47-.19-2.18H12v4.13h5.4a4.6 4.6 0 0 1-2 3.02v2.5h3.24c1.9-1.75 3-4.32 3-7.47z"/><path d="M12 22c2.7 0 4.97-.9 6.63-2.44l-3.24-2.5c-.9.6-2.05.96-3.39.96-2.6 0-4.8-1.76-5.6-4.12H3.05v2.58A10 10 0 0 0 12 22z"/><path d="M6.4 13.9a6 6 0 0 1 0-3.8V7.52H3.05a10 10 0 0 0 0 8.96l3.35-2.58z"/><path d="M12 6.08c1.47 0 2.79.5 3.83 1.5l2.87-2.87A10 10 0 0 0 3.05 7.52L6.4 10.1c.8-2.36 3-4.02 5.6-4.02z"/></svg>
-        <span data-i18n="footer.find_google">Find us on Google</span>
+        <span>Find us on Google</span>
       </a>
     </nav>
   </div>
-  <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span data-i18n="footer.rights">All rights reserved.</span></p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version <span id="siteVersion">3.2.2</span></a></p>
-  <p class="footer-version"><a href="admin.html" data-i18n="footer.staff_signin">Staff Sign In</a></p>
+  <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span>All rights reserved.</span></p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version <span id="siteVersion">4.0.0</span></a></p>
+  <p class="footer-version"><a href="admin.html">Staff Sign In</a></p>
 </footer>
 
 <div id="cookie-banner" class="cookie-banner" hidden role="region" aria-label="Cookie notice">
   <div class="wrap cookie-banner-inner">
-    <p data-i18n-html="cookie.text">We use Netlify Analytics (cookie-free, privacy-respecting) to see site traffic, plus a small amount of local storage for things like your dark/light mode choice. Nothing here is used for advertising or sold to anyone. See our <a href="privacy.html" data-i18n="footer.privacy_policy">Privacy Policy</a>.</p>
+    <p>We use Netlify Analytics (cookie-free, privacy-respecting) to see site traffic. Nothing here is used for advertising or sold to anyone. See our <a href="privacy.html">Privacy Policy</a>.</p>
     <div class="cookie-banner-actions">
-      <button type="button" class="btn btn-primary btn-small" data-consent="dismiss" data-i18n="cookie.accept">Got it</button>
+      <button type="button" class="btn btn-primary btn-small" data-consent="dismiss">Got it</button>
     </div>
   </div>
 </div>
 
-<script src="js/i18n.js"></script>
 <script src="js/main.js"></script>
 <script src="js/site-version.js"></script>
 </body>

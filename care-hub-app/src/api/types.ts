@@ -378,12 +378,8 @@ export interface AuthenticatedUser {
   role: "customer" | "staff" | "admin";
   verified: boolean;
 }
-// Matches account.js's withDefaultPreferences() -- language is one of
-// js/i18n.js's 16 site-wide language codes (kept as a plain string here
-// rather than a union, since the legacy site's list can grow without a
-// Care Hub-side type change; account.js is the real validation boundary).
+// Matches account.js's withDefaultPreferences().
 export interface AccountPreferences {
-  language: string;
   timezone: string;
   emailNotifications: boolean;
 }

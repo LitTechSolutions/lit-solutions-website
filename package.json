@@ -3,7 +3,8 @@
   "private": true,
   "description": "Little Technical Solutions LLC website + admin content module (Netlify Functions + Blobs) + Business Care Hub (src/).",
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "new-release-post": "node scripts/new-release-post.js"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
@@ -14,6 +15,7 @@
   "devDependencies": {
     "jsdom": "^29.1.1",
     "jspdf": "2.5.2",
-    "netlify-cli": "^26.2.0"
+    "netlify-cli": "^26.2.0",
+    "playwright": "^1.48.0"
   }
 }

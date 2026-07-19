@@ -59,7 +59,6 @@ function loadDesignerPage() {
       capturedRequests.push(body);
       return Promise.resolve({ ok: true, json: () => Promise.resolve({ id: "WD-TEST123", resumeToken: "a".repeat(64) }) });
     }
-    // i18n.js probes for i18n/<lang>.json on language switch; not exercised here.
     return Promise.resolve({ ok: false, status: 404 });
   };
 
@@ -71,8 +70,6 @@ function loadDesignerPage() {
   window.eval(vendoredJspdf);
   const pdfJs = fs.readFileSync(path.join(ROOT, "js", "website-designer-pdf.js"), "utf8");
   window.eval(pdfJs);
-  const i18nJs = fs.readFileSync(path.join(ROOT, "js", "i18n.js"), "utf8");
-  window.eval(i18nJs);
   const mainJs = fs.readFileSync(path.join(ROOT, "js", "main.js"), "utf8");
   window.eval(mainJs);
   const wdJs = fs.readFileSync(path.join(ROOT, "js", "website-designer.js"), "utf8");

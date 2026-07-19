@@ -1,66 +1,71 @@
 /* =========================================================
    Little Technical Solutions — Stylesheet
-   Design tokens — "Precision Signal" palette (v2.4.0 redesign)
+   Design tokens — v4.0.0 redesign, Apple-inspired: one confident
+   accent, near-black ink on white/light-gray, generous type and
+   spacing, light-only (no dark theme).
 
    Variable NAMES below are historical (--accent-orange/--accent-teal/
-   --navy-deep etc. date from the original orange+teal brand) and are kept
-   as-is deliberately: hundreds of call sites across every page and JS
+   --navy-deep etc. date from the original orange+teal brand) and are
+   kept as-is deliberately, same reasoning as the "Precision Signal"
+   redesign before it: hundreds of call sites across every page and JS
    file already reference them via var(), and renaming would mean an
-   error-prone sweep for no visual benefit. Only the VALUES changed, to
-   the new indigo-primary / emerald-secondary palette below.
+   error-prone sweep for no visual benefit. Only the VALUES changed.
+   Dark-theme overrides are gone entirely -- there is only one theme now.
    ========================================================= */
 :root{
   /* Color */
-  --paper: #FAFAF9;
-  --paper-alt: #FFFFFF;
-  --ink: #14161A;
-  --ink-soft: #5B6169;
-  --ink-faint: #868C94;
-  --line: #E5E7EB;
-  --line-strong: #C7CBD1;
+  --paper: #FFFFFF;
+  --paper-alt: #F5F5F7;
+  --ink: #1D1D1F;
+  --ink-soft: #6E6E73;
+  --ink-faint: #86868B;
+  --line: #D2D2D7;
+  --line-strong: #B8B8BD;
+  /* The one confident accent -- sampled from the existing logo's blue,
+     unchanged from the prior palette, reused rather than replaced so
+     the wordmark and the site still read as the same brand. */
   --accent-orange: #3548C4;
   --accent-orange-dark: #3548C450;
-  --accent-teal: #0E8C6B;
-  --navy-deep: #10131C;
-  --navy-mid: #1B2333;
+  /* Previously a co-equal second "brand personality" color (teal,
+     used decoratively throughout marketing copy -- eyebrows, icons).
+     Apple's own palette uses exactly one confident accent for actions/
+     links and reserves everything else for narrow semantic meaning
+     (a muted success/selected green, a red for errors) -- so this is
+     now that muted, functional-only green, not a second decorative
+     brand color. Page redesigns should move any purely-decorative
+     former teal usage onto --accent-orange instead of keeping it here. */
+  --accent-teal: #1D8348;
+  --navy-deep: #1D1D1F;
+  --navy-mid: #2C2C2E;
 
-  /* Fixed light text for permanently-dark sections (hero, footer, CTAs).
-     Deliberately NOT redefined in dark mode — these sections are always
-     dark regardless of site theme, so their text must always stay light. */
-  --on-dark: #F5F5F4;
-  /* Same idea for the teal "eyebrow" label color specifically: .hero,
-     .page-hero, .intake-hero, and .contact all use a fixed --navy-deep/
-     --navy-mid background regardless of site theme, but their eyebrows
-     were using the theme-adaptive --accent-teal, which is only legible
-     enough (#34C99A) in dark mode -- in light mode it fell back to the
-     light-background-tuned #0E8C6B, landing at 4.40:1 against the dark
-     hero, just under WCAG AA's 4.5:1 for text this size. Fixed value,
-     not redefined in dark mode, matching --on-dark's pattern exactly. */
-  --accent-teal-on-dark: #34C99A;
+  /* Fixed light text for permanently-dark sections (hero, footer, CTAs). */
+  --on-dark: #FFFFFF;
+  --accent-teal-on-dark: #6DD98C;
+  /* Light tint of the one confident accent, for eyebrow labels sitting
+     directly on the fixed-dark hero/CTA sections (.hero, .page-hero,
+     .intake-hero, .contact) -- the darker --accent-orange-text variant
+     is tuned for legibility on light backgrounds only. */
+  --accent-orange-on-dark: #94A5F2;
 
   /* Readable variants of the accent colors, for use as small/bare TEXT on
-     adaptive light backgrounds — the vivid --accent-orange/--accent-teal
-     stay reserved for buttons, backgrounds, and icons on dark sections,
-     where the vivid, brighter tone is both correct and legible. */
+     light backgrounds. */
   --accent-orange-text: #2C3AA0;
-  --accent-teal-text: #0B7A5C;
+  --accent-teal-text: #16693A;
 
-  /* Selected/checked state (checkboxes, radios) — emerald-based, kept
-     visually distinct from both the indigo CTA color and the red
-     error color below, so "chosen" and "wrong" never look alike. */
-  --select-bg: #E7F5EF;
-  --select-border: #0E8C6B;
+  /* Selected/checked state (checkboxes, radios) — the muted functional
+     green, kept visually distinct from both the blue CTA color and the
+     red error color below, so "chosen" and "wrong" never look alike. */
+  --select-bg: #E9F5EC;
+  --select-border: #1D8348;
 
-  /* Error / missing-field state — a genuine red, adaptive so text
-     stays readable against it in both themes. */
+  /* Error / missing-field state — a genuine red. */
   --error-bg: #FDECEA;
   --error-border: #D93F3F;
   --error-text: #A32E2E;
 
-  /* Warm "notice/callout" semantic color — deliberately kept warm/amber
-     even against the cooler indigo primary (a common, legible pairing:
-     cool brand accent for actions, warm accent for "read this" boxes).
-     Used by launch-banner, vet-note, gov-info-note, etc. */
+  /* Warm "notice/callout" semantic color, for "read this" boxes
+     (launch-banner, vet-note, gov-info-note, etc.) -- kept warm/amber
+     against the cooler blue primary, a common and legible pairing. */
   --notice-bg: #FCF3E3;
   --notice-bg-strong: #F7E6C4;
   --notice-border: #D9A44D;
@@ -68,19 +73,35 @@
   --notice-text-strong: #5C3F0A;
   --notice-icon: #C97A2E;
 
-  /* Type. --font-heading is the new bold, tight-tracking sans used for
-     h1/h2/h3 — real headline weight instead of monospace. --font-display
-     stays monospace and is used everywhere else it always was (prices,
-     badges, eyebrows, meta labels) — tabular, "precise" digits/labels
-     are exactly the character this redesign is named for. */
-  --font-heading: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-display: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
-  --font-body: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* Type. One system font stack everywhere -- renders as San Francisco
+     on Apple devices (exactly how apple.com itself renders, confirmed
+     by inspecting its computed styles directly), and as each platform's
+     own native UI font elsewhere (Segoe UI on Windows, Roboto on
+     Android/ChromeOS). No self-hosted webfont, no monospace accents --
+     Apple's marketing pages don't use either. */
+  --font-heading: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 
   /* Layout */
   --wrap: 1180px;
-  --radius: 8px;
-  --header-h: 76px;
+  --wrap-narrow: 980px;
+  --radius: 18px;
+  --radius-pill: 980px;
+  --header-h: 64px;
+
+  /* Spacing scale -- same values as care-hub-app/src/styles/tokens.css's
+     scale, so both apps share one rhythm. The marketing site had no
+     systematic scale before this redesign (ad hoc rem values throughout);
+     this is the first one. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--accent-orange) 45%, transparent);
 
   /* Website Designer mobile sticky estimate bar. --wd-mobile-bar-height
      is a fallback for the very first paint -- js/website-designer.js
@@ -93,35 +114,6 @@
      just touching it. */
   --wd-mobile-bar-height: 4.75rem;
   --wd-mobile-bar-gap: 16px;
-}
-
-/* Dark mode overrides — applied when <html data-theme="dark"> is set.
-   Only tokens that should visually adapt are redefined here. Fixed dark
-   accents (--navy-deep, --navy-mid) and the brand accents stay stable
-   across both themes so hero/footer/CTA sections don't shift. */
-:root[data-theme="dark"]{
-  --paper: #101216;
-  --paper-alt: #191C22;
-  --ink: #EDEEF0;
-  --ink-soft: #AEB3BB;
-  --ink-faint: #7D838C;
-  --line: #2B2E35;
-  --line-strong: #3D414A;
-  --accent-orange: #5566D9;
-  --accent-teal: #34C99A;
-  --accent-orange-text: #7E8CE8;
-  --accent-teal-text: #34C99A;
-  --select-bg: #0F2B22;
-  --select-border: #34C99A;
-  --error-bg: #3A1B18;
-  --error-border: #FF6B5C;
-  --error-text: #FF9A8C;
-  --notice-bg: #2A2313;
-  --notice-bg-strong: #2E2018;
-  --notice-border: #4A3A1E;
-  --notice-text: #E8C078;
-  --notice-text-strong: #F0D6A0;
-  --notice-icon: #E8935C;
 }
 
 *,*::before,*::after{ box-sizing: border-box; }
@@ -138,7 +130,7 @@ body{
 img{ max-width:100%; display:block; }
 ul{ margin:0; padding:0; list-style:none; }
 a{ color: inherit; text-decoration: none; }
-h1,h2,h3{ font-family: var(--font-heading); font-weight:700; margin: 0; line-height: 1.15; letter-spacing: -0.02em; }
+h1,h2,h3{ font-family: var(--font-heading); font-weight:600; margin: 0; line-height: 1.15; letter-spacing: -0.02em; }
 p{ margin:0; }
 
 @media (prefers-reduced-motion: reduce){
@@ -177,7 +169,7 @@ p{ margin:0; }
   font-size: .9rem;
   letter-spacing: .01em;
   padding: .85rem 1.5rem;
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   border: 1.5px solid transparent;
   cursor: pointer;
   transition: transform .15s ease, background .15s ease, border-color .15s ease, color .15s ease;
@@ -207,7 +199,6 @@ p{ margin:0; }
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--line);
 }
-:root[data-theme="dark"] .site-header{ background: rgba(14,21,38,0.85); }
 .site-header .wrap{ max-width: 1600px; }
 .header-inner{ display:flex; align-items:center; justify-content:space-between; gap:1rem; }
 
@@ -229,7 +220,6 @@ p{ margin:0; }
 .main-nav a:hover::after{ transform: scaleX(1); }
 .main-nav a.is-active{ color: var(--accent-orange-text); }
 .main-nav a.is-active::after{ transform: scaleX(1); background: var(--accent-orange); }
-:root[data-theme="dark"] .main-nav a.is-active{ color: var(--accent-orange-text); }
 .is-current-page{ cursor: not-allowed; }
 .header-actions a.btn.is-current-page{ pointer-events: none; opacity: .6; }
 .header-actions a.btn.is-current-page:hover{ transform:none; }
@@ -237,25 +227,6 @@ p{ margin:0; }
 .header-actions{ display:flex; align-items:center; gap:1.25rem; }
 .header-actions .btn{ flex-shrink:0; white-space:nowrap; }
 .phone-link{ display:flex; align-items:center; gap:.4rem; font-family:var(--font-display); font-size:.85rem; font-weight:500; white-space:nowrap; }
-
-.theme-toggle{
-  display:flex; align-items:center; justify-content:center; position:relative;
-  width: 36px; height: 36px; border-radius:50%;
-  border: 1px solid var(--line-strong); background: var(--paper-alt);
-  color: var(--ink); cursor:pointer; flex-shrink:0;
-  transition: background .2s ease, border-color .2s ease, color .2s ease;
-}
-/* Invisible expanded hit area so the tappable region meets the ~44px
-   touch-target minimum without growing the visible chrome (which would
-   overflow the header row at narrow mobile widths -- see .search-toggle
-   and .nav-toggle below for the same technique). */
-.theme-toggle::before{ content:""; position:absolute; inset:-4px; }
-.theme-toggle:hover{ border-color: var(--accent-orange); color: var(--accent-orange); }
-.theme-toggle svg{ width:18px; height:18px; }
-.theme-toggle .theme-icon-sun{ display:none; }
-.theme-toggle .theme-icon-moon{ display:block; }
-:root[data-theme="dark"] .theme-toggle .theme-icon-sun{ display:block; }
-:root[data-theme="dark"] .theme-toggle .theme-icon-moon{ display:none; }
 
 .nav-toggle{
   display:none; flex-direction:column; align-items:center; justify-content:center; gap:5px;
@@ -283,27 +254,62 @@ p{ margin:0; }
   background-size: 44px 44px;
   mask-image: radial-gradient(ellipse at 30% 40%, black 10%, transparent 70%);
 }
-.hero .eyebrow{ color: var(--accent-teal-on-dark); }
+.hero .eyebrow{ color: var(--accent-orange-on-dark); }
 .hero-inner{
   position:relative;
   display:grid;
   grid-template-columns: 1.1fr .9fr;
-  gap: 2rem;
-  align-items:center;
+  gap: 2.5rem;
+  align-items:start;
+}
+.hero-copy{ max-width: 720px; }
+
+.hero-testimonial{
+  position:relative;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.14);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: var(--radius);
+  padding: 2rem 1.9rem 1.6rem;
+  margin-top: .35rem;
+}
+.hero-testimonial::before{
+  content:"\201C"; position:absolute; top:-.5rem; left:1.35rem;
+  font-family: var(--font-heading); font-size:3.5rem; font-weight:700;
+  line-height:1; color: var(--accent-orange-on-dark); opacity:.35; pointer-events:none;
+}
+.hero-testimonial-quote{
+  position:relative; font-size:.82rem; line-height:1.7;
+  color: rgba(255,255,255,.82); margin-bottom:1.25rem;
+}
+.hero-testimonial-author{
+  position:relative; font-family: var(--font-display); font-size:.82rem; font-weight:600;
+  color: var(--on-dark); padding-top:.9rem; border-top:1px solid rgba(255,255,255,.14);
+  margin-bottom:.9rem;
+}
+.hero-testimonial-link{
+  position:relative; display:inline-block; font-family: var(--font-display);
+  font-size:.8rem; font-weight:600; color: var(--accent-orange-on-dark); text-decoration:none;
+}
+.hero-testimonial-link:hover{ text-decoration:underline; }
+
+@media (max-width:860px){
+  .hero-inner{ grid-template-columns: 1fr; }
 }
 .vet-badge{
   display:inline-flex; align-items:center; gap:.4rem;
   font-family: var(--font-display); font-size:.72rem; font-weight:600;
   letter-spacing:.04em; text-transform:uppercase;
-  color: var(--navy-deep); background: var(--accent-teal);
-  padding:.4rem .7rem; border-radius: 3px; margin-bottom: 1.1rem;
+  color: #FFFFFF; background: var(--accent-orange);
+  padding:.4rem .7rem; border-radius: var(--radius-pill); margin-bottom: 1.1rem;
 }
 .eyebrow{
   font-family: var(--font-display);
   font-size: .78rem;
   letter-spacing: .12em;
   text-transform: uppercase;
-  color: var(--accent-teal);
+  color: var(--accent-orange-text);
   margin-bottom: 1rem;
   font-weight:600;
 }
@@ -321,7 +327,7 @@ p{ margin:0; }
 .rotator-slot{ display:inline-block; overflow:hidden; height:1.4em; vertical-align:bottom; }
 .rotator-word{
   display:inline-block;
-  color: var(--accent-teal); font-weight:700;
+  color: var(--accent-orange-on-dark); font-weight:700;
   animation: rotator-in .5s ease;
 }
 @keyframes rotator-in{
@@ -353,9 +359,6 @@ p{ margin:0; }
 }
 .hero-stats dd{ margin:0; font-family:var(--font-display); font-size:.92rem; font-weight:600; }
 
-.hero-diagram{ position:relative; transition: transform .2s ease-out; transform-style: preserve-3d; will-change: transform; }
-.network-svg{ width:100%; height:auto; overflow:visible; }
-
 /* Scroll reveal */
 .reveal{
   opacity:0; transform: translateY(28px);
@@ -365,15 +368,6 @@ p{ margin:0; }
 @media (prefers-reduced-motion: reduce){
   .reveal{ opacity:1; transform:none; transition:none; }
 }
-.net-lines line{ stroke: rgba(245,245,244,0.18); stroke-width:1.5; }
-.net-node circle{ fill: var(--navy-mid); stroke: rgba(245,245,244,0.35); stroke-width:1.5; }
-.net-node text{
-  font-family: var(--font-display); font-size:12px; font-weight:600;
-  fill: var(--on-dark); letter-spacing:.02em;
-}
-.net-node--center circle{ fill: var(--accent-orange); stroke: var(--accent-orange); }
-.net-node--center text{ fill: #FFFFFF; font-size:14px; }
-.pulse{ fill: var(--accent-teal); filter: drop-shadow(0 0 4px var(--accent-teal)); }
 
 /* =========================================================
    Trust strip
@@ -473,8 +467,6 @@ section{ padding: 5.5rem 0; }
   touch-action: none;
   transition: filter .25s ease;
 }
-:root[data-theme="dark"] .compare{ filter: brightness(0.82) saturate(0.92); }
-:root[data-theme="dark"] .compare{ box-shadow: 0 24px 60px rgba(0,0,0,0.45); }
 .compare-frame{ position:absolute; inset:0; }
 .compare-after{ z-index:1; }
 .compare-before{
@@ -607,6 +599,11 @@ section{ padding: 5.5rem 0; }
 .veteran{ background: var(--paper-alt); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
 .veteran-inner{ display:grid; grid-template-columns: 1.1fr .9fr; gap: 3rem; align-items:center; }
 .cred-list{ display:flex; flex-direction:column; gap:1rem; }
+/* Several pages set a 2/3/4-column grid on .cred-list via an inline style
+   (which this class-level rule can't otherwise override) -- collapse it
+   back to one column at the same final breakpoint every other card grid
+   on the site uses, or it overflows on narrow phones. */
+@media (max-width:600px){ .cred-list{ grid-template-columns: 1fr !important; } }
 .cred-card{
   display:flex; align-items:flex-start; gap:.9rem;
   background: var(--paper); border:1px solid var(--line); border-radius: var(--radius);
@@ -670,7 +667,7 @@ section{ padding: 5.5rem 0; }
   background: var(--navy-deep); color: var(--on-dark);
   padding: 4rem 0 3rem;
 }
-.intake-hero .eyebrow{ color: var(--accent-teal-on-dark); }
+.intake-hero .eyebrow{ color: var(--accent-orange-on-dark); }
 .section-head .eyebrow, .why-copy .eyebrow, .veteran-copy .eyebrow{ color: var(--accent-teal-text); }
 .intake-hero h1{
   font-size: clamp(1.9rem, 3.6vw, 2.6rem); color:#fff; font-weight:600; margin-top:.6rem;
@@ -728,6 +725,11 @@ section{ padding: 5.5rem 0; }
 .intake-block--collapsible[data-active="true"] .intake-block-status{ color: var(--accent-teal-text); font-weight:600; }
 .intake-chevron{ color: var(--ink-faint); flex-shrink:0; transition: transform .25s ease, color .2s ease; }
 .intake-block-toggle[aria-expanded="true"] .intake-chevron{ transform: rotate(180deg); color: var(--accent-orange-text); }
+@media (max-width:600px){
+  .intake-block-toggle{ flex-wrap:wrap; }
+  .intake-block-toggle-right{ width:100%; justify-content:space-between; margin-top:.6rem; }
+  .intake-block-status{ text-align:left; max-width:none; }
+}
 .intake-block-content{ max-height:0; overflow:hidden; transition: max-height .3s ease; }
 .intake-block-content-inner{
   padding: 0 1.75rem 2rem; border-top: 1px dashed var(--line); padding-top: 1.5rem;
@@ -1056,7 +1058,6 @@ section{ padding: 5.5rem 0; }
 .terms-agree label{ font-size:.85rem; color: var(--ink-soft); line-height:1.5; cursor:pointer; }
 .terms-agree a{ color: var(--ink); text-decoration:underline; font-weight:600; }
 .terms-agree.needs-attention{ border-color: var(--accent-orange); background:var(--notice-bg-strong); }
-:root[data-theme="dark"] .terms-agree.needs-attention{ background: var(--notice-bg-strong); }
 .terms-warning{
   display:none; color: var(--accent-orange-text); font-size:.8rem; font-weight:600; margin: -1rem 0 1.5rem;
 }
@@ -1080,6 +1081,8 @@ a.pay-btn.is-locked, a.pay-btn-sm.is-locked{ opacity:.5; }
 }
 .pricing-cta h2{ color:#fff; font-size:1.3rem; margin-bottom:.6rem; }
 .pricing-cta p{ color: rgba(245,245,244,0.75); margin-bottom:1.4rem; max-width:52ch; margin-left:auto; margin-right:auto; }
+.pricing-cta .btn-ghost{ border-color: rgba(245,245,244,0.35); color:#fff; }
+.pricing-cta .btn-ghost:hover{ border-color:#fff; }
 
 .vet-banner{
   background: linear-gradient(135deg, var(--navy-deep), var(--navy-mid));
@@ -1105,13 +1108,13 @@ a.pay-btn.is-locked, a.pay-btn-sm.is-locked{ opacity:.5; }
    Contact
    ========================================================= */
 .contact{ background: var(--navy-mid); color: var(--on-dark); }
-.contact .eyebrow{ color: var(--accent-teal-on-dark); }
+.contact .eyebrow{ color: var(--accent-orange-on-dark); }
 .contact h2{ color:#fff; }
 .contact .section-lede{ color: rgba(245,245,244,0.72); }
 .contact-inner{ display:grid; grid-template-columns: .9fr 1.1fr; gap: 3rem; }
 
 .contact-details{ margin-top: 2rem; display:flex; flex-direction:column; gap:1rem; }
-.contact-details li{ display:flex; align-items:center; gap:.75rem; font-size:.95rem; color: rgba(245,245,244,0.85); }
+.contact-details li{ display:flex; align-items:center; gap:.75rem; font-size:.95rem; color: var(--ink); }
 .contact-details svg{ color: var(--accent-orange); flex-shrink:0; }
 .contact-details a:hover{ color: var(--accent-orange); }
 
@@ -1145,7 +1148,7 @@ input, select, textarea{
 input:focus, select:focus, textarea:focus{ outline:2px solid var(--accent-orange); outline-offset:1px; border-color: var(--accent-orange); }
 textarea{ resize: vertical; }
 .form-note{ margin-top: .85rem; font-size:.85rem; min-height: 1.2em; color: var(--accent-teal-text); font-weight:600; }
-.form-note--error{ color: var(--accent-orange-text) !important; }
+.form-note--error{ color: var(--error-text) !important; }
 
 /* =========================================================
    Footer
@@ -1176,7 +1179,7 @@ textarea{ resize: vertical; }
   .letter-portrait img{ max-height:320px; }
 }
 
-@media (max-width: 1620px){
+@media (max-width: 1100px){
   .header-inner{ gap: .6rem; }
   .header-actions{ gap:.5rem; }
   .header-actions .btn-small{ padding:.5rem .85rem; font-size:.72rem; }
@@ -1197,15 +1200,13 @@ textarea{ resize: vertical; }
   .nav-toggle.is-open span:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
   .nav-toggle span{ transition: transform .2s ease, opacity .2s ease; }
 
-  /* The Services/Resources sub-dropdowns must switch to inline/static
+  /* The Services/Resources sub-dropdown must switch to inline/static
      positioning at the SAME breakpoint .main-nav collapses to its mobile
-     panel at (1620px) -- not the older, narrower 1100px breakpoint below.
-     Otherwise, in the 1101-1620px gap, .main-nav is already the narrow
-     mobile panel but these submenus still use desktop absolute/centered
-     positioning relative to the full-width panel, so they render
-     detached and floating far from their toggle instead of docked
-     underneath it. Scoped to .main-nav so the separate language-switcher
-     dropdown (not part of this collapsible panel) is unaffected. */
+     panel (1100px) -- deliberately kept equal to the generic .nav-dropdown
+     breakpoint further below (not the old 1620px value this used to be,
+     back when i18n's much longer translated nav labels needed far more
+     horizontal room; English-only labels don't). Scoped to .main-nav so
+     any other .nav-dropdown instance elsewhere on the page is unaffected. */
   .main-nav .nav-dropdown{ position:static; }
   .main-nav .nav-dropdown-toggle{ width:100%; justify-content:space-between; padding:1rem 28px; border-bottom:1px solid var(--line); }
   .main-nav .nav-dropdown-menu{
@@ -1238,11 +1239,6 @@ textarea{ resize: vertical; }
   .nav-toggle{ order:1; }
   .header-actions{ order:2; flex-basis:100%; justify-content:center; }
   .main-nav{ top:100%; }
-}
-
-@media (max-width: 860px){
-  .hero-inner{ grid-template-columns: 1fr; }
-  .hero-diagram{ order:-1; max-width: 340px; margin: 0 auto 1rem; }
 }
 
 @media (max-width: 640px){
@@ -1293,24 +1289,6 @@ textarea{ resize: vertical; }
 .nav-dropdown-menu a::after{ display:none; }
 .nav-dropdown-menu a.is-active{ color: var(--accent-orange-text); font-weight:600; }
 
-/* =========================================================
-   Language bar (site-wide, above the main header)
-   ========================================================= */
-.lang-bar{ background: var(--navy-deep); border-bottom:1px solid rgba(255,255,255,0.08); }
-.lang-bar-inner{ display:flex; justify-content:flex-end; padding:.35rem 0; }
-.lang-dropdown-toggle{ color: rgba(245,245,244,0.85); font-size:.76rem; font-weight:600; padding:.3rem .5rem; }
-.lang-dropdown-toggle:hover{ color:#fff; }
-.lang-dropdown-toggle::after{ display:none; }
-.lang-dropdown-menu{ left:auto; right:0; transform:none; margin-top:.5rem; max-height:60vh; overflow-y:auto; }
-.lang-option{
-  display:flex; width:100%; justify-content:space-between; align-items:center; gap:1rem;
-  background:none; border:none; text-align:left; font:inherit; font-size:.87rem; color: var(--ink);
-  padding:.6rem .75rem; border-radius:calc(var(--radius) - 1px); cursor:pointer;
-}
-.lang-option:hover{ background:var(--paper); color:var(--accent-orange-text); }
-.lang-option.is-active{ color: var(--accent-orange-text); font-weight:600; }
-.lang-option .lang-code{ color: var(--ink-faint); font-family: var(--font-display); font-size:.7rem; flex-shrink:0; }
-
 @media (max-width:1100px){
   .nav-dropdown{ position:static; }
   .nav-dropdown-toggle{ width:100%; justify-content:space-between; padding:1rem 28px; border-bottom:1px solid var(--line); }
@@ -1324,14 +1302,14 @@ textarea{ resize: vertical; }
 
 /* ---- Section intro (reused across all new interior pages) ---- */
 .page-hero{ background: var(--navy-deep); color: var(--on-dark); padding: 4rem 0 3rem; }
-.page-hero .eyebrow{ color: var(--accent-teal-on-dark); }
+.page-hero .eyebrow{ color: var(--accent-orange-on-dark); }
 .page-hero h1{ font-size: clamp(1.9rem, 3.6vw, 2.6rem); color:#fff; font-weight:600; margin-top:.6rem; }
 .page-hero .section-lede{ color: rgba(245,245,244,0.75); margin-top:1rem; max-width: 62ch; }
 
 /* ---- Tagline banner (home page) ---- */
 .tagline-banner{
   text-align:center; font-family: var(--font-display); font-weight:600;
-  font-size: clamp(1rem, 2vw, 1.3rem); color: var(--accent-teal);
+  font-size: clamp(1rem, 2vw, 1.3rem); color: var(--accent-orange-text);
   padding: 1.5rem 0; letter-spacing:.01em;
 }
 
@@ -1341,7 +1319,6 @@ textarea{ resize: vertical; }
   background:var(--select-bg); border:1px solid var(--select-border); color:var(--accent-teal-text); border-radius: var(--radius);
   padding: 1.1rem 1.3rem; margin: 1.5rem 0;
 }
-:root[data-theme="dark"] .nationwide-note{ background:var(--select-bg); border-color:var(--select-border); color:var(--accent-teal-text); }
 .nationwide-note svg{ flex-shrink:0; margin-top:.15rem; color: var(--accent-teal-text); }
 .nationwide-note p{ margin:0; font-size:.9rem; line-height:1.6; }
 .nationwide-note strong{ color:inherit; }
@@ -1431,6 +1408,7 @@ textarea{ resize: vertical; }
 
 /* ---- Booking ---- */
 .booking-type-grid{ display:grid; grid-template-columns: repeat(2, 1fr); gap:1.25rem; margin-bottom:2.5rem; }
+@media (max-width:600px){ .booking-type-grid{ grid-template-columns: 1fr; } }
 .booking-type-card{
   background: var(--paper-alt); border:1px solid var(--line); border-radius: var(--radius); padding:1.5rem;
 }
@@ -1517,7 +1495,7 @@ textarea{ resize: vertical; }
 .newsletter-form input[type="email"]{ min-width:220px; }
 .newsletter-form-note{ font-size:.78rem; color: var(--ink-faint); margin-top:.5rem; width:100%; }
 .newsletter-status{ font-size:.85rem; font-weight:600; color: var(--accent-teal-text); margin-top:.5rem; min-height:1.2em; }
-.newsletter-status.is-error{ color: var(--accent-orange-text); }
+.newsletter-status.is-error{ color: var(--error-text); }
 
 @media (max-width:700px){
   .newsletter-box{ flex-direction:column; align-items:stretch; text-align:center; }
@@ -1590,7 +1568,7 @@ textarea{ resize: vertical; }
   padding: 1rem 0; display:flex; align-items:center; justify-content:space-between; gap:1.5rem; flex-wrap:wrap;
 }
 .cookie-banner-inner p{ font-size:.85rem; line-height:1.6; max-width:70ch; margin:0; }
-.cookie-banner-inner a{ color: var(--accent-teal-text); text-decoration:underline; font-weight:600; }
+.cookie-banner-inner a{ color: var(--accent-orange-text); text-decoration:underline; font-weight:600; }
 .cookie-banner-actions{ flex-shrink:0; }
 
 .breadcrumb{
@@ -1698,7 +1676,6 @@ textarea{ resize: vertical; }
 }
 .account-doc-badge--invoice{ background:var(--notice-bg-strong); color:var(--notice-icon); border-color:var(--notice-border); }
 .account-doc-badge--receipt{ background: var(--select-bg); color: var(--accent-teal-text); border-color: var(--select-border); }
-:root[data-theme="dark"] .account-doc-badge--invoice{ background:var(--notice-bg-strong); color:var(--notice-text-strong); border-color:var(--notice-text-strong); }
 .account-doc-status--paid{ color: var(--accent-teal-text); font-weight:600; }
 .account-doc-status--unpaid{ color: var(--accent-orange-text); font-weight:600; }
 
@@ -1841,7 +1818,6 @@ textarea{ resize: vertical; }
   height: 82vh; height: 82dvh; min-height: 520px; max-height: 860px;
   overflow: hidden;
 }
-:root[data-theme="dark"] .wd-sidebar{ box-shadow: 0 14px 34px rgba(0,0,0,0.35); }
 
 .wd-sidebar-header{
   padding:.7rem 1.1rem .55rem; border-bottom:1px solid var(--line);
@@ -1949,8 +1925,6 @@ textarea{ resize: vertical; }
   box-shadow: 0 1px 2px rgba(20,33,61,0.05); transition: box-shadow .2s ease, transform .2s ease, border-color .2s ease;
 }
 .wd-category:hover{ box-shadow: 0 6px 16px rgba(20,33,61,0.08); transform: translateY(-1px); border-color: var(--line-strong); }
-:root[data-theme="dark"] .wd-category{ box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-:root[data-theme="dark"] .wd-category:hover{ box-shadow: 0 6px 16px rgba(0,0,0,0.3); }
 @media (prefers-reduced-motion: reduce){ .wd-category, .wd-category:hover{ transition:none; transform:none; } }
 
 /* collapsed-by-default category accordion */
@@ -2082,7 +2056,7 @@ textarea{ resize: vertical; }
    margin separates it from whichever panel happens to be showing above it. */
 .wd-heroes-toggle--inline{ margin-top:1.25rem; }
 
-.wd-pdf-error{ color: var(--accent-orange-text); font-size:.8rem; font-weight:600; margin-top:.6rem; }
+.wd-pdf-error{ color: var(--error-text); font-size:.8rem; font-weight:600; margin-top:.6rem; }
 
 .wd-browser{ background: var(--paper-alt); border:1px solid var(--line); border-radius: var(--radius); overflow:hidden; box-shadow: 0 10px 26px rgba(20,33,61,0.08); }
 .wd-browser-chrome{ display:flex; align-items:center; gap:.4rem; padding:.6rem .8rem; background: var(--paper); border-bottom:1px solid var(--line); }
@@ -2389,35 +2363,6 @@ textarea{ resize: vertical; }
   .wd-category-chevron{ transition:none; }
   .wd-bundle-savings-badge.wd-pop-in{ animation:none; }
 }
-
-/* ---- RTL mirroring (Arabic) --------------------------------------------
-   js/i18n.js sets dir="rtl" correctly, but most of this stylesheet uses
-   physical left/right properties, so text and custom bullet markers didn't
-   mirror. This covers the rules that actually carry directional meaning
-   (bulleted lists with a custom ::before marker, left-aligned text/buttons,
-   inline badge spacing) -- not a full physical-to-logical-property rewrite
-   of the whole file, which would be a much larger, higher-risk change for
-   a single pass (docs/audit F023). */
-[dir="rtl"] .ticket ul li{ padding-left:0; padding-right:1.1rem; }
-[dir="rtl"] .ticket ul li::before{ left:auto; right:0; }
-[dir="rtl"] .patch-changes li{ padding-left:0; padding-right:1.2rem; }
-[dir="rtl"] .patch-changes li::before{ left:auto; right:0; }
-[dir="rtl"] .package-features li{ padding-left:0; padding-right:1.6rem; }
-[dir="rtl"] .package-features li::before{ left:auto; right:0; }
-[dir="rtl"] .wd-included-list li{ padding-left:0; padding-right:1.4rem; }
-[dir="rtl"] .wd-included-list li::before{ left:auto; right:0; }
-[dir="rtl"] .legal-doc ul{ padding-left:0; padding-right:1.3rem; }
-[dir="rtl"] .form-note--missing ul{ padding-left:0; padding-right:1.2rem; }
-[dir="rtl"] .stat-item,
-[dir="rtl"] .about-teaser-stats .stat-item{ text-align:right; }
-[dir="rtl"] .lang-option,
-[dir="rtl"] .intake-block-toggle,
-[dir="rtl"] .hero-group-item,
-[dir="rtl"] .wd-category-header,
-[dir="rtl"] .price-block-head{ text-align:right; }
-[dir="rtl"] .price-was{ margin-right:0; margin-left:.4rem; }
-[dir="rtl"] .mock-logo--before{ margin-right:0; margin-left:6px; }
-[dir="rtl"] .cookie-banner-inner{ text-align:right; }
 
 /* ---- website-project-brief.html (standalone worksheet, opened in a new
    tab from website-designer.html's post-quote prompt) --------------------

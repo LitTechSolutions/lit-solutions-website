@@ -298,19 +298,13 @@ document.addEventListener('DOMContentLoaded', () => {
     ],
   };
 
-  // ---- i18n helpers -----------------------------------------------------
+  // ---- catalog text helpers ----------------------------------------------
   // This tool builds nearly everything visible from JS (catalog JSON +
-  // template strings), not static HTML, so none of it can carry a
-  // data-i18n attribute the way the rest of the site does. i18n.js exposes
-  // window.LTS_I18N for exactly this: a lookup with an English fallback,
-  // so a missing translation key never breaks anything, it just shows
-  // English for that one string until a translation is added.
-  function tt(path, fallback) {
-    return window.LTS_I18N ? window.LTS_I18N.t(path, fallback) : fallback;
-  }
-  function tCatItem(title) { return tt('catalog_items.' + title, title); }
-  function tCatCategory(cat) { return tt('catalog_categories.' + cat, cat); }
-  function tDyn(key, fallback) { return tt('wd_dyn.' + key, fallback); }
+  // template strings), not static HTML. English-only now -- these just
+  // pass their text straight through -- but call sites stay unchanged.
+  function tCatItem(title) { return title; }
+  function tCatCategory(cat) { return cat; }
+  function tDyn(key, fallback) { return fallback; }
   function fillTemplate(str, vars) {
     return str.replace(/\{\{(\w+)\}\}/g, (m, k) => (vars[k] !== undefined ? String(vars[k]) : m));
   }
@@ -1120,8 +1114,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Re-applies a restored draft's selections/fields once the catalog has
-  // rendered its checkboxes -- mirrors the exact pattern the lts:langchange
-  // handler below already uses to restore checked state after a re-render.
+  // rendered its checkboxes.
   function applyDraft(draft) {
     Array.from(document.querySelectorAll('input[data-priority]')).forEach(el => {
       if (draft.checkedTitles.includes(el.dataset.title)) {
@@ -1377,37 +1370,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // live entirely in website-project-brief.html / js/website-project-brief.js
   // (opened in a new tab via openWorksheet() above) -- this page never
   // shows the complete brief inline again.
-
-  // Everything above is built from JS, not static HTML, so switching
-  // language mid-session (the visitor is on Step 2/3 already) needs an
-  // explicit re-render -- i18n.js's normal data-i18n pass never touches
-  // this tool's dynamically-generated content. Category panels get fully
-  // rebuilt (same as a fresh catalog load), so checked state is captured
-  // first and restored after, rather than lost.
-  document.addEventListener('lts:langchange', () => {
-    if (!state.catalog) return;
-    const checkedTitles = new Set(Array.from(document.querySelectorAll('input[data-priority]:checked')).map(el => el.dataset.title));
-    renderIncludedSummary();
-    renderCategoryGroup(optionalContainer, state.catalog.categories, 'C');
-    renderCategoryGroup(premiumContainer, state.catalog.categories, 'S');
-    Array.from(document.querySelectorAll('input[data-priority]')).forEach(el => {
-      if (checkedTitles.has(el.dataset.title)) el.checked = true;
-    });
-    state.catalog.categories.forEach(cat => updateCategoryBundleUI(cat.category));
-    refreshPreviewContent();
-    renderBadges();
-    updatePriceAndBreakdown();
-    renderCategoryChips();
-    applyFeatureFilters();
-    // renderCategoryGroup() just rebuilt every category block from scratch
-    // (fresh accordion markup, nothing open), so re-apply the same
-    // "land on real, selectable options" behavior a first-time catalog
-    // load gets, instead of leaving a customer who switched languages
-    // mid-selection staring at an all-collapsed list.
-    if (state.featureTab === 'addons') openFirstCategoryIfNoneOpen(optionalContainer);
-    if (state.featureTab === 'premium') openFirstCategoryIfNoneOpen(premiumContainer);
-    syncMobileBarHeight();
-  });
 
   // Resume an interrupted session (accidental refresh/navigation) --
   // silent, since sessionStorage only ever holds this same tab's own

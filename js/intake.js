@@ -9,13 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const formNote = document.getElementById('formNote');
   const missingNote = document.getElementById('missingFieldsNote');
 
-  // Same t()-with-English-fallback pattern js/cms.js and
-  // js/website-designer.js already use for JS-generated (not static-HTML,
-  // so untouched by i18n.js's own data-i18n pass) text.
-  function tt(path, fallback) {
-    return window.LTS_I18N ? window.LTS_I18N.t(path, fallback) : fallback;
-  }
-
   // ----------------------------------------------------------------
   // Collapsible sections (Website Project Details / Gov Contracting)
   // Manual expand/collapse works for everyone. Checking the relevant
@@ -84,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const lbl = document.querySelector(`label[for="${el.id}"]`);
       if (lbl) return lbl.textContent.replace('*', '').trim();
     }
-    return tt('intake.missing_field_fallback', 'A required field');
+    return 'A required field';
   }
 
   function isFilled(el) {
@@ -130,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (missing.length) {
-      const intro = tt('intake.missing_fields_intro', "Please fill in the following before submitting (type N/A if a question doesn't apply to you):");
+      const intro = "Please fill in the following before submitting (type N/A if a question doesn't apply to you):";
       missingNote.innerHTML = `<strong>${intro}</strong><ul>${missing.map(m => `<li>${m}</li>`).join('')}</ul>`;
       missingNote.classList.add('is-visible');
       if (firstBadEl) {
