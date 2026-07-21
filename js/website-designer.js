@@ -738,7 +738,14 @@ document.addEventListener('DOMContentLoaded', () => {
           state.preferredContact = preferredContact;
           document.getElementById('wdSubmissionId').textContent = state.quickLeadId;
           saveDraftNow();
-          showPanel('prompt');
+          // A real page navigation (not an inline panel swap) so this
+          // moment has a stable URL -- design-submitted.html only ever
+          // loads after this real 201 response, making it usable as a
+          // Google Ads conversion-tracking destination. Resume token
+          // travels via the URL fragment, never a query string, matching
+          // the existing worksheet-link convention (see worksheetUrl()
+          // below) -- never sent to the server, never logged.
+          window.location.href = 'design-submitted.html#resume=' + encodeURIComponent(state.quickLeadId + '.' + state.resumeToken);
         })
         .catch((err) => {
           quickFormStatus.textContent = err.message && err.message !== 'Failed to fetch'

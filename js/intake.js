@@ -134,11 +134,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return true;
   }
 
-  const encodeForm = (data) =>
-    Object.entries(data)
-      .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-      .join('&');
-
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -152,28 +147,46 @@ document.addEventListener('DOMContentLoaded', () => {
     formNote.textContent = 'Sending…';
 
     try {
-      const formData = new FormData(form);
-      const plainData = {};
-      for (const [key, value] of formData.entries()) {
-        if (plainData[key] !== undefined) {
-          plainData[key] = `${plainData[key]}, ${value}`;
-        } else {
-          plainData[key] = value;
-        }
-      }
+      const val = (name) => (form.elements[name] ? form.elements[name].value.trim() : '');
+      const checkedValue = (name) => {
+        const el = form.querySelector(`input[name="${name}"]:checked`);
+        return el ? el.value : '';
+      };
+      const checkedValues = (name) =>
+        Array.from(form.querySelectorAll(`input[name="${name}"]:checked`)).map((el) => el.value);
 
-      const response = await fetch('/', {
+      const payload = {
+        form: 'intake',
+        fullName: val('full_name'), businessName: val('business_name'), email: val('email'), phone: val('phone'),
+        addressCity: val('address_city'), referralSource: val('referral_source'),
+        contactMethod: checkedValue('contact_method'), bestTime: checkedValue('best_time'),
+        govContractingInterest: !!(govTrigger && govTrigger.checked),
+        services: checkedValues('services'), generalNotes: val('general_notes'),
+        currentWebsite: val('current_website'), requestedDomain: val('requested_domain'),
+        businessDescription: val('business_description'), targetCustomers: val('target_customers'),
+        mustHavePages: val('must_have_pages'), mustHaveFeatures: val('must_have_features'),
+        stylePreference: val('style_preference'), inspirationSites: val('inspiration_sites'),
+        existingContent: val('existing_content'), photosImagery: val('photos_imagery'),
+        hasLogo: checkedValue('has_logo'), hasContent: checkedValue('has_content'), hasDomain: checkedValue('has_domain'),
+        timeline: val('timeline'), budgetRange: val('budget_range'),
+        ueiNumber: val('uei_number'), naicsCodes: val('naics_codes'), samGovInfo: val('sam_gov_info'),
+        certifications: val('certifications'), additionalNotes: val('additional_notes'),
+        botField: val('bot-field'),
+      };
+
+      const response = await fetch('/.netlify/functions/site-forms', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: encodeForm(plainData)
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
         formNote.textContent = "Thanks — we'll follow up within one business day.";
         form.reset();
       } else {
+        const data = await response.json().catch(() => ({}));
         formNote.classList.add('form-note--error');
-        formNote.textContent = 'Something went wrong. Please call or email us directly.';
+        formNote.textContent = data.error || 'Something went wrong. Please call or email us directly.';
       }
     } catch (err) {
       formNote.classList.add('form-note--error');

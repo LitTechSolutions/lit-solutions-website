@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quote Request Received — Little Technical Solutions LLC</title>
+<meta name="description" content="Your Website Designer quote request has been received.">
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header wpb-header" id="siteHeader">
+  <div class="wrap header-inner">
+    <a href="index.html" class="logo" aria-label="Little Technical Solutions LLC — home">
+      <span class="logo-mark" aria-hidden="true">
+        <img src="assets/logo-icon.png" alt="" width="40" height="40">
+      </span>
+      <span class="logo-text">
+        <span class="logo-line1">Little Technical</span>
+        <span class="logo-line2">Solutions <span class="logo-llc">LLC</span></span>
+      </span>
+    </a>
+    <div class="header-actions">
+      <a href="tel:+18043090968" class="phone-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        804-309-0968
+      </a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wpb-shell">
+    <div class="wrap wpb-wrap">
+
+      <!-- Default state: submission confirmed, offer the full questionnaire -->
+      <section class="wpb-state" id="dsPrompt">
+        <div class="card wd-done-card">
+          <h1 id="dsPromptHeading">Thanks — we've got your quote request.</h1>
+          <p>We typically respond within one business day with next steps and a firm quote.</p>
+          <p class="wd-note" id="dsReferenceNote" hidden><span>Submission reference:</span> <strong id="dsSubmissionId"></strong></p>
+          <hr style="border:none; border-top:1px dashed var(--line); margin:1.5rem 0;">
+          <h2 id="dsQuestionnaireHeading">Want to finish your project details now?</h2>
+          <p>The more we know up front, the faster we can start once you're ready — but it's completely optional. We'll follow up either way using the contact method you picked.</p>
+          <div class="wd-panel-actions">
+            <a href="index.html" class="btn btn-ghost">Not right now</a>
+            <button type="button" class="btn btn-primary" id="dsOpenWorksheetBtn">Yes, open project worksheet</button>
+          </div>
+          <p class="wd-note wd-fallback-link" id="dsWorksheetFallback" hidden>
+            <span>Your browser blocked the new tab.</span>
+            <a href="#" id="dsWorksheetFallbackLink" target="_blank" rel="noopener">Open your project worksheet</a>
+          </p>
+        </div>
+      </section>
+
+      <!-- Shown after the worksheet tab has been opened -->
+      <section class="wpb-state" id="dsWorksheetOpened" hidden>
+        <div class="card wd-done-card">
+          <h1>Your project worksheet opened in a new tab.</h1>
+          <p>Your quote request has already been received. Finish the worksheet whenever you're ready — it stays open in that tab.</p>
+          <div class="wd-panel-actions">
+            <a href="index.html" class="btn btn-ghost">Back to home</a>
+            <button type="button" class="btn btn-primary" id="dsOpenWorksheetAgainBtn">Open worksheet again</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Reached directly (no submission reference) -- e.g. a bookmarked or shared link -->
+      <section class="wpb-state" id="dsNoReference" hidden>
+        <div class="card wd-done-card">
+          <h1>This page follows a Website Designer quote request.</h1>
+          <p>If you haven't submitted a quote yet, start with the Website Designer — you'll land back here automatically once you do.</p>
+          <div class="wd-panel-actions">
+            <a href="index.html" class="btn btn-ghost">Back to home</a>
+            <a href="website-designer.html" class="btn btn-primary">Go to Website Designer</a>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer wpb-footer">
+  <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. All rights reserved.</p>
+</footer>
+
+<script src="js/main.js"></script>
+<script src="js/design-submitted.js"></script>
+</body>
+</html>

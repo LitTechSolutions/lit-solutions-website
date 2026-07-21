@@ -365,7 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Simple contact form (contact.html) — same AJAX-to-Netlify-Forms pattern
+  // Simple contact form (contact.html) — same AJAX-to-site-forms.js pattern
   // as the newsletter form, with a missing-fields summary matching the
   // intake form's validation pattern (js/intake.js).
   const simpleContactForm = document.getElementById('simpleContactForm');
@@ -405,15 +405,29 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (missingNote) missingNote.classList.remove('is-visible');
 
-      const formData = new FormData(simpleContactForm);
+      const payload = {
+        form: 'contact',
+        name: simpleContactForm.elements['name'].value.trim(),
+        email: simpleContactForm.elements['email'].value.trim(),
+        message: simpleContactForm.elements['message'].value.trim(),
+        botField: honeypot ? honeypot.value : '',
+      };
       if (statusEl) { statusEl.textContent = 'Sending…'; statusEl.classList.remove('form-note--error'); }
-      fetch('/', { method: 'POST', body: formData })
-        .then(res => {
+      fetch('/.netlify/functions/site-forms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+        .then(async res => {
           if (statusEl) {
-            statusEl.textContent = res.ok
-              ? "Thanks — we'll follow up within one business day."
-              : 'Something went wrong. Please call or email us directly.';
-            statusEl.classList.toggle('form-note--error', !res.ok);
+            if (res.ok) {
+              statusEl.textContent = "Thanks — we'll follow up within one business day.";
+              statusEl.classList.remove('form-note--error');
+            } else {
+              const data = await res.json().catch(() => ({}));
+              statusEl.textContent = data.error || 'Something went wrong. Please call or email us directly.';
+              statusEl.classList.add('form-note--error');
+            }
           }
           if (res.ok) simpleContactForm.reset();
         })
@@ -426,7 +440,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Booking request form (booking.html) — same AJAX-to-Netlify-Forms
+  // Booking request form (booking.html) — same AJAX-to-site-forms.js
   // pattern as the contact form, plus a custom check requiring at least
   // one of email/phone (neither is natively `required` on its own).
   const bookingRequestForm = document.getElementById('bookingRequestForm');
@@ -508,15 +522,33 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (missingNote) missingNote.classList.remove('is-visible');
 
-      const formData = new FormData(bookingRequestForm);
+      const payload = {
+        form: 'booking',
+        name: bookingRequestForm.elements['name'].value.trim(),
+        email: email.value.trim(),
+        phone: phone.value.trim(),
+        serviceType: bookingRequestForm.elements['service_type'].value,
+        preferredDate: bookingRequestForm.elements['preferred_date'].value,
+        preferredTime: timeChecked.value,
+        note: bookingRequestForm.elements['note'].value.trim(),
+        botField: honeypot ? honeypot.value : '',
+      };
       if (statusEl) { statusEl.textContent = 'Sending…'; statusEl.classList.remove('form-note--error'); }
-      fetch('/', { method: 'POST', body: formData })
-        .then(res => {
+      fetch('/.netlify/functions/site-forms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+        .then(async res => {
           if (statusEl) {
-            statusEl.textContent = res.ok
-              ? "Thanks — we'll confirm your requested time within one business day."
-              : 'Something went wrong. Please call or email us directly.';
-            statusEl.classList.toggle('form-note--error', !res.ok);
+            if (res.ok) {
+              statusEl.textContent = "Thanks — we'll confirm your requested time within one business day.";
+              statusEl.classList.remove('form-note--error');
+            } else {
+              const data = await res.json().catch(() => ({}));
+              statusEl.textContent = data.error || 'Something went wrong. Please call or email us directly.';
+              statusEl.classList.add('form-note--error');
+            }
           }
           if (res.ok) bookingRequestForm.reset();
         })
@@ -529,7 +561,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Newsletter signup — lightweight AJAX submit to Netlify Forms with an
+  // Newsletter signup — lightweight AJAX submit to site-forms.js with an
   // inline status message, consistent with the rest of the site's forms.
   document.querySelectorAll('.newsletter-form').forEach(form => {
     const statusEl = form.parentElement.querySelector('.newsletter-status');
@@ -538,14 +570,22 @@ document.addEventListener('DOMContentLoaded', () => {
       const honeypot = form.querySelector('input[name="bot-field"]');
       if (honeypot && honeypot.value) return; // silently drop likely-bot submissions
 
-      const formData = new FormData(form);
-      fetch('/', { method: 'POST', body: formData })
-        .then(res => {
+      const payload = { form: 'newsletter', email: form.elements['email'].value.trim(), botField: honeypot ? honeypot.value : '' };
+      fetch('/.netlify/functions/site-forms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+        .then(async res => {
           if (statusEl) {
-            statusEl.textContent = res.ok
-              ? "You're on the list — thanks for signing up!"
-              : 'Something went wrong. Please try again or email dylan@lit-solutions.tech.';
-            statusEl.classList.toggle('is-error', !res.ok);
+            if (res.ok) {
+              statusEl.textContent = "You're on the list — thanks for signing up!";
+              statusEl.classList.remove('is-error');
+            } else {
+              const data = await res.json().catch(() => ({}));
+              statusEl.textContent = data.error || 'Something went wrong. Please try again or email dylan@lit-solutions.tech.';
+              statusEl.classList.add('is-error');
+            }
           }
           if (res.ok) form.reset();
         })

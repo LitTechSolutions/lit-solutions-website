@@ -28,6 +28,16 @@
   to = "/care-hub/index.html"
   status = 200
 
+# This catch-all has no method restriction, so it also matches POST
+# requests -- including a POST to "/" itself, which is how native Netlify
+# Forms' AJAX pattern (fetch('/', {method:'POST', ...})) submits. That
+# combination broke all 4 of the site's forms (contact/booking/newsletter/
+# intake): every submission 404'd here instead of being captured by
+# Netlify Forms. Fixed by moving those forms onto a real Netlify Function
+# (netlify/functions/site-forms.js) instead -- /.netlify/functions/* is a
+# reserved path Netlify always routes to the function first, regardless of
+# this rule, matching how website-designer.js already worked. Do not
+# reintroduce data-netlify="true" forms without re-solving this.
 [[redirects]]
   from = "/*"
   to = "/404.html"

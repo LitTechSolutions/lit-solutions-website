@@ -33,6 +33,8 @@
 //                                                        heroesDiscount, bundledCategories, bundleSavings,
 //                                                        optionalSelected, customRequest, selectedBundles,
 //                                                        createdAt, ip }
+//   inquiries     : key = submission id (CONTACT-/    -> { form: "contact"|"booking"|"newsletter"|"intake",
+//                   BOOKING-/NEWSLETTER-/INTAKE-...)      ...form-specific fields (see site-forms.js), createdAt, ip }
 
 const { getStore } = require("@netlify/blobs");
 
