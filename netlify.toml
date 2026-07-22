@@ -13,6 +13,32 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
+# littletechicalsolutions.com was added as a domain alias for brand
+# protection, but Netlify's automatic "redirect non-primary domains to
+# primary" behavior only covers www/apex variants of the SAME registered
+# domain -- confirmed live in the Netlify dashboard: www.lit-solutions.tech
+# shows "Redirects automatically to primary domain," but
+# littletechicalsolutions.com and its www variant show only "Domain alias"
+# with no such note, even with lit-solutions.tech set as primary. A
+# genuinely different domain added as an alias just mirrors the site's
+# content instead of forwarding. These explicit host-matched redirects are
+# the fix. Must come before the generic /* catch-all below (redirects are
+# evaluated in order, first match wins, and that rule has no hostname so it
+# would otherwise match these requests first). `force = true` is required
+# too -- without it, this domain's own served index.html/etc. would win
+# over the redirect by Netlify's normal file-vs-redirect precedence.
+[[redirects]]
+  from = "https://littletechicalsolutions.com/*"
+  to = "https://lit-solutions.tech/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.littletechicalsolutions.com/*"
+  to = "https://lit-solutions.tech/:splat"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "/subscriptions.html"
   to = "/payment.html#subscriptions"

@@ -40,6 +40,7 @@ function clientIp(event) {
 
 async function handlePeek(event, deps) {
   const rateLimitedFn = deps.rateLimited || rateLimited;
+  const nowFn = deps.now || (() => new Date());
   const ip = clientIp(event);
   if (await rateLimitedFn("invitation-peek", ip, 30, 300)) {
     return json(429, { error: "Too many attempts. Try again in a few minutes." });
@@ -50,7 +51,7 @@ async function handlePeek(event, deps) {
 
   const invitation = await getInvitationByTokenHash(hashInvitationToken(token), deps);
   const GENERIC_ERROR = json(404, { error: "This invitation link is invalid or has expired." });
-  if (!invitation || invitation.status !== "pending" || new Date(invitation.expiresAt).getTime() <= Date.now()) {
+  if (!invitation || invitation.status !== "pending" || new Date(invitation.expiresAt).getTime() <= nowFn().getTime()) {
     return GENERIC_ERROR;
   }
 

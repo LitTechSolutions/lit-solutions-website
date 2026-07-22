@@ -54,7 +54,7 @@ test("GET with an unknown token returns a generic 404, not a distinguishing mess
 
 test("GET with a valid pending token peeks without creating anything", async () => {
   const sql = routingFakeSql({ invitations: [invitationRow()], organizations: [{ id: "org-a", name: "Acme LLC", status: "active", created_at: "2026-01-01T00:00:00.000Z", updated_at: "2026-01-01T00:00:00.000Z", created_by: "admin-1", version: 1 }] });
-  const res = await handler({ httpMethod: "GET", headers: {}, queryStringParameters: { token: "valid-token-1234567890" } }, {}, { sql, ...NO_RATE_LIMIT });
+  const res = await handler({ httpMethod: "GET", headers: {}, queryStringParameters: { token: "valid-token-1234567890" } }, {}, { sql, now: FIXED_NOW, ...NO_RATE_LIMIT });
   assert.equal(res.statusCode, 200);
   const body = JSON.parse(res.body);
   assert.equal(body.email, "customer@example.com");
