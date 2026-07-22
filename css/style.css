@@ -978,6 +978,7 @@ section{ padding: 5.5rem 0; }
 }
 .price-item-value small{ font-weight:400; color: var(--ink-faint); }
 .price-item-free{ color: var(--accent-teal-text); }
+.price-item-quote{ color: var(--ink-soft); font-weight:600; }
 .pay-inline-link{
   display:inline-block; margin-left:.6rem; font-family: var(--font-body); font-weight:600;
   font-size:.78rem; color: var(--accent-teal-text); text-decoration: underline;
