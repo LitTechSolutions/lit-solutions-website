@@ -292,6 +292,7 @@ p{ margin:0; }
   font-size:.8rem; font-weight:600; color: var(--accent-orange-on-dark); text-decoration:none;
 }
 .hero-testimonial-link:hover{ text-decoration:underline; }
+.hero-testimonial-link[hidden]{ display:none; }
 
 .hero-testimonial-slides{ position:relative; overflow:hidden; }
 .hero-testimonial-slides.height-animated{ transition: height .6s ease; }

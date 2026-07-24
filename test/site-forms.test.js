@@ -31,44 +31,9 @@ test("rejects an unknown form discriminator", async () => {
 
 test("enforces the shared rate limit before touching any form logic", async () => {
   const deps = fakeDeps({ rateLimited: async () => true });
-  const res = await handler(eventFor({ form: "contact", name: "A", email: "a@example.com", message: "hi" }), {}, deps);
+  const res = await handler(eventFor({ form: "newsletter", email: "a@example.com" }), {}, deps);
   assert.equal(res.statusCode, 429);
   assert.equal(deps._store.size, 0);
-});
-
-test("contact: stores the submission and emails Dylan", async () => {
-  const deps = fakeDeps();
-  const res = await handler(eventFor({ form: "contact", name: "Jane Doe", email: "jane@example.com", message: "Need a quote" }), {}, deps);
-  assert.equal(res.statusCode, 201);
-  const body = JSON.parse(res.body);
-  assert.ok(body.id.startsWith("CONTACT-"));
-  assert.equal(body.emailSent, true);
-  const stored = deps._store.get(body.id);
-  assert.equal(stored.name, "Jane Doe");
-  assert.equal(stored.email, "jane@example.com");
-  assert.equal(deps._emails.length, 1);
-  assert.match(deps._emails[0].html, /Need a quote/);
-});
-
-test("contact: rejects a missing message", async () => {
-  const deps = fakeDeps();
-  const res = await handler(eventFor({ form: "contact", name: "Jane", email: "jane@example.com", message: "" }), {}, deps);
-  assert.equal(res.statusCode, 400);
-  assert.equal(deps._store.size, 0);
-});
-
-test("contact: rejects an invalid email", async () => {
-  const deps = fakeDeps();
-  const res = await handler(eventFor({ form: "contact", name: "Jane", email: "not-an-email", message: "hi" }), {}, deps);
-  assert.equal(res.statusCode, 400);
-});
-
-test("contact: a filled honeypot pretends success without storing or emailing", async () => {
-  const deps = fakeDeps();
-  const res = await handler(eventFor({ form: "contact", name: "Bot", email: "bot@example.com", message: "spam", botField: "gotcha" }), {}, deps);
-  assert.equal(res.statusCode, 201);
-  assert.equal(deps._store.size, 0);
-  assert.equal(deps._emails.length, 0);
 });
 
 test("booking: accepts email-only contact info", async () => {

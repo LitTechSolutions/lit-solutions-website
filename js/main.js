@@ -61,9 +61,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const slidesWrap = heroTestimonial.querySelector('.hero-testimonial-slides');
     const slides = Array.from(heroTestimonial.querySelectorAll('.hero-testimonial-slide'));
     const dots = Array.from(heroTestimonial.querySelectorAll('.hero-testimonial-dot'));
+    const learnMoreLink = heroTestimonial.querySelector('.hero-testimonial-link');
     let current = slides.findIndex(s => s.classList.contains('is-active'));
     if (current < 0) current = 0;
     let timer = null;
+
+    // "Learn more" only makes sense for Bill Armour's slide (index 0) --
+    // it points at the Portfolio case study built for his company, which
+    // the other two reviews aren't tied to.
+    if (learnMoreLink) learnMoreLink.hidden = (current !== 0);
 
     const syncHeight = () => {
       if (slidesWrap && slides[current]) slidesWrap.style.height = slides[current].offsetHeight + 'px';
@@ -76,6 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
       current = index;
       slides[current].classList.add('is-active');
       if (dots[current]) { dots[current].classList.add('is-active'); dots[current].setAttribute('aria-pressed', 'true'); }
+      if (learnMoreLink) learnMoreLink.hidden = (current !== 0);
       syncHeight();
     };
 
@@ -398,84 +405,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Simple contact form (contact.html) — same AJAX-to-site-forms.js pattern
-  // as the newsletter form, with a missing-fields summary matching the
-  // intake form's validation pattern (js/intake.js).
-  const simpleContactForm = document.getElementById('simpleContactForm');
-  if (simpleContactForm) {
-    const statusEl = simpleContactForm.querySelector('.form-note');
-    const missingNote = simpleContactForm.querySelector('.form-note--missing');
-    simpleContactForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const missing = [];
-      let firstBadEl = null;
-      simpleContactForm.querySelectorAll('[required]').forEach(field => {
-        const ok = field.value.trim().length > 0 &&
-          (field.type !== 'email' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value));
-        field.classList.toggle('field-error', !ok);
-        if (ok) {
-          field.removeAttribute('aria-invalid');
-          field.removeAttribute('aria-describedby');
-        } else {
-          field.setAttribute('aria-invalid', 'true');
-          if (missingNote && missingNote.id) field.setAttribute('aria-describedby', missingNote.id);
-          const label = simpleContactForm.querySelector(`label[for="${field.id}"]`);
-          missing.push(label ? label.textContent.trim() : 'A required field');
-          if (!firstBadEl) firstBadEl = field;
-        }
-      });
-      const honeypot = simpleContactForm.querySelector('input[name="bot-field"]');
-      if (honeypot && honeypot.value) return;
-
-      if (missing.length) {
-        if (missingNote) {
-          const intro = 'Please fill in the following:';
-          missingNote.innerHTML = `<strong>${intro}</strong><ul>${missing.map(m => `<li>${m}</li>`).join('')}</ul>`;
-          missingNote.classList.add('is-visible');
-        }
-        if (firstBadEl) firstBadEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        return;
-      }
-      if (missingNote) missingNote.classList.remove('is-visible');
-
-      const payload = {
-        form: 'contact',
-        name: simpleContactForm.elements['name'].value.trim(),
-        email: simpleContactForm.elements['email'].value.trim(),
-        message: simpleContactForm.elements['message'].value.trim(),
-        botField: honeypot ? honeypot.value : '',
-      };
-      if (statusEl) { statusEl.textContent = 'Sending…'; statusEl.classList.remove('form-note--error'); }
-      fetch('/.netlify/functions/site-forms', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      })
-        .then(async res => {
-          if (statusEl) {
-            if (res.ok) {
-              statusEl.textContent = "Thanks — we'll follow up within one business day.";
-              statusEl.classList.remove('form-note--error');
-            } else {
-              const data = await res.json().catch(() => ({}));
-              statusEl.textContent = data.error || 'Something went wrong. Please call or email us directly.';
-              statusEl.classList.add('form-note--error');
-            }
-          }
-          if (res.ok) simpleContactForm.reset();
-        })
-        .catch(() => {
-          if (statusEl) {
-            statusEl.textContent = 'Something went wrong. Please call or email us directly.';
-            statusEl.classList.add('form-note--error');
-          }
-        });
-    });
-  }
-
-  // Booking request form (booking.html) — same AJAX-to-site-forms.js
-  // pattern as the contact form, plus a custom check requiring at least
-  // one of email/phone (neither is natively `required` on its own).
+  // Booking request form (booking.html) — AJAX-to-site-forms.js pattern
+  // (see js/intake.js for the same shape), plus a custom check requiring
+  // at least one of email/phone (neither is natively `required` on its own).
   const bookingRequestForm = document.getElementById('bookingRequestForm');
   if (bookingRequestForm) {
     const dateInput = document.getElementById('booking-date');

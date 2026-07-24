@@ -1,16 +1,18 @@
-// site-forms.js -- handles the marketing site's 4 simple public forms
-// (contact, booking request, newsletter signup, new-client intake) via a
+// site-forms.js -- handles the marketing site's simple public forms
+// (booking request, newsletter signup, new-client intake) via a
 // single "form" discriminator, replacing native Netlify Forms entirely.
+// (The site's separate Contact page/form was removed entirely -- Request
+// Service/intake.html is now the only way to reach out through the site.)
 //
 // Netlify Forms' AJAX pattern (fetch POST to "/") depends on Netlify's
 // deploy-time form-detection claiming the request before netlify.toml's
 // redirect rules are evaluated. This site's catch-all `/* -> /404.html`
 // redirect (no method restriction) was winning that race instead -- every
-// one of these 4 forms failed with a plain 404, and no submission ever
+// one of these forms failed with a plain 404, and no submission ever
 // reached Dylan. Real Netlify Function paths (/.netlify/functions/*) are
 // a reserved prefix Netlify always routes to the function first,
 // regardless of custom redirects -- exactly what website-designer.js
-// already relies on -- so moving these 4 forms onto the same mechanism
+// already relies on -- so moving these forms onto the same mechanism
 // sidesteps the redirect-vs-Forms race entirely, rather than reordering
 // redirect rules and hoping Netlify's forms-detection cooperates.
 //
@@ -21,8 +23,6 @@
 // Blobs store AND emailed to Dylan, persisted first so a transient email
 // outage never silently loses a submission.
 //
-//   POST { form: "contact", name, email, message }
-//     -> 201 { id, emailSent }
 //   POST { form: "booking", name, email?, phone?, serviceType, preferredDate,
 //          preferredTime, note? }  (at least one of email/phone required)
 //     -> 201 { id, emailSent }
@@ -55,29 +55,6 @@ function trimmed(v) {
 }
 function newId(prefix) {
   return `${prefix}-${Date.now().toString(36).toUpperCase()}-${crypto.randomBytes(3).toString("hex").toUpperCase()}`;
-}
-
-async function handleContact(body, ip, deps) {
-  const name = trimmed(body.name);
-  const email = trimmed(body.email);
-  const message = trimmed(body.message);
-  if (!name) return json(400, { error: "Name is required." });
-  if (!email || !EMAIL_RE.test(email)) return json(400, { error: "A valid email is required." });
-  if (!message) return json(400, { error: "A message is required." });
-  if (body.botField) return json(201, { id: null, emailSent: false }); // honeypot: pretend success, do nothing
-
-  const id = newId("CONTACT");
-  const record = { id, form: "contact", name, email: email.toLowerCase(), message, createdAt: Date.now(), ip };
-  await deps.setJSON("inquiries", id, record);
-
-  const html = `
-    <h2>New contact message -- ${esc(id)}</h2>
-    <p><strong>Name:</strong> ${esc(name)}<br><strong>Email:</strong> ${esc(email)}</p>
-    <p><strong>Message:</strong><br>${escList(message)}</p>
-    <p style="color:#666;font-size:.85rem;">Submitted ${new Date(record.createdAt).toLocaleString("en-US")} from IP ${esc(ip)}.</p>
-  `;
-  const result = await deps.sendEmail({ to: "dylan@lit-solutions.tech", subject: `Contact form -- ${name}`, html });
-  return json(201, { id, emailSent: result.sent });
 }
 
 async function handleBooking(body, ip, deps) {
@@ -168,7 +145,7 @@ async function handleIntake(body, ip, deps) {
   return json(201, { id, emailSent: result.sent });
 }
 
-const HANDLERS = { contact: handleContact, booking: handleBooking, newsletter: handleNewsletter, intake: handleIntake };
+const HANDLERS = { booking: handleBooking, newsletter: handleNewsletter, intake: handleIntake };
 
 exports.handler = async (event, context, deps = {}) => {
   if (event.httpMethod !== "POST") return json(405, { error: "Method not allowed" });
