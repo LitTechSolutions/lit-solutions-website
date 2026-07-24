@@ -134,78 +134,71 @@ test("newsletter: rejects an invalid email", async () => {
 function minimalIntake(overrides = {}) {
   return {
     form: "intake",
-    fullName: "Pat Customer", businessName: "Pat's Shop", email: "pat@example.com", phone: "555-111-2222",
-    addressCity: "Montross, VA", referralSource: "Google", contactMethod: "Phone Call", bestTime: "No preference",
-    services: ["Not sure yet"], generalNotes: "Not sure what I need yet.",
+    fullName: "Pat Customer", email: "pat@example.com", phone: "555-111-2222",
+    contactMethod: "Phone Call", reason: "Not sure what I need yet, just want to talk it through.",
     ...overrides,
   };
 }
 
-test("intake: accepts a minimal submission with no optional sections triggered", async () => {
+test("intake: accepts a minimal 5-field submission", async () => {
   const deps = fakeDeps();
-  const res = await handler(eventFor(minimalIntake()), {}, deps);
+  const res = await handler(eventFor(minimalIntake({ email: "Pat@Example.com" })), {}, deps);
   assert.equal(res.statusCode, 201);
   const body = JSON.parse(res.body);
   assert.ok(body.id.startsWith("INTAKE-"));
+  assert.equal(body.emailSent, true);
   const stored = deps._store.get(body.id);
-  assert.equal(stored.businessName, "Pat's Shop");
-  assert.deepEqual(stored.services, ["Not sure yet"]);
+  assert.equal(stored.fullName, "Pat Customer");
+  assert.equal(stored.email, "pat@example.com"); // stored lowercased, matching the other 3 forms
+  assert.equal(stored.phone, "555-111-2222");
+  assert.equal(stored.contactMethod, "Phone Call");
+  assert.match(deps._emails[0].html, /Not sure what I need yet/);
 });
 
-test("intake: reports every missing always-required field at once", async () => {
+test("intake: rejects a preferred contact method outside the fixed list", async () => {
   const deps = fakeDeps();
-  const res = await handler(eventFor({ form: "intake", services: [] }), {}, deps);
+  const res = await handler(eventFor(minimalIntake({ contactMethod: "Carrier Pigeon" })), {}, deps);
   assert.equal(res.statusCode, 400);
-  const body = JSON.parse(res.body);
-  assert.match(body.error, /Full Name/);
-  assert.match(body.error, /What do you need help with/);
   assert.equal(deps._store.size, 0);
 });
 
-test("intake: checking Website Services requires the section-3 fields", async () => {
+test("intake: HTML in the reason field is escaped, not executed, in the outbound email", async () => {
   const deps = fakeDeps();
-  const res = await handler(eventFor(minimalIntake({ services: ["Website Services"] })), {}, deps);
+  const res = await handler(eventFor(minimalIntake({
+    fullName: '<script>alert(1)</script>', reason: "Need help with <b>tags</b> & \"quotes\".",
+  })), {}, deps);
+  assert.equal(res.statusCode, 201);
+  const html = deps._emails[0].html;
+  assert.doesNotMatch(html, /<script>/);
+  assert.match(html, /&lt;script&gt;/);
+  assert.match(html, /&lt;b&gt;tags&lt;\/b&gt;/);
+  assert.match(html, /&amp;/);
+});
+
+test("intake: reports every missing required field at once", async () => {
+  const deps = fakeDeps();
+  const res = await handler(eventFor({ form: "intake" }), {}, deps);
   assert.equal(res.statusCode, 400);
-  assert.match(JSON.parse(res.body).error, /Business description/);
+  const body = JSON.parse(res.body);
+  assert.match(body.error, /Full Name/);
+  assert.match(body.error, /Email Address/);
+  assert.match(body.error, /Phone Number/);
+  assert.match(body.error, /Preferred contact method/);
+  assert.match(body.error, /What can we help you with/);
+  assert.equal(deps._store.size, 0);
 });
 
-test("intake: Website Services with all section-3 fields filled succeeds", async () => {
+test("intake: rejects an invalid email", async () => {
   const deps = fakeDeps();
-  const res = await handler(eventFor(minimalIntake({
-    services: ["Website Services"],
-    currentWebsite: "N/A", requestedDomain: "patsshop.com", businessDescription: "We sell things.",
-    targetCustomers: "Locals", mustHavePages: "Home, Contact", mustHaveFeatures: "Contact form",
-    stylePreference: "Clean", inspirationSites: "N/A", existingContent: "N/A", photosImagery: "N/A",
-    hasLogo: "Need one", hasContent: "Need help", hasDomain: "Need help", timeline: "2 months", budgetRange: "$1000",
-  })), {}, deps);
-  assert.equal(res.statusCode, 201);
-});
-
-test("intake: checking government contracting requires the section-4 fields", async () => {
-  const deps = fakeDeps();
-  const res = await handler(eventFor(minimalIntake({ govContractingInterest: true })), {}, deps);
+  const res = await handler(eventFor(minimalIntake({ email: "not-an-email" })), {}, deps);
   assert.equal(res.statusCode, 400);
-  assert.match(JSON.parse(res.body).error, /UEI/);
+  assert.equal(deps._store.size, 0);
 });
 
-test("intake: government contracting with all section-4 fields filled succeeds", async () => {
+test("intake: a filled honeypot pretends success without storing or emailing", async () => {
   const deps = fakeDeps();
-  const res = await handler(eventFor(minimalIntake({
-    govContractingInterest: true, ueiNumber: "ABC123", naicsCodes: "541511", samGovInfo: "N/A", certifications: "N/A",
-  })), {}, deps);
+  const res = await handler(eventFor(minimalIntake({ botField: "gotcha" })), {}, deps);
   assert.equal(res.statusCode, 201);
-  assert.equal(deps._store.get(JSON.parse(res.body).id).govContractingInterest, true);
-});
-
-test("intake: additionalNotes is always optional even with both sections triggered", async () => {
-  const deps = fakeDeps();
-  const res = await handler(eventFor(minimalIntake({
-    services: ["Website Services"],
-    currentWebsite: "N/A", requestedDomain: "N/A", businessDescription: "N/A", targetCustomers: "N/A",
-    mustHavePages: "N/A", mustHaveFeatures: "N/A", stylePreference: "N/A", inspirationSites: "N/A",
-    existingContent: "N/A", photosImagery: "N/A", hasLogo: "N/A", hasContent: "N/A", hasDomain: "N/A",
-    timeline: "N/A", budgetRange: "N/A",
-    govContractingInterest: true, ueiNumber: "N/A", naicsCodes: "N/A", samGovInfo: "N/A", certifications: "N/A",
-  })), {}, deps);
-  assert.equal(res.statusCode, 201);
+  assert.equal(deps._store.size, 0);
+  assert.equal(deps._emails.length, 0);
 });

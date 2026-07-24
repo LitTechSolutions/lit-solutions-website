@@ -108,7 +108,7 @@
         </div>
         <div>
           <form class="newsletter-form">
-            <p class="visually-hidden"><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
+            <p class="visually-hidden" aria-hidden="true"><label>Don't fill this out if you're human: <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
             <input type="email" name="email" placeholder="you@email.com" required aria-label="Email address">
             <button type="submit" class="btn btn-primary">Subscribe</button>
           </form>
@@ -160,7 +160,7 @@
     </nav>
   </div>
   <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. All rights reserved.</p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version <span id="siteVersion">4.0.0</span></a></p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version <span id="siteVersion">4.1.0</span></a></p>
   <p class="footer-version"><a href="/care-hub/login">Staff Sign In</a></p>
 </footer>
 

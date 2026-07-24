@@ -28,17 +28,7 @@
 //     -> 201 { id, emailSent }
 //   POST { form: "newsletter", email }
 //     -> 201 { id, emailSent }
-//   POST { form: "intake", fullName, businessName, email, phone, addressCity,
-//          referralSource, contactMethod, bestTime, govContractingInterest,
-//          services: [string], generalNotes,
-//          -- required only if services includes "Website Services":
-//          currentWebsite, requestedDomain, businessDescription,
-//          targetCustomers, mustHavePages, mustHaveFeatures, stylePreference,
-//          inspirationSites, existingContent, photosImagery, hasLogo,
-//          hasContent, hasDomain, timeline, budgetRange,
-//          -- required only if govContractingInterest is truthy:
-//          ueiNumber, naicsCodes, samGovInfo, certifications,
-//          additionalNotes }  (always optional)
+//   POST { form: "intake", fullName, email, phone, contactMethod, reason }
 //     -> 201 { id, emailSent }
 //   400 { error }  -- validation failure (client already blocks these; this
 //                     is a defense-in-depth backstop, not the primary UX)
@@ -52,7 +42,7 @@ const { sendEmail: sendEmailReal } = require("./_lib/email");
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const SERVICE_TYPES = ["Website Design & Development", "Computer Repair", "Networking", "Cybersecurity", "Small Business IT", "Not sure yet"];
 const PREFERRED_TIMES = ["Morning (8am–12pm)", "Afternoon (12–5pm)", "Evening (5–7pm)", "No preference"];
-const INTAKE_SERVICES = ["Website Services", "Computer Services", "Networking", "Cybersecurity", "Small Business IT", "Not sure yet"];
+const CONTACT_METHODS = ["Phone Call", "Text Message", "Email", "No preference"];
 
 function esc(s) {
   return String(s || "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -146,68 +136,35 @@ async function handleNewsletter(body, ip, deps) {
 
 // Field labels used only in the "missing fields" 400 error and the outbound
 // email -- kept in one place so the two never drift apart.
-const INTAKE_ALWAYS_FIELDS = [
-  ["fullName", "Full Name"], ["businessName", "Business / Organization"], ["email", "Email Address"],
-  ["phone", "Phone Number"], ["addressCity", "Service Address or City"], ["referralSource", "How did you hear about us?"],
-  ["contactMethod", "Preferred contact method"], ["bestTime", "Best time to reach you"], ["generalNotes", "Briefly describe what you need"],
-];
-const INTAKE_WEBSITE_FIELDS = [
-  ["currentWebsite", "Current website"], ["requestedDomain", "Requested domain"], ["businessDescription", "Business description"],
-  ["targetCustomers", "Typical customers"], ["mustHavePages", "Must-have pages"], ["mustHaveFeatures", "Must-have features"],
-  ["stylePreference", "Style preference"], ["inspirationSites", "Inspiration sites"], ["existingContent", "Existing content"],
-  ["photosImagery", "Photos/imagery"], ["hasLogo", "Do you have a logo?"], ["hasContent", "Is content ready?"],
-  ["hasDomain", "Own a domain?"], ["timeline", "Target timeline"], ["budgetRange", "Budget range"],
-];
-const INTAKE_GOVCONTRACT_FIELDS = [
-  ["ueiNumber", "UEI"], ["naicsCodes", "NAICS code(s)"], ["samGovInfo", "SAM.gov info"], ["certifications", "Certifications"],
+const INTAKE_FIELDS = [
+  ["fullName", "Full Name"], ["email", "Email Address"], ["phone", "Phone Number"],
+  ["contactMethod", "Preferred contact method"], ["reason", "What can we help you with?"],
 ];
 
 async function handleIntake(body, ip, deps) {
   const clean = {};
-  for (const [key] of INTAKE_ALWAYS_FIELDS) clean[key] = trimmed(body[key]);
-  const services = Array.isArray(body.services) ? body.services.filter((s) => INTAKE_SERVICES.includes(s)) : [];
-  const govContractingInterest = !!body.govContractingInterest;
+  for (const [key] of INTAKE_FIELDS) clean[key] = trimmed(body[key]);
 
-  const missing = INTAKE_ALWAYS_FIELDS.filter(([key]) => !clean[key]).map(([, label]) => label);
-  if (!services.length) missing.push("What do you need help with?");
   if (clean.email && !EMAIL_RE.test(clean.email)) return json(400, { error: "A valid email is required." });
-
-  const wantsWebsite = services.includes("Website Services");
-  for (const [key] of INTAKE_WEBSITE_FIELDS) clean[key] = trimmed(body[key]);
-  if (wantsWebsite) missing.push(...INTAKE_WEBSITE_FIELDS.filter(([key]) => !clean[key]).map(([, label]) => label));
-
-  for (const [key] of INTAKE_GOVCONTRACT_FIELDS) clean[key] = trimmed(body[key]);
-  if (govContractingInterest) missing.push(...INTAKE_GOVCONTRACT_FIELDS.filter(([key]) => !clean[key]).map(([, label]) => label));
-
+  const missing = INTAKE_FIELDS.filter(([key]) => !clean[key]).map(([, label]) => label);
   if (missing.length) return json(400, { error: `Please fill in: ${missing.join(", ")}.` });
+  if (clean.contactMethod && !CONTACT_METHODS.includes(clean.contactMethod)) return json(400, { error: "Please choose a valid preferred contact method." });
   if (body.botField) return json(201, { id: null, emailSent: false });
 
-  const additionalNotes = trimmed(body.additionalNotes);
   const id = newId("INTAKE");
-  const record = {
-    id, form: "intake", ...clean, services, govContractingInterest, additionalNotes, createdAt: Date.now(), ip,
-  };
+  const record = { id, form: "intake", ...clean, email: clean.email.toLowerCase(), createdAt: Date.now(), ip };
   await deps.setJSON("inquiries", id, record);
 
-  const websiteRows = wantsWebsite ? INTAKE_WEBSITE_FIELDS.map(([key, label]) => `<p><strong>${esc(label)}:</strong><br>${escList(clean[key])}</p>`).join("") : "";
-  const govRows = govContractingInterest ? INTAKE_GOVCONTRACT_FIELDS.map(([key, label]) => `<p><strong>${esc(label)}:</strong> ${esc(clean[key])}</p>`).join("") : "";
   const html = `
-    <h2>New client intake -- ${esc(id)}</h2>
+    <h2>New service request -- ${esc(id)}</h2>
     <p><strong>Name:</strong> ${esc(clean.fullName)}<br>
-       <strong>Business:</strong> ${esc(clean.businessName)}<br>
        <strong>Email:</strong> ${esc(clean.email)}<br>
        <strong>Phone:</strong> ${esc(clean.phone)}<br>
-       <strong>Service address/city:</strong> ${esc(clean.addressCity)}<br>
-       <strong>Heard about us via:</strong> ${esc(clean.referralSource)}<br>
-       <strong>Preferred contact:</strong> ${esc(clean.contactMethod)} &nbsp; <strong>Best time:</strong> ${esc(clean.bestTime)}</p>
-    <p><strong>Services needed:</strong> ${esc(services.join(", "))}</p>
-    <p><strong>What they need:</strong><br>${escList(clean.generalNotes)}</p>
-    ${websiteRows ? `<h3>Website Project Details</h3>${websiteRows}` : ""}
-    ${govContractingInterest ? `<h3>Government Contracting</h3>${govRows}` : ""}
-    ${additionalNotes ? `<p><strong>Anything else:</strong><br>${escList(additionalNotes)}</p>` : ""}
+       <strong>Preferred contact:</strong> ${esc(clean.contactMethod)}</p>
+    <p><strong>What they need:</strong><br>${escList(clean.reason)}</p>
     <p style="color:#666;font-size:.85rem;">Submitted ${new Date(record.createdAt).toLocaleString("en-US")} from IP ${esc(ip)}.</p>
   `;
-  const result = await deps.sendEmail({ to: "dylan@lit-solutions.tech", subject: `New client intake -- ${clean.businessName || clean.fullName}`, html });
+  const result = await deps.sendEmail({ to: "dylan@lit-solutions.tech", subject: `New service request -- ${clean.fullName}`, html });
   return json(201, { id, emailSent: result.sent });
 }
 

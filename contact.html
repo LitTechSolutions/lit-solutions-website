@@ -115,7 +115,7 @@
         <h3>Send a quick message</h3>
         <p style="font-size:.88rem; color:var(--ink-soft); margin-bottom:1.25rem;">A short question? Use this. For a full project quote, the <a href="intake.html" style="color:var(--accent-orange-text); text-decoration:underline;">project form</a> below gets you a faster, more complete answer.</p>
         <form id="simpleContactForm">
-          <p class="visually-hidden"><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
+          <p class="visually-hidden" aria-hidden="true"><label>Don't fill this out if you're human: <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
           <div class="form-row">
             <label for="contact-name">Name</label>
             <input id="contact-name" name="name" type="text" required>
@@ -141,7 +141,6 @@
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 12l2 2 4-4M7.8 3h8.4a2.4 2.4 0 0 1 2.4 2.4v13.2a2.4 2.4 0 0 1-2.4 2.4H7.8a2.4 2.4 0 0 1-2.4-2.4V5.4A2.4 2.4 0 0 1 7.8 3z"/></svg>
         </div>
         <h3>Ready to start a project?</h3>
-        <p>Our project form takes a few minutes and tells us exactly what you need — services, timeline, budget, and more — so we can follow up with a real answer instead of a round of back-and-forth questions.</p>
         <a href="intake.html" class="btn btn-primary btn-block">Request Service</a>
         <p class="contact-cta-note">Prefer to just call or email? Use the details above — we're happy to talk it through directly.</p>
       </div>
@@ -190,7 +189,7 @@
     </nav>
   </div>
   <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span>All rights reserved.</span></p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version <span id="siteVersion">4.0.0</span></a></p>
+  <p class="footer-version"><a href="patch-notes.html">Website Version <span id="siteVersion">4.1.0</span></a></p>
   <p class="footer-version"><a href="/care-hub/login">Staff Sign In</a></p>
 </footer>
 

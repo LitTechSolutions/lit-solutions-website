@@ -55,6 +55,90 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 2400);
   }
 
+  // Rotating hero testimonial carousel
+  const heroTestimonial = document.getElementById('heroTestimonial');
+  if (heroTestimonial) {
+    const slidesWrap = heroTestimonial.querySelector('.hero-testimonial-slides');
+    const slides = Array.from(heroTestimonial.querySelectorAll('.hero-testimonial-slide'));
+    const dots = Array.from(heroTestimonial.querySelectorAll('.hero-testimonial-dot'));
+    let current = slides.findIndex(s => s.classList.contains('is-active'));
+    if (current < 0) current = 0;
+    let timer = null;
+
+    const syncHeight = () => {
+      if (slidesWrap && slides[current]) slidesWrap.style.height = slides[current].offsetHeight + 'px';
+    };
+
+    const goTo = (index) => {
+      if (index === current || !slides[index]) return;
+      slides[current].classList.remove('is-active');
+      if (dots[current]) { dots[current].classList.remove('is-active'); dots[current].setAttribute('aria-pressed', 'false'); }
+      current = index;
+      slides[current].classList.add('is-active');
+      if (dots[current]) { dots[current].classList.add('is-active'); dots[current].setAttribute('aria-pressed', 'true'); }
+      syncHeight();
+    };
+
+    const next = () => goTo((current + 1) % slides.length);
+    const prev = () => goTo((current - 1 + slides.length) % slides.length);
+    const stop = () => { if (timer) { clearInterval(timer); timer = null; } };
+    const start = () => {
+      if (prefersReducedMotion || slides.length < 2) return;
+      stop();
+      timer = setInterval(next, 5000);
+    };
+
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => { goTo(i); start(); });
+    });
+
+    // Pausing needs to track hover and focus together -- otherwise tabbing
+    // into the carousel while the mouse is still resting on it (or vice
+    // versa) lets the other listener resume rotation out from under the user.
+    let hovered = false;
+    let focused = false;
+    const updatePause = () => { if (hovered || focused) stop(); else start(); };
+
+    heroTestimonial.addEventListener('mouseenter', () => { hovered = true; updatePause(); });
+    heroTestimonial.addEventListener('mouseleave', () => { hovered = false; updatePause(); });
+    heroTestimonial.addEventListener('focusin', () => { focused = true; updatePause(); });
+    heroTestimonial.addEventListener('focusout', (e) => {
+      if (heroTestimonial.contains(e.relatedTarget)) return; // focus moved to another element still inside the carousel
+      focused = false;
+      updatePause();
+    });
+
+    // Swipe support -- touch devices only have the tiny dots to tap otherwise.
+    // Purely a touchend comparison (no touchmove/preventDefault), so it never
+    // fights the page's normal vertical scroll.
+    let touchStartX = 0;
+    let touchStartY = 0;
+    heroTestimonial.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    heroTestimonial.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      const dy = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return; // not a clear horizontal swipe
+      if (dx < 0) next(); else prev();
+      start();
+    }, { passive: true });
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(syncHeight, 150);
+    });
+
+    syncHeight();
+    // Enable the smooth height transition only after the initial sizing, so
+    // the very first paint doesn't visibly grow from zero -- only slide
+    // changes/resizes after that should animate.
+    if (slidesWrap) slidesWrap.classList.add('height-animated');
+    start();
+  }
+
   // Scroll-reveal animations
   const revealEls = document.querySelectorAll('.reveal');
   if (revealEls.length) {
@@ -144,57 +228,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }, { threshold: 0.5 });
     statNums.forEach(el => statObserver.observe(el));
-  }
-
-  // Before/after website compare slider
-  const compareSlider = document.getElementById('compareSlider');
-  const compareBefore = document.getElementById('compareBefore');
-  const compareHandle = document.getElementById('compareHandle');
-
-  if (compareSlider && compareBefore && compareHandle) {
-    let dragging = false;
-
-    const setPosition = (percent) => {
-      const clamped = Math.max(2, Math.min(98, percent));
-      compareBefore.style.clipPath = `inset(0 ${100 - clamped}% 0 0)`;
-      compareHandle.style.left = `${clamped}%`;
-      compareHandle.setAttribute('aria-valuenow', Math.round(clamped));
-    };
-
-    const positionFromEvent = (clientX) => {
-      const rect = compareSlider.getBoundingClientRect();
-      return ((clientX - rect.left) / rect.width) * 100;
-    };
-
-    const startDrag = () => { dragging = true; };
-    const endDrag = () => { dragging = false; };
-    const onMove = (clientX) => { if (dragging) setPosition(positionFromEvent(clientX)); };
-
-    compareHandle.addEventListener('mousedown', startDrag);
-    compareSlider.addEventListener('mousedown', (e) => { dragging = true; setPosition(positionFromEvent(e.clientX)); });
-    window.addEventListener('mouseup', endDrag);
-    window.addEventListener('mousemove', (e) => onMove(e.clientX));
-
-    compareHandle.addEventListener('touchstart', startDrag, { passive: true });
-    compareSlider.addEventListener('touchstart', (e) => {
-      dragging = true;
-      onMove(e.touches[0].clientX);
-    }, { passive: true });
-    window.addEventListener('touchend', endDrag);
-    window.addEventListener('touchcancel', endDrag);
-    window.addEventListener('touchmove', (e) => {
-      if (!dragging) return;
-      e.preventDefault(); // stop page scroll from fighting the drag on touch devices
-      onMove(e.touches[0].clientX);
-    }, { passive: false });
-
-    compareHandle.addEventListener('keydown', (e) => {
-      const current = parseFloat(compareHandle.style.left) || 50;
-      if (e.key === 'ArrowLeft') setPosition(current - 5);
-      if (e.key === 'ArrowRight') setPosition(current + 5);
-    });
-
-    setPosition(50);
   }
 
   // Terms & Conditions gate — payment buttons won't proceed until checked
