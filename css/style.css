@@ -808,7 +808,10 @@ section{ padding: 5.5rem 0; }
 /* =========================================================
    Subscriptions
    ========================================================= */
-.sub-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+/* auto-fit so this works for the 2-card support block and the 3-card
+   website subscription block without a fixed column count leaving an
+   orphan card on its own row. */
+.sub-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
 .sub-card{
   background: var(--paper-alt); border: 1px solid var(--line); border-radius: var(--radius);
   padding: 1.75rem; display:flex; flex-direction:column; min-width: 0;
@@ -2141,3 +2144,17 @@ body.has-price-bar .cookie-banner{
   margin-bottom:1.75rem; max-width:70ch;
 }
 .subscription-anything-else a{ color: var(--accent-orange-text); text-decoration:underline; }
+
+/* Subscription tier checkout buttons */
+.subscription-plan-actions{
+  display:flex; flex-direction:column; gap:.5rem; margin-top:1.25rem;
+}
+.subscription-plan-actions .btn{ width:100%; text-align:center; }
+.subscription-order-note{
+  margin-top:1.5rem; font-size:.85rem; color: var(--ink-soft); line-height:1.7;
+  max-width:70ch;
+}
+.subscription-order-note strong{ color: var(--ink); }
+.subscription-order-note a{ color: var(--accent-orange-text); text-decoration:underline; }
+.sub-deposit-line{ font-size:.84rem; color: var(--ink-faint); margin:-.4rem 0 .9rem; }
+.sub-deposit-line strong{ color: var(--ink); }

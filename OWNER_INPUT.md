@@ -188,13 +188,32 @@ the copy points most buyers at the outright packages.
 They are in `pricing.html` only (search `subscription-plan-price`), so
 they are quick to change. Nothing else depends on them.
 
-### 5b. No Square links exist for these yet
+### 5b. Square links — LIVE AND VERIFIED 2026-07-26
 
-The subscription CTA points at `intake.html` ("Ask about a subscription
-plan"), deliberately — there is no Square checkout link for any of the
-three tiers, so there is no broken payment button. Once you create the
-Square subscription products, the buttons can point at them the same way
-`payment.html`'s existing two plans do.
+Dylan created all six Payment Links. Each was loaded and checked against
+the published price before wiring, and each button's label was verified
+against the product it actually points at (no deposit/subscription swap):
+
+| Tier | Deposit link | Verified | Subscription link | Verified |
+|---|---|---|---|---|
+| Basic | `square.link/u/lwgSQrWM` | $149.00 one-time | `square.link/u/fLTqZg7k` | $79.00 / month |
+| Standard | `square.link/u/GaFznrtG` | $249.00 one-time | `square.link/u/Y40Brp2x` | $129.00 / month |
+| Pro | `square.link/u/av8VJj8O` | $399.00 one-time | `square.link/u/izfCOOLP` | $199.00 / month |
+
+Wired into `pricing.html` (tier cards) and `payment.html` (new
+`#website-subscriptions` block). **If you change a price in Square, change
+it in both files** — nothing reads it from Square at runtime.
+
+Two things worth knowing:
+
+- **Deposit and subscription are separate checkouts**, so the customer
+  pays twice and sees two charges. Both pages say so, and the buttons are
+  numbered "1." and "2." to force the order. If you'd rather it were one
+  step, Square subscription plans can carry a setup fee — that would
+  replace all six links with three.
+- **The Heroes Discount has no discounted links.** The pages tell
+  eligible customers to contact you to confirm their rate before paying,
+  matching how `heroes-pricing.html` already handles it.
 
 ### 5c. What the site now commits you to on ownership
 
