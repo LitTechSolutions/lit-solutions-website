@@ -182,6 +182,34 @@ redesign quietly demote it.
   had to be re-shot after the hero network-diagram graphic it displayed
   was removed from `index.html` in a later pass of this same release.
 
+## Square subscription webhooks (v27)
+
+Square is the source of truth for whether a website subscription is being
+paid for. `netlify/functions/square-webhook.js` consumes
+`subscription.created`/`subscription.updated`; `square-subscriptions.js` is
+the staff side. Setup runbook: **`docs/development/SQUARE_WEBHOOK_SETUP.md`**
+— the integration is inert until migration 007 is run and two env vars
+(`SQUARE_WEBHOOK_SIGNATURE_KEY`, `SQUARE_WEBHOOK_NOTIFICATION_URL`) are set
+in Netlify.
+
+Four things not to relearn the hard way:
+
+- **A webhook never creates an organization.** Payment arrives before the
+  customer exists in the Care Hub, and terms.html §18 says the Care Hub is
+  invitation-only. Events land unlinked in `square_subscription_links` and a
+  human links them during onboarding. Do not "helpfully" auto-provision.
+- **Square's signature is not the generic one.** It is
+  `base64(HMAC-SHA256(key, notificationUrl + rawBody))` with **no signed
+  timestamp**, so `src/webhooks/webhookVerification.js` (Stripe-shaped, hex,
+  replay window) does not fit and `squareWebhookVerification.js` exists
+  instead. The algorithm is pinned by a test against Square's own SDK.
+- **Idempotency is the only replay defence**, precisely because nothing
+  timestamped is signed — hence the unique `(provider, provider_event_id)`
+  index from migration 007.
+- **Business problems return 200.** Square retries non-2xx forever, so an
+  unprocessable event must be acknowledged. Only bad signatures (401) and
+  misconfiguration (500) return errors.
+
 ## Architecture summary
 
 - **Static, build-less, multi-page site.** One `.html` file per URL, no

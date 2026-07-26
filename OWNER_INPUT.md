@@ -297,3 +297,60 @@ squatters quickly, and if the client's email runs on that domain, their
 email dies with it. "I stopped paying and they lost their domain" is the
 kind of thing that produces an unrecoverable review even when we were
 within our rights. The 30-day notice makes it demonstrably their choice.
+
+
+## 6. Square subscription webhooks — BUILT, NEEDS FOUR SETUP STEPS (2026-07-26)
+
+Dylan asked for the webhook-driven integration rather than manual status
+updates: "I know it's more work now but it's the standard and I need to be
+there."
+
+**It is written, tested (43 new tests) and deployed — and inert until you
+do four things.** Full runbook with the reasoning behind each decision:
+`docs/development/SQUARE_WEBHOOK_SETUP.md`.
+
+1. **Run `migrations/007_square_subscription_webhooks.sql` against Neon.**
+   Same manual process as migrations 002–006. Nothing works before this.
+2. **Create the webhook subscription in the Square dashboard**, pointed at
+   `https://lit-solutions.tech/.netlify/functions/square-webhook`, for the
+   events `subscription.created` and `subscription.updated`.
+3. **Set two environment variables in Netlify** — `SQUARE_WEBHOOK_SIGNATURE_KEY`
+   and `SQUARE_WEBHOOK_NOTIFICATION_URL`. Set them yourself in the Netlify UI;
+   they must never be pasted into a chat or committed. Redeploy afterwards.
+4. **Send a test event from Square** and confirm a 200, then check
+   `GET /.netlify/functions/webhook-events?provider=square`.
+
+Until step 3 the endpoint returns 500 and rejects everything, which is the
+safe failure mode — it never trusts an unverified request.
+
+### The one design decision you should agree with
+
+**A webhook never creates an organization.** When someone's deposit clears
+they have paid us money and have no Care Hub account, no verified identity,
+and `terms.html` §18 says the Care Hub is invitation-only. Auto-creating a
+tenant from webhook data would produce a junk organization for every test
+payment and skip onboarding entirely.
+
+So every Square subscription lands **unlinked** on a queue:
+
+```
+GET  /.netlify/functions/square-subscriptions?unlinked=true
+POST /.netlify/functions/square-subscriptions
+     { "squareSubscriptionId": "...", "organizationId": "...", "planKey": "..." }
+```
+
+You link it during onboarding, which creates the internal subscription
+record. After that, Square status changes flow through automatically.
+
+**This means a paid subscription sits waiting for you.** With a handful of
+customers that is correct and safe. If it ever becomes a bottleneck, the fix
+is an admin screen for the queue, not auto-provisioning.
+
+### Deliberately not built yet
+
+- Customer-facing subscription status on `/myaccount` — the API exists, nothing
+  renders it. Worth doing once there are real subscribers.
+- An admin UI for the linking queue — API-only today.
+- `invoice.payment_made` / `invoice.failed` handling — Square already reflects
+  payment failure in the subscription status we do handle, so it would be
+  duplicate signal unless you want per-invoice history.
