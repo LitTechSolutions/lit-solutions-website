@@ -95,7 +95,104 @@
         <p><strong>Introductory pricing:</strong> the prices in this tool are our current introductory rates. If they change, we post the new rates first and honor any quote already given -- and the <strong>American Heroes Discount</strong> is permanent either way.</p><p style="margin-top:.6rem;"><strong>Payment is split 50/50</strong> -- half to get started, half at launch once you have seen the finished site and approved it. You are never asked to pay the full amount upfront. See our <a href="terms.html">Terms</a>, section 3.</p>
       </details>
 
-      <div class="wd-steps-row">
+      <!-- Payment-mode choice, shown before the configurator. The two routes
+           are genuinely different products (one-off build you own vs. a fixed
+           monthly bundle we own and host), so this is a fork rather than a
+           toggle on the same estimate -- pretending you can configure a
+           subscription feature-by-feature would misrepresent what it is. -->
+      <div class="wd-mode-choice" id="wdModeChoice">
+        <h2>First: how would you like to pay for it?</h2>
+        <p class="wd-mode-lede">Same build either way. The difference is whether you own it outright or we host and maintain it for a monthly fee. You can switch between these at any point &mdash; nothing here commits you to anything.</p>
+
+        <div class="wd-mode-grid">
+          <button type="button" class="wd-mode-card" data-wd-mode="buy">
+            <span class="wd-mode-tag">Option 1</span>
+            <span class="wd-mode-title">Buy it outright</span>
+            <span class="wd-mode-price">from <strong>$699</strong></span>
+            <span class="wd-mode-sub">one-time, split 50/50</span>
+            <span class="wd-mode-list">
+              <span class="is-good">You own the files, source code and design</span>
+              <span class="is-good">Nothing expires, nothing switches off</span>
+              <span class="is-good">Host it with us or anywhere else</span>
+              <span class="is-plain">Optional $39/month care plan afterwards</span>
+            </span>
+            <span class="wd-mode-cta">Build my quote &rarr;</span>
+          </button>
+
+          <button type="button" class="wd-mode-card" data-wd-mode="subscribe">
+            <span class="wd-mode-tag">Option 2</span>
+            <span class="wd-mode-title">Pay monthly</span>
+            <span class="wd-mode-price">from <strong>$79</strong>/month</span>
+            <span class="wd-mode-sub">plus a $149 deposit to start</span>
+            <span class="wd-mode-list">
+              <span class="is-good">Far less to pay upfront</span>
+              <span class="is-good">Hosting, maintenance and support included</span>
+              <span class="is-warn">We own the build and license it to you</span>
+              <span class="is-warn">Cancel and the site goes offline</span>
+            </span>
+            <span class="wd-mode-cta">See the three plans &rarr;</span>
+          </button>
+        </div>
+
+        <p class="wd-mode-foot">Not sure? Most people are better off buying outright &mdash; over a few years it costs less. The monthly option is for businesses that need to be online now and can't put several hundred dollars down today. <a href="pricing.html#website-subscription">Full comparison on our Pricing page.</a></p>
+      </div>
+
+      <!-- Subscription route: fixed tiers, so no configurator -- straight to
+           the plans, the trade-off, and checkout. -->
+      <div class="wd-subscribe-panel" id="wdSubscribePanel" hidden>
+        <button type="button" class="wd-mode-back" data-wd-mode="reset">&larr; Back to payment options</button>
+        <h2>Website Subscription plans</h2>
+        <p class="wd-mode-lede">Three fixed tiers. Every optional feature from this tool can still be added to any of them &mdash; we fold it into the monthly price instead of charging a lump sum.</p>
+
+        <div class="subscription-plan-grid">
+          <div class="subscription-plan">
+            <h3>Basic</h3>
+            <p class="subscription-plan-price"><span class="subscription-down">$149</span> to start<br><span class="subscription-monthly">$79</span><span class="subscription-per">/month</span></p>
+            <p class="subscription-plan-note">Our Starter build &mdash; up to 5 pages &mdash; plus hosting, security updates, backups and support.</p>
+            <div class="subscription-plan-actions">
+              <a href="https://square.link/u/lwgSQrWM" class="btn btn-primary btn-small" target="_blank" rel="noopener" data-sub-step="deposit" data-sub-tier="Basic" data-sub-monthly="$79">Pay $149 deposit</a>
+              <a href="https://square.link/u/fLTqZg7k" class="btn btn-ghost btn-small" target="_blank" rel="noopener" data-sub-step="subscribe" data-sub-tier="Basic">Start $79/month</a>
+            </div>
+          </div>
+          <div class="subscription-plan subscription-plan--featured">
+            <span class="package-badge">Most popular</span>
+            <h3>Standard</h3>
+            <p class="subscription-plan-price"><span class="subscription-down">$249</span> to start<br><span class="subscription-monthly">$129</span><span class="subscription-per">/month</span></p>
+            <p class="subscription-plan-note">Our Business build &mdash; up to 10 pages, blog, FAQ, booking, enhanced SEO &mdash; plus everything in Basic.</p>
+            <div class="subscription-plan-actions">
+              <a href="https://square.link/u/GaFznrtG" class="btn btn-primary btn-small" target="_blank" rel="noopener" data-sub-step="deposit" data-sub-tier="Standard" data-sub-monthly="$129">Pay $249 deposit</a>
+              <a href="https://square.link/u/Y40Brp2x" class="btn btn-ghost btn-small" target="_blank" rel="noopener" data-sub-step="subscribe" data-sub-tier="Standard">Start $129/month</a>
+            </div>
+          </div>
+          <div class="subscription-plan">
+            <h3>Pro</h3>
+            <p class="subscription-plan-price"><span class="subscription-down">$399</span> to start<br><span class="subscription-monthly">$199</span><span class="subscription-per">/month</span></p>
+            <p class="subscription-plan-note">Customer sign-in, two-factor authentication, dashboards, admin content editing and advanced hardening &mdash; plus everything in Standard.</p>
+            <div class="subscription-plan-actions">
+              <a href="https://square.link/u/av8VJj8O" class="btn btn-primary btn-small" target="_blank" rel="noopener" data-sub-step="deposit" data-sub-tier="Pro" data-sub-monthly="$199">Pay $399 deposit</a>
+              <a href="https://square.link/u/izfCOOLP" class="btn btn-ghost btn-small" target="_blank" rel="noopener" data-sub-step="subscribe" data-sub-tier="Pro">Start $199/month</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="step2-reminder" id="step2Reminder" hidden role="status">
+          <div class="step2-reminder-body">
+            <strong>You've paid the deposit &mdash; one step left.</strong>
+            <span>Start your monthly plan to get your build scheduled. Nothing begins until this is done.</span>
+          </div>
+          <a href="#" class="btn btn-primary btn-small" id="step2Link" target="_blank" rel="noopener">Finish: start my plan</a>
+          <button type="button" class="step2-dismiss" id="step2Dismiss" aria-label="Dismiss this reminder">&times;</button>
+        </div>
+
+        <div class="subscription-catch">
+          <h3>The catch, stated plainly</h3>
+          <p><strong>On a subscription plan we own the website build and license it to you while you're subscribed.</strong> That's the trade for the low upfront cost. Plans run for a <strong>12-month minimum</strong>, then month to month. If the subscription ends, we stop hosting the site and it goes offline &mdash; always after written notice. It is not rent-to-own.</p>
+          <p><strong>Yours no matter what:</strong> your domain, your content, and your business data. If we registered your domain it's in <em>your</em> name from day one, and you get at least 30 days' notice before we stop covering the renewal. <strong>You can buy the site outright whenever you like</strong>, with everything you've already paid coming off the price.</p>
+          <p class="subscription-catch-fine">Full terms on our <a href="pricing.html#website-subscription">Pricing page</a> and in <a href="terms.html">Terms</a>, section 9. Prefer to own it from day one? <button type="button" class="wd-inline-link" data-wd-mode="buy">Build a buy-outright quote instead</button>.</p>
+        </div>
+      </div>
+
+      <div class="wd-steps-row" id="wdStepsRow" hidden>
         <div class="wd-steps" role="tablist" aria-label="Website designer steps">
           <button type="button" class="wd-step is-active" data-step="1" aria-current="step">1. Package</button>
           <button type="button" class="wd-step" data-step="2" disabled>2. Customize &amp; quote</button>
@@ -103,7 +200,7 @@
         <button type="button" class="wd-start-over" id="wdStartOver" hidden>Start over</button>
       </div>
 
-      <div class="wd-configurator" id="wdConfigurator">
+      <div class="wd-configurator" id="wdConfigurator" hidden>
 
         <!-- Step 1: package selection -->
         <div class="wd-panel is-active" id="wdStep1" data-panel="1">
@@ -180,6 +277,11 @@
             <span class="wd-quote-recap-note">Starting price -- confirmed by us before any work begins.</span>
             <div class="wd-cost-breakdown wd-quote-recap-breakdown" id="wdQuoteRecapBreakdown" aria-label="Itemized estimate"></div>
           </div>
+
+          <!-- Offered right where the total lands: this is the moment someone
+               decides the number is too big, and it's exactly who the monthly
+               option exists for. -->
+          <p class="wd-switch-note">More than you wanted to spend upfront? We also build sites for a deposit plus a monthly fee, from $149 + $79/month. <button type="button" class="wd-inline-link" data-wd-mode="subscribe">See the monthly plans</button> &mdash; your selections here stay saved.</p>
 
           <button type="button" class="btn btn-ghost btn-block" id="wdDownloadPdf" hidden>Download summary (PDF)</button>
           <p class="wd-pdf-error" id="wdPdfError" role="alert" hidden>The PDF summary tool didn't load correctly. You can still submit your project -- we'll follow up directly -- or refresh the page to try again.</p>
@@ -358,5 +460,7 @@
 <script src="js/main.js"></script>
 <script src="js/site-version.js"></script>
 <script src="js/website-designer.js"></script>
+<script src="js/website-designer-mode.js"></script>
+<script src="js/subscribe-flow.js"></script>
 </body>
 </html>

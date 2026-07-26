@@ -2186,3 +2186,67 @@ body.has-price-bar .cookie-banner{
 }
 .step2-dismiss:hover{ opacity:1; }
 .step2-dismiss:focus-visible{ outline:2px solid currentColor; outline-offset:-4px; border-radius:50%; }
+
+/* =========================================================
+   Website Designer: buy vs. subscribe fork
+   ========================================================= */
+.wd-mode-choice{ max-width:900px; margin:0 auto 2rem; }
+.wd-mode-choice > h2{ font-size:1.45rem; margin-bottom:.5rem; }
+.wd-mode-lede{ color: var(--ink-soft); line-height:1.7; margin-bottom:1.5rem; max-width:68ch; }
+.wd-mode-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap:1.25rem; }
+
+.wd-mode-card{
+  display:flex; flex-direction:column; align-items:flex-start; gap:.35rem;
+  text-align:left; width:100%; cursor:pointer;
+  background: var(--paper-alt); border:2px solid var(--line);
+  border-radius: var(--radius); padding:1.6rem;
+  font: inherit; color: inherit;
+  transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+.wd-mode-card:hover{ border-color: var(--accent-teal); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(15,23,42,.08); }
+.wd-mode-card:focus-visible{ outline:2px solid var(--accent-orange); outline-offset:3px; }
+.wd-mode-tag{
+  font-family: var(--font-display); font-size:.68rem; font-weight:700;
+  letter-spacing:.08em; text-transform:uppercase; color: var(--ink-faint);
+}
+.wd-mode-title{ font-family: var(--font-heading); font-size:1.25rem; font-weight:700; }
+.wd-mode-price{ font-size:1rem; color: var(--ink-soft); }
+.wd-mode-price strong{ font-family: var(--font-display); font-size:1.7rem; color: var(--ink); }
+.wd-mode-sub{ font-size:.83rem; color: var(--ink-faint); margin-bottom:.9rem; }
+.wd-mode-list{ display:grid; gap:.45rem; width:100%; margin-bottom:1.1rem; }
+.wd-mode-list > span{ position:relative; padding-left:1.5rem; font-size:.86rem; line-height:1.55; color: var(--ink-soft); }
+.wd-mode-list > span::before{
+  position:absolute; left:0; top:0; font-weight:700; font-size:.95rem; line-height:1.45;
+}
+.wd-mode-list .is-good::before{ content:"\2713"; color: var(--accent-teal); }
+.wd-mode-list .is-warn::before{ content:"\0021"; color: var(--accent-orange); }
+.wd-mode-list .is-plain::before{ content:"\00B7"; color: var(--ink-faint); font-size:1.3rem; line-height:1.15; }
+.wd-mode-cta{
+  margin-top:auto; font-family: var(--font-display); font-weight:600;
+  font-size:.9rem; color: var(--accent-orange-text);
+}
+.wd-mode-foot{
+  margin-top:1.5rem; font-size:.85rem; color: var(--ink-faint); line-height:1.7; max-width:70ch;
+}
+.wd-mode-foot a{ color: var(--accent-orange-text); text-decoration:underline; }
+
+.wd-subscribe-panel{ max-width:900px; margin:0 auto 2rem; }
+.wd-subscribe-panel > h2{ font-size:1.45rem; margin-bottom:.5rem; }
+.wd-subscribe-panel .subscription-plan-grid{ margin-bottom:1.5rem; }
+.wd-mode-back{
+  background:none; border:none; padding:.35rem 0; margin-bottom:1rem;
+  font: inherit; font-size:.86rem; color: var(--accent-orange-text);
+  cursor:pointer; text-decoration:underline;
+}
+.wd-mode-back:focus-visible{ outline:2px solid var(--accent-orange); outline-offset:2px; }
+.wd-inline-link{
+  background:none; border:none; padding:0; font:inherit; color:inherit;
+  text-decoration:underline; cursor:pointer;
+}
+.wd-switch-note{
+  margin-top:1rem; padding:.9rem 1.1rem;
+  background: var(--paper-alt); border:1px solid var(--line);
+  border-left:3px solid var(--accent-orange); border-radius: var(--radius);
+  font-size:.84rem; color: var(--ink-soft); line-height:1.65;
+}
+.wd-switch-note .wd-inline-link{ color: var(--accent-orange-text); font-weight:600; }
