@@ -1037,6 +1037,12 @@ section{ padding: 5.5rem 0; }
   padding-bottom:.5rem; border-bottom: 1px solid var(--line);
 }
 .legal-doc h2:first-child{ margin-top:0; }
+/* Subsections (e.g. Terms 9.1/9.2/9.3) -- no rule existed, so these
+   previously fell back to the browser default and outranked the h2 above them. */
+.legal-doc h3{
+  font-size: .95rem; font-weight:600; margin-top: 1.6rem; margin-bottom:.55rem;
+  color: var(--ink);
+}
 .legal-doc p{ color: var(--ink-soft); font-size:.92rem; line-height:1.7; margin-bottom:1rem; }
 .legal-doc ul{ margin: 0 0 1rem; padding-left: 1.3rem; color: var(--ink-soft); font-size:.92rem; line-height:1.7; }
 .legal-doc ul li{ margin-bottom:.4rem; }
@@ -2062,3 +2068,76 @@ body.has-price-bar .cookie-banner{
 .payment-terms-fine a{ color: var(--accent-orange-text); text-decoration:underline; }
 .label-optional{ font-weight:400; color: var(--ink-faint); text-transform:none; letter-spacing:0; }
 .field-hint{ margin-top:.35rem; font-size:.78rem; color: var(--ink-faint); }
+
+/* =========================================================
+   Website Subscription offer (pricing.html)
+   The ownership trade-off is deliberately given its own high-contrast
+   block rather than a bullet -- a buyer discovering "we own it" after
+   purchase is the exact failure this section exists to prevent.
+   ========================================================= */
+.package-own-note{
+  background: var(--paper-alt); border:1px solid var(--line);
+  border-left:4px solid var(--accent-teal); border-radius: var(--radius);
+  padding:1.1rem 1.3rem; margin-bottom:3rem;
+  font-size:.9rem; color: var(--ink-soft); line-height:1.7;
+}
+.package-own-note strong{ color: var(--ink); }
+
+.subscription-offer{
+  border:1px solid var(--line); border-radius: var(--radius);
+  padding:2.25rem; margin-bottom:3rem; background: var(--paper);
+}
+.subscription-offer-head{ max-width:64ch; margin-bottom:1.75rem; }
+.subscription-offer-head h2{ font-size:1.5rem; margin:.25rem 0 .6rem; }
+
+.subscription-plan-grid{
+  display:grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+  gap:1.25rem; margin-bottom:1.75rem;
+}
+.subscription-plan{
+  background: var(--paper-alt); border:1px solid var(--line);
+  border-radius: var(--radius); padding:1.5rem;
+}
+.subscription-plan h3{ font-size:1.05rem; margin-bottom:.75rem; }
+.subscription-plan-price{ line-height:1.4; margin-bottom:.75rem; }
+.subscription-down{ font-family:var(--font-display); font-size:1.25rem; font-weight:700; color:var(--ink); }
+.subscription-monthly{ font-family:var(--font-display); font-size:2rem; font-weight:700; color:var(--ink); }
+.subscription-per{ font-size:.9rem; color:var(--ink-faint); }
+.subscription-plan-note{ font-size:.85rem; color:var(--ink-soft); line-height:1.6; }
+
+.subscription-catch{
+  background: var(--notice-bg); border:1px solid var(--notice-border);
+  border-radius: var(--radius); padding:1.6rem 1.75rem; color: var(--notice-text);
+}
+.subscription-catch h3{ font-size:1.02rem; margin-bottom:.85rem; color:inherit; }
+.subscription-catch p{ font-size:.89rem; line-height:1.7; margin-bottom:.9rem; }
+.subscription-catch p:last-child{ margin-bottom:0; }
+.subscription-catch strong{ color:inherit; font-weight:700; }
+.subscription-catch-fine{ font-size:.83rem !important; opacity:.9; }
+.subscription-catch a{ color:inherit; text-decoration:underline; }
+
+@media (max-width:600px){
+  .subscription-offer{ padding:1.5rem; }
+  .subscription-catch{ padding:1.25rem; }
+}
+
+/* Three-tier subscription plan cards */
+.subscription-plan--featured{
+  position:relative; border-color: var(--accent-teal); border-width:2px;
+}
+.subscription-plan--featured .package-badge{ position:static; display:inline-block; margin-bottom:.75rem; }
+.subscription-features{
+  list-style:none; margin-top:1rem; padding:0;
+  display:grid; gap:.5rem; font-size:.85rem; color: var(--ink-soft);
+}
+.subscription-features li{ position:relative; padding-left:1.4rem; line-height:1.55; }
+.subscription-features li::before{
+  content:""; position:absolute; left:0; top:.45em;
+  width:6px; height:6px; border-radius:50%; background: var(--line-strong, #c9cfd6);
+}
+.subscription-features li.is-extra::before{ background: var(--accent-teal); }
+.subscription-anything-else{
+  font-size:.87rem; color: var(--ink-soft); line-height:1.7;
+  margin-bottom:1.75rem; max-width:70ch;
+}
+.subscription-anything-else a{ color: var(--accent-orange-text); text-decoration:underline; }

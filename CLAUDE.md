@@ -67,7 +67,7 @@ actually changes.
   version's folder is what actually deploys.
 - The version follows semver: **major** = large redesign/rework,
   **minor** = feature addition, **patch** = bug/security fix only.
-  Current: `4.4.0`. It is tracked internally and in `patch-notes.html`;
+  Current: `4.5.0`. It is tracked internally and in `patch-notes.html`;
   it is no longer displayed to customers (see next bullet).
 - **The version string is no longer shown to customers (v27).** The
   footer "Website Version 4.x.x" line and its `<span id="siteVersion">`
@@ -106,6 +106,43 @@ states them in sync:
   moment a policy binds, that answer changes and a "licensed & insured"
   signal can go on the homepage/About/service pages. Until then, no page
   may imply coverage that doesn't exist.
+
+## Website ownership model (v27 / v4.5.0)
+
+Ownership is **per project and always disclosed before purchase** —
+`terms.html` section 9 is the authority and is split three ways:
+
+- **9.1 Buy-outright** (Starter $699 / Business $1,299, paid 50/50):
+  client owns files, source and design on full payment. This is the
+  default when a scope of work is silent.
+- **9.2 Website Subscription** (Basic $149+$79/mo, Standard $249+$129/mo,
+  Pro $399+$199/mo, 12-month minimum): **we** own the build and license
+  it while the subscription is active. Cancellation means the site goes
+  offline, after written notice. Not rent-to-own. A buy-out path exists.
+- **9.3 Always the client's, on any plan**: their content, their business
+  data, and their domain.
+
+Two rules that are operational habits, not just copy — breaking either
+makes published pages factually false:
+
+1. **Client domains are registered in the client's name**, as owner and
+   admin contact, from day one. We only cover the renewal fee. On
+   cancellation, at least **30 days' written notice** before we stop
+   covering renewals, plus transfer instructions.
+2. **Nothing goes offline without written notice first.**
+
+The subscription prices are documented as *derived proposals* in
+`OWNER_INPUT.md` section 5a and live only in `pricing.html`. The tiers
+have no Square checkout links yet — the CTA deliberately points at
+`intake.html` so there is no broken payment button.
+
+Copy rule: the ownership trade-off on subscription plans must stay
+**prominent and pre-purchase**, never fine print. A buyer discovering
+"we own it" at cancellation is the exact failure the `.subscription-catch`
+block on `pricing.html` exists to prevent — the original outside audit
+flagged undisclosed lock-in as a trust-killer, so don't let a future
+redesign quietly demote it.
+
 
 ## Release blog posts
 

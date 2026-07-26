@@ -157,3 +157,81 @@ and Kahai Fuqua reviews as static cards. `js/cms.js`'s
 admin-entered items exist, so there's no double-render risk — but note
 that if the CMS holds only Bill Armour's, adding it via admin will drop
 Kahai's from that page. Add both in admin, or leave the static pair.
+
+## 5. Website Subscription plans (v4.5.0) — PRICES ARE PROPOSALS, CONFIRM BEFORE MERGE
+
+Dylan asked for a subscription model: build the site for a small deposit
+plus a monthly fee, with Little Technical Solutions retaining ownership
+of the build. Three tiers were requested (Basic / Standard / Pro),
+offering the same optional features as the one-off builds.
+
+### 5a. The numbers I published are DERIVED, not given — confirm them
+
+| Tier | Deposit | Monthly | Mirrors |
+|---|---|---|---|
+| Basic | $149 | $79/mo | Starter build ($699) |
+| Standard | $249 | $129/mo | Business build ($1,299) |
+| Pro | $399 | $199/mo | Business + accounts/admin/security features |
+
+How I got there: monthly = (equivalent build price ÷ 24 months) + the
+$39/mo Website Care Plan baseline, rounded up for margin. Basic works out
+at $29 + $39 = $68 → $79. Standard at $54 + $39 = $93 → $129. Pro assumes
+a ~$2,499 equivalent build → $104 + infra → $199.
+
+Sanity check on Basic over 12 months: $149 + $948 = **$1,097**, versus
+buying Starter outright at $699 + 12 × $39 care = **$1,167**. So year one
+is slightly cheaper on subscription and every year after is more
+expensive — which is the honest story we tell on the page, and the reason
+the copy points most buyers at the outright packages.
+
+**All six numbers and the 12-month minimum term are mine, not yours.**
+They are in `pricing.html` only (search `subscription-plan-price`), so
+they are quick to change. Nothing else depends on them.
+
+### 5b. No Square links exist for these yet
+
+The subscription CTA points at `intake.html` ("Ask about a subscription
+plan"), deliberately — there is no Square checkout link for any of the
+three tiers, so there is no broken payment button. Once you create the
+Square subscription products, the buttons can point at them the same way
+`payment.html`'s existing two plans do.
+
+### 5c. What the site now commits you to on ownership
+
+`terms.html` section 9 was restructured into three parts:
+
+- **9.1 Buy-outright** — Starter and Business are unchanged: pay in full,
+  you own the files, source and design. Dylan confirmed these stay
+  buy-outright.
+- **9.2 Subscription** — we own the build and license it while the
+  subscription is active. If it ends, the site goes offline **after
+  written notice**. Explicitly not rent-to-own. Includes a buy-out path:
+  the equivalent one-off build price less everything already paid.
+- **9.3 Always the client's, on any plan** — their content, their
+  business data, and their domain.
+
+**The buy-out formula needs your sign-off.** "Equivalent build price less
+what they've already paid" can reach zero on a long subscription. Consider
+a floor (e.g. minimum $199 to cover handover work) or a cap on how much
+of the monthly counts toward it.
+
+### 5d. The domain rule you must actually follow
+
+Per Dylan's decision, handling depends on who registered it:
+
+- **Client already owned it** — we never take control; nothing we do
+  touches it.
+- **We registered it** — it goes in the **client's name, as owner and
+  admin contact, from day one**. We only cover the renewal fee. On
+  cancellation: transfer billing control on request, and give **at least
+  30 days' written notice** before we stop covering renewals.
+
+This is now published in Terms 9.3, the FAQ, and the Pricing page. It is
+an operational habit, not just copy — **if a client domain is ever
+registered in Dylan's own name, the site is factually wrong.**
+
+The reason for the notice period: an expired domain gets picked up by
+squatters quickly, and if the client's email runs on that domain, their
+email dies with it. "I stopped paying and they lost their domain" is the
+kind of thing that produces an unrecoverable review even when we were
+within our rights. The 30-day notice makes it demonstrably their choice.
