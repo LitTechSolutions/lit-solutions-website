@@ -58,7 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Rotating hero testimonial carousel
   const heroTestimonial = document.getElementById('heroTestimonial');
   if (heroTestimonial) {
-    const slidesWrap = heroTestimonial.querySelector('.hero-testimonial-slides');
     const slides = Array.from(heroTestimonial.querySelectorAll('.hero-testimonial-slide'));
     const dots = Array.from(heroTestimonial.querySelectorAll('.hero-testimonial-dot'));
     const learnMoreLink = heroTestimonial.querySelector('.hero-testimonial-link');
@@ -71,19 +70,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // the other two reviews aren't tied to.
     if (learnMoreLink) learnMoreLink.hidden = (current !== 0);
 
-    const syncHeight = () => {
-      if (slidesWrap && slides[current]) slidesWrap.style.height = slides[current].offsetHeight + 'px';
-    };
-
     const goTo = (index) => {
       if (index === current || !slides[index]) return;
-      slides[current].classList.remove('is-active');
+      const outgoing = slides[current];
+      outgoing.classList.remove('is-active');
+      outgoing.classList.add('is-leaving');
+      setTimeout(() => outgoing.classList.remove('is-leaving'), 550);
       if (dots[current]) { dots[current].classList.remove('is-active'); dots[current].setAttribute('aria-pressed', 'false'); }
       current = index;
       slides[current].classList.add('is-active');
       if (dots[current]) { dots[current].classList.add('is-active'); dots[current].setAttribute('aria-pressed', 'true'); }
       if (learnMoreLink) learnMoreLink.hidden = (current !== 0);
-      syncHeight();
     };
 
     const next = () => goTo((current + 1) % slides.length);
@@ -132,17 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
       start();
     }, { passive: true });
 
-    let resizeTimer;
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(syncHeight, 150);
-    });
-
-    syncHeight();
-    // Enable the smooth height transition only after the initial sizing, so
-    // the very first paint doesn't visibly grow from zero -- only slide
-    // changes/resizes after that should animate.
-    if (slidesWrap) slidesWrap.classList.add('height-animated');
     start();
   }
 

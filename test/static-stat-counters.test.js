@@ -1,6 +1,9 @@
 // Guards against the "zero-counter" SEO/no-JS bug: the animated stat
-// counters on index.html and about.html (.stat-num, data-count="N")
-// used to render "0" in the static HTML and rely on js/main.js's
+// counters on about-the-owner.html (.stat-num, data-count="N") -- the
+// founder's Navy-service stats, consolidated onto that page out of
+// index.html/about.html to remove the duplication tracked as audit
+// finding F036 -- used to render "0" in the static HTML and rely on
+// js/main.js's
 // IntersectionObserver-driven animateCount() to fill in the real
 // number once scrolled into view. That meant search crawlers,
 // no-JS/failed-JS visitors, reduced-motion users who load fast, and
@@ -32,10 +35,6 @@ function checkFile(file) {
   }
 }
 
-test("index.html stat counters render their real values in static HTML, never zero", () => {
-  checkFile("index.html");
-});
-
-test("about.html stat counters render their real values in static HTML, never zero", () => {
-  checkFile("about.html");
+test("about-the-owner.html stat counters render their real values in static HTML, never zero", () => {
+  checkFile("about-the-owner.html");
 });

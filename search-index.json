@@ -9,13 +9,19 @@
     "title": "About Us",
     "href": "about.html",
     "scope": "Company",
-    "excerpt": "Veteran-owned and operated. Meet Dylan Little, U.S. Navy veteran and founder."
+    "excerpt": "Veteran-owned technology company offering website design, computer repair, networking, cybersecurity, and small business IT."
   },
   {
     "title": "Our Team",
     "href": "team.html",
     "scope": "Company",
     "excerpt": "Who you'll actually be working with."
+  },
+  {
+    "title": "About the Owner",
+    "href": "about-the-owner.html",
+    "scope": "Company",
+    "excerpt": "Meet Dylan Little — U.S. Navy veteran, B.S. in Cybersecurity Technology, and the founder of Little Technical Solutions LLC."
   },
   {
     "title": "Portfolio",
@@ -111,7 +117,7 @@
     "title": "Blog",
     "href": "blog.html",
     "scope": "Resources",
-    "excerpt": "Practical, jargon-free articles on websites, cybersecurity, and networking."
+    "excerpt": "Practical, plain-language articles on websites, cybersecurity, and networking."
   },
   {
     "title": "We Redesigned Our Website",

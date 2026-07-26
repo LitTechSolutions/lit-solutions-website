@@ -21,32 +21,50 @@ actually changes.
   websites, computers, networking, cybersecurity, and small-business IT —
   not primarily an "AI website company." Do not exaggerate credentials,
   business age, staffing, or response capacity in any customer-facing copy.
-- **Founder-bio fact duplication (audit F036, Info severity, no build
-  step to de-duplicate through):** the facts above — Navy years, ship
-  name/hull number, degree, university — are hand-typed independently in
-  `about.html` (photo caption, founder lede, credential cards),
-  `index.html` (homepage lede, credential cards), `team.html` (founder
-  bio line), and `testimonials.html` (credential cards). If any of these
-  facts ever change again, this is the checklist of every location that
-  needs the same edit — the CG-64→CG-54 correction (`9a753a6`) already
-  had to be done as a manual sweep across all of them once.
+- **Headcount stays private (as of v26):** the owner explicitly asked for
+  employee count to be kept private. Customer-facing copy should not state
+  or imply the business is a solo/one-person operation ("team of one,"
+  "the same person who answers the phone," "one technician," etc.) —
+  use neutral collective language ("we," "our team") instead. This is
+  about not *confirming* headcount either way, not about fabricating
+  claims of a larger staff. `team.html` was the main offender (previously
+  titled "One person, every job") and has been reworded; check it and the
+  homepage/service pages before reintroducing this kind of phrasing.
+- **Founder-bio content lives on `about-the-owner.html` (as of v26):** the
+  full Navy-service narrative, ship photos, education detail, and Dylan's
+  personal letter were consolidated onto this one dedicated page — this
+  resolves what used to be audit finding F036 (the same facts hand-typed
+  independently across `about.html`, `index.html`, `team.html`, and
+  `testimonials.html`). `about.html` is now company/services-focused, not
+  founder-focused. The other pages keep only brief, non-duplicated
+  mentions (e.g. "Veteran-owned" trust badges) linking to
+  `about-the-owner.html` for the full story — if any of these facts ever
+  change again, `about-the-owner.html` is the one place to edit; the brief
+  mentions elsewhere shouldn't need touching unless their own wording
+  changes. `about-the-owner.html` has no persistent nav slot (main or
+  footer) — same pattern as `portfolio.html` — it's reached via contextual
+  links plus `sitemap.xml`/`sitemap.html`/`search-index.json`.
 
 ## Versioning convention
 
 - Each site revision lives in its own folder under `Business Website/
-  Website Code/vN` (currently `v25`), copied forward from the previous
+  Website Code/vN` (currently `v26`), copied forward from the previous
   version — never edited in place. Each version folder is its own git
   repo pointed at the same GitHub remote
   (`LitTechSolutions/lit-solutions-website`), so pushing from the current
   version's folder is what actually deploys.
 - The in-page "Website Version" footer string (visible on all 33 public
   pages) follows semver: **major** = large redesign/rework, **minor** =
-  feature addition, **patch** = bug/security fix only. Current: `4.0.0`
-  (v25 is the Apple-inspired visual redesign + i18n removal).
-- There is no build step and no shared include/template mechanism, so a
-  version bump (or any header/footer change) means editing the string in
-  all 33 public HTML files directly — this repo has done that via a
-  scripted `sed` sweep on every release so far.
+  feature addition, **patch** = bug/security fix only. Current: `4.3.0`.
+- The *dynamically displayed* version is a single source of truth,
+  `js/site-version.js`'s `SITE_VERSION` constant (F034) — editing it there
+  is enough for the on-page display. There is still no build step or
+  shared include/template mechanism though, so each HTML file also has a
+  static fallback `<span id="siteVersion">4.3.0</span>` (for no-JS
+  visitors/crawlers, before `js/site-version.js` overwrites it) that
+  `SITE_VERSION` does *not* keep in sync automatically — that fallback
+  string still needs a `sed` sweep across all 33 public HTML files on
+  every release, same as any other header/footer change.
 
 ## Release blog posts
 
