@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import type { FormEvent } from "react";
 import { api } from "../api/client";
-import type { Subscription } from "../api/types";
+import type { Subscription, SquareSubscriptionLink } from "../api/types";
 import { strings } from "../strings/en";
 import { useApi } from "../hooks/useApi";
 import { useMemberships } from "../hooks/useMemberships";
@@ -83,7 +83,26 @@ function StaffSubscriptions() {
 }
 
 function SubscriptionsForOrg({ organizationId, readOnly }: { organizationId: string; readOnly: boolean }) {
-  const fetchSubscriptions = useCallback(() => api.subscriptions.list(organizationId), [organizationId]);
+  // Fetch both sides together: our lifecycle record and Square's billing view
+  // of it. A subscription whose payments have failed is "active" in our table
+  // right up until the webhook lands, so showing only our status can tell a
+  // customer everything is fine while Square has already stopped billing.
+  // Square links are best-effort -- if that call fails the page still renders
+  // the subscriptions, just without billing detail.
+  const fetchSubscriptions = useCallback(
+    () =>
+      Promise.all([
+        api.subscriptions.list(organizationId),
+        // Wrapped rather than a bare .catch(): if the Square surface is
+        // absent entirely the property access throws synchronously, which a
+        // promise .catch() would never see, blanking the whole page over
+        // optional detail.
+        Promise.resolve()
+          .then(() => api.squareSubscriptions.list(organizationId))
+          .catch(() => ({ links: [] as SquareSubscriptionLink[] })),
+      ]).then(([subs, square]) => ({ ...subs, squareLinks: square.links })),
+    [organizationId]
+  );
   const state = useApi(fetchSubscriptions, [organizationId], (data) => data.subscriptions.length === 0);
 
   if (state.status === "loading") return <Loading />;
@@ -92,6 +111,9 @@ function SubscriptionsForOrg({ organizationId, readOnly }: { organizationId: str
   if (state.status === "error") return <ErrorState body={state.message} onRetry={state.retry} />;
 
   const subscriptionsList = state.status === "success" ? state.data.subscriptions : [];
+  const squareLinks = state.status === "success" ? state.data.squareLinks : [];
+  const linkFor = (sub: Subscription) =>
+    squareLinks.find((l) => l.subscriptionId === sub.id || (!!sub.providerSubscriptionReference && l.squareSubscriptionId === sub.providerSubscriptionReference));
 
   return (
     <div>
@@ -104,9 +126,9 @@ function SubscriptionsForOrg({ organizationId, readOnly }: { organizationId: str
         <ul style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)", marginTop: readOnly ? "var(--space-4)" : 0 }}>
           {subscriptionsList.map((sub) =>
             readOnly ? (
-              <SubscriptionCard key={sub.id} subscription={sub} />
+              <SubscriptionCard key={sub.id} subscription={sub} squareLink={linkFor(sub)} />
             ) : (
-              <StaffSubscriptionRow key={sub.id} subscription={sub} onUpdated={state.retry} />
+              <StaffSubscriptionRow key={sub.id} subscription={sub} squareLink={linkFor(sub)} onUpdated={state.retry} />
             )
           )}
         </ul>
@@ -120,7 +142,54 @@ function SubscriptionsForOrg({ organizationId, readOnly }: { organizationId: str
   );
 }
 
-function SubscriptionCard({ subscription }: { subscription: Subscription }) {
+
+/**
+ * Square's own view of the subscription. Deliberately shown as a separate
+ * fact rather than merged into the status badge: they can legitimately
+ * disagree for a short window (a webhook in flight), and quietly showing one
+ * as if it were the other would hide exactly the situation a customer most
+ * needs to know about -- billing stopped, service about to.
+ */
+function BillingPanel({ subscription, squareLink }: { subscription: Subscription; squareLink?: SquareSubscriptionLink }) {
+  const s = strings.subscriptions;
+  if (!squareLink) {
+    return (
+      <p style={{ color: "var(--ink-faint)", fontSize: "0.82rem", marginTop: "var(--space-2)" }}>{s.billingNone}</p>
+    );
+  }
+
+  const message =
+    squareLink.mappedStatus === "active"
+      ? s.billingActive
+      : squareLink.mappedStatus === "paused"
+        ? s.billingPaused
+        : squareLink.mappedStatus === "cancelled"
+          ? s.billingCancelled
+          : `${s.billingUnknown} ${squareLink.squareStatus}`;
+
+  const disagrees = squareLink.mappedStatus !== null && squareLink.mappedStatus !== subscription.status;
+
+  return (
+    <div style={{ marginTop: "var(--space-3)", paddingTop: "var(--space-3)", borderTop: "1px solid var(--line)" }}>
+      <strong style={{ fontSize: "0.8rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--ink-faint)" }}>
+        {s.billingHeading}
+      </strong>
+      <p style={{ fontSize: "0.85rem", marginTop: "var(--space-2)" }}>{message}</p>
+      {disagrees ? (
+        <p role="status" style={{ fontSize: "0.82rem", marginTop: "var(--space-2)", color: "var(--accent-orange-text)" }}>
+          {s.billingMismatch}
+        </p>
+      ) : null}
+      {squareLink.lastEventAt ? (
+        <p style={{ color: "var(--ink-faint)", fontSize: "0.78rem", marginTop: "var(--space-2)" }}>
+          {s.billingLastEvent} {new Date(squareLink.lastEventAt).toLocaleString()}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+function SubscriptionCard({ subscription, squareLink }: { subscription: Subscription; squareLink?: SquareSubscriptionLink }) {
   return (
     <li className="card">
       <div style={{ display: "flex", justifyContent: "space-between", gap: "var(--space-3)" }}>
@@ -142,11 +211,12 @@ function SubscriptionCard({ subscription }: { subscription: Subscription }) {
           </>
         ) : null}
       </p>
+      <BillingPanel subscription={subscription} squareLink={squareLink} />
     </li>
   );
 }
 
-function StaffSubscriptionRow({ subscription, onUpdated }: { subscription: Subscription; onUpdated: () => void }) {
+function StaffSubscriptionRow({ subscription, squareLink, onUpdated }: { subscription: Subscription; squareLink?: SquareSubscriptionLink; onUpdated: () => void }) {
   const [nextStatus, setNextStatus] = useState<Subscription["status"]>(subscription.status);
   const [transitioning, setTransitioning] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -204,6 +274,7 @@ function StaffSubscriptionRow({ subscription, onUpdated }: { subscription: Subsc
           {transitioning ? strings.subscriptions.transitioning : strings.subscriptions.transitionButton}
         </button>
       </div>
+      <BillingPanel subscription={subscription} squareLink={squareLink} />
       {error ? (
         <p className="field-error" role="alert">
           {error}

@@ -48,6 +48,7 @@ import type {
   ScopeOfWork,
   ServiceRecord,
   Subscription,
+  SquareSubscriptionLink,
   TechnologyAsset,
   TemplateDefinition,
   Ticket,
@@ -238,6 +239,16 @@ export const subscriptions = {
     request<{ subscription: Subscription }>("/subscriptions", { method: "PATCH", body: { subscriptionId, nextStatus } }),
 };
 
+// ---- Square subscription links ----
+export const squareSubscriptions = {
+  list: (organizationId: string) =>
+    request<{ links: SquareSubscriptionLink[] }>("/square-subscriptions", { query: { organizationId } }),
+  listUnlinked: () =>
+    request<{ links: SquareSubscriptionLink[] }>("/square-subscriptions", { query: { unlinked: "true" } }),
+  link: (input: { squareSubscriptionId: string; organizationId: string; planKey: string }) =>
+    request<{ subscription: Subscription }>("/square-subscriptions", { method: "POST", body: input }),
+};
+
 // ---- F043/F041 Technology Assets / Backups ----
 export const technologyAssets = {
   createAsset: (input: { organizationId: string; type: string; label: string; warrantyExpiresAt?: string; licenseExpiresAt?: string }) =>
@@ -408,6 +419,7 @@ export const api = {
   websiteProfiles,
   entitlements,
   subscriptions,
+  squareSubscriptions,
   technologyAssets,
   reminders,
   checklists,

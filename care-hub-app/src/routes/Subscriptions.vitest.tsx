@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
   subscriptionsList: vi.fn(),
   subscriptionsCreate: vi.fn(),
   subscriptionsTransition: vi.fn(),
+  squareList: vi.fn(),
 }));
 
 vi.mock("../api/memberships", () => ({
@@ -16,6 +17,7 @@ vi.mock("../api/memberships", () => ({
 vi.mock("../api/client", () => ({
   api: {
     subscriptions: { list: mocks.subscriptionsList, create: mocks.subscriptionsCreate, transition: mocks.subscriptionsTransition },
+    squareSubscriptions: { list: mocks.squareList },
   },
 }));
 
@@ -26,32 +28,24 @@ vi.mock("../auth/AuthContext", () => ({
   }),
 }));
 
-// strings/en.ts doesn't have a `subscriptions` section yet -- this screen
-// was built against the reported key set in the same session that will
-// add it there for real (see this repo's build-out notes). Merge onto
-// the real module's other sections (via importOriginal) rather than
-// editing strings/en.ts directly, so this test is self-contained today
-// and still exercises the real tickets/checklists/states strings every
-// other screen already depends on.
+// strings/en.ts DOES have a `subscriptions` section now (it didn't when this
+// screen was first built, which is what the previous version of this comment
+// described). The mock is kept only to pin the exact copy these assertions
+// match on -- but it now spreads the real section first, so keys added later
+// (e.g. the billing panel's) reach the component instead of being shadowed
+// into undefined.
 vi.mock("../strings/en", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../strings/en")>();
   return {
     strings: {
       ...actual.strings,
       subscriptions: {
+        ...actual.strings.subscriptions,
         title: "Subscriptions",
         emptyBody: "No subscriptions have been set up for this organization yet.",
         statusLabels: { active: "Active", paused: "Paused", cancelled: "Cancelled" },
-        statusLabel: "Status",
-        startedLabel: "Started",
-        pausedLabel: "Paused",
-        cancelledLabel: "Cancelled",
         transitionButton: "Update status",
-        transitioning: "Updating…",
-        newHeading: "Create a subscription",
-        planKeyLabel: "Plan key",
         createButton: "Create subscription",
-        creating: "Creating…",
       },
     },
   };
@@ -68,10 +62,30 @@ function subscription(overrides = {}) {
   };
 }
 
+
+function squareLink(overrides = {}) {
+  return {
+    squareSubscriptionId: "sq-sub-1",
+    squareStatus: "ACTIVE",
+    mappedStatus: "active" as const,
+    subscriptionId: "sub-1",
+    lastEventAt: "2026-07-26T10:00:00Z",
+    lastEventType: "subscription.updated",
+    ...overrides,
+  };
+}
+
+const ORG_MEMBERSHIP = {
+  memberships: [{ organizationId: "org-1", organizationName: "Acme Co", role: "org_owner" as const, status: "active" }],
+};
+
 describe("Subscriptions", () => {
   beforeEach(() => {
     Object.values(mocks).forEach((m) => m.mockReset());
     authRole = "customer";
+    // Square billing detail is supplementary; default it to "nothing linked"
+    // so the existing assertions stay about the subscription itself.
+    mocks.squareList.mockResolvedValue({ links: [] });
   });
 
   it("shows a customer's subscriptions read-only, with no status control", async () => {
@@ -137,5 +151,66 @@ describe("Subscriptions", () => {
     await userEvent.click(screen.getByRole("button", { name: /update status/i }));
 
     expect(mocks.subscriptionsTransition).toHaveBeenCalledWith("sub-1", "paused");
+  });
+
+  it("tells a customer their billing is active with Square", async () => {
+    mocks.membershipsList.mockResolvedValue(ORG_MEMBERSHIP);
+    mocks.subscriptionsList.mockResolvedValue({ subscriptions: [subscription()] });
+    mocks.squareList.mockResolvedValue({ links: [squareLink()] });
+
+    render(<Subscriptions />);
+    expect(await screen.findByText(/billing is active with square/i)).toBeInTheDocument();
+  });
+
+  it("warns the customer when Square has paused billing -- the case they most need to see", async () => {
+    // Our own record still says "active" until the webhook lands, so showing
+    // only our status would tell someone everything is fine while Square has
+    // already stopped taking payments.
+    mocks.membershipsList.mockResolvedValue(ORG_MEMBERSHIP);
+    mocks.subscriptionsList.mockResolvedValue({ subscriptions: [subscription({ status: "active" })] });
+    mocks.squareList.mockResolvedValue({ links: [squareLink({ squareStatus: "DEACTIVATED", mappedStatus: "paused" })] });
+
+    render(<Subscriptions />);
+    expect(await screen.findByText(/square has paused billing/i)).toBeInTheDocument();
+    // And it is surfaced as a disagreement rather than silently overwriting.
+    expect(screen.getByText(/disagree/i)).toBeInTheDocument();
+  });
+
+  it("says so plainly when a subscription has no Square link at all", async () => {
+    mocks.membershipsList.mockResolvedValue(ORG_MEMBERSHIP);
+    mocks.subscriptionsList.mockResolvedValue({ subscriptions: [subscription()] });
+    mocks.squareList.mockResolvedValue({ links: [] });
+
+    render(<Subscriptions />);
+    expect(await screen.findByText(/not linked to a square subscription/i)).toBeInTheDocument();
+  });
+
+  it("reports an unrecognised Square status rather than hiding it", async () => {
+    mocks.membershipsList.mockResolvedValue(ORG_MEMBERSHIP);
+    mocks.subscriptionsList.mockResolvedValue({ subscriptions: [subscription()] });
+    mocks.squareList.mockResolvedValue({ links: [squareLink({ squareStatus: "SOMETHING_NEW", mappedStatus: null })] });
+
+    render(<Subscriptions />);
+    expect(await screen.findByText(/SOMETHING_NEW/)).toBeInTheDocument();
+  });
+
+  it("still renders the subscription when the Square lookup fails", async () => {
+    // Billing detail is supplementary -- losing it must not blank the page.
+    mocks.membershipsList.mockResolvedValue(ORG_MEMBERSHIP);
+    mocks.subscriptionsList.mockResolvedValue({ subscriptions: [subscription()] });
+    mocks.squareList.mockRejectedValue(new Error("square is down"));
+
+    render(<Subscriptions />);
+    expect(await screen.findByText(/website_care/i)).toBeInTheDocument();
+    expect(await screen.findByText(/not linked to a square subscription/i)).toBeInTheDocument();
+  });
+
+  it("matches a link by providerSubscriptionReference when subscriptionId is absent", async () => {
+    mocks.membershipsList.mockResolvedValue(ORG_MEMBERSHIP);
+    mocks.subscriptionsList.mockResolvedValue({ subscriptions: [subscription({ providerSubscriptionReference: "sq-sub-9" })] });
+    mocks.squareList.mockResolvedValue({ links: [squareLink({ squareSubscriptionId: "sq-sub-9", subscriptionId: undefined })] });
+
+    render(<Subscriptions />);
+    expect(await screen.findByText(/billing is active with square/i)).toBeInTheDocument();
   });
 });

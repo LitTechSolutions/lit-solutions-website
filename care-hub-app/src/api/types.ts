@@ -192,6 +192,27 @@ export interface Subscription {
   providerSubscriptionReference?: string;
 }
 
+// ---- Square subscription link ----
+// The billing-provider side of a subscription. Populated by the Square
+// webhook (netlify/functions/square-webhook.js) and joined to a Subscription
+// by providerSubscriptionReference. `organizationId` is absent while the
+// payment is waiting to be linked to an organization during onboarding.
+export interface SquareSubscriptionLink {
+  squareSubscriptionId: string;
+  squareCustomerId?: string;
+  squarePlanVariationId?: string;
+  squareStatus: string;
+  mappedStatus: "active" | "paused" | "cancelled" | null;
+  customerEmail?: string;
+  customerName?: string;
+  organizationId?: string;
+  subscriptionId?: string;
+  firstSeenAt?: string;
+  lastEventAt?: string;
+  lastEventType?: string;
+  linkedAt?: string;
+}
+
 // ---- F043/F041 Technology Asset / Backup ----
 export interface TechnologyAsset {
   id: string;

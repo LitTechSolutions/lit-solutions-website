@@ -167,9 +167,21 @@ algorithm drifted; re-read the SDK rather than editing the expectation.
 
 ## What is deliberately NOT built
 
-- **No customer-facing subscription status on `/myaccount` yet.** The data is
-  there (`square-subscriptions?organizationId=`) but nothing renders it. Worth
-  doing once there are real subscribers to show it to.
+- **Subscription status lives in the Care Hub, not `/myaccount`.** This is not
+  an oversight: `myaccount.html`'s `maybeRedirectToCareHub()` sends any
+  customer who has an organization membership straight to `/care-hub/`, and a
+  linked subscription customer always has one. Putting billing status on
+  `/myaccount` would put it on a page the audience is bounced away from. The
+  Care Hub's Subscriptions screen now shows our lifecycle status *and*
+  Square's billing status side by side.
+- **A customer who has paid but is not yet linked to an organization still
+  sees nothing.** They have no membership, so they stay on `/myaccount`, and
+  we cannot match them to their Square payment: the subscription webhook
+  payload carries `customer_id`, not an email address. Closing this needs a
+  call to Square's Customers API (and therefore `SQUARE_ACCESS_TOKEN`) to
+  populate `square_subscription_links.customer_email`, which is why the column
+  exists and is currently always null. Until then the gap is covered by
+  onboarding them within a business day.
 - **No admin UI for the linking queue.** It's API-only today. With a handful of
   subscribers, a `curl` is honestly fine; a screen is worth building when it
   isn't.
