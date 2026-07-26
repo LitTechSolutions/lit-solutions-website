@@ -181,28 +181,30 @@ plus a monthly fee, with Little Technical Solutions retaining ownership
 of the build. Three tiers were requested (Basic / Standard / Pro),
 offering the same optional features as the one-off builds.
 
-### 5a. The numbers I published are DERIVED, not given — confirm them
+### 5a. Pricing — CONFIRMED BY DYLAN 2026-07-26
 
 | Tier | Deposit | Monthly | Mirrors |
 |---|---|---|---|
 | Basic | $149 | $79/mo | Starter build ($699) |
 | Standard | $249 | $129/mo | Business build ($1,299) |
-| Pro | $399 | $199/mo | Business + accounts/admin/security features |
+| Pro | $399 | $199/mo | Business + accounts/admin/security |
 
-How I got there: monthly = (equivalent build price ÷ 24 months) + the
-$39/mo Website Care Plan baseline, rounded up for margin. Basic works out
-at $29 + $39 = $68 → $79. Standard at $54 + $39 = $93 → $129. Pro assumes
-a ~$2,499 equivalent build → $104 + infra → $199.
+All three carry a 12-month minimum term, then continue month to month.
 
-Sanity check on Basic over 12 months: $149 + $948 = **$1,097**, versus
-buying Starter outright at $699 + 12 × $39 care = **$1,167**. So year one
-is slightly cheaper on subscription and every year after is more
-expensive — which is the honest story we tell on the page, and the reason
-the copy points most buyers at the outright packages.
+These were originally derived — monthly = (equivalent build price ÷ 24
+months) + the $39/mo Website Care baseline, rounded up — and flagged as
+proposals needing sign-off. **Dylan reviewed them and confirmed they
+stand.** They are no longer provisional.
 
-**All six numbers and the 12-month minimum term are mine, not yours.**
-They are in `pricing.html` only (search `subscription-plan-price`), so
-they are quick to change. Nothing else depends on them.
+Year one on Basic works out at $1,097 against $1,167 for buying Starter
+outright with the care plan, and every year after costs more ($948/yr vs
+$468/yr). That's the honest comparison the Pricing page makes, and it's
+why the copy still points most buyers at the outright packages.
+
+The numbers appear in `pricing.html`, `payment.html` and
+`website-designer.html`, and nothing reads them from Square at runtime —
+**if a price changes in Square it must be changed in all three**, or the
+site and the checkout will disagree.
 
 ### 5b. Square links — LIVE AND VERIFIED 2026-07-26
 

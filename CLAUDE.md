@@ -137,10 +137,14 @@ makes published pages factually false:
    covering renewals, plus transfer instructions.
 2. **Nothing goes offline without written notice first.**
 
-The subscription prices are documented as *derived proposals* in
-`OWNER_INPUT.md` section 5a and live only in `pricing.html`. The tiers
-have no Square checkout links yet — the CTA deliberately points at
-`intake.html` so there is no broken payment button.
+The subscription prices were confirmed by the owner on 2026-07-26 and are
+settled, not provisional (`OWNER_INPUT.md` section 5a). They are hard-coded
+in `pricing.html`, `payment.html` and `website-designer.html`, and nothing
+reads them from Square at runtime — a price change has to be made in all
+three or the site and the checkout will disagree. Live Square Payment Links
+are wired for all six (three deposits, three subscriptions); the deposit
+and the monthly plan are separate checkouts because Square Payment Links
+support only one paid phase.
 
 Copy rule: the ownership trade-off on subscription plans must stay
 **prominent and pre-purchase**, never fine print. A buyer discovering
