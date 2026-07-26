@@ -94,14 +94,17 @@ These are live promises. If any is wrong, fix it *before* deploy:
   DD-214 is sitting in the inbox 30 days later, the Privacy Policy is
   now factually wrong.
 
-### 4b. Business hours — VERIFY
+### 4b. Business hours — CONFIRMED BY DYLAN 2026-07-26
 
-The site now publishes **Mon–Fri, 8:00am–7:00pm ET** in the footer of
-every page, in `faq.html`, in `booking.html`, and in the `LocalBusiness`
-structured data on 29 pages. This was **derived** from booking.html's own
-time windows (Morning 8am–12pm / Afternoon 12–5pm / Evening 5–7pm), not
-supplied by Dylan. If the real hours differ — including weekends — say so
-and they need changing in all four places.
+**7:00am – 7:00pm ET, seven days a week** (weekends included). Confirmed
+directly by Dylan. This replaced an earlier derived guess of Mon–Fri
+8:00am–7:00pm, which was wrong on both the opening time and the days.
+
+Published in: the footer of every page, `faq.html` ("What are your
+hours?"), `booking.html` (lede + the Morning window, now 7am–12pm), and
+the `openingHoursSpecification` in the `LocalBusiness` JSON-LD on 29
+pages (Mo–Su 07:00–19:00). "Same business day" response claims were
+changed to "same day, seven days a week" to match.
 
 ### 4c. Insurance — currently answered "no" in public
 
