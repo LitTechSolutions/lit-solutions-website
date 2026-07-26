@@ -106,16 +106,32 @@ the `openingHoursSpecification` in the `LocalBusiness` JSON-LD on 29
 pages (Mo–Su 07:00–19:00). "Same business day" response claims were
 changed to "same day, seven days a week" to match.
 
-### 4c. Insurance — currently answered "no" in public
+### 4c. Insurance — RESOLVED, deliberately not mentioned
 
-`faq.html` now says plainly that we are **not yet insured**, that coverage
-is in progress, and that liability is capped at what the customer paid.
-This was the single most damaging gap in the audit for on-site work.
-Two actions:
-1. Get general liability coverage. It is the highest-value offline item
-   on this list by a distance.
-2. The day it binds, update the FAQ answer and add a "licensed & insured"
-   signal to the homepage, About, and service pages.
+**Owner decision, 2026-07-26: removed from the site entirely.** An earlier
+version of `faq.html` carried an "Are you insured?" entry answering
+honestly that coverage was not yet in place. Dylan asked for it taken out
+— he doesn't want insurance raised as a topic until there's a customer
+base that justifies carrying a policy, at which point he'll update it.
+
+The site is now **silent** on insurance rather than claiming anything.
+Silence is not a false claim, so nothing published is inaccurate. What
+remains, and is the honest part, is Terms section 7: our liability for any
+job is capped at what the client paid us for that job. That was always
+disclosed and hasn't changed.
+
+Two practical notes for whoever picks this up later:
+
+- **Don't reintroduce it** — no FAQ question, no "insured" badge, nothing
+  implying coverage. `CLAUDE.md` carries the same instruction.
+- **If a customer or a commercial client asks directly, answer honestly.**
+  Some business clients require proof of insurance before letting a
+  contractor on site; that conversation will happen eventually and the
+  answer needs to match reality, not the website's silence.
+
+When a policy is active, this becomes a genuine selling point worth
+putting on the homepage, About and service pages — it was the single
+biggest missing trust signal for on-site work in the original audit.
 
 ### 4d. Nextdoor page name — CANNOT BE FIXED FROM THIS REPO
 
@@ -214,6 +230,31 @@ Two things worth knowing:
 - **The Heroes Discount has no discounted links.** The pages tell
   eligible customers to contact you to confirm their rate before paying,
   matching how `heroes-pricing.html` already handles it.
+
+### 5b-i. Two-step checkout — kept, with a safety net (2026-07-26)
+
+Square Payment Links only support **one paid phase**, so a deposit and a
+recurring charge cannot share a link. Multi-phase plans exist in the
+Subscriptions API but the Checkout API can't check out into them, so a
+genuine single checkout would mean building our own with the Web Payments
+SDK — which moves us from PCI SAQ-A to SAQ-A-EP and introduces a
+half-succeeded state (deposit taken, subscription never created).
+
+**Decision: keep two links, mitigate the risk in the page.** With zero
+subscription clients, building a custom checkout to remove one click is
+optimising a problem we don't have yet.
+
+The mitigation is `js/subscribe-flow.js`: clicking a deposit button records
+the tier in `localStorage`, and when the visitor returns to the tab a prompt
+appears with the correct subscription link pre-filled. It clears when they
+subscribe, is dismissible, and expires after 14 days. It never blocks or
+disables step 2 — someone may have paid their deposit by invoice or be
+resuming days later.
+
+**Revisit when** there are enough subscription sign-ups to see whether
+anyone actually stalls between step 1 and step 2. If Square later adds
+setup fees to Payment Links, that collapses six links into three with no
+code at all — check that first.
 
 ### 5c. What the site now commits you to on ownership
 

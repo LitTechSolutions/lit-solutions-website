@@ -2158,3 +2158,31 @@ body.has-price-bar .cookie-banner{
 .subscription-order-note a{ color: var(--accent-orange-text); text-decoration:underline; }
 .sub-deposit-line{ font-size:.84rem; color: var(--ink-faint); margin:-.4rem 0 .9rem; }
 .sub-deposit-line strong{ color: var(--ink); }
+
+/* Website Subscription checkout -- static header (the block never collapses,
+   so nothing should look like it needs opening before you can pay) */
+.price-block-head--static{ cursor:default; }
+.price-block-head--static:hover{ background:inherit; }
+
+/* Step-2 prompt: the deposit and the monthly plan are separate Square
+   checkouts, and a paid deposit with no subscription is the worst outcome
+   for everyone, so this surfaces when someone comes back from the deposit tab. */
+.step2-reminder{
+  display:flex; align-items:center; gap:1rem; flex-wrap:wrap;
+  position:relative; margin:0 0 1.5rem;
+  padding:1rem 2.5rem 1rem 1.25rem;
+  background: var(--notice-bg); border:1px solid var(--notice-border);
+  border-left:4px solid var(--accent-orange); border-radius: var(--radius);
+  color: var(--notice-text);
+}
+.step2-reminder[hidden]{ display:none; }
+.step2-reminder-body{ flex:1 1 260px; min-width:0; font-size:.88rem; line-height:1.6; }
+.step2-reminder-body strong{ display:block; color:inherit; }
+.step2-reminder .btn{ flex:0 0 auto; }
+.step2-dismiss{
+  position:absolute; top:.4rem; right:.5rem;
+  width:32px; height:32px; padding:0; border:none; background:none;
+  font-size:1.25rem; line-height:1; cursor:pointer; color:inherit; opacity:.55;
+}
+.step2-dismiss:hover{ opacity:1; }
+.step2-dismiss:focus-visible{ outline:2px solid currentColor; outline-offset:-4px; border-radius:50%; }

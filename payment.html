@@ -192,20 +192,28 @@
 
 
       <div class="price-block" id="website-subscriptions">
-        <button class="price-block-head" type="button" aria-expanded="false">
+        <div class="price-block-head price-block-head--static">
           <span class="price-block-head-left">
             <span class="ticket-code">Website plans</span>
           <h2>Website Subscription</h2>
           </span>
           <span class="price-block-toggle">
             <span class="price-block-count">3 tiers</span>
-            <svg class="price-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
           </span>
-        </button>
+        </div>
         <div style="padding: 0 1.75rem 1.75rem;">
           <p class="pay-block-copy">
-            Getting a website built for a small deposit plus a monthly fee. <strong>Pay the deposit first, then start the monthly subscription</strong> &mdash; two separate checkouts, so expect two charges. Not sure which tier? <a href="intake.html">Ask us before you pay.</a>
+            A website built for a small deposit plus a monthly fee. It's <strong>two quick checkouts</strong> &mdash; deposit first, then the monthly plan &mdash; so expect two charges. Both open in a new tab; this page stays put and will remind you about step 2. Not sure which tier? <a href="intake.html">Ask us before you pay.</a>
           </p>
+
+          <div class="step2-reminder" id="step2Reminder" hidden role="status">
+            <div class="step2-reminder-body">
+              <strong>You've paid the deposit &mdash; one step left.</strong>
+              <span>Start your monthly plan to get your build scheduled. Nothing begins until this is done.</span>
+            </div>
+            <a href="#" class="btn btn-primary btn-small" id="step2Link" target="_blank" rel="noopener">Finish: start my plan</a>
+            <button type="button" class="step2-dismiss" id="step2Dismiss" aria-label="Dismiss this reminder">&times;</button>
+          </div>
 
           <div class="sub-grid">
 
@@ -214,8 +222,8 @@
               <p class="sub-card-desc">Our Starter build &mdash; up to 5 pages &mdash; plus hosting, maintenance, security updates and support.</p>
               <div class="sub-price"><span class="sub-price-amount">$79</span><span class="sub-price-period">/month</span></div>
               <p class="sub-deposit-line">plus a <strong>$149</strong> deposit to start</p>
-              <a href="https://square.link/u/lwgSQrWM" class="btn btn-primary pay-btn" target="_blank" rel="noopener">1. Pay $149 deposit</a>
-              <a href="https://square.link/u/fLTqZg7k" class="btn btn-ghost pay-btn" style="margin-top:.5rem;" target="_blank" rel="noopener">2. Start $79/month</a>
+              <a href="https://square.link/u/lwgSQrWM" class="btn btn-primary pay-btn" target="_blank" rel="noopener" data-sub-step="deposit" data-sub-tier="Basic" data-sub-monthly="$79">1. Pay $149 deposit</a>
+              <a href="https://square.link/u/fLTqZg7k" class="btn btn-ghost pay-btn" style="margin-top:.5rem;" target="_blank" rel="noopener" data-sub-step="subscribe" data-sub-tier="Basic">2. Start $79/month</a>
             </article>
 
             <article class="sub-card">
@@ -223,8 +231,8 @@
               <p class="sub-card-desc">Our Business build &mdash; up to 10 pages, blog, FAQ, booking, enhanced SEO &mdash; plus everything in Basic.</p>
               <div class="sub-price"><span class="sub-price-amount">$129</span><span class="sub-price-period">/month</span></div>
               <p class="sub-deposit-line">plus a <strong>$249</strong> deposit to start</p>
-              <a href="https://square.link/u/GaFznrtG" class="btn btn-primary pay-btn" target="_blank" rel="noopener">1. Pay $249 deposit</a>
-              <a href="https://square.link/u/Y40Brp2x" class="btn btn-ghost pay-btn" style="margin-top:.5rem;" target="_blank" rel="noopener">2. Start $129/month</a>
+              <a href="https://square.link/u/GaFznrtG" class="btn btn-primary pay-btn" target="_blank" rel="noopener" data-sub-step="deposit" data-sub-tier="Standard" data-sub-monthly="$129">1. Pay $249 deposit</a>
+              <a href="https://square.link/u/Y40Brp2x" class="btn btn-ghost pay-btn" style="margin-top:.5rem;" target="_blank" rel="noopener" data-sub-step="subscribe" data-sub-tier="Standard">2. Start $129/month</a>
             </article>
 
             <article class="sub-card">
@@ -232,8 +240,8 @@
               <p class="sub-card-desc">Customer sign-in, two-factor authentication, user dashboards, admin content editing and advanced hardening &mdash; plus everything in Standard.</p>
               <div class="sub-price"><span class="sub-price-amount">$199</span><span class="sub-price-period">/month</span></div>
               <p class="sub-deposit-line">plus a <strong>$399</strong> deposit to start</p>
-              <a href="https://square.link/u/av8VJj8O" class="btn btn-primary pay-btn" target="_blank" rel="noopener">1. Pay $399 deposit</a>
-              <a href="https://square.link/u/izfCOOLP" class="btn btn-ghost pay-btn" style="margin-top:.5rem;" target="_blank" rel="noopener">2. Start $199/month</a>
+              <a href="https://square.link/u/av8VJj8O" class="btn btn-primary pay-btn" target="_blank" rel="noopener" data-sub-step="deposit" data-sub-tier="Pro" data-sub-monthly="$199">1. Pay $399 deposit</a>
+              <a href="https://square.link/u/izfCOOLP" class="btn btn-ghost pay-btn" style="margin-top:.5rem;" target="_blank" rel="noopener" data-sub-step="subscribe" data-sub-tier="Pro">2. Start $199/month</a>
             </article>
 
           </div>
@@ -268,23 +276,43 @@
 </main>
 
 <script>
-// Deep-link support: /payment.html#subscriptions (or #one-time-payment) opens
-// that dropdown automatically, so old bookmarks/links to the removed
-// Subscriptions page still land somewhere useful.
+// Deep-link support: /payment.html#subscriptions, #one-time-payment or
+// #website-subscriptions opens that block and scrolls to it, so links and old
+// bookmarks land on the thing they promised rather than the top of the page.
 (function () {
   var hash = window.location.hash.replace('#', '');
   if (!hash) return;
   var target = document.getElementById(hash);
   if (!target) return;
+
   var head = target.querySelector('.price-block-head');
   var wrap = target.querySelector('.price-list-wrap');
-  if (!head || !wrap) return;
-  document.querySelectorAll('.price-block-head[aria-expanded="true"]').forEach(function (btn) {
-    if (btn !== head) { btn.setAttribute('aria-expanded', 'false'); btn.nextElementSibling.style.maxHeight = '0px'; }
+
+  // Collapsible blocks need opening first. Always-open ones (no wrap) skip
+  // straight to the scroll.
+  if (head && wrap) {
+    document.querySelectorAll('.price-block-head[aria-expanded="true"]').forEach(function (btn) {
+      if (btn !== head) { btn.setAttribute('aria-expanded', 'false'); btn.nextElementSibling.style.maxHeight = '0px'; }
+    });
+    head.setAttribute('aria-expanded', 'true');
+    wrap.style.maxHeight = wrap.scrollHeight + 'px';
+  }
+
+  // Offset for the sticky header, or the block's own heading ends up underneath it.
+  function go() {
+    var header = document.querySelector('.site-header');
+    var offset = (header ? header.getBoundingClientRect().height : 0) + 12;
+    var y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+    window.scrollTo({ top: y < 0 ? 0 : y, behavior: 'smooth' });
+  }
+
+  // Scroll once on load, then again once late layout has settled -- reveal
+  // animations and the accordion's max-height are applied after load and
+  // were pushing the target several hundred pixels below where we'd stopped.
+  window.addEventListener('load', function () {
+    go();
+    setTimeout(go, 400);
   });
-  head.setAttribute('aria-expanded', 'true');
-  wrap.style.maxHeight = wrap.scrollHeight + 'px';
-  window.addEventListener('load', function () { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
 })();
 </script>
 
@@ -354,5 +382,6 @@
 
 <script src="js/main.js"></script>
 <script src="js/site-version.js"></script>
+<script src="js/subscribe-flow.js"></script>
 </body>
 </html>

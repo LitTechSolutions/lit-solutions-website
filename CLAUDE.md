@@ -102,10 +102,16 @@ states them in sync:
 - **No SSN-bearing documents by email** for the Heroes Discount, deleted
   within 7 days of verification (`terms.html` §10, `heroes-pricing.html`,
   `privacy.html` §1 and §5).
-- **Not insured, and we say so** — `faq.html` states this plainly. The
-  moment a policy binds, that answer changes and a "licensed & insured"
-  signal can go on the homepage/About/service pages. Until then, no page
-  may imply coverage that doesn't exist.
+- **Insurance is not mentioned anywhere, deliberately (owner decision,
+  2026-07-26).** An earlier FAQ entry answered "Are you insured?" with an
+  honest "not yet"; the owner asked for it removed until there's a
+  customer base that justifies carrying a policy. The site is now silent
+  on the subject rather than claiming anything either way. **Do not
+  reintroduce an insurance question, claim, or badge** — and never imply
+  coverage that doesn't exist. What does remain published is the honest
+  part: Terms section 7 caps our liability at what the client paid for
+  the job in question. Revisit only when the owner says a policy is
+  active.
 
 ## Website ownership model (v27 / v4.5.0)
 
