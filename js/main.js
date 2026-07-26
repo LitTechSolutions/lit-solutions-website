@@ -61,17 +61,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const slides = Array.from(heroTestimonial.querySelectorAll('.hero-testimonial-slide'));
     const dots = Array.from(heroTestimonial.querySelectorAll('.hero-testimonial-dot'));
     const learnMoreLink = heroTestimonial.querySelector('.hero-testimonial-link');
+    const pauseBtn = heroTestimonial.querySelector('.hero-testimonial-pause');
     let current = slides.findIndex(s => s.classList.contains('is-active'));
     if (current < 0) current = 0;
     let timer = null;
+    // Explicit user pause outranks hover/focus -- once it's set, nothing
+    // (including the mouse leaving the card) may restart rotation.
+    let userPaused = false;
 
     // "Learn more" only makes sense for Bill Armour's slide (index 0) --
     // it points at the Portfolio case study built for his company, which
-    // the other two reviews aren't tied to.
+    // the other review isn't tied to.
     if (learnMoreLink) learnMoreLink.hidden = (current !== 0);
+
+    const slidesWrap = heroTestimonial.querySelector('.hero-testimonial-slides');
+
+    // Pin the wrapper to its current height before the swap, so the CSS
+    // height transition has a concrete start value to animate from (it can't
+    // animate out of `auto`). Released back to `auto` once the swap settles,
+    // so the card still reflows correctly on resize or font changes.
+    let releaseTimer = null;
+    const animateHeightTo = (nextSlide) => {
+      if (!slidesWrap || prefersReducedMotion) return;
+      const from = slidesWrap.getBoundingClientRect().height;
+      const to = nextSlide.getBoundingClientRect().height;
+      if (!from || !to || Math.abs(from - to) < 1) return;
+      clearTimeout(releaseTimer);
+      slidesWrap.style.height = from + 'px';
+      requestAnimationFrame(() => { slidesWrap.style.height = to + 'px'; });
+      releaseTimer = setTimeout(() => { slidesWrap.style.height = ''; }, 500);
+    };
 
     const goTo = (index) => {
       if (index === current || !slides[index]) return;
+      animateHeightTo(slides[index]);
       const outgoing = slides[current];
       outgoing.classList.remove('is-active');
       outgoing.classList.add('is-leaving');
@@ -87,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const prev = () => goTo((current - 1 + slides.length) % slides.length);
     const stop = () => { if (timer) { clearInterval(timer); timer = null; } };
     const start = () => {
-      if (prefersReducedMotion || slides.length < 2) return;
+      if (prefersReducedMotion || userPaused || slides.length < 2) return;
       stop();
       timer = setInterval(next, 5000);
     };
@@ -95,6 +118,23 @@ document.addEventListener('DOMContentLoaded', () => {
     dots.forEach((dot, i) => {
       dot.addEventListener('click', () => { goTo(i); start(); });
     });
+
+    if (pauseBtn) {
+      // Only meaningful while rotation can actually happen.
+      if (prefersReducedMotion || slides.length < 2) {
+        pauseBtn.hidden = true;
+      } else {
+        pauseBtn.addEventListener('click', () => {
+          userPaused = !userPaused;
+          pauseBtn.setAttribute('aria-pressed', String(userPaused));
+          pauseBtn.setAttribute('aria-label', userPaused ? 'Resume testimonial rotation' : 'Pause testimonial rotation');
+          // Resuming defers to updatePause() rather than calling start()
+          // directly, so an explicit resume still respects a hover that's
+          // currently holding the carousel still.
+          if (userPaused) stop(); else updatePause();
+        });
+      }
+    }
 
     // Pausing needs to track hover and focus together -- otherwise tabbing
     // into the carousel while the mouse is still resting on it (or vice
@@ -105,7 +145,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     heroTestimonial.addEventListener('mouseenter', () => { hovered = true; updatePause(); });
     heroTestimonial.addEventListener('mouseleave', () => { hovered = false; updatePause(); });
-    heroTestimonial.addEventListener('focusin', () => { focused = true; updatePause(); });
+    // The pause/play control is deliberately exempt from focus-pausing. Focus
+    // lands on it the moment it's clicked, so counting it would mean pressing
+    // "resume" visibly did nothing until you clicked away.
+    heroTestimonial.addEventListener('focusin', (e) => {
+      if (e.target === pauseBtn) return;
+      focused = true;
+      updatePause();
+    });
     heroTestimonial.addEventListener('focusout', (e) => {
       if (heroTestimonial.contains(e.relatedTarget)) return; // focus moved to another element still inside the carousel
       focused = false;

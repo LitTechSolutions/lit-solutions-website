@@ -58,6 +58,20 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
+    // We ask for a phone number but don't force it -- an email address is
+    // enough to reply to. It only becomes required if the visitor has asked
+    // us to phone or text them, where we genuinely can't proceed without it.
+    const phoneEl = form.querySelector('#phone');
+    const method = form.querySelector('input[name="contact_method"]:checked');
+    const needsPhone = method && (method.value === 'Phone Call' || method.value === 'Text Message');
+    if (phoneEl && needsPhone && phoneEl.value.trim() === '') {
+      missing.push('Phone Number (you asked us to ' + (method.value === 'Text Message' ? 'text' : 'call') + ' you)');
+      if (!firstBadEl) firstBadEl = phoneEl;
+      phoneEl.setAttribute('aria-invalid', 'true');
+      phoneEl.setAttribute('aria-describedby', 'missingFieldsNote');
+      phoneEl.classList.add('field-error');
+    }
+
     if (missing.length) {
       missingNote.innerHTML = `<strong>Please fill in the following before submitting:</strong><ul>${missing.map(m => `<li>${m}</li>`).join('')}</ul>`;
       missingNote.classList.add('is-visible');

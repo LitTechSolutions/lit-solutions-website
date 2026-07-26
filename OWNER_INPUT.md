@@ -71,3 +71,86 @@ surrounding change.
   looks wrong there, that's a live-data/rendering question that needs
   checking on the actual deployment, not something fixable by editing
   static files in this repo.
+
+## 4. Outside-customer audit remediation (v27 / v4.4.0) — ITEMS ONLY DYLAN CAN CLOSE
+
+A skeptical-customer review of the live site was run twice (before and
+after the v4.3.0 revision). Most findings were fixed in code in v27. The
+items below are published on the live site but depend on something only
+Dylan can confirm or do. **Read this before deploying v27.**
+
+### 4a. Business commitments now published — confirm you accept them
+
+These are live promises. If any is wrong, fix it *before* deploy:
+
+- **50/50 payment** on fixed-price website work, replacing 100% upfront.
+- **30-day workmanship warranty** on our labor (`terms.html` §6A).
+- **30 days** (was 7) to report that work wasn't done as agreed.
+- **No trip charge** anywhere inside the on-site service area.
+- **Domain / files / source code released within 10 business days, free**,
+  regardless of how the relationship ended, with no offboarding fee.
+- **Heroes Discount eligibility documents deleted within 7 days** of
+  verification. This one requires an actual habit, not just copy — if a
+  DD-214 is sitting in the inbox 30 days later, the Privacy Policy is
+  now factually wrong.
+
+### 4b. Business hours — VERIFY
+
+The site now publishes **Mon–Fri, 8:00am–7:00pm ET** in the footer of
+every page, in `faq.html`, in `booking.html`, and in the `LocalBusiness`
+structured data on 29 pages. This was **derived** from booking.html's own
+time windows (Morning 8am–12pm / Afternoon 12–5pm / Evening 5–7pm), not
+supplied by Dylan. If the real hours differ — including weekends — say so
+and they need changing in all four places.
+
+### 4c. Insurance — currently answered "no" in public
+
+`faq.html` now says plainly that we are **not yet insured**, that coverage
+is in progress, and that liability is capped at what the customer paid.
+This was the single most damaging gap in the audit for on-site work.
+Two actions:
+1. Get general liability coverage. It is the highest-value offline item
+   on this list by a distance.
+2. The day it binds, update the FAQ answer and add a "licensed & insured"
+   signal to the homepage, About, and service pages.
+
+### 4d. Nextdoor page name — CANNOT BE FIXED FROM THIS REPO
+
+Our Nextdoor URL is
+`nextdoor.com/page/little-technical-solutuons-llc/` — **"solutuons"**,
+misspelled. It resolves, so the Nextdoor page itself was created with the
+typo in its name. It appears in the footer of every page and in the
+`sameAs` structured data sitewide. Dylan needs to rename the page in
+Nextdoor's own settings; once the new URL is known, update the footer
+link and the `sameAs` array in all 29 pages' JSON-LD.
+
+### 4e. Facebook link — VERIFY
+
+`facebook.com/profile.php?id=61591618750945` returned HTTP 400 to a
+logged-out fetch during the audit. Facebook frequently blocks non-browser
+requests, so this may be a false alarm — but please open it in a private
+window and confirm a logged-out visitor can actually see the page.
+
+### 4f. Kahai Fuqua review — no direct link
+
+Dylan confirmed this is a real review but no direct review URL was
+supplied, so the "Google review" attribution on `index.html` and
+`testimonials.html` links to the Google Business profile rather than to
+the review itself. A deep link to the individual review would be
+stronger; add it if Google exposes one.
+
+The third homepage testimonial ("John Matrix") was **removed** at Dylan's
+direction — it read as a placeholder to an outside reader (it is the
+protagonist of the film *Commando*), and the Testimonials page
+simultaneously said we had no reviews yet.
+
+### 4g. Testimonials page is now static, not empty
+
+`testimonials.html` previously rendered a "More reviews are on the way"
+empty state while the homepage showed three five-star reviews — the most
+damaging single contradiction in the audit. It now ships the Bill Armour
+and Kahai Fuqua reviews as static cards. `js/cms.js`'s
+`mountTestimonials()` still replaces that grid wholesale when
+admin-entered items exist, so there's no double-render risk — but note
+that if the CMS holds only Bill Armour's, adding it via admin will drop
+Kahai's from that page. Add both in admin, or leave the static pair.

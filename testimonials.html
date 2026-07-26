@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://lit-solutions.tech/testimonials.html">
 <meta property="og:image" content="https://lit-solutions.tech/assets/logo-full.png">
 <meta name="twitter:card" content="summary">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Little Technical Solutions LLC","image":"https://lit-solutions.tech/assets/logo-full.png","telephone":"+18043090968","email":"dylan@lit-solutions.tech","url":"https://lit-solutions.tech/","priceRange":"$$","areaServed":[{"@type":"City","name":"Montross, VA"},{"@type":"City","name":"Colonial Beach, VA"},{"@type":"City","name":"King George, VA"},{"@type":"City","name":"Dahlgren, VA"}],"sameAs":["https://www.facebook.com/profile.php?id=61591618750945","https://share.google/2HaFNAzBwHXCsMn72","https://nextdoor.com/page/little-technical-solutuons-llc/"]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Little Technical Solutions LLC","image":"https://lit-solutions.tech/assets/logo-full.png","telephone":"+18043090968","email":"dylan@lit-solutions.tech","url":"https://lit-solutions.tech/","priceRange":"$$","areaServed":[{"@type":"City","name":"Montross, VA"},{"@type":"City","name":"Colonial Beach, VA"},{"@type":"City","name":"King George, VA"},{"@type":"City","name":"Dahlgren, VA"}],"sameAs":["https://www.facebook.com/profile.php?id=61591618750945","https://share.google/2HaFNAzBwHXCsMn72","https://nextdoor.com/page/little-technical-solutuons-llc/"],"address":{"@type":"PostalAddress","addressLocality":"Montross","addressRegion":"VA","addressCountry":"US"},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"19:00"}]}</script>
 
 <link rel="stylesheet" href="css/style.css">
 <link rel="icon" type="image/png" href="assets/favicon.png">
@@ -84,21 +84,31 @@
 
   <section class="alt-bg">
     <div class="wrap">
-      <div class="testimonials-empty reveal" id="testimonialsEmptyState">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4M12 3l8 4v5c0 5-3.5 9-8 10-4.5-1-8-5-8-10V7z"/></svg>
-        <h2>More reviews are on the way.</h2>
-        <p>We publish a review once a client has shared it and approved the exact wording — more will appear here as they come in. In the meantime, see our completed project on the <a href="portfolio.html" style="color:var(--accent-orange-text); text-decoration:underline;">Portfolio page</a>, or reach out directly to ask about our work.</p>
-        <a href="intake.html" class="btn btn-primary">Request Service</a>
+      <!-- These are the same two reviews shown on the homepage, published here
+           in full so the two pages can never disagree about what we have. The
+           CMS (js/cms.js mountTestimonials) replaces this grid wholesale when
+           admin-entered items exist, so there's no double-render risk. -->
+      <div class="testimonial-grid" id="testimonialsGrid">
+        <div class="testimonial-card reveal">
+          <p class="testimonial-quote">&ldquo;Little Technical Solutions LLC built a professional website that gives Armour Wireless Solutions a clear online presence and accurately presents our background, capabilities, and contracting information. Dylan worked directly with me, communicated throughout the project, and made the changes I requested. After the original site was delivered, he also developed a secure photo-management feature that allows me to sign in with two-factor authentication and upload or remove website photos without editing code. I appreciated the straightforward process, personal attention, and willingness to build around what my company actually needed. I would recommend Little Technical Solutions LLC to other small businesses looking for professional website development and responsive, direct support.&rdquo;</p>
+          <p class="testimonial-author">Bill Armour, President / Owner, Armour Wireless Solutions, LLC</p>
+          <p class="testimonial-meta">Reviewed and approved in writing by the client. See the <a href="portfolio.html">project write-up</a>.</p>
+        </div>
+        <div class="testimonial-card reveal">
+          <p class="testimonial-quote">&ldquo;The whole thing is clean, fast, and put together the right way. What surprised me most is how much care went into the parts you don't normally see, like keeping visitors' information private and locking down security. This is a cybersecurity company that actually runs their own site the way they tell you to run yours, and that says a lot about how they work.&rdquo;</p>
+          <p class="testimonial-author">Kahai Fuqua &middot; &starf;&starf;&starf;&starf;&starf;</p>
+          <p class="testimonial-meta"><a href="https://share.google/2HaFNAzBwHXCsMn72" target="_blank" rel="noopener">Read this review on Google &nearr;</a></p>
+        </div>
       </div>
-      <div class="testimonial-grid" id="testimonialsGrid" hidden></div>
+      <p class="testimonials-note">We're early, and we'd rather show you two reviews you can check than a page of quotes you can't. Every review here is published only after the client has seen and approved the exact wording.</p>
     </div>
   </section>
 
   <section class="alt-bg">
     <div class="wrap">
       <header class="section-head">
-        <p class="eyebrow">In the meantime</p>
-        <h2>Here's what you can verify yourself</h2>
+        <p class="eyebrow">Beyond the reviews</p>
+        <h2>Here's what else you can verify yourself</h2>
       </header>
       <div class="cred-list" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem;">
         <div class="cred-card reveal">
@@ -125,6 +135,15 @@
       <img src="assets/logo-icon.png" alt="Little Technical Solutions LLC" width="36" height="36" class="footer-logo">
       <span class="logo-line1">Little Technical Solutions LLC</span>
       <p>Websites, computers, networks, and security — handled by one call.</p>
+      <p class="footer-contact">
+        <a href="tel:+18043090968">804-309-0968</a><br>
+        <a href="mailto:dylan@lit-solutions.tech">dylan@lit-solutions.tech</a>
+      </p>
+      <p class="footer-contact footer-hours">
+        <strong>Hours:</strong> Mon–Fri, 8:00am – 7:00pm ET<br>
+        <strong>Based in</strong> Montross, VA — serving the Northern Neck on-site,
+        and the whole U.S. remotely for websites.
+      </p>
     </div>
     <nav class="footer-nav" aria-label="Footer">
       <a href="index.html">Home</a>
@@ -133,17 +152,17 @@
       <a href="pricing.html">Pricing</a>
       <a href="heroes-pricing.html">Heroes Discount</a>
       <a href="about.html">About</a>
-      <a href="team.html">Our Team</a>
+      <a href="team.html">Who You'll Work With</a>
       <a href="service-area.html">Service Area</a>
       <a href="faq.html">FAQ</a>
       <a href="blog.html">Blog</a>
       <a href="payment.html">Payments</a>
       <a href="intake.html">New Client Form</a>
       <a href="search.html">Search</a>
+      <a href="myaccount.html">Client Sign In</a>
       <a href="sitemap.html">Sitemap</a>
       <a href="privacy.html">Privacy Policy</a>
       <a href="terms.html">Terms &amp; Conditions</a>
-      <a href="patch-notes.html">Website Updates</a>
       <a href="#" id="manageConsentLink">Cookie Notice</a>
     </nav>
     <nav class="footer-social" aria-label="Social">
@@ -162,7 +181,6 @@
     </nav>
   </div>
   <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span>All rights reserved.</span></p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version <span id="siteVersion">4.3.0</span></a></p>
   <p class="footer-version"><a href="/care-hub/login">Staff Sign In</a></p>
 </footer>
 

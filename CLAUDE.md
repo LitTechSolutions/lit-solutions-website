@@ -21,15 +21,27 @@ actually changes.
   websites, computers, networking, cybersecurity, and small-business IT —
   not primarily an "AI website company." Do not exaggerate credentials,
   business age, staffing, or response capacity in any customer-facing copy.
-- **Headcount stays private (as of v26):** the owner explicitly asked for
-  employee count to be kept private. Customer-facing copy should not state
-  or imply the business is a solo/one-person operation ("team of one,"
-  "the same person who answers the phone," "one technician," etc.) —
-  use neutral collective language ("we," "our team") instead. This is
-  about not *confirming* headcount either way, not about fabricating
-  claims of a larger staff. `team.html` was the main offender (previously
-  titled "One person, every job") and has been reworded; check it and the
-  homepage/service pages before reintroducing this kind of phrasing.
+- **Headcount stays private (as of v26, refined in v27):** the owner
+  explicitly asked for employee count to be kept private. Customer-facing
+  copy should not state or imply the business is a solo/one-person
+  operation ("team of one," "the same person who answers the phone,"
+  "one technician," etc.). This is about not *confirming* headcount
+  either way, not about fabricating claims of a larger staff.
+  **v27 adds the other half of that rule:** copy must not imply a larger
+  staff either. An outside review read "Our Team" / "The people behind the
+  work" (plural, one person pictured) as deliberate concealment, which is
+  worse than either honest answer. The safe register is second-person and
+  singular-agnostic — "you'll know who's coming," "owner-led," "your point
+  of contact" — never "the people behind the work" or "our team of." As of
+  v27 `team.html` is titled "Who you'll work with" and leads with
+  "You'll know who's coming."
+  Note that headcount still leaks in places the scrub missed: `terms.html`
+  §12 references "its owner, and any subcontractors" (kept — it's standard
+  and no longer contradicts anything), and `portfolio.html` says
+  "brand-new business" (kept — that's business *age*, which the owner has
+  not asked to keep private, and CLAUDE.md forbids exaggerating it).
+  The v2.1.0 patch note that stated "one owner and no plans to add staff"
+  outright was reworded in v27.
 - **Founder-bio content lives on `about-the-owner.html` (as of v26):** the
   full Navy-service narrative, ship photos, education detail, and Dylan's
   personal letter were consolidated onto this one dedicated page — this
@@ -48,23 +60,52 @@ actually changes.
 ## Versioning convention
 
 - Each site revision lives in its own folder under `Business Website/
-  Website Code/vN` (currently `v26`), copied forward from the previous
+  Website Code/vN` (currently `v27`), copied forward from the previous
   version — never edited in place. Each version folder is its own git
   repo pointed at the same GitHub remote
   (`LitTechSolutions/lit-solutions-website`), so pushing from the current
   version's folder is what actually deploys.
-- The in-page "Website Version" footer string (visible on all 33 public
-  pages) follows semver: **major** = large redesign/rework, **minor** =
-  feature addition, **patch** = bug/security fix only. Current: `4.3.0`.
-- The *dynamically displayed* version is a single source of truth,
-  `js/site-version.js`'s `SITE_VERSION` constant (F034) — editing it there
-  is enough for the on-page display. There is still no build step or
-  shared include/template mechanism though, so each HTML file also has a
-  static fallback `<span id="siteVersion">4.3.0</span>` (for no-JS
-  visitors/crawlers, before `js/site-version.js` overwrites it) that
-  `SITE_VERSION` does *not* keep in sync automatically — that fallback
-  string still needs a `sed` sweep across all 33 public HTML files on
-  every release, same as any other header/footer change.
+- The version follows semver: **major** = large redesign/rework,
+  **minor** = feature addition, **patch** = bug/security fix only.
+  Current: `4.4.0`. It is tracked internally and in `patch-notes.html`;
+  it is no longer displayed to customers (see next bullet).
+- **The version string is no longer shown to customers (v27).** The
+  footer "Website Version 4.x.x" line and its `<span id="siteVersion">`
+  fallback were removed from every public page: an outside review read a
+  public version number plus a public changelog as advertising
+  instability (13 releases and 3 redesigns) to people evaluating us to
+  *build* their site. `js/site-version.js`'s `SITE_VERSION` constant is
+  still the single source of truth and still the only place to edit on a
+  release — it just has no on-page target now, and no-ops harmlessly.
+  Header/footer changes still need a scripted sweep across all public
+  HTML files; there's still no build step or include mechanism.
+
+## Customer-facing trust commitments (v27)
+
+These are promises now published on the live site. They are business
+commitments, not copy — don't soften, reword, or quietly drop them
+without the owner explicitly deciding to, and keep every page that
+states them in sync:
+
+- **50/50 payment on fixed-price website work** (`terms.html` §3), stated
+  on `pricing.html`, `faq.html`, `payment.html`, `website-designer.html`.
+- **30-day workmanship warranty** (`terms.html` §6A), stated on
+  `pricing.html`, `faq.html`, `payment.html`.
+- **30-day window** to raise a problem, up from 7 (`terms.html` §4).
+- **Free diagnostic with no carve-out** — `terms.html` §6 previously said
+  diagnostic time was billable while `pricing.html` said "Free". Billable
+  time now starts only after a quote is approved.
+- **No trip charge inside the on-site service area** (`pricing.html`,
+  `faq.html`).
+- **Domain/files/source released within 10 business days, free**
+  (`terms.html` §9, `faq.html`).
+- **No SSN-bearing documents by email** for the Heroes Discount, deleted
+  within 7 days of verification (`terms.html` §10, `heroes-pricing.html`,
+  `privacy.html` §1 and §5).
+- **Not insured, and we say so** — `faq.html` states this plainly. The
+  moment a policy binds, that answer changes and a "licensed & insured"
+  signal can go on the homepage/About/service pages. Until then, no page
+  may imply coverage that doesn't exist.
 
 ## Release blog posts
 

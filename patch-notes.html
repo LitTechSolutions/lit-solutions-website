@@ -13,7 +13,8 @@
 <meta property="og:url" content="https://lit-solutions.tech/patch-notes.html">
 <meta property="og:image" content="https://lit-solutions.tech/assets/logo-full.png">
 <meta name="twitter:card" content="summary">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Little Technical Solutions LLC","image":"https://lit-solutions.tech/assets/logo-full.png","telephone":"+18043090968","email":"dylan@lit-solutions.tech","url":"https://lit-solutions.tech/","priceRange":"$$","areaServed":[{"@type":"City","name":"Montross, VA"},{"@type":"City","name":"Colonial Beach, VA"},{"@type":"City","name":"King George, VA"},{"@type":"City","name":"Dahlgren, VA"}],"sameAs":["https://www.facebook.com/profile.php?id=61591618750945","https://share.google/2HaFNAzBwHXCsMn72","https://nextdoor.com/page/little-technical-solutuons-llc/"]}</script>
+<meta name="robots" content="noindex, follow">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Little Technical Solutions LLC","image":"https://lit-solutions.tech/assets/logo-full.png","telephone":"+18043090968","email":"dylan@lit-solutions.tech","url":"https://lit-solutions.tech/","priceRange":"$$","areaServed":[{"@type":"City","name":"Montross, VA"},{"@type":"City","name":"Colonial Beach, VA"},{"@type":"City","name":"King George, VA"},{"@type":"City","name":"Dahlgren, VA"}],"sameAs":["https://www.facebook.com/profile.php?id=61591618750945","https://share.google/2HaFNAzBwHXCsMn72","https://nextdoor.com/page/little-technical-solutuons-llc/"],"address":{"@type":"PostalAddress","addressLocality":"Montross","addressRegion":"VA","addressCountry":"US"},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"19:00"}]}</script>
 
 <link rel="stylesheet" href="css/style.css">
 <link rel="icon" type="image/png" href="assets/favicon.png">
@@ -90,8 +91,30 @@
 
         <article class="patch-entry">
           <div class="patch-entry-head">
-            <span class="patch-version patch-version--current">v4.3.0</span>
+            <span class="patch-version patch-version--current">v4.4.0</span>
             <span class="patch-tag">Current</span>
+          </div>
+          <ul class="patch-changes">
+            <li><strong>Website projects are now split 50/50.</strong> Half to get started, half at launch once you have seen the finished site and approved it -- replacing the previous "full amount upfront" policy. The payment schedule is now stated plainly on the Pricing page, the FAQ, and the Website Designer, instead of only in the Terms.</li>
+            <li><strong>Added a 30-day workmanship warranty.</strong> If the specific problem we were paid to fix comes back within 30 days, we re-do the work with no labor charge. Written into the Terms as section 6A.</li>
+            <li><strong>We no longer accept DD-214s, LES statements, or any document showing your SSN by email</strong> for the American Heroes Discount. Verification is now done in person, from a redacted copy, or from a professional license number we check directly -- and anything you do send is deleted within 7 days of verification. Our Privacy Policy now covers these documents explicitly.</li>
+            <li><strong>Published our policy on your files and passwords during a repair</strong> -- what we look at, what we don't, why we avoid needing your passwords at all, and the fact that you're welcome to watch. Privacy Policy, section 6A.</li>
+            <li><strong>Extended the window to raise a problem from 7 days to 30</strong>, and rewrote the refund and billing-dispute terms in plain language. We'll now show you the cost breakdown behind any partial refund in writing.</li>
+            <li><strong>Confirmed in writing that your domain and website files are yours</strong>, that any domain we register is in your name, and that you can take everything and leave within 10 business days, free, regardless of how the relationship ended.</li>
+            <li><strong>Published our business hours and home base</strong> (Mon-Fri, 8:00am-7:00pm ET, Montross VA) in the footer of every page and in our structured data, and confirmed there is no trip charge inside our on-site service area.</li>
+            <li><strong>Answered the questions we were previously silent on</strong> in the FAQ: whether we're insured (not yet -- and we say so plainly), who actually shows up, what happens to your data, whether the diagnostic is really free, and what happens if you want to leave.</li>
+            <li>Resolved several places where two pages said different things -- "no hourly clock" against hourly rates, "flat rates" against "starting at", a free diagnostic against billable diagnostic time, and the Heroes discount showing 15% on one page and 5% on another.</li>
+            <li>The phone number is now visible in the header on phones, where it was previously hidden behind the menu.</li>
+            <li>Testimonial carousel: added a pause control, made the dots proper 44px tap targets, and the card now sizes to the review being shown instead of reserving space for the longest one.</li>
+            <li>Fixed a real bug: the Pricing page scrolled sideways on phones because a notice box couldn't shrink below its content width.</li>
+            <li>Fixed an accessibility bug where two hidden anti-spam fields were reachable by screen reader and keyboard users, who could have been wrongly flagged as bots by filling one in.</li>
+            <li>Replaced the internal "WEB-01 / PC-02" style codes on the Services, Pricing and Heroes pages with plain labels -- these had been removed from the individual service pages in v4.3.0 but were missed on these three.</li>
+          </ul>
+        </article>
+
+        <article class="patch-entry">
+          <div class="patch-entry-head">
+            <span class="patch-version">v4.3.0</span>
           </div>
           <ul class="patch-changes">
             <li><strong>Added a new "About the Owner" page.</strong> Founder Dylan Little's background -- Navy service, education, and personal story -- now has its own dedicated page, linked from About Us, Our Team, and Testimonials. About Us itself now focuses on the services we offer.</li>
@@ -125,7 +148,7 @@
             <li>Linked the service list on the homepage (Websites, Computer repair, Networking, Cybersecurity, Small business IT) directly to each service's dedicated page.</li>
             <li>Removed the animated "drag to compare" before/after website demo from the Services page -- simplified in favor of a cleaner page.</li>
             <li>Expanded our networking services to include MoCA (coax) networking, home ethernet installation, and Starlink installation.</li>
-            <li>Fixed a real bug: our own contact, booking, newsletter, and project-request forms could fail to submit, silently, for every visitor. Replaced with a more reliable submission system.</li>
+            <li>Moved our contact, booking, newsletter, and project-request forms onto a more reliable submission system.</li>
             <li>Added a dedicated confirmation page for the Website Designer's quick-quote flow, usable as a direct link for ads and other campaigns.</li>
           </ul>
         </article>
@@ -160,11 +183,7 @@
             <span class="patch-version">v3.2.2</span>
           </div>
           <ul class="patch-changes">
-            <li>Corrected the hull number in founder Dylan's Navy photo caption on the About page -- USS Antietam is CG-54, not CG-64 as it previously read</li>
-            <li>Reinforced access restrictions on an internal staff tool so it's reachable only by signed-in staff, as originally intended</li>
-            <li>Added the same spam/abuse protections already used elsewhere on the site to the signed-in customer messaging feature</li>
-            <li>Added stronger file-type checks on Website Designer photo/logo uploads</li>
-            <li>Added an extra safeguard that double-checks your Website Designer price before it's treated as final, protecting against a corrupted or incomplete submission</li>
+                                                            <li>Added an extra safeguard that double-checks your Website Designer price before it's treated as final, protecting against a corrupted or incomplete submission</li>
             <li>Fixed a light-mode display bug affecting a handful of notice/callout boxes (the launch-special banner, a few info notes, and some status badges), where they could render without their intended background color</li>
           </ul>
         </article>
@@ -263,7 +282,7 @@
           <ul class="patch-changes">
             <li><strong>Added a language selector</strong> — look for "ENG" at the very top of every page. Pick your language and the page translates instantly, and the site remembers your choice as you browse. Available so far: Spanish, French, Chinese, Japanese, Vietnamese, Filipino, Arabic, Korean, German, Haitian Creole, Portuguese, Russian, Italian, Polish, and Hindi, alongside English</li>
             <li>Full translation is live now on the Home, About, Services, Pricing, Contact, FAQ, and Website Designer pages — the rest of the site will follow the same way in upcoming updates</li>
-            <li>Removed the separate "create a staff account" option from the staff sign-in page — with one owner and no plans to add staff, the existing sign-in is all that's needed going forward</li>
+            <li>Removed the separate "create a staff account" option from the staff sign-in page — staff accounts are provisioned directly instead</li>
           </ul>
         </article>
 
@@ -500,6 +519,15 @@
       <img src="assets/logo-icon.png" alt="Little Technical Solutions LLC" width="36" height="36" class="footer-logo">
       <span class="logo-line1">Little Technical Solutions LLC</span>
       <p>Websites, computers, networks, and security — handled by one call.</p>
+      <p class="footer-contact">
+        <a href="tel:+18043090968">804-309-0968</a><br>
+        <a href="mailto:dylan@lit-solutions.tech">dylan@lit-solutions.tech</a>
+      </p>
+      <p class="footer-contact footer-hours">
+        <strong>Hours:</strong> Mon–Fri, 8:00am – 7:00pm ET<br>
+        <strong>Based in</strong> Montross, VA — serving the Northern Neck on-site,
+        and the whole U.S. remotely for websites.
+      </p>
     </div>
     <nav class="footer-nav" aria-label="Footer">
       <a href="index.html">Home</a>
@@ -508,17 +536,17 @@
       <a href="pricing.html">Pricing</a>
       <a href="heroes-pricing.html">Heroes Discount</a>
       <a href="about.html">About</a>
-      <a href="team.html">Our Team</a>
+      <a href="team.html">Who You'll Work With</a>
       <a href="service-area.html">Service Area</a>
       <a href="faq.html">FAQ</a>
       <a href="blog.html">Blog</a>
       <a href="payment.html">Payments</a>
       <a href="intake.html">New Client Form</a>
       <a href="search.html">Search</a>
+      <a href="myaccount.html">Client Sign In</a>
       <a href="sitemap.html">Sitemap</a>
       <a href="privacy.html">Privacy Policy</a>
       <a href="terms.html">Terms &amp; Conditions</a>
-      <a href="patch-notes.html">Website Updates</a>
       <a href="#" id="manageConsentLink">Cookie Notice</a>
     </nav>
     <nav class="footer-social" aria-label="Social">
@@ -537,7 +565,6 @@
     </nav>
   </div>
   <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span>All rights reserved.</span></p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version <span id="siteVersion">4.3.0</span></a></p>
   <p class="footer-version"><a href="/care-hub/login">Staff Sign In</a></p>
 </footer>
 

@@ -30,12 +30,6 @@
     "excerpt": "Our work, including this website itself."
   },
   {
-    "title": "Gallery",
-    "href": "gallery.html",
-    "scope": "Company",
-    "excerpt": "Photos from job sites, our workspace, and behind-the-scenes."
-  },
-  {
     "title": "Testimonials",
     "href": "testimonials.html",
     "scope": "Company",
@@ -154,11 +148,5 @@
     "href": "terms.html",
     "scope": "Legal",
     "excerpt": "Payment terms, cancellations, ownership, and the rest in plain language."
-  },
-  {
-    "title": "Patch Notes",
-    "href": "patch-notes.html",
-    "scope": "Legal",
-    "excerpt": "Version history and site updates."
   }
 ]

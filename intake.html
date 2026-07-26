@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://lit-solutions.tech/intake.html">
 <meta property="og:image" content="https://lit-solutions.tech/assets/logo-full.png">
 <meta name="twitter:card" content="summary">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Little Technical Solutions LLC","image":"https://lit-solutions.tech/assets/logo-full.png","telephone":"+18043090968","email":"dylan@lit-solutions.tech","url":"https://lit-solutions.tech/","priceRange":"$$","areaServed":[{"@type":"City","name":"Montross, VA"},{"@type":"City","name":"Colonial Beach, VA"},{"@type":"City","name":"King George, VA"},{"@type":"City","name":"Dahlgren, VA"}],"sameAs":["https://www.facebook.com/profile.php?id=61591618750945","https://share.google/2HaFNAzBwHXCsMn72","https://nextdoor.com/page/little-technical-solutuons-llc/"]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Little Technical Solutions LLC","image":"https://lit-solutions.tech/assets/logo-full.png","telephone":"+18043090968","email":"dylan@lit-solutions.tech","url":"https://lit-solutions.tech/","priceRange":"$$","areaServed":[{"@type":"City","name":"Montross, VA"},{"@type":"City","name":"Colonial Beach, VA"},{"@type":"City","name":"King George, VA"},{"@type":"City","name":"Dahlgren, VA"}],"sameAs":["https://www.facebook.com/profile.php?id=61591618750945","https://share.google/2HaFNAzBwHXCsMn72","https://nextdoor.com/page/little-technical-solutuons-llc/"],"address":{"@type":"PostalAddress","addressLocality":"Montross","addressRegion":"VA","addressCountry":"US"},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"19:00"}]}</script>
 
 <link rel="stylesheet" href="css/style.css">
 <link rel="icon" type="image/png" href="assets/favicon.png">
@@ -79,7 +79,7 @@
     <div class="wrap">
       <p class="eyebrow">Request service</p>
       <h1>Tell us what you need.</h1>
-      <p class="section-lede">A few details and we'll take it from there — no long questionnaire, just enough to get started.</p>
+      <p class="section-lede">A few details and we'll take it from there — no long questionnaire, just enough for us to call you back with the right questions. We reply the same business day, Monday to Friday.</p>
     </div>
   </section>
 
@@ -104,8 +104,9 @@
 
           <div class="form-row form-row--split">
             <div>
-              <label for="phone">Phone Number *</label>
-              <input type="tel" id="phone" name="phone" autocomplete="tel" required data-required="always">
+              <label for="phone">Phone Number <span class="label-optional">(optional)</span></label>
+              <input type="tel" id="phone" name="phone" autocomplete="tel" aria-describedby="phoneHint">
+              <p class="field-hint" id="phoneHint">Only needed if you'd like us to call or text you.</p>
             </div>
             <div data-required="always" data-label="Preferred contact method" role="radiogroup" aria-labelledby="contactMethodLabel">
               <label id="contactMethodLabel">Preferred contact method *</label>
@@ -138,6 +139,15 @@
       <img src="assets/logo-icon.png" alt="Little Technical Solutions LLC" width="36" height="36" class="footer-logo">
       <span class="logo-line1">Little Technical Solutions LLC</span>
       <p>Websites, computers, networks, and security — handled by one call.</p>
+      <p class="footer-contact">
+        <a href="tel:+18043090968">804-309-0968</a><br>
+        <a href="mailto:dylan@lit-solutions.tech">dylan@lit-solutions.tech</a>
+      </p>
+      <p class="footer-contact footer-hours">
+        <strong>Hours:</strong> Mon–Fri, 8:00am – 7:00pm ET<br>
+        <strong>Based in</strong> Montross, VA — serving the Northern Neck on-site,
+        and the whole U.S. remotely for websites.
+      </p>
     </div>
     <nav class="footer-nav" aria-label="Footer">
       <a href="index.html">Home</a>
@@ -146,17 +156,17 @@
       <a href="pricing.html">Pricing</a>
       <a href="heroes-pricing.html">Heroes Discount</a>
       <a href="about.html">About</a>
-      <a href="team.html">Our Team</a>
+      <a href="team.html">Who You'll Work With</a>
       <a href="service-area.html">Service Area</a>
       <a href="faq.html">FAQ</a>
       <a href="blog.html">Blog</a>
       <a href="payment.html">Payments</a>
       <a href="intake.html">New Client Form</a>
       <a href="search.html">Search</a>
+      <a href="myaccount.html">Client Sign In</a>
       <a href="sitemap.html">Sitemap</a>
       <a href="privacy.html">Privacy Policy</a>
       <a href="terms.html">Terms &amp; Conditions</a>
-      <a href="patch-notes.html">Website Updates</a>
       <a href="#" id="manageConsentLink">Cookie Notice</a>
     </nav>
     <nav class="footer-social" aria-label="Social">
@@ -175,7 +185,6 @@
     </nav>
   </div>
   <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span>All rights reserved.</span></p>
-  <p class="footer-version"><a href="patch-notes.html">Website Version <span id="siteVersion">4.3.0</span></a></p>
   <p class="footer-version"><a href="/care-hub/login">Staff Sign In</a></p>
 </footer>
 
