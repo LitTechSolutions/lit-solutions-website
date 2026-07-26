@@ -346,11 +346,44 @@ record. After that, Square status changes flow through automatically.
 customers that is correct and safe. If it ever becomes a bottleneck, the fix
 is an admin screen for the queue, not auto-provisioning.
 
-### Deliberately not built yet
+### Subscription status — DONE, in the Care Hub (2026-07-26)
 
-- Customer-facing subscription status on `/myaccount` — the API exists, nothing
-  renders it. Worth doing once there are real subscribers.
-- An admin UI for the linking queue — API-only today.
-- `invoice.payment_made` / `invoice.failed` handling — Square already reflects
-  payment failure in the subscription status we do handle, so it would be
-  duplicate signal unless you want per-invoice history.
+Built on the Care Hub's Subscriptions screen, not `/myaccount`.
+`myaccount.html`'s `maybeRedirectToCareHub()` sends any customer with an
+organization membership straight to `/care-hub/`, and a linked subscription
+customer always has one — so `/myaccount` would have been a page the
+audience never reaches.
+
+It shows our lifecycle status and Square's billing status as separate
+facts, including when they disagree. Previously only ours was shown, which
+reads "active" until a webhook lands — so a customer whose card had been
+declined would have been reassured while Square had already stopped
+billing.
+
+### Deliberately not built — owner decision, 2026-07-26
+
+**The pre-link gap: leave it until there are subscribers actually sitting
+in it.** Dylan's call, and a reasonable one — the edge cases are easier to
+get right against a real case than a guessed one.
+
+The gap: someone who has paid on Square but has not yet been linked to an
+organization has no membership, so they stay on `/myaccount` and see
+nothing about the subscription they just paid for. They cannot currently be
+matched to their payment either — the subscription webhook payload carries
+`customer_id`, not an email address.
+
+Closing it would need a call to Square's Customers API (and therefore a
+`SQUARE_ACCESS_TOKEN` env var) to populate
+`square_subscription_links.customer_email`. That column already exists for
+this purpose and is always null today; **do not remove it as dead schema.**
+
+Until then the gap is covered by onboarding within one business day, which
+the plan pages already promise.
+
+Also not built, for the same "wait for real demand" reason:
+
+- An admin UI for the linking queue — API-only today. With a handful of
+  subscribers a `curl` is honestly fine.
+- `invoice.payment_made` / `invoice.failed` handling — Square already
+  reflects payment failure in the subscription status we do handle, so this
+  would be duplicate signal unless per-invoice history is wanted.
