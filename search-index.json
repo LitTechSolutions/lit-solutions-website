@@ -148,5 +148,23 @@
     "href": "terms.html",
     "scope": "Legal",
     "excerpt": "Payment terms, cancellations, ownership, and the rest in plain language."
+  },
+  {
+    "title": "Basic Website Subscription",
+    "href": "plan-basic.html",
+    "scope": "Pricing",
+    "excerpt": "Discounted pricing for military, veterans, teachers, first responders, and more."
+  },
+  {
+    "title": "Standard Website Subscription",
+    "href": "plan-standard.html",
+    "scope": "Pricing",
+    "excerpt": "Discounted pricing for military, veterans, teachers, first responders, and more."
+  },
+  {
+    "title": "Pro Website Subscription",
+    "href": "plan-pro.html",
+    "scope": "Pricing",
+    "excerpt": "Discounted pricing for military, veterans, teachers, first responders, and more."
   }
 ]

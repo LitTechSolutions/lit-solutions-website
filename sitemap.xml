@@ -11,6 +11,9 @@
   <url><loc>https://lit-solutions.tech/service-area.html</loc><priority>0.6</priority></url>
   <url><loc>https://lit-solutions.tech/pricing.html</loc><priority>0.9</priority></url>
   <url><loc>https://lit-solutions.tech/website-designer.html</loc><priority>0.9</priority></url>
+  <url><loc>https://lit-solutions.tech/plan-basic.html</loc><priority>0.7</priority></url>
+  <url><loc>https://lit-solutions.tech/plan-standard.html</loc><priority>0.7</priority></url>
+  <url><loc>https://lit-solutions.tech/plan-pro.html</loc><priority>0.7</priority></url>
   <url><loc>https://lit-solutions.tech/heroes-pricing.html</loc><priority>0.6</priority></url>
   <url><loc>https://lit-solutions.tech/team.html</loc><priority>0.5</priority></url>
   <url><loc>https://lit-solutions.tech/about-the-owner.html</loc><priority>0.5</priority></url>
