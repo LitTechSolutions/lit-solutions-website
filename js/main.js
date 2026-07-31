@@ -140,6 +140,32 @@ document.addEventListener('DOMContentLoaded', () => {
       updatePause();
     });
 
+    // Long reviews are line-clamped on narrow screens (see the
+    // .hero-testimonial-quote clamp in style.css) so the card doesn't reserve
+    // most of a phone screen. Reveal the "read the full review" link only on
+    // slides whose text is ACTUALLY being cut off -- offering it on a quote
+    // that fits would be a small lie, and which quotes overflow depends on
+    // viewport width, so this is re-evaluated on resize.
+    const syncClampLinks = () => {
+      slides.forEach((slide) => {
+        const quote = slide.querySelector('.hero-testimonial-quote');
+        const more = slide.querySelector('.hero-testimonial-more');
+        if (!quote || !more) return;
+        // 1px of tolerance: sub-pixel line heights make scrollHeight exceed
+        // clientHeight by a fraction even when nothing is truncated.
+        more.hidden = quote.scrollHeight <= quote.clientHeight + 1;
+      });
+    };
+    syncClampLinks();
+    let clampTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(clampTimer);
+      clampTimer = setTimeout(syncClampLinks, 150);
+    });
+    // Web fonts land after first paint and change how many lines the text
+    // takes, so re-check once they're ready.
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncClampLinks);
+
     // Swipe support -- touch devices only have the tiny dots to tap otherwise.
     // Purely a touchend comparison (no touchmove/preventDefault), so it never
     // fights the page's normal vertical scroll.

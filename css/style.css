@@ -2433,3 +2433,28 @@ body.has-price-bar .cookie-banner{
   .mockup-grid{ grid-template-columns: 1fr; }
   .mockup-grid .mockup--phone{ justify-self:start; }
 }
+
+/* Clamp long hero reviews on narrow screens.
+   The card reserves space for the longest review so its height never changes
+   (see .hero-testimonial-slides above). On a 375px phone that meant Bill
+   Armour's review reserved ~567px -- roughly 70% of the viewport -- before a
+   visitor had scrolled at all. Clamping shortens what the tallest slide needs,
+   so the reserved height drops while staying just as constant.
+   The full text stays in the DOM (line-clamp only hides it visually, so screen
+   readers still read it whole) and is published verbatim on testimonials.html,
+   which the revealed link points at. */
+@media (max-width: 860px){
+  .hero-testimonial-quote{
+    display:-webkit-box;
+    -webkit-line-clamp: 7;
+    -webkit-box-orient: vertical;
+    overflow:hidden;
+  }
+}
+.hero-testimonial-more{
+  position:relative; margin-top:.6rem; font-size:.82rem;
+}
+.hero-testimonial-more[hidden]{ display:none; }
+.hero-testimonial-more a{
+  color: var(--accent-orange-on-dark); text-decoration:underline; text-underline-offset:2px;
+}
