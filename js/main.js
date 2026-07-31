@@ -74,27 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // the other review isn't tied to.
     if (learnMoreLink) learnMoreLink.hidden = (current !== 0);
 
-    const slidesWrap = heroTestimonial.querySelector('.hero-testimonial-slides');
-
-    // Pin the wrapper to its current height before the swap, so the CSS
-    // height transition has a concrete start value to animate from (it can't
-    // animate out of `auto`). Released back to `auto` once the swap settles,
-    // so the card still reflows correctly on resize or font changes.
-    let releaseTimer = null;
-    const animateHeightTo = (nextSlide) => {
-      if (!slidesWrap || prefersReducedMotion) return;
-      const from = slidesWrap.getBoundingClientRect().height;
-      const to = nextSlide.getBoundingClientRect().height;
-      if (!from || !to || Math.abs(from - to) < 1) return;
-      clearTimeout(releaseTimer);
-      slidesWrap.style.height = from + 'px';
-      requestAnimationFrame(() => { slidesWrap.style.height = to + 'px'; });
-      releaseTimer = setTimeout(() => { slidesWrap.style.height = ''; }, 500);
-    };
-
     const goTo = (index) => {
       if (index === current || !slides[index]) return;
-      animateHeightTo(slides[index]);
       const outgoing = slides[current];
       outgoing.classList.remove('is-active');
       outgoing.classList.add('is-leaving');

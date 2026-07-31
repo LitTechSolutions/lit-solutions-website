@@ -301,30 +301,31 @@ p{ margin:0; }
 .hero-testimonial-link:hover{ text-decoration:underline; }
 .hero-testimonial-link[hidden]{ display:none; }
 
-/* The card sizes to the *active* review, not to the longest one -- sizing to
-   the longest left short reviews sitting in a mostly-empty box (on a 375px
-   phone the tallest quote reserved ~70% of the viewport). The active slide
-   stays in normal flow so the wrapper gets a correct natural height with no
-   JS; JS then animates between those heights so it doesn't snap. */
+/* All slides occupy the SAME grid cell, so the card is always as tall as the
+   longest review and its height never changes as it rotates.
+   An earlier version sized the card to the *active* slide to avoid short
+   reviews sitting in a tall box. That traded a cosmetic gap for a real
+   defect: the whole page shifted every five seconds as the card grew and
+   shrank. Reserving the space is the lesser evil -- content is vertically
+   centred so a short quote still looks deliberate. Do not reintroduce
+   per-slide sizing. */
 .hero-testimonial-slides{
   position:relative; overflow:hidden;
-  transition: height .45s ease;
+  display:grid;
 }
 .hero-testimonial-slide{
-  position:absolute; top:0; left:0; width:100%;
+  grid-area:1 / 1; width:100%;
   display:flex; flex-direction:column; justify-content:center;
   opacity:0; visibility:hidden; z-index:1;
   transform: translateX(-28px);
   transition: opacity .5s ease, transform .5s ease, visibility 0s linear .5s;
 }
 .hero-testimonial-slide.is-active{
-  position:relative;
   opacity:1; visibility:visible; z-index:2;
   transform: translateX(0);
   transition: opacity .5s ease, transform .5s ease, visibility 0s linear 0s;
 }
 .hero-testimonial-slide.is-leaving{
-  position:absolute;
   opacity:0; visibility:visible; z-index:1;
   transform: translateX(28px);
   transition: opacity .5s ease, transform .5s ease;
@@ -409,7 +410,13 @@ p{ margin:0; }
   margin-top: 1.1rem; font-family: var(--font-display); font-size:1.05rem; font-weight:500;
   color: rgba(245,245,244,0.65); line-height:1.4;
 }
-.rotator-slot{ display:inline-block; overflow:hidden; height:1.4em; min-width:15.5ch; vertical-align:bottom; }
+/* No min-width. It used to be pinned to the longest phrase ("small business
+   IT") so the trailing text wouldn't jitter, but that left a visible ~100px
+   hole after short words like "websites". Instead the trailing clause is
+   given its own line (flex-basis:100% below), so the slot can size to its
+   content and nothing downstream moves. */
+.rotator-slot{ display:inline-block; overflow:hidden; height:1.4em; vertical-align:bottom; }
+.hero-rotator .rotator-label:last-child{ flex-basis:100%; }
 .rotator-word{
   display:inline-block; white-space:nowrap;
   color: var(--accent-orange-on-dark); font-weight:700;
@@ -1074,19 +1081,29 @@ a.pay-btn.is-locked, a.pay-btn-sm.is-locked{ opacity:.5; }
 .price-list--columns{ display:grid; grid-template-columns: 1fr 1fr; column-gap: 2rem; }
 .price-list--columns li{ border-bottom: 1px dashed var(--line); }
 
-/* Grid rather than flex: the text here is often an anonymous item (bare text
-   next to the icon, no wrapping element), which can't be given min-width:0
-   directly. A `minmax(0,1fr)` track lets that column shrink regardless, which
-   flex couldn't -- previously this gave the whole pricing page a horizontal
-   scrollbar on phones. */
+/* Floated icon rather than flex or grid. These notes come in two shapes:
+   `<p class="price-note"><svg>bare text</p>` and
+   `<div class="price-note"><svg><p>…</p><p>…</p></div>`, and neither flex nor
+   grid handles both.
+     - flex: the bare text becomes an anonymous flex item, which can't be
+       given min-width:0, so it refused to shrink and gave the pricing page a
+       horizontal scrollbar on phones.
+     - grid: with several paragraphs the second one auto-flowed into the icon
+       column, sizing that track to a full-width block and collapsing the text
+       column to 0px -- the payments note rendered one character per line.
+       Pinning children to column 2 then pushed the *anonymous* text item
+       (which `> *` can't match) into an implicit third column.
+   A float sidesteps all of it: text flows around the icon, paragraphs stack
+   normally, and nothing creates a track that can collapse or overflow. */
 .price-note{
-  display:grid; grid-template-columns: auto minmax(0, 1fr);
-  gap:.9rem; align-items:start;
+  display:block;
   background:var(--notice-bg); border: 1px solid var(--notice-border); border-radius: var(--radius);
   padding: 1.1rem 1.3rem; margin: 1rem 0 2.5rem; color:var(--notice-text); font-size:.85rem;
 }
-.price-note svg{ flex-shrink:0; margin-top:.1rem; }
-.price-note p{ margin:0; min-width:0; overflow-wrap:anywhere; }
+.price-note::after{ content:""; display:block; clear:both; }
+.price-note > svg{ float:left; flex-shrink:0; margin:.1rem .9rem 0 0; }
+.price-note p{ margin:0; overflow-wrap:anywhere; }
+.price-note p + p{ margin-top:.75rem; }
 
 .pricing-cta{
   text-align:center; background: var(--navy-mid); color:#fff;
@@ -1770,6 +1787,10 @@ textarea{ resize: vertical; }
 .wd-illustrative-note{ font-size:.78rem; color: var(--ink-faint); font-style:italic; margin-bottom:1.25rem; }
 
 .wd-steps-row{ display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; }
+/* A class rule with `display` outranks the UA's [hidden]{display:none}, so
+   the step chips stayed on screen while the buy/subscribe chooser was up
+   even though the element really was hidden="true". */
+.wd-steps-row[hidden], .wd-configurator[hidden], .wd-mode-choice[hidden], .wd-subscribe-panel[hidden]{ display:none; }
 .wd-steps{ display:flex; gap:.5rem; margin-bottom:2rem; border-bottom:1px solid var(--line); flex:1 1 auto; min-width:0; }
 .wd-step{
   background:none; border:none; border-bottom:2px solid transparent; padding:.75rem .25rem; margin-right:1.5rem;
@@ -2218,9 +2239,13 @@ body.has-price-bar .cookie-banner{
 .wd-mode-list > span::before{
   position:absolute; left:0; top:0; font-weight:700; font-size:.95rem; line-height:1.45;
 }
+/* One glyph shape for all three, differing only in colour -- the previous
+   mix of a tick, a bare "!" and a middot read as inconsistent rather than
+   meaningful, and "!" picked up var(--accent-orange), which despite the name
+   is the indigo brand colour, so it rendered blue. */
 .wd-mode-list .is-good::before{ content:"\2713"; color: var(--accent-teal); }
-.wd-mode-list .is-warn::before{ content:"\0021"; color: var(--accent-orange); }
-.wd-mode-list .is-plain::before{ content:"\00B7"; color: var(--ink-faint); font-size:1.3rem; line-height:1.15; }
+.wd-mode-list .is-warn::before{ content:"\2022"; color: #B4530A; }
+.wd-mode-list .is-plain::before{ content:"\2022"; color: var(--ink-faint); }
 .wd-mode-cta{
   margin-top:auto; font-family: var(--font-display); font-weight:600;
   font-size:.9rem; color: var(--accent-orange-text);
