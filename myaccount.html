@@ -83,7 +83,7 @@
     <div class="wrap">
       <p class="eyebrow">My Account</p>
       <h1 id="acctPageTitle">My Account</h1>
-      <p class="section-lede">Sign in to view your invoices, receipts, and paperwork, and manage your login.</p>
+      <p class="section-lede" id="acctPageLede">Sign in to view your invoices, receipts, and paperwork, and manage your login.</p>
     </div>
   </section>
 
@@ -176,10 +176,29 @@
   }
   function el(html) { var d = document.createElement("div"); d.innerHTML = html.trim(); return d.firstChild; }
 
-  // Sets both the browser tab title and the on-page H1.
-  function setPageTitle(text) {
+  // Sets the browser tab title, the on-page H1, and the standfirst under it.
+  // The standfirst used to be a fixed line about invoices and paperwork, which
+  // read as a non-sequitur on every view that isn't about those -- "Project
+  // brief" followed by "Sign in to view your invoices" in particular.
+  var LEDES = {
+    "Sign in": "Sign in to view your invoices, receipts, and paperwork, and manage your login.",
+    "Create an account": "Your account is where you pay, fill in your project brief, and keep your paperwork.",
+    "Enter your code": "One quick step to confirm it's really your email address.",
+    "Verify your email": "One quick step to confirm it's really your email address.",
+    "Reset your password": "We'll email you a link to set a new one.",
+    "Set a new password": "Choose something long. A passphrase beats a short, complicated password.",
+    "Project brief": "Tell us about your business and what the site needs to do. This is what we build from.",
+    "My documents": "Invoices, receipts, paperwork, and a copy of your project brief.",
+    "Favorites & saved searches": "Pages you've saved for later.",
+    "Notifications": "Updates about your account and your project.",
+    "Messages": "Talk to us directly. We answer seven days a week.",
+    "Account Settings": "Your name, email and password.",
+  };
+  function setPageTitle(text, lede) {
     document.title = text + " — My Account — Little Technical Solutions LLC";
     document.getElementById("acctPageTitle").textContent = text;
+    var l = document.getElementById("acctPageLede");
+    if (l) l.textContent = lede || LEDES[text] || "";
   }
 
   async function api(path, opts) {
@@ -539,8 +558,13 @@
       var done = orders.find(function (o) { return o.status === "brief_submitted"; });
 
       if (!order && done) {
+        // Guard the date: a missing or unparseable timestamp rendering as
+        // "Submitted Invalid Date." reads as a broken page, and the sentence
+        // works perfectly well without it.
+        var when = done.briefSubmittedAt ? new Date(done.briefSubmittedAt) : null;
+        var whenText = (when && !isNaN(when.getTime())) ? ' on ' + when.toLocaleDateString() : '';
         v.innerHTML = '<div class="card"><h2 style="font-size:1.15rem;">Your brief is in</h2>' +
-          '<p style="color:var(--ink-soft); font-size:.92rem; margin-top:.5rem;">Submitted ' + esc(new Date(done.briefSubmittedAt).toLocaleDateString()) + '. A copy is in your <a href="#documents" style="color:var(--accent-orange-text);text-decoration:underline;">Documents</a> tab, and we\'ll be in touch within one business day.</p></div>';
+          '<p style="color:var(--ink-soft); font-size:.92rem; margin-top:.5rem;">Submitted' + esc(whenText) + '. A copy is in your <a href="#documents" style="color:var(--accent-orange-text);text-decoration:underline;">Documents</a> tab, and we\'ll be in touch within one business day.</p></div>';
         return;
       }
       if (!order) {
@@ -621,6 +645,8 @@
     document.title = "Dashboard — My Account — Little Technical Solutions LLC";
     var h1 = document.getElementById("acctPageTitle");
     h1.innerHTML = '<span>Welcome, </span>' + esc(state.user.name);
+    var lede = document.getElementById("acctPageLede");
+    if (lede) lede.textContent = "Everything for your website project lives here.";
     var v = el('<div>' +
       '<div id="dashOrder"></div>' +
       '<div class="account-shortcuts" id="dashShortcuts">' +
