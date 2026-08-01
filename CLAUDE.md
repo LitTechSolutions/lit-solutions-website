@@ -17,6 +17,13 @@ actually changes.
   CG-64 (corrected site-wide, see commit `9a753a6`).
 - **Education:** B.S. in Cybersecurity Technology, University of Maryland
   Global Campus. Also works professionally in systems engineering.
+- **Tagline (as of v27, owner decision 2026-08-01):** **"Solutions Not
+  Excuses."** Replaces "Modernizing the Northern Neck, One Small Business at
+  a Time." It lives in one place customer-facing: `index.html`'s
+  `.tagline-banner`. The old line carried the only geographic phrase in the
+  homepage *body*, but "Northern Neck" still appears in index.html's meta
+  description, the service-area copy, and 30+ other pages, so no local-SEO
+  signal was lost with it.
 - **Positioning:** a local, personally-accountable technology partner for
   websites, computers, networking, cybersecurity, and small-business IT —
   not primarily an "AI website company." Do not exaggerate credentials,
