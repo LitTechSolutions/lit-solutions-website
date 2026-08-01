@@ -387,3 +387,35 @@ Also not built, for the same "wait for real demand" reason:
 - `invoice.payment_made` / `invoice.failed` handling — Square already
   reflects payment failure in the subscription status we do handle, so this
   would be duplicate signal unless per-invoice history is wanted.
+
+
+## 7. Square product names now disagree with the site — ACTION NEEDED (2026-08-01)
+
+The subscription tiers were renamed **Basic → Standard, Standard → Premium,
+Pro → Executive**. The Square Payment Links were left pointing at the same
+products (same prices, same checkout), so nothing is broken — but **the
+products in Square are still called "Basic Website Deposit", "Standard
+Website Subscription", "Pro Website Deposit" and so on.**
+
+A customer will click "Pay $249 deposit" under **Premium** and land on a
+Square page headed **"Standard Website Deposit"**. That looks like they've
+clicked the wrong thing, at the exact moment you're asking for money.
+
+**Rename the six products in the Square dashboard to match:**
+
+| Square product (now) | Should read |
+|---|---|
+| Basic Website Deposit | Standard Website Deposit |
+| Basic Website Subscription | Standard Website Subscription |
+| Standard Website Deposit | Premium Website Deposit |
+| Standard Website Subscription | Premium Website Subscription |
+| Pro Website Deposit | Executive Website Deposit |
+| Pro Website Subscription | Executive Website Subscription |
+
+Renaming a product does **not** change its payment-link URL, so nothing in
+the repo needs updating afterwards — the six links stay exactly as they are.
+
+Also note: `/plan-basic.html` and `/plan-pro.html` now 301 to the new URLs.
+`/plan-standard.html` deliberately has **no** redirect, because that name was
+reused — it used to be the middle tier and is now the entry tier. The pages
+had been live about a day, so index exposure is negligible.

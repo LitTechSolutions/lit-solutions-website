@@ -39,6 +39,21 @@
   status = 301
   force = true
 
+# Website plan tiers were renamed Basic/Standard/Pro -> Standard/Premium/
+# Executive. Two of the three URLs changed; /plan-standard.html deliberately
+# has NO redirect because the name was reused -- it now serves the entry tier
+# rather than the middle one. The pages were only live for a day, so the
+# index exposure is negligible.
+[[redirects]]
+  from = "/plan-basic.html"
+  to = "/plan-standard.html"
+  status = 301
+
+[[redirects]]
+  from = "/plan-pro.html"
+  to = "/plan-executive.html"
+  status = 301
+
 [[redirects]]
   from = "/subscriptions.html"
   to = "/payment.html#subscriptions"

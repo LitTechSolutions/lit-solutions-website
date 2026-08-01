@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /*
- * Generates the three Website Subscription detail pages (plan-basic.html,
- * plan-standard.html, plan-pro.html) from one template plus the PLANS data
- * below.
+ * Generates the three Website Subscription detail pages (plan-standard.html,
+ * plan-premium.html, plan-executive.html) from one template plus the PLANS
+ * data below.
  *
  * These pages are ~95% identical, and this site has no build step or include
  * mechanism -- three hand-maintained copies would have drifted apart the
@@ -35,8 +35,8 @@ const COMMON_INCLUDED = [
 
 const PLANS = [
   {
-    slug: 'basic',
-    name: 'Basic',
+    slug: 'standard',
+    name: 'Standard',
     deposit: '$149',
     monthly: '$79',
     depositLink: 'https://square.link/u/lwgSQrWM',
@@ -58,8 +58,8 @@ const PLANS = [
     mockups: ['home', 'mobile'],
   },
   {
-    slug: 'standard',
-    name: 'Standard',
+    slug: 'premium',
+    name: 'Premium',
     featured: true,
     deposit: '$249',
     monthly: '$129',
@@ -86,8 +86,8 @@ const PLANS = [
     mockups: ['home', 'blog', 'mobile'],
   },
   {
-    slug: 'pro',
-    name: 'Pro',
+    slug: 'executive',
+    name: 'Executive',
     deposit: '$399',
     monthly: '$199',
     depositLink: 'https://square.link/u/av8VJj8O',
@@ -96,7 +96,7 @@ const PLANS = [
     equivalentPrice: 'about $2,500',
     tagline: 'For sites that need to <em>do</em> things &mdash; accounts, logins, content you manage yourself.',
     who: 'Your customers need to sign in. Maybe they check an order, download something that\'s theirs, or see history you keep for them. And you want to change your own content without emailing anyone.',
-    pages: ['Everything in Standard', 'Sign-in &amp; registration', 'Customer dashboard', 'Profile &amp; preferences', 'Admin content editor', 'Media manager'],
+    pages: ['Everything in Premium', 'Sign-in &amp; registration', 'Customer dashboard', 'Profile &amp; preferences', 'Admin content editor', 'Media manager'],
     detail: [
       ['Customer sign-in &amp; registration', 'Proper account handling &mdash; passwords hashed and never stored readable, sessions managed correctly, password reset that works.'],
       ['Two-factor authentication', 'Because a customer account that only needs a password is a customer account waiting to be taken.'],
@@ -106,7 +106,7 @@ const PLANS = [
       ['Advanced security hardening', 'Rate limiting, stricter headers, upload validation, and a review of the whole surface before launch.'],
       ['Conversion tracking &amp; A/B testing', 'Find out which version of a page actually gets you called, rather than guessing.'],
     ],
-    edits: 'Unlimited reasonable content changes, and priority response &mdash; Pro sites go to the front of the queue.',
+    edits: 'Unlimited reasonable content changes, and priority response &mdash; Executive sites go to the front of the queue.',
     mockups: ['home', 'dashboard', 'mobile'],
   },
 ];
@@ -285,7 +285,7 @@ ${li(COMMON_INCLUDED)}
         </li>
         <li>
           <h3>5. We build it, and you review it</h3>
-          <p>Typically ${p.slug === 'basic' ? '1&ndash;2 weeks' : p.slug === 'standard' ? '2&ndash;4 weeks' : '3&ndash;6 weeks'} once we have your content. You see it on a private link before anyone else does, and you get revisions before launch.</p>
+          <p>Typically ${p.slug === 'standard' ? '1&ndash;2 weeks' : p.slug === 'premium' ? '2&ndash;4 weeks' : '3&ndash;6 weeks'} once we have your content. You see it on a private link before anyone else does, and you get revisions before launch.</p>
         </li>
         <li>
           <h3>6. It goes live, and we keep it running</h3>
