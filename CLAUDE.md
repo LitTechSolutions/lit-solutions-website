@@ -145,13 +145,12 @@ makes published pages factually false:
 2. **Nothing goes offline without written notice first.**
 
 The subscription prices were confirmed by the owner on 2026-07-26 and are
-settled, not provisional (`OWNER_INPUT.md` section 5a). They are hard-coded
-in `pricing.html`, `payment.html` and `website-designer.html`, and nothing
-reads them from Square at runtime — a price change has to be made in all
-three or the site and the checkout will disagree. Live Square Payment Links
-are wired for all six (three deposits, three subscriptions); the deposit
-and the monthly plan are separate checkouts because Square Payment Links
-support only one paid phase.
+settled, not provisional (`OWNER_INPUT.md` section 5a). **As of the Stripe
+migration they live in exactly one place**, `netlify/functions/_lib/
+product_catalog.js`; `js/product-catalog.js` and the three `plan-*.html`
+pages are generated from it (`npm run build:catalog`, `npm run build:plans`)
+and a test fails if the generated copy drifts. `pricing.html` still carries
+the plan-card prices by hand — change those alongside the catalog.
 
 Copy rule: the ownership trade-off on subscription plans must stay
 **prominent and pre-purchase**, never fine print. A buyer discovering
@@ -189,10 +188,93 @@ redesign quietly demote it.
   had to be re-shot after the hero network-diagram graphic it displayed
   was removed from `index.html` in a later pass of this same release.
 
+## Payments: Stripe for the website, Square for everything else (v27)
+
+**`netlify/functions/_lib/pricing.js` is the only place money is
+calculated**, and **`_lib/stripe_config.js` is the only place credentials
+are resolved.** Setup runbook: **`docs/development/STRIPE_SETUP.md`**. The
+path is inert until the active mode's key and webhook secret are set in
+Netlify — a 500 from `/checkout` before that is correct fail-closed
+behaviour, not a bug.
+
+**Credentials come in pairs, chosen by `STRIPE_MODE`:** `test` reads
+`STRIPE_TEST_KEY` + `STRIPE_TEST_WEBHOOK_SECRET`, `live` (or unset) reads
+`STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET`. Never read either variable
+directly — a live key verified against a test signing secret 401s every
+delivery and the only symptom is an order stuck on "Waiting on payment".
+The resolver also **refuses a key whose prefix disagrees with the declared
+mode**, in both directions, because `sk_live_` in the test slot charges real
+cards while the owner believes they are testing. Unset defaults to LIVE on
+purpose: defaulting to test would take no money from real customers while
+looking perfectly healthy.
+
+**`stripe-setup.js` + My Account → Stripe setup** does the one-time wiring:
+it reports the active mode, lists webhook endpoints with what's wrong with
+each, and creates the correct endpoint (right URL, right four events, right
+mode) returning the signing secret once. It never returns the secret key and
+deliberately does not write Netlify variables.
+
+Why the migration happened, so nobody proposes going back: Square Payment
+Links support **one paid phase per link**. A deposit plus a monthly plan
+therefore needed two checkouts, and because the links are static and shared
+nothing in the redirect identified *which* order was paid. That forced a
+`payment_reported` status meaning "the customer says they paid", an "I've
+completed both payments" button, and a manual linking step. Stripe returns
+our own `orderId` in the session metadata, so all four are gone.
+
+Seven things not to relearn the hard way:
+
+- **Only website work may be checkout-able** (owner's rule, 2026-08-01):
+  website services are a fixed rate and payable on the site; IT services are
+  quoted and invoiced through Pay a Bill. `PRODUCTS` in `product_catalog.js`
+  is website-only; `INVOICE_ONLY` and `QUOTE_ONLY` record what is published
+  but deliberately not payable. Tests fail if anything in the Cybersecurity,
+  Networking, Small business IT or Computer repair categories becomes
+  purchasable again. Don't "helpfully" add them back. The one agreed
+  exception is `it-support`: the rule is really "IT *jobs* are quoted and
+  invoiced", and an ongoing flat monthly plan has nothing to quote.
+- **checkout.js is the only thing that may create an order.** The order must
+  exist *before* the Stripe session so its id can ride in the metadata.
+  `POST /orders` returns 410 on purpose.
+- **Stripe bills a recurring line immediately.** Today's charge is the
+  one-off component **plus** the first month, and a pure monthly
+  subscription must emit *only* a recurring line. Emitting a separate
+  "first month" one-off alongside it double-charges — that shipped briefly
+  in development and would have taken $78 on a $39 plan. There is an
+  exhaustive test asserting shown-total equals sum-of-line-items for every
+  product under every hero/pay-in-full combination. Don't delete it.
+- **The Heroes rate follows the COMPONENT, not the product**: 15% on
+  one-time work, 5% on recurring. A subscription plan's *deposit* gets 15%
+  while its *monthly* gets 5%.
+- **The discount is read from the account, never from the request.**
+  Verification happens before payment because a discount can't be applied to
+  a card already charged. `hero-status.js` has **no upload field by design**
+  — terms §10 and the privacy policy promise no SSN-bearing document ever
+  arrives, and having nowhere to send one is how that promise is kept.
+- **BNPL requires paying in full.** Stripe has no BNPL in subscription mode,
+  which matches the owner's own rule; `/checkout` rejects the combination
+  rather than silently charging a card.
+- **Prices are sent inline as `price_data`.** Nothing exists in the Stripe
+  dashboard, so there are no product IDs to maintain and no way for a
+  dashboard name to disagree with the site — the exact mismatch that
+  happened with Square's product names (`OWNER_INPUT.md` §7).
+
+Retired in this migration, don't resurrect: `js/plan-catalog.js`,
+`netlify/functions/_lib/plan_catalog.js` (two more sources of truth for
+prices) and `js/subscribe-flow.js` (a helper that existed only to nurse
+people through the two Square checkouts).
+
 ## Square subscription webhooks (v27)
 
-Square is the source of truth for whether a website subscription is being
-paid for. `netlify/functions/square-webhook.js` consumes
+Square is still how money that didn't start on the website is taken: in
+person, an invoice for hourly or quoted work, and the `payment.html` links.
+**It no longer handles website plans — Stripe is now the source of truth for
+whether a website subscription is being paid for**, via
+`stripe-webhook.js`. The Square integration below stays wired for
+subscriptions sold outside the site, and for any legacy order taken before
+the migration (`orders.js` still renders those).
+
+`netlify/functions/square-webhook.js` consumes
 `subscription.created`/`subscription.updated`; `square-subscriptions.js` is
 the staff side. Setup runbook: **`docs/development/SQUARE_WEBHOOK_SETUP.md`**
 — the integration is inert until migration 007 is run and two env vars

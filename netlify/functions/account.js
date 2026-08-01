@@ -15,6 +15,7 @@
 
 const { readCookie, getSession, verifyPassword, hashPassword, revokeAllSessionsForUser, clearSessionCookie, json, rateLimited } = require("./_lib/auth_utils");
 const { getJSON, setJSON, deleteKey, store } = require("./_lib/blob_store");
+const { publicStatus: heroPublicStatus } = require("./hero-status");
 
 function withDefaultPreferences(preferences) {
   return Object.assign({ timezone: "", emailNotifications: true }, preferences || {});
@@ -38,7 +39,16 @@ exports.handler = async (event) => {
   if (event.httpMethod === "GET") {
     const found = await findUserRecord(session.userId);
     if (!found) return json(404, { error: "Account not found." });
-    return json(200, { user: { id: found.user.id, name: found.user.name, email: found.user.email, role: found.user.role, preferences: withDefaultPreferences(found.user.preferences) } });
+    // heroStatus rides along on the session payload rather than needing its
+    // own fetch: the owner's requirement is that eligibility is visible to
+    // the customer *at sign in*, and every signed-in surface already reads
+    // this endpoint. It is display state only -- the discount itself is
+    // decided server-side at checkout from the same field.
+    return json(200, { user: {
+      id: found.user.id, name: found.user.name, email: found.user.email, role: found.user.role,
+      preferences: withDefaultPreferences(found.user.preferences),
+      heroStatus: heroPublicStatus(found.user),
+    } });
   }
 
   if (event.httpMethod !== "POST") return json(405, { error: "Method not allowed" });

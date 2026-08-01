@@ -96,8 +96,26 @@
 
         <article class="patch-entry">
           <div class="patch-entry-head">
-            <span class="patch-version patch-version--current">v4.5.0</span>
+            <span class="patch-version patch-version--current">v4.6.0</span>
             <span class="patch-tag">Current</span>
+          </div>
+          <ul class="patch-changes">
+            <li><strong>One checkout instead of two.</strong> A subscription plan used to mean paying a deposit, then going back for the monthly plan separately &mdash; two trips, and it was entirely possible to do the first and forget the second. Now it is a single secure checkout that sets up both at once, and your dashboard updates itself the moment payment lands. No more "I've completed both payments" button, and nothing waiting on us to check by hand.</li>
+            <li><strong>Apple Pay and Google Pay.</strong> On any device that supports them, paying is a thumbprint. Card details are handled entirely by Stripe &mdash; we never see or store them.</li>
+            <li><strong>Buy now, pay later.</strong> On one-off work you can spread the cost through Klarna, Affirm or Afterpay at checkout. Because those providers settle the full amount with us immediately and you repay them, pay-over-time orders are charged in full rather than split 50/50.</li>
+            <li><strong>A real cart.</strong> Add as many things as you like &mdash; a website plan, a Wi-Fi setup, an ongoing support plan &mdash; and pay for all of it in one go, with a running total that shows exactly what comes out today, what recurs monthly, and what is owed at launch. Anything you can add to the cart shows the flat price it will actually charge.</li>
+            <li><strong>Website work can now be bought online at a fixed rate</strong> &mdash; all three website plans, both buy-outright packages, the Website Care Plan, and our flat-rate website services (domain and DNS, business email, SEO, domain management). The price you see is the price you pay.</li>
+            <li><strong>IT work is still quoted first and invoiced after, on purpose.</strong> Computer repair, networking, cybersecurity and small-business IT depend on what we find when we look, so those prices stay a guide, we tell you the real number before starting, and you pay the invoice. We are not going to take your money in a cart for a job nobody has scoped yet.</li>
+            <li><strong>The American Heroes Discount is now built into your account.</strong> Ask for it from your dashboard, we confirm you qualify, and from then on 15% off one-time work and 5% off monthly is applied automatically at every checkout &mdash; you are never asked to prove it twice. Your status is shown when you sign in, so you always know where you stand <em>before</em> you pay. As always, <strong>we will never ask you to email us anything carrying your Social Security number</strong>; there is deliberately nowhere on this site to upload one.</li>
+            <li><strong>Manage your own billing.</strong> Update a card, download an invoice, or cancel a plan yourself, from your dashboard. Cancelling stops the billing; a site never goes offline without written notice from us first.</li>
+            <li><strong>If a checkout gets interrupted, you can pick it straight back up.</strong> Close the tab by accident and your order is still on your dashboard, waiting, with nothing charged.</li>
+            <li>Fixed a rate limit that could, in the wrong circumstances, have counted every customer's activity against one shared allowance rather than each person's own.</li>
+          </ul>
+        </article>
+
+        <article class="patch-entry">
+          <div class="patch-entry-head">
+            <span class="patch-version">v4.5.0</span>
           </div>
           <ul class="patch-changes">
             <li><strong>Added Website Subscription plans -- Basic, Standard and Pro.</strong> A small deposit plus a monthly fee that covers the build, hosting, maintenance, security updates and support, for businesses who can't put the full cost down upfront. Every optional feature from the Website Designer can be folded into any tier.</li>
@@ -605,7 +623,7 @@
   </div>
 </div>
 
-<script src="js/plan-catalog.js"></script>
+<script src="js/product-catalog.js"></script>
 <script src="js/cart.js"></script>
 <script src="js/main.js"></script>
 <script src="js/site-version.js"></script>

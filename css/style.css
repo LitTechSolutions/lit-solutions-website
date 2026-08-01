@@ -2477,38 +2477,89 @@ body.has-price-bar .cookie-banner{
 }
 .cart-badge[hidden]{ display:none; }
 
-.cart-wrap{ max-width:820px; }
+.cart-wrap{ max-width:1060px; }
 .cart-empty{ text-align:center; padding:2rem 0 3rem; }
 .cart-empty h2{ font-size:1.4rem; margin-bottom:.6rem; }
 .cart-empty p{ color: var(--ink-soft); line-height:1.7; max-width:56ch; margin:0 auto; }
 
-.cart-item{
-  display:grid; grid-template-columns: 1fr 260px; gap:2rem;
-  background: var(--paper-alt); border:1px solid var(--line);
-  border-radius: var(--radius); padding:1.75rem; margin-bottom:1.5rem;
+/* Lines on the left, the money on the right, and the money stays in view
+   while you scroll a long cart. */
+.cart-layout{ display:grid; grid-template-columns: 1fr 340px; gap:2rem; align-items:start; }
+.cart-rail{ position:sticky; top:96px; display:grid; gap:1rem; }
+
+.cart-lines{ display:grid; gap:1rem; }
+.cart-line{
+  display:grid; grid-template-columns: 1fr auto; gap:1.25rem;
+  background: var(--paper); border:1px solid var(--line);
+  border-radius: var(--radius); padding:1.35rem 1.5rem;
 }
-.cart-item-main h2{ font-size:1.5rem; margin:.1rem 0 .5rem; }
-.cart-item-summary{ color: var(--ink-soft); line-height:1.7; font-size:.92rem; }
-.cart-item-links{ margin-top:.9rem; font-size:.85rem; }
-.cart-item-links a{ color: var(--accent-orange-text); text-decoration:underline; }
-.cart-item-price{ border-left:1px solid var(--line); padding-left:1.5rem; }
-.cart-price-row{
-  display:flex; justify-content:space-between; align-items:baseline;
-  gap:1rem; font-size:.9rem; color: var(--ink-soft); margin-bottom:.5rem;
+.cart-line-cat{
+  font-size:.7rem; letter-spacing:.08em; text-transform:uppercase;
+  color: var(--ink-faint); font-weight:700; margin-bottom:.25rem;
 }
-.cart-price-row strong{ font-family: var(--font-display); font-size:1.35rem; color: var(--ink); }
-.cart-price-note{ margin-top:.9rem; font-size:.78rem; color: var(--ink-faint); line-height:1.6; }
+.cart-line-name{ font-family: var(--font-display); font-size:1.15rem; margin:0 0 .35rem; }
+.cart-line-summary{ color: var(--ink-soft); line-height:1.6; font-size:.86rem; margin:0; }
+.cart-line-note{ color: var(--ink-faint); line-height:1.6; font-size:.78rem; margin:.55rem 0 0; }
+.cart-line-links{ margin-top:.6rem; font-size:.82rem; }
+.cart-line-links a{ color: var(--accent-orange-text); text-decoration:underline; }
+
+.cart-line-right{ text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:.5rem; min-width:150px; }
+.cart-line-price{ font-family: var(--font-display); font-size:1.2rem; color: var(--ink); }
+.cart-line-was{ font-size:.8rem; color: var(--ink-faint); text-decoration:line-through; }
+.cart-line-sub{ font-size:.78rem; color: var(--ink-soft); }
+
+.qty{
+  display:inline-flex; align-items:center; border:1px solid var(--line);
+  border-radius:999px; overflow:hidden; background: var(--paper);
+}
+.qty button{
+  width:30px; height:30px; border:none; background:none; cursor:pointer;
+  font: inherit; font-size:1rem; line-height:1; color: var(--ink-soft);
+}
+.qty button:hover:not(:disabled){ background: var(--paper-alt); color: var(--ink); }
+.qty button:disabled{ opacity:.35; cursor:default; }
+.qty output{ min-width:2ch; text-align:center; font-size:.9rem; font-variant-numeric: tabular-nums; }
+
+.cart-line-remove{
+  background:none; border:none; padding:0; font: inherit; font-size:.78rem;
+  color: var(--ink-faint); text-decoration:underline; cursor:pointer;
+}
+.cart-line-remove:hover{ color: var(--ink); }
 
 .cart-summary{
   background: var(--paper-alt); border:1px solid var(--line);
   border-left:4px solid var(--accent-teal);
-  border-radius: var(--radius); padding:1.75rem;
+  border-radius: var(--radius); padding:1.5rem;
 }
 .cart-summary h2{ font-size:1.1rem; margin-bottom:1rem; }
+.cart-totals{ display:grid; gap:.55rem; margin-bottom:1.15rem; }
+.cart-total-row{
+  display:flex; justify-content:space-between; align-items:baseline; gap:1rem;
+  font-size:.88rem; color: var(--ink-soft);
+}
+.cart-total-row strong{ color: var(--ink); font-variant-numeric: tabular-nums; }
+.cart-total-row--headline{
+  border-top:1px solid var(--line); padding-top:.75rem; margin-top:.25rem;
+  font-size:.95rem; color: var(--ink);
+}
+.cart-total-row--headline strong{ font-family: var(--font-display); font-size:1.5rem; }
+.cart-total-row--save{ color: var(--accent-teal-text); }
+.cart-total-row--save strong{ color: var(--accent-teal-text); }
+
+.cart-toggle{
+  display:flex; gap:.7rem; align-items:flex-start; cursor:pointer;
+  background: var(--paper); border:1px solid var(--line); border-radius:12px;
+  padding:.85rem 1rem; margin-bottom:1rem; font-size:.85rem; line-height:1.5;
+}
+.cart-toggle input{ margin-top:.15rem; flex-shrink:0; }
+.cart-toggle strong{ display:block; color: var(--ink); }
+.cart-toggle span{ color: var(--ink-soft); }
+.cart-toggle[hidden]{ display:none; }
+
 .cart-steps{ list-style:none; counter-reset:cart-step; padding:0; margin-bottom:1.5rem; display:grid; gap:.75rem; }
 .cart-steps li{
   counter-increment:cart-step; position:relative; padding-left:2rem;
-  font-size:.9rem; color: var(--ink-soft); line-height:1.6;
+  font-size:.88rem; color: var(--ink-soft); line-height:1.6;
 }
 .cart-steps li::before{
   content:counter(cart-step); position:absolute; left:0; top:0;
@@ -2517,7 +2568,7 @@ body.has-price-bar .cookie-banner{
   display:flex; align-items:center; justify-content:center;
 }
 .cart-steps strong{ color: var(--ink); }
-.cart-fine{ margin-top:.75rem; font-size:.82rem; color: var(--ink-faint); text-align:center; }
+.cart-fine{ margin-top:.75rem; font-size:.8rem; color: var(--ink-faint); text-align:center; line-height:1.6; }
 .cart-fine[hidden]{ display:none; }
 .cart-remove{
   display:block; margin:1rem auto 0; background:none; border:none;
@@ -2526,15 +2577,63 @@ body.has-price-bar .cookie-banner{
 }
 .cart-remove:hover{ color: var(--ink); }
 
+/* Wallet + BNPL reassurance, directly under the checkout button, because
+   "can I use Apple Pay" is the question that stops a phone checkout dead. */
+.cart-wallets{
+  display:flex; flex-wrap:wrap; gap:.4rem; justify-content:center; margin-top:.85rem;
+}
+.cart-wallets span{
+  font-size:.7rem; letter-spacing:.02em; color: var(--ink-soft);
+  border:1px solid var(--line); border-radius:999px; padding:.2rem .55rem; background: var(--paper);
+}
+
+.cart-note{
+  border-radius: var(--radius); padding:1rem 1.15rem; font-size:.85rem; line-height:1.65;
+  border:1px solid var(--line); background: var(--paper);
+}
+.cart-note strong{ display:block; margin-bottom:.2rem; color: var(--ink); }
+.cart-note a{ color: var(--accent-orange-text); text-decoration:underline; }
+.cart-note--hero{ border-left:4px solid var(--accent-teal); background: var(--select-bg); }
+.cart-note--pending{ border-left:4px solid var(--accent-orange); }
+.cart-note--error{ border-left:4px solid #B3261E; color:#B3261E; }
+.cart-note[hidden]{ display:none; }
+
 /* An "add to cart" button that's already been used says so, rather than
    inviting a second click that would do nothing visible. */
 .btn.is-in-cart{
   background: var(--accent-teal); border-color: var(--accent-teal); color:#fff;
 }
 
-@media (max-width:700px){
-  .cart-item{ grid-template-columns:1fr; gap:1.25rem; padding:1.4rem; }
-  .cart-item-price{ border-left:none; border-top:1px solid var(--line); padding-left:0; padding-top:1.25rem; }
+/* The one-line explanation under a price table: why these are payable here
+   and those are quoted. Sits inside the collapsible block, not above it. */
+.price-block-note{
+  margin:0; padding:0 1.75rem 1.5rem; font-size:.83rem; line-height:1.65;
+  color: var(--ink-faint); max-width:70ch;
+}
+.price-block-note a{ color: var(--accent-orange-text); text-decoration:underline; }
+
+/* The compact in-table variant, on the pricing page's service rows. */
+.price-add{
+  display:inline-block; margin-left:.55rem; padding:.28rem .7rem;
+  border:1px solid var(--accent-orange); border-radius:999px;
+  background: var(--paper); color: var(--accent-orange-text);
+  font: inherit; font-size:.76rem; font-weight:600; white-space:nowrap; cursor:pointer;
+  vertical-align:middle;
+}
+.price-add:hover{ background: var(--accent-orange); color:#fff; }
+.price-add.is-in-cart{
+  background: var(--accent-teal); border-color: var(--accent-teal); color:#fff;
+}
+
+@media (max-width:900px){
+  .cart-layout{ grid-template-columns:1fr; }
+  /* Sticky on a phone would eat the viewport, and the summary is the last
+     thing you read before paying anyway. */
+  .cart-rail{ position:static; }
+}
+@media (max-width:560px){
+  .cart-line{ grid-template-columns:1fr; gap:1rem; padding:1.15rem 1.2rem; }
+  .cart-line-right{ align-items:flex-start; text-align:left; flex-direction:row; flex-wrap:wrap; justify-content:space-between; width:100%; }
 }
 
 /* ---- Dashboard order card & project brief ---- */
@@ -2557,6 +2656,20 @@ body.has-price-bar .cookie-banner{
   text-decoration:underline; cursor:pointer;
 }
 .order-paid-link:hover{ color: var(--ink); }
+
+/* Heroes Discount status, shown at sign-in. Neutral by default -- this is an
+   offer, not an alert -- and only coloured once there's a real state. */
+.hero-status{
+  background: var(--paper-alt); border:1px solid var(--line);
+  border-left:4px solid var(--line-strong); border-radius: var(--radius);
+  padding:1.1rem 1.35rem; margin-bottom:1.5rem;
+}
+.hero-status strong{ display:block; font-size:.98rem; color: var(--ink); margin-bottom:.2rem; }
+.hero-status span{ display:block; font-size:.88rem; color: var(--ink-soft); line-height:1.65; }
+.hero-status a{ color: var(--accent-orange-text); text-decoration:underline; }
+.hero-status--verified{ border-left-color: var(--accent-teal); background: var(--select-bg); }
+.hero-status--verified strong{ color: var(--accent-teal-text); }
+.hero-status--pending{ border-left-color: var(--accent-orange); }
 
 .brief-card .form-row{ margin-bottom:1.1rem; }
 .brief-actions{ display:flex; align-items:center; gap:1rem; margin-top:1.5rem; }

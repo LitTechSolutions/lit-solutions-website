@@ -93,24 +93,69 @@
 
       <div class="cart-empty" id="cartEmpty" hidden>
         <h2>Nothing in your cart yet.</h2>
-        <p>Have a look at the three website plans &mdash; each page explains exactly what you get, shows what the site will look like, and spells out the ownership terms before you commit to anything.</p>
-        <p style="margin-top:1.5rem;"><a href="pricing.html#website-subscription" class="btn btn-primary">See the plans</a></p>
+        <p>Everything with a fixed price can be bought right here &mdash; website plans, one-off builds, ongoing support, and the set-up jobs we quote at a flat rate. Anything priced by the hour is quoted first, because a number we invent in a cart isn't a number we'd honour.</p>
+        <p style="margin-top:1.5rem;">
+          <a href="pricing.html" class="btn btn-primary">See everything and pricing</a>
+          <a href="services.html" class="btn btn-ghost">Browse services</a>
+        </p>
       </div>
 
       <div class="cart-live" id="cartLive" hidden>
-        <div class="cart-item" id="cartItem"></div>
+        <div class="cart-layout">
 
-        <div class="cart-summary">
-          <h2>What happens next</h2>
-          <ol class="cart-steps">
-            <li><strong>Create your account</strong> &mdash; email and password, then a 6-digit code we email you.</li>
-            <li><strong>Pay the deposit</strong> from your dashboard, through Square.</li>
-            <li><strong>Fill in your project brief</strong> &mdash; it appears in your inbox the moment payment is in.</li>
-            <li><strong>We call you</strong> within one business day to talk it through.</li>
-          </ol>
-          <a href="#" class="btn btn-primary btn-block" id="cartCheckout">Continue to checkout</a>
-          <p class="cart-fine" id="cartSignedInNote" hidden>You're signed in &mdash; this goes straight to your dashboard.</p>
-          <button type="button" class="cart-remove" data-cart-remove>Remove from cart</button>
+          <div>
+            <div class="cart-lines" id="cartLines"></div>
+            <button type="button" class="cart-remove" data-cart-remove>Empty the cart</button>
+          </div>
+
+          <aside class="cart-rail">
+
+            <div class="cart-note cart-note--hero" id="heroActive" hidden>
+              <strong>American Heroes Discount applied</strong>
+              15% off one-time work and 5% off monthly, already in the prices below. It stays on your account &mdash; you'll never be asked to prove it twice.
+            </div>
+
+            <div class="cart-note cart-note--pending" id="heroPending" hidden>
+              <strong>We're still verifying your Heroes Discount</strong>
+              Prices below are full price. We have to confirm eligibility <em>before</em> you pay &mdash; once it's on your account the discount applies automatically. If you pay now you'll pay full price, so give us a call on <a href="tel:+18043090968">804-309-0968</a> if you'd rather we sort it first.
+            </div>
+
+            <div class="cart-note" id="heroOffer" hidden>
+              <strong>Military, veteran, teacher, first responder?</strong>
+              The <a href="heroes-pricing.html">American Heroes Discount</a> is 15% off one-time work and 5% off monthly. We verify it before you pay, so <a href="myaccount.html#hero">request it from your account</a> first &mdash; it can't be added afterwards.
+            </div>
+
+            <div class="cart-summary">
+              <h2>Order summary</h2>
+
+              <div class="cart-totals" id="cartTotals"></div>
+
+              <label class="cart-toggle" id="payInFullToggle" hidden>
+                <input type="checkbox" id="payInFull">
+                <span>
+                  <strong>Pay in full instead of 50/50</strong>
+                  <span id="payInFullNote">Website builds are normally half now, half at launch.</span>
+                </span>
+              </label>
+
+              <ol class="cart-steps" id="cartSteps"></ol>
+
+              <button type="button" class="btn btn-primary btn-block" id="cartCheckout">Continue to checkout</button>
+
+              <div class="cart-wallets" id="cartWallets" hidden>
+                <span>Apple&nbsp;Pay</span><span>Google&nbsp;Pay</span><span>Card</span><span id="walletBnpl" hidden>Pay over time</span>
+              </div>
+
+              <p class="cart-fine" id="cartFine"></p>
+              <div class="cart-note cart-note--error" id="cartError" hidden></div>
+            </div>
+
+            <div class="cart-note" id="bnplNote" hidden>
+              <strong>Buy now, pay later</strong>
+              Available on this cart through Klarna, Affirm or Afterpay at checkout. It settles the <em>full</em> amount with us up front and you repay them &mdash; so there's no 50/50 split on a pay-over-time order.
+            </div>
+
+          </aside>
         </div>
       </div>
 
@@ -118,55 +163,307 @@
   </section>
 </main>
 
-<script src="js/plan-catalog.js"></script>
+<script src="js/product-catalog.js"></script>
 <script src="js/cart.js"></script>
 <script>
+/* Cart page.
+ *
+ * Prices render instantly from the generated catalog so the page is never
+ * blank, then the server is asked to price the same cart and its answer wins.
+ * That second number is the one Stripe will charge -- the catalog is display
+ * data, the endpoint is the authority, and showing the customer anything the
+ * endpoint disagrees with is the bug this arrangement exists to prevent.
+ */
 (function () {
-  var itemEl = document.getElementById('cartItem');
-  var emptyEl = document.getElementById('cartEmpty');
-  var liveEl = document.getElementById('cartLive');
-  var checkout = document.getElementById('cartCheckout');
-  var signedNote = document.getElementById('cartSignedInNote');
+  'use strict';
+
+  var linesEl    = document.getElementById('cartLines');
+  var totalsEl   = document.getElementById('cartTotals');
+  var stepsEl    = document.getElementById('cartSteps');
+  var emptyEl    = document.getElementById('cartEmpty');
+  var liveEl     = document.getElementById('cartLive');
+  var checkoutEl = document.getElementById('cartCheckout');
+  var fineEl     = document.getElementById('cartFine');
+  var errorEl    = document.getElementById('cartError');
+  var toggleWrap = document.getElementById('payInFullToggle');
+  var toggleEl   = document.getElementById('payInFull');
+  var toggleNote = document.getElementById('payInFullNote');
+  var walletsEl  = document.getElementById('cartWallets');
+  var walletBnpl = document.getElementById('walletBnpl');
+  var bnplNote   = document.getElementById('bnplNote');
+  var heroActive = document.getElementById('heroActive');
+  var heroPending= document.getElementById('heroPending');
+  var heroOffer  = document.getElementById('heroOffer');
+
+  var C = window.LTS_CART, P = window.LTS_PRODUCTS, money = P.money;
+
   var signedIn = false;
+  var heroState = 'none';
+  var serverPriced = null;   // the authoritative quote, once it arrives
+  var pricingSeq = 0;        // guards against a slow response overwriting a fast one
 
-  // Ask once whether there's a session, so "Continue to checkout" can go
-  // straight to the dashboard for someone who already has an account rather
-  // than bouncing them through a sign-up they don't need.
-  fetch('/.netlify/functions/account', { credentials: 'same-origin' })
-    .then(function (r) { return r.ok ? r.json() : null; })
-    .then(function (d) { signedIn = !!(d && d.user); paint(); })
-    .catch(function () { paint(); });
-
-  function paint() {
-    var cart = window.LTS_CART.read();
-    emptyEl.hidden = !!cart;
-    liveEl.hidden = !cart;
-    if (!cart) return;
-
-    var plan = window.LTS_PLANS.getPlan(cart.planKey);
-    itemEl.innerHTML =
-      '<div class="cart-item-main">' +
-        '<p class="eyebrow">Website Subscription</p>' +
-        '<h2>' + plan.name + '</h2>' +
-        '<p class="cart-item-summary">' + plan.summary + '</p>' +
-        '<p class="cart-item-links"><a href="' + plan.page + '">Full details</a></p>' +
-      '</div>' +
-      '<div class="cart-item-price">' +
-        '<p class="cart-price-row"><span>Deposit today</span><strong>' + plan.deposit + '</strong></p>' +
-        '<p class="cart-price-row"><span>Then monthly</span><strong>' + plan.monthly + '</strong></p>' +
-        '<p class="cart-price-note">' + plan.minimumTermMonths + '-month minimum, then month to month. We own the build and license it to you while you subscribe &mdash; the full terms are on the plan page.</p>' +
-      '</div>';
-
-    signedNote.hidden = !signedIn;
-    checkout.setAttribute('href', signedIn ? 'myaccount.html#dashboard' : 'myaccount.html#register');
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
   }
 
-  document.addEventListener('lts:cart-changed', paint);
-  document.addEventListener('DOMContentLoaded', paint);
+  /* ---------------------------------------------------------- session ---- */
+
+  fetch('/.netlify/functions/account', { credentials: 'same-origin' })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (d) {
+      signedIn = !!(d && d.user);
+      heroState = (d && d.user && d.user.heroStatus && d.user.heroStatus.state) || 'none';
+      paint();
+      quote();
+    })
+    .catch(function () { paint(); });
+
+  /* ------------------------------------------------------- server quote -- */
+
+  function quote() {
+    var state = C.read();
+    if (!signedIn || !state.items.length) { serverPriced = null; return; }
+    var seq = ++pricingSeq;
+    var url = '/.netlify/functions/checkout?items=' + encodeURIComponent(C.toQuery()) +
+              '&payInFull=' + (state.payInFull ? 'true' : 'false');
+    fetch(url, { credentials: 'same-origin' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        if (seq !== pricingSeq) return;      // a newer request already answered
+        if (!d || d.empty || !d.priced) return;
+        serverPriced = d;
+        paint();
+      })
+      .catch(function () { /* the catalog figures stay on screen */ });
+  }
+
+  /* ------------------------------------------------- local price fallback -- */
+
+  /* Mirrors _lib/pricing.js closely enough to render before the server
+     answers. It is never used to decide what anyone is charged. */
+  function localQuote(state) {
+    var hero = heroState === 'verified';
+    var lines = [], today = 0, monthly = 0, balance = 0, listToday = 0;
+    var anyPackage = false;
+
+    state.items.forEach(function (item) {
+      var p = P.get(item.key);
+      if (!p) return;
+      if (p.kind === 'package') anyPackage = true;
+      var pr = P.priceFor(p, hero);
+      var list = P.priceFor(p, false);
+
+      var full = p.kind === 'package' && state.payInFull;
+      var lineToday   = (full ? pr.payInFullCents : pr.chargedTodayCents) * item.qty;
+      var lineList    = (full ? list.payInFullCents : list.chargedTodayCents) * item.qty;
+      var lineMonthly = pr.monthlyCents * item.qty;
+      var lineBalance = full ? 0 : pr.balanceAtLaunchCents * item.qty;
+
+      lines.push({
+        key: p.key, product: p, quantity: item.qty,
+        label: full ? p.name + ' — paid in full' : p.label,
+        chargedTodayCents: lineToday, listTodayCents: lineList,
+        monthlyCents: lineMonthly, balanceAtLaunchCents: lineBalance,
+      });
+      today += lineToday; listToday += lineList; monthly += lineMonthly; balance += lineBalance;
+    });
+
+    return {
+      lines: lines, hero: hero, anyPackage: anyPackage,
+      chargedTodayCents: today, monthlyCents: monthly,
+      balanceAtLaunchCents: balance, heroSavingCents: listToday - today,
+    };
+  }
+
+  /* Whatever the server said, or the local estimate until it does. */
+  function view() {
+    var state = C.read();
+    var local = localQuote(state);
+    if (!serverPriced) return local;
+
+    var p = serverPriced.priced;
+    var byKey = {};
+    local.lines.forEach(function (l) { byKey[l.key] = l; });
+
+    return {
+      lines: p.lines.map(function (l) {
+        var loc = byKey[l.key] || {};
+        return {
+          key: l.key, product: loc.product || P.get(l.key), quantity: l.quantity,
+          label: l.label,
+          chargedTodayCents: l.oneOffCents + l.monthlyCents,
+          listTodayCents: l.listOneOffCents + l.listMonthlyCents,
+          monthlyCents: l.monthlyCents,
+          balanceAtLaunchCents: l.balanceAtLaunchCents,
+        };
+      }),
+      hero: p.hero, anyPackage: local.anyPackage,
+      chargedTodayCents: p.chargedTodayCents, monthlyCents: p.monthlyCents,
+      balanceAtLaunchCents: p.balanceAtLaunchCents, heroSavingCents: p.heroSavingCents,
+      includesFirstMonth: p.includesFirstMonth,
+      bnpl: !!serverPriced.bnplAvailable,
+      authoritative: true,
+    };
+  }
+
+  /* ------------------------------------------------------------- render -- */
+
+  function lineHTML(l) {
+    var p = l.product || {};
+    var showWas = l.listTodayCents > l.chargedTodayCents;
+    var sub = [];
+    if (l.monthlyCents) sub.push(money(l.monthlyCents) + '/month');
+    if (l.balanceAtLaunchCents) sub.push(money(l.balanceAtLaunchCents) + ' at launch');
+
+    // Quantity only makes sense on repeatable work. Nobody buys two Premium
+    // websites on one order, and offering the stepper invites the question.
+    var steppable = p.kind === 'service';
+
+    return '<div class="cart-line">' +
+      '<div>' +
+        '<p class="cart-line-cat">' + esc(p.category || '') + '</p>' +
+        '<h2 class="cart-line-name">' + esc(l.label) + '</h2>' +
+        (p.summary ? '<p class="cart-line-summary">' + esc(p.summary) + '</p>' : '') +
+        (p.blurb ? '<p class="cart-line-note">' + esc(p.blurb) + '</p>' : '') +
+        (p.page ? '<p class="cart-line-links"><a href="' + esc(p.page) + '">Full details</a></p>' : '') +
+      '</div>' +
+      '<div class="cart-line-right">' +
+        (showWas ? '<span class="cart-line-was">' + money(l.listTodayCents) + '</span>' : '') +
+        '<span class="cart-line-price">' + money(l.chargedTodayCents) + '</span>' +
+        (sub.length ? '<span class="cart-line-sub">' + sub.join(' &middot; ') + '</span>' : '') +
+        (steppable
+          ? '<span class="qty">' +
+              '<button type="button" data-qty-down="' + esc(l.key) + '" aria-label="One fewer"' + (l.quantity <= 1 ? ' disabled' : '') + '>&minus;</button>' +
+              '<output aria-label="Quantity">' + l.quantity + '</output>' +
+              '<button type="button" data-qty-up="' + esc(l.key) + '" aria-label="One more"' + (l.quantity >= C.MAX_QTY ? ' disabled' : '') + '>+</button>' +
+            '</span>'
+          : '') +
+        '<button type="button" class="cart-line-remove" data-cart-remove="' + esc(l.key) + '">Remove</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function totalsHTML(v) {
+    var rows = '';
+    if (v.heroSavingCents > 0) {
+      rows += '<p class="cart-total-row cart-total-row--save"><span>American Heroes Discount</span><strong>&minus;' + money(v.heroSavingCents) + '</strong></p>';
+    }
+    rows += '<p class="cart-total-row cart-total-row--headline"><span>Charged today</span><strong>' + money(v.chargedTodayCents) + '</strong></p>';
+    if (v.monthlyCents > 0) {
+      rows += '<p class="cart-total-row"><span>Then every month</span><strong>' + money(v.monthlyCents) + '</strong></p>';
+      // Stripe bills the first month with the deposit, so today's figure is
+      // bigger than the deposit alone. Say so rather than let them find out.
+      rows += '<p class="cart-line-note" style="margin:0">Today\'s total includes your first month. Billing then repeats monthly and you can cancel from your account.</p>';
+    }
+    if (v.balanceAtLaunchCents > 0) {
+      rows += '<p class="cart-total-row"><span>Balance at launch</span><strong>' + money(v.balanceAtLaunchCents) + '</strong></p>';
+      rows += '<p class="cart-line-note" style="margin:0">Nothing is taken for the balance now &mdash; we invoice it once you\'ve approved the finished site.</p>';
+    }
+    return rows;
+  }
+
+  function stepsHTML(v) {
+    var s = [];
+    if (!signedIn) s.push('<li><strong>Create your account</strong> &mdash; email and password, then a 6-digit code we email you.</li>');
+    s.push('<li><strong>Pay securely</strong> through Stripe &mdash; card, Apple Pay or Google Pay.</li>');
+    if (v.lines.some(function (l) { return (l.product || {}).kind === 'plan' || (l.product || {}).kind === 'package'; })) {
+      s.push('<li><strong>Fill in your project brief</strong> &mdash; it unlocks in your account the moment payment lands.</li>');
+    }
+    s.push('<li><strong>We call you</strong> within one business day to talk it through.</li>');
+    return s.join('');
+  }
+
+  function paint() {
+    var state = C.read();
+    emptyEl.hidden = !!state.items.length;
+    liveEl.hidden = !state.items.length;
+    if (!state.items.length) return;
+
+    var v = view();
+
+    linesEl.innerHTML = v.lines.map(lineHTML).join('');
+    totalsEl.innerHTML = totalsHTML(v);
+    stepsEl.innerHTML = stepsHTML(v);
+
+    toggleWrap.hidden = !v.anyPackage;
+    toggleEl.checked = !!state.payInFull;
+    toggleNote.textContent = state.payInFull
+      ? 'The whole build is charged today. Nothing is owed at launch.'
+      : 'Website builds are normally half now, half at launch.';
+
+    // Wallets are always there on hosted Checkout; BNPL only when the server
+    // says this cart qualifies, so we never advertise an option that then
+    // isn't on the Stripe page.
+    walletsEl.hidden = false;
+    walletBnpl.hidden = !v.bnpl;
+    bnplNote.hidden = !v.bnpl;
+
+    heroActive.hidden  = heroState !== 'verified';
+    heroPending.hidden = heroState !== 'pending';
+    heroOffer.hidden   = !signedIn || heroState !== 'none';
+
+    checkoutEl.textContent = signedIn ? 'Pay ' + money(v.chargedTodayCents) + ' securely' : 'Create an account to check out';
+    fineEl.innerHTML = signedIn
+      ? 'Secure checkout by Stripe. We never see or store your card details.'
+      : 'You need an account so your order, your project brief and your paperwork all live in one place.';
+  }
+
+  /* ------------------------------------------------------------ actions -- */
+
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest) return;
+    var up = e.target.closest('[data-qty-up]');
+    if (up) { var k = up.getAttribute('data-qty-up'); var line = findLine(k); if (line) C.setQty(k, line.qty + 1); return; }
+    var down = e.target.closest('[data-qty-down]');
+    if (down) { var k2 = down.getAttribute('data-qty-down'); var l2 = findLine(k2); if (l2) C.setQty(k2, l2.qty - 1); return; }
+  });
+
+  function findLine(key) {
+    var items = C.read().items;
+    for (var i = 0; i < items.length; i++) if (items[i].key === key) return items[i];
+    return null;
+  }
+
+  toggleEl.addEventListener('change', function () {
+    C.setPayInFull(toggleEl.checked);
+  });
+
+  checkoutEl.addEventListener('click', function () {
+    if (!signedIn) {
+      // Come back here after they've made an account, so the cart isn't a
+      // dead end they have to re-find.
+      window.location.href = 'myaccount.html?next=cart#register';
+      return;
+    }
+    errorEl.hidden = true;
+    checkoutEl.disabled = true;
+    checkoutEl.textContent = 'Opening secure checkout…';
+
+    fetch('/.netlify/functions/checkout', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: C.read().items, payInFull: C.read().payInFull }),
+    })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+      .then(function (res) {
+        if (res.ok && res.d.url) { window.location.href = res.d.url; return; }
+        throw new Error((res.d && res.d.error) || "We couldn't start checkout.");
+      })
+      .catch(function (err) {
+        errorEl.textContent = err.message + ' If it keeps happening, call us on 804-309-0968 and we\'ll take it over the phone.';
+        errorEl.hidden = false;
+        checkoutEl.disabled = false;
+        paint();
+      });
+  });
+
+  document.addEventListener('lts:cart-changed', function () { paint(); quote(); });
   paint();
 })();
 </script>
-</main>
 
 <footer class="site-footer">
   <div class="wrap footer-inner">

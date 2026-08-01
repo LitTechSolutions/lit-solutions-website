@@ -160,7 +160,7 @@
   </div>
 </div>
 
-<script src="js/plan-catalog.js"></script>
+<script src="js/product-catalog.js"></script>
 <script src="js/cart.js"></script>
 <script src="js/main.js"></script>
 <script src="js/site-version.js"></script>
@@ -193,6 +193,9 @@
     "Notifications": "Updates about your account and your project.",
     "Messages": "Talk to us directly. We answer seven days a week.",
     "Account Settings": "Your name, email and password.",
+    "American Heroes Discount": "15% off one-time work, 5% off monthly \u2014 confirmed before you pay.",
+    "Verify Heroes Discount requests": "Approve or decline eligibility. Their cart shows full price until you do.",
+    "Stripe setup": "One-time wiring. The key already in Netlify does the work.",
   };
   function setPageTitle(text, lede) {
     document.title = text + " — My Account — Little Technical Solutions LLC";
@@ -219,6 +222,7 @@
       tabsEl.hidden = false;
       tabsEl.innerHTML = '<a href="#dashboard">Dashboard</a><a href="#documents">Documents</a><a href="#messages">Messages</a>' +
         '<a href="#favorites">Favorites</a><a href="#notifications">Notifications<span class="tab-badge" id="notifTabBadge" hidden>0</span></a>' +
+        (state.user.role === "admin" ? '<a href="#heroqueue">Verify Heroes</a><a href="#stripe">Stripe setup</a>' : '<a href="#hero">Heroes Discount</a>') +
         '<a href="#profile">Account Settings</a><a href="#" id="account-signout">Sign out</a>';
       document.getElementById("account-signout").addEventListener("click", async function (e) {
         e.preventDefault();
@@ -243,6 +247,36 @@
       badge.textContent = count;
     });
   }
+
+  /* Where to send someone once they're signed in. The cart links here as
+   * `?next=cart` when a visitor has to make an account before checking out;
+   * without this they'd land on an empty dashboard and have to find their
+   * way back to a cart they'd already filled. Whitelisted, because an open
+   * redirect on a page that handles sign-in is not a small thing. */
+  var NEXT_DESTINATIONS = { cart: "cart.html", pricing: "pricing.html" };
+
+  function pendingNext() {
+    try {
+      var fromUrl = new URLSearchParams(window.location.search).get("next");
+      if (fromUrl && NEXT_DESTINATIONS[fromUrl]) {
+        sessionStorage.setItem("lts-next", fromUrl);
+        return fromUrl;
+      }
+      var stored = sessionStorage.getItem("lts-next");
+      return stored && NEXT_DESTINATIONS[stored] ? stored : null;
+    } catch (e) { return null; }
+  }
+
+  /** Returns true if it navigated away; callers should stop rendering. */
+  function followNext() {
+    var next = pendingNext();
+    if (!next) return false;
+    try { sessionStorage.removeItem("lts-next"); } catch (e) {}
+    window.location.href = NEXT_DESTINATIONS[next];
+    return true;
+  }
+
+  pendingNext();
 
   function requireAuth() {
     if (!state.user) { window.location.hash = "#signin"; return false; }
@@ -297,6 +331,7 @@
         await loadSession();
         if (await maybeRedirectToCareHub()) return;
         renderTabs();
+        if (followNext()) return;
         window.location.hash = "#dashboard";
       } else if (r.body && r.body.code === "unverified") {
         status.innerHTML = "Please verify your email before signing in. " +
@@ -439,6 +474,8 @@
       if (r.ok && r.body && r.body.user) {
         state.user = r.body.user;
         state.pendingEmail = null;
+        renderTabs();
+        if (followNext()) return;
         window.location.hash = "#dashboard";
         return;
       }
@@ -466,81 +503,219 @@
   };
 
 
-  /* ---- website plan order: pay, then the project brief ----------------
-   * The dashboard is where a purchase actually completes. If they arrived
-   * with something in their cart, the order is created here (server-side,
-   * against the server plan catalog) and the cart is cleared, so a stale
-   * localStorage entry can't resurrect a second order later.
+  /* ---- orders: pay, then the project brief ----------------------------
+   * Orders are created by checkout.js before it opens the Stripe session, so
+   * by the time anyone lands here the order already exists. This view's job
+   * is to say what state it's in and offer the one action that moves it on.
    */
+  function money(cents) {
+    if (cents == null) return "";
+    return "$" + (cents / 100).toLocaleString("en-US", {
+      minimumFractionDigits: cents % 100 ? 2 : 0, maximumFractionDigits: 2,
+    });
+  }
+
   async function mountOrder(host) {
     if (!host) return;
-    var cart = window.LTS_CART ? window.LTS_CART.read() : null;
 
-    // Coming back from Square. The link is static and shared, so it can't
-    // tell us WHICH order was paid -- we take the customer's word, label it
-    // as unconfirmed, and let the brief open. See orders.js.
-    var returned = /[?&]paid=1/.test(window.location.search);
+    // Back from a successful Stripe checkout. The webhook is what actually
+    // marks the order paid, and it can land a second either side of the
+    // redirect -- so say something true while we wait rather than showing
+    // "unpaid" to someone who just paid.
+    var params = new URLSearchParams(window.location.search);
+    var justPaid = params.get("checkout") === "success";
+    var justPaidOrder = params.get("order");
+    if (justPaid) {
+      history.replaceState(null, "", window.location.pathname + window.location.hash);
+      // The cart is theirs no longer -- it's an order now.
+      if (window.LTS_CART) window.LTS_CART.clear();
+    }
 
     var r = await api("orders");
     var orders = (r.ok && r.body && r.body.orders) || [];
-    var order = orders.find(function (o) { return o.status !== "brief_submitted"; }) || null;
+    var live = orders.filter(function (o) { return o.status !== "cancelled"; });
+    if (!live.length) { host.innerHTML = ""; return; }
 
-    if (!order && cart) {
-      var created = await api("orders", { method: "POST", body: JSON.stringify({ planKey: cart.planKey }) });
-      if (created.ok && created.body && created.body.order) {
-        order = created.body.order;
-        window.LTS_CART.clear();
+    host.innerHTML = live.map(function (o) { return card(o, justPaid && o.id === justPaidOrder); }).join("");
+    wire();
+
+    function statusLine(o, optimistic) {
+      if (optimistic && o.status === "awaiting_payment") {
+        return { cls: "is-pending", text: "Payment received \u2014 we\u2019re just confirming it with Stripe. This page updates on its own." };
       }
-    } else if (order && cart) {
-      window.LTS_CART.clear();
+      switch (o.status) {
+        case "awaiting_payment": return { cls: "is-pending", text: "Waiting on payment." };
+        case "payment_processing": return { cls: "is-pending", text: "Your payment is settling. Some pay-over-time methods take a day or two \u2014 nothing is held up in the meantime." };
+        case "checkout_failed": return { cls: "is-pending", text: "Checkout didn\u2019t open last time. Nothing was charged." };
+        case "paid": return { cls: "is-confirmed", text: "Payment confirmed. Your build is booked in." };
+        case "brief_submitted": return { cls: "is-confirmed", text: "Paid, and your brief is in. We\u2019ll be in touch within one business day." };
+        default: return { cls: "is-pending", text: "" };
+      }
     }
 
-    if (!order) { host.innerHTML = ""; return; }
-
-    if (returned && order.status === "awaiting_payment") {
-      var rep = await api("orders", { method: "PATCH", body: JSON.stringify({ id: order.id, action: "report-payment" }) });
-      if (rep.ok && rep.body && rep.body.order) order = rep.body.order;
-      history.replaceState(null, "", window.location.pathname + window.location.hash);
+    function priceLines(o) {
+      var rows = [];
+      if (o.status === "awaiting_payment" || o.status === "checkout_failed") {
+        if (o.chargedTodayCents != null) rows.push("<strong>" + money(o.chargedTodayCents) + "</strong> due now");
+      } else if (o.amountPaidCents != null) {
+        rows.push("<strong>" + money(o.amountPaidCents) + "</strong> paid");
+      } else if (o.chargedTodayCents != null) {
+        rows.push("<strong>" + money(o.chargedTodayCents) + "</strong> paid");
+      }
+      if (o.monthlyCents) rows.push(money(o.monthlyCents) + "/month");
+      if (o.balanceAtLaunchCents) rows.push(money(o.balanceAtLaunchCents) + " at launch");
+      return rows.join(" &middot; ");
     }
 
-    render(order);
+    function card(o, optimistic) {
+      var st = statusLine(o, optimistic);
+      var unpaid = (o.status === "awaiting_payment" || o.status === "checkout_failed") && !optimistic;
+      var canBrief = (o.status === "paid" || o.status === "payment_processing") && o.needsBrief;
 
-    function render(o) {
-      if (o.status === "awaiting_payment") {
-        host.innerHTML =
-          '<div class="order-card order-card--action">' +
-            '<p class="eyebrow">Your order</p>' +
-            '<h2>' + esc(o.planName) + ' website</h2>' +
-            '<p class="order-line">' + esc(o.deposit) + ' deposit today, then ' + esc(o.monthly) + '/month.</p>' +
-            '<p class="order-note">Two quick checkouts on Square &mdash; the deposit, then the monthly plan. Come back here afterwards and your project brief will be waiting.</p>' +
-            '<div class="order-actions">' +
-              '<a class="btn btn-primary" id="orderPay" href="' + esc(o.depositLink) + '" target="_blank" rel="noopener">Complete purchase &mdash; pay ' + esc(o.deposit) + ' deposit</a>' +
-              '<a class="btn btn-ghost" href="' + esc(o.subscriptionLink) + '" target="_blank" rel="noopener">Then start ' + esc(o.monthly) + '/month</a>' +
-            '</div>' +
-            '<button type="button" class="order-paid-link" id="orderPaid">I\'ve completed both payments</button>' +
-          '</div>';
-        host.querySelector("#orderPaid").addEventListener("click", async function () {
-          var rr = await api("orders", { method: "PATCH", body: JSON.stringify({ id: o.id, action: "report-payment" }) });
-          if (rr.ok && rr.body && rr.body.order) render(rr.body.order);
+      var actions = [];
+      if (unpaid) actions.push('<button type="button" class="btn btn-primary" data-pay="' + esc(o.id) + '">Pay ' + money(o.chargedTodayCents) + ' securely</button>');
+      if (canBrief) actions.push('<a class="btn btn-primary" href="#brief">Fill in your project brief</a>');
+      if (o.hasSubscription) actions.push('<button type="button" class="btn btn-ghost" data-billing="' + esc(o.id) + '">Manage billing</button>');
+      if (o.status === "brief_submitted") actions.push('<a class="btn btn-ghost" href="#documents">See your paperwork</a>');
+
+      return '<div class="order-card' + (unpaid || canBrief ? ' order-card--action' : '') + '">' +
+        '<p class="eyebrow">Your order</p>' +
+        '<h2>' + esc(o.summary) + '</h2>' +
+        '<p class="order-line">' + priceLines(o) + '</p>' +
+        (o.hero ? '<p class="order-note" style="color:var(--accent-teal-text);">American Heroes Discount applied.</p>' : '') +
+        '<p class="order-status ' + st.cls + '">' + st.text + '</p>' +
+        (canBrief ? '<p class="order-note">One thing left: your project brief. It\u2019s what we build from, and we can\u2019t start without it.</p>' : '') +
+        (unpaid ? '<p class="order-note">Card, Apple Pay or Google Pay \u2014 secure checkout by Stripe. Nothing has been charged yet.</p>' : '') +
+        (actions.length ? '<div class="order-actions">' + actions.join("") + '</div>' : '') +
+        (unpaid ? '<button type="button" class="order-paid-link" data-cancel="' + esc(o.id) + '">Cancel this order</button>' : '') +
+      '</div>';
+    }
+
+    function wire() {
+      host.querySelectorAll("[data-pay]").forEach(function (btn) {
+        btn.addEventListener("click", async function () {
+          btn.disabled = true;
+          var was = btn.textContent;
+          btn.textContent = "Opening secure checkout\u2026";
+          var res = await api("checkout", { method: "POST", body: JSON.stringify({ orderId: btn.getAttribute("data-pay") }) });
+          if (res.ok && res.body && res.body.url) { window.location.href = res.body.url; return; }
+          btn.disabled = false;
+          btn.textContent = was;
+          alert((res.body && res.body.error) || "Couldn\u2019t start checkout. Call us on 804-309-0968 and we\u2019ll take it over the phone.");
         });
-        return;
-      }
+      });
 
-      var confirmed = o.status === "paid";
-      host.innerHTML =
-        '<div class="order-card order-card--brief">' +
-          '<p class="eyebrow">Your order</p>' +
-          '<h2>' + esc(o.planName) + ' website</h2>' +
-          '<p class="order-status ' + (confirmed ? 'is-confirmed' : 'is-pending') + '">' +
-            (confirmed
-              ? 'Payment confirmed. Your build is booked in.'
-              : 'Payment received &mdash; we\'re confirming it with Square. Nothing is held up in the meantime.') +
-          '</p>' +
-          '<p class="order-note">One thing left: your project brief. It\'s what we build from, and we can\'t start without it.</p>' +
-          '<div class="order-actions"><a class="btn btn-primary" href="#brief">Fill in your project brief</a></div>' +
-        '</div>';
+      host.querySelectorAll("[data-billing]").forEach(function (btn) {
+        btn.addEventListener("click", async function () {
+          btn.disabled = true;
+          var res = await api("billing-portal", { method: "POST", body: JSON.stringify({ orderId: btn.getAttribute("data-billing") }) });
+          if (res.ok && res.body && res.body.url) { window.location.href = res.body.url; return; }
+          btn.disabled = false;
+          alert((res.body && res.body.error) || "Couldn\u2019t open billing just now.");
+        });
+      });
+
+      host.querySelectorAll("[data-cancel]").forEach(function (btn) {
+        btn.addEventListener("click", async function () {
+          if (!window.confirm("Cancel this order? Nothing has been charged, and you can order again any time.")) return;
+          await api("orders", { method: "PATCH", body: JSON.stringify({ id: btn.getAttribute("data-cancel"), action: "cancel" }) });
+          mountOrder(host);
+        });
+      });
+    }
+
+    // The webhook usually lands within a second or two of the redirect. Poll
+    // briefly so the card resolves itself instead of asking them to refresh,
+    // then stop -- an indefinite poll on a quiet dashboard is just noise.
+    if (justPaid) {
+      var tries = 0;
+      var poll = setInterval(async function () {
+        tries++;
+        var rr = await api("orders");
+        var got = ((rr.ok && rr.body && rr.body.orders) || []).find(function (o) { return o.id === justPaidOrder; });
+        if ((got && got.status !== "awaiting_payment") || tries >= 10) {
+          clearInterval(poll);
+          if (got && got.status !== "awaiting_payment") mountOrder(host);
+        }
+      }, 3000);
     }
   }
+
+
+  /* ---- American Heroes Discount ---------------------------------------
+   * Verified BEFORE payment, never after: the discount is a price, and a
+   * price can't be applied retrospectively to a card that has already been
+   * charged. So this view exists to get the request in early, and the state
+   * is shown at sign-in on the dashboard so nobody discovers it too late.
+   *
+   * There is deliberately no upload field. terms.html section 10 and the
+   * privacy policy both promise we never receive an unredacted DD-214, LES,
+   * or anything carrying an SSN -- and the surest way to keep that promise
+   * is to have nowhere to send one.
+   */
+  views.hero = function () {
+    if (!requireAuth()) return el("<div></div>");
+    setPageTitle("American Heroes Discount");
+    var v = el('<div id="heroHost"><p style="color:var(--ink-faint); font-size:.9rem;">Loading\u2026</p></div>');
+
+    (async function () {
+      var r = await api("hero-status");
+      if (!r.ok) { v.innerHTML = '<div class="card"><p class="form-note form-note--error">Couldn\'t load your status. Refresh and try again.</p></div>'; return; }
+      var st = r.body.status || {};
+      render(st);
+
+      function render(st) {
+        if (st.state === "verified") {
+          v.innerHTML = '<div class="card"><h2 style="font-size:1.15rem;">You\u2019re verified \u2014 thank you for what you do.</h2>' +
+            '<p style="color:var(--ink-soft); font-size:.92rem; margin-top:.5rem; line-height:1.7;"><strong>15% off one-time work and 5% off monthly plans</strong> now applies automatically at checkout' +
+            (st.category ? ' (' + esc(st.category) + ')' : '') + '. It\u2019s on your account permanently, so you won\u2019t be asked to prove it again.</p></div>';
+          return;
+        }
+        if (st.state === "pending") {
+          v.innerHTML = '<div class="card"><h2 style="font-size:1.15rem;">We\u2019re confirming your eligibility</h2>' +
+            '<p style="color:var(--ink-soft); font-size:.92rem; margin-top:.5rem; line-height:1.7;">Usually within one business day' +
+            (st.category ? ' \u2014 you told us: <strong>' + esc(st.category) + '</strong>' : '') + '. ' +
+            'We have to confirm it <em>before</em> you pay, because a discount can\u2019t be applied to a card that\u2019s already been charged. ' +
+            'If you\u2019re in a hurry, call <a href="tel:+18043090968" style="color:var(--accent-orange-text);text-decoration:underline;">804-309-0968</a>.</p>' +
+            '<p style="color:var(--ink-faint); font-size:.85rem; margin-top:1rem; line-height:1.6;"><strong>We will never ask you to email anything carrying your Social Security number.</strong> ' +
+            'We verify in person, from a copy with the sensitive fields blacked out, or from a licence number we check directly with the issuing body.</p></div>';
+          return;
+        }
+
+        var declined = st.state === "declined";
+        var opts = (st.categories || []).map(function (c) { return '<option value="' + esc(c) + '">' + esc(c) + '</option>'; }).join("");
+        v.innerHTML = '<div class="card">' +
+          (declined
+            ? '<h2 style="font-size:1.15rem;">We couldn\u2019t confirm it from what we had</h2><p style="color:var(--ink-soft); font-size:.92rem; margin-top:.5rem; line-height:1.7;">That\u2019s very often a missing detail rather than a no. Try again below, or call <a href="tel:+18043090968" style="color:var(--accent-orange-text);text-decoration:underline;">804-309-0968</a>.</p>'
+            : '<h2 style="font-size:1.15rem;">15% off one-time work, 5% off monthly</h2><p style="color:var(--ink-soft); font-size:.92rem; margin-top:.5rem; line-height:1.7;">For active duty military, veterans, teachers, first responders, doctors, TSA agents, police, firefighters, and Virginia FFL holders. <a href="heroes-pricing.html" style="color:var(--accent-orange-text);text-decoration:underline;">The full details are here.</a></p>') +
+          '<p style="color:var(--ink-soft); font-size:.92rem; margin-top:1rem; line-height:1.7;"><strong>Ask before you pay.</strong> We confirm eligibility first, then the discount applies automatically at every checkout from then on. It can\u2019t be added to a payment that\u2019s already gone through.</p>' +
+          '<form id="heroForm" style="margin-top:1.5rem;">' +
+            '<div class="form-row"><label for="heroCat">Which applies to you? <span style="color:var(--accent-orange-text);">*</span></label>' +
+            '<select id="heroCat" aria-required="true"><option value="">Choose one\u2026</option>' + opts + '</select></div>' +
+            '<div class="form-row"><label for="heroNote">Anything that helps us confirm it <span style="font-weight:400;color:var(--ink-faint);">(optional)</span></label>' +
+            '<textarea id="heroNote" rows="3" placeholder="Branch and years, the school or department you work for, a licence number we can check \u2014 whatever\u2019s easiest."></textarea></div>' +
+            '<p style="color:var(--ink-faint); font-size:.85rem; line-height:1.6; margin-bottom:1rem;"><strong>Do not send documents here.</strong> We never accept an unredacted DD-214, LES, or anything showing a Social Security number. We\u2019ll arrange verification with you directly.</p>' +
+            '<button type="submit" class="btn btn-primary">Request the discount</button>' +
+            '<p class="form-note" id="heroStatus" role="status"></p>' +
+          '</form></div>';
+
+        var form = v.querySelector("#heroForm");
+        form.addEventListener("submit", async function (e) {
+          e.preventDefault();
+          var status = v.querySelector("#heroStatus");
+          var cat = v.querySelector("#heroCat").value;
+          if (!cat) { status.textContent = "Choose the category that applies to you."; status.className = "form-note form-note--error"; return; }
+          status.textContent = "Sending\u2026"; status.className = "form-note";
+          var res = await api("hero-status", { method: "POST", body: JSON.stringify({ category: cat, note: v.querySelector("#heroNote").value }) });
+          if (res.ok && res.body && res.body.status) { render(res.body.status); return; }
+          status.textContent = (res.body && res.body.error) || "Couldn\u2019t send that. Try again.";
+          status.className = "form-note form-note--error";
+        });
+      }
+    })();
+
+    return v;
+  };
 
 
   // The project brief. Fields come from the server so the form, the PDF and
@@ -554,7 +729,13 @@
     (async function () {
       var r = await api("orders");
       var orders = (r.ok && r.body && r.body.orders) || [];
-      var order = orders.find(function (o) { return o.status === "paid" || o.status === "payment_reported"; });
+      // payment_processing is included: a delayed method (some buy-now-pay-
+      // later) can take days to settle, and making someone wait on that to
+      // start their brief kills the momentum the brief depends on. And only
+      // a build needs one -- a cart of one-off services has nothing to brief.
+      var order = orders.find(function (o) {
+        return o.needsBrief !== false && (o.status === "paid" || o.status === "payment_processing");
+      });
       var done = orders.find(function (o) { return o.status === "brief_submitted"; });
 
       if (!order && done) {
@@ -645,6 +826,259 @@
     return v;
   };
 
+  /* Hero status, shown at sign-in. The owner's requirement is that a
+   * customer knows where they stand BEFORE they reach a checkout, because
+   * the discount is verified in advance and can't be applied afterwards. */
+  function mountHeroBanner(host) {
+    if (!host) return;
+    var st = (state.user && state.user.heroStatus) || null;
+    if (!st) { host.innerHTML = ""; return; }
+
+    if (st.state === "verified") {
+      host.innerHTML = '<div class="hero-status hero-status--verified">' +
+        '<strong>American Heroes Discount active</strong>' +
+        '<span>15% off one-time work and 5% off monthly, applied automatically at checkout.</span></div>';
+      return;
+    }
+    if (st.state === "pending") {
+      host.innerHTML = '<div class="hero-status hero-status--pending">' +
+        '<strong>We\u2019re confirming your Heroes Discount</strong>' +
+        '<span>Usually within one business day. Prices stay at full price until it\u2019s confirmed \u2014 ' +
+        'we have to verify before you pay, not after. <a href="#hero">See your request</a></span></div>';
+      return;
+    }
+    if (st.state === "declined") {
+      host.innerHTML = '<div class="hero-status hero-status--pending">' +
+        '<strong>We couldn\u2019t confirm your Heroes Discount</strong>' +
+        '<span>Often just a missing detail. <a href="#hero">Try again</a> or call 804-309-0968.</span></div>';
+      return;
+    }
+    host.innerHTML = '<div class="hero-status">' +
+      '<strong>Military, veteran, teacher, first responder?</strong>' +
+      '<span>15% off one-time work and 5% off monthly. We confirm eligibility before you pay, so ' +
+      '<a href="#hero">ask for it first</a> \u2014 it can\u2019t be added to a payment that\u2019s already gone through.</span></div>';
+  }
+
+  /* The owner's side of the Heroes Discount. Approving here is what makes a
+   * customer's price change, and it has to happen BEFORE they pay -- so this
+   * exists to make the turnaround short rather than to be thorough. */
+  views.heroqueue = function () {
+    if (!requireAuth()) return el("<div></div>");
+    if (state.user.role !== "admin") { window.location.hash = "#dashboard"; return el("<div></div>"); }
+    setPageTitle("Verify Heroes Discount requests");
+    var v = el('<div id="hqHost"><p style="color:var(--ink-faint); font-size:.9rem;">Loading\u2026</p></div>');
+
+    load();
+    async function load() {
+      var r = await api("hero-status?pending=true");
+      if (!r.ok) { v.innerHTML = '<div class="card"><p class="form-note form-note--error">Couldn\'t load the queue.</p></div>'; return; }
+      var queue = r.body.pending || [];
+      if (!queue.length) {
+        v.innerHTML = '<div class="card"><h2 style="font-size:1.15rem;">Nothing waiting</h2>' +
+          '<p style="color:var(--ink-soft); font-size:.92rem; margin-top:.5rem;">Requests appear here the moment a customer asks. They\u2019re emailed to you too.</p></div>';
+        return;
+      }
+      v.innerHTML = '<p style="color:var(--ink-soft); font-size:.9rem; margin-bottom:1rem;">' +
+          '<strong>' + queue.length + '</strong> waiting. Verify in person, from a copy with the sensitive fields blacked out, ' +
+          'or from a licence number you check with the issuing body. <strong>Never accept an unredacted DD-214 or LES.</strong></p>' +
+        queue.map(function (q) {
+          var when = q.requestedAt ? new Date(q.requestedAt) : null;
+          return '<div class="order-card order-card--action">' +
+            '<p class="eyebrow">' + esc(q.category || "") + '</p>' +
+            '<h2>' + esc(q.name || q.email) + '</h2>' +
+            '<p class="order-line" style="font-size:.95rem;">' + esc(q.email) + '</p>' +
+            (q.note ? '<p class="order-note">Their note: ' + esc(q.note) + '</p>' : '') +
+            (when && !isNaN(when.getTime()) ? '<p class="order-note">Asked ' + esc(when.toLocaleString()) + '</p>' : '') +
+            '<div class="order-actions">' +
+              '<button type="button" class="btn btn-primary" data-approve="' + esc(q.email) + '">Approve</button>' +
+              '<button type="button" class="btn btn-ghost" data-decline="' + esc(q.email) + '">Decline</button>' +
+            '</div></div>';
+        }).join("");
+
+      v.querySelectorAll("[data-approve],[data-decline]").forEach(function (btn) {
+        btn.addEventListener("click", async function () {
+          var approve = btn.hasAttribute("data-approve");
+          var email = btn.getAttribute(approve ? "data-approve" : "data-decline");
+          if (!approve && !window.confirm("Decline " + email + "? They\u2019ll be emailed and invited to call.")) return;
+          btn.disabled = true;
+          await api("hero-status", { method: "PATCH", body: JSON.stringify({ customerEmail: email, decision: approve ? "verified" : "declined" }) });
+          load();
+        });
+      });
+    }
+
+    return v;
+  };
+
+  /* Someone can reach the dashboard with a full cart and no order yet --
+   * they made an account precisely so they could check out. Say so, rather
+   * than showing them an empty dashboard and letting the cart go stale. */
+  function mountCartPrompt(host) {
+    if (!host || !window.LTS_CART || !window.LTS_PRODUCTS) return;
+    var items = window.LTS_CART.read().items;
+    if (!items.length) { host.innerHTML = ""; return; }
+
+    var names = items.map(function (i) {
+      var p = window.LTS_PRODUCTS.get(i.key);
+      var name = p ? p.name : i.key;
+      return i.qty > 1 ? name + " \u00d7 " + i.qty : name;
+    });
+    host.innerHTML = '<div class="order-card order-card--action">' +
+      '<p class="eyebrow">Still in your cart</p>' +
+      '<h2>' + esc(names.join(", ")) + '</h2>' +
+      '<p class="order-note">Nothing has been charged. Pick up where you left off whenever you\u2019re ready.</p>' +
+      '<div class="order-actions"><a class="btn btn-primary" href="cart.html">Go to your cart</a></div>' +
+    '</div>';
+  }
+
+  /* Stripe wiring, driven from here rather than from the Stripe dashboard.
+   * The secret key already sits in Netlify's environment, so it can create
+   * its own webhook endpoint -- with the right URL, the right four events,
+   * and automatically in whichever mode the key belongs to. That last part
+   * is the one that silently breaks hand-made setups: a test-mode endpoint
+   * behind a live key 401s every delivery and the only symptom a customer
+   * ever sees is an order stuck on "Waiting on payment". */
+  views.stripe = function () {
+    if (!requireAuth()) return el("<div></div>");
+    if (state.user.role !== "admin") { window.location.hash = "#dashboard"; return el("<div></div>"); }
+    setPageTitle("Stripe setup");
+    var v = el('<div id="stripeHost"><p style="color:var(--ink-faint); font-size:.9rem;">Checking\u2026</p></div>');
+
+    load();
+    async function load() {
+      var r = await api("stripe-setup");
+      if (!r.ok) {
+        v.innerHTML = '<div class="card"><p class="form-note form-note--error">' +
+          esc((r.body && r.body.error) || "Couldn\'t check Stripe.") + '</p></div>';
+        return;
+      }
+      render(r.body);
+    }
+
+    function chip(cls, title, sub) {
+      return '<div class="hero-status ' + cls + '" style="margin:0 0 1rem;">' +
+        '<strong>' + esc(title) + '</strong><span>' + sub + '</span></div>';
+    }
+
+    function modeChip(d) {
+      if (d.keyMode === "mismatch") {
+        // The detail is spelled out in the body below; repeating it here just
+        // makes the same sentence appear twice.
+        return chip("hero-status--pending", "Refusing to run",
+          'The key and <code>STRIPE_MODE</code> disagree.');
+      }
+      if (d.keyMode === "missing") return "";
+      if (d.mode === "live") {
+        return chip("hero-status--pending", "LIVE mode \u2014 real cards, real money",
+          'Reading <code>' + esc(d.keyVar) + '</code>. To switch, set <code>STRIPE_MODE=test</code> in Netlify and redeploy.');
+      }
+      return chip("hero-status--verified", "TEST mode \u2014 no real money moves",
+        'Reading <code>' + esc(d.keyVar) + '</code>. To go live, set <code>STRIPE_MODE=live</code> (or remove it) and redeploy.');
+    }
+
+    /* Which of the four variables Netlify actually has. Booleans only --
+       the server never sends key material, and this never asks for it. */
+    function varTable(d) {
+      if (!d.available) return "";
+      var rows = Object.keys(d.available).map(function (name) {
+        var set = d.available[name];
+        var active = (name === d.keyVar || name === d.secretVar);
+        return '<p class="cart-total-row" style="font-size:.84rem;">' +
+          '<span><code>' + esc(name) + '</code>' + (active ? ' <em style="color:var(--accent-orange-text);">in use</em>' : '') + '</span>' +
+          '<strong style="color:' + (set ? 'var(--accent-teal-text)' : 'var(--ink-faint)') + ';">' +
+          (set ? 'set' : 'not set') + '</strong></p>';
+      }).join("");
+      return '<div style="margin-top:1.5rem;"><h3 style="font-size:.95rem;margin-bottom:.5rem;">Netlify variables</h3>' + rows + '</div>';
+    }
+
+    function render(d) {
+      if (d.keyMode === "missing" || d.keyMode === "mismatch") {
+        v.innerHTML = '<div class="card">' +
+          modeChip(d) +
+          '<h2 style="font-size:1.15rem;">' +
+            (d.keyMode === "mismatch" ? "Stripe is refusing to run" : "Stripe isn\u2019t configured yet") + '</h2>' +
+          '<p style="color:var(--ink-soft); font-size:.92rem; margin-top:.5rem; line-height:1.7;">' + esc(d.advice) + '</p>' +
+          varTable(d) +
+          '<div class="order-actions"><button type="button" class="btn btn-ghost" id="stripeRefresh">Re-check</button></div>' +
+        '</div>';
+        v.querySelector("#stripeRefresh").addEventListener("click", load);
+        return;
+      }
+
+      var rows = (d.endpoints || []).map(function (e) {
+        var state = e.healthy ? "is-confirmed" : "is-pending";
+        var why = e.healthy ? "Correct."
+          : !e.urlMatches ? "Points somewhere else \u2014 not this site."
+          : e.missingEvents.length ? "Missing: " + e.missingEvents.join(", ")
+          : e.status !== "enabled" ? "Disabled in Stripe." : "Incomplete.";
+        return '<p class="order-status ' + state + '" style="font-weight:400;">' +
+          '<code style="font-size:.82rem;">' + esc(e.url) + '</code><br>' +
+          '<span style="font-size:.85rem;">' + esc(why) + ' (' + (e.livemode ? "live" : "test") + ')</span></p>';
+      }).join("") || '<p style="color:var(--ink-faint); font-size:.9rem;">No webhook endpoints on this Stripe account yet.</p>';
+
+      v.innerHTML = '<div class="card">' +
+        modeChip(d) +
+        '<h2 style="font-size:1.15rem;">Webhook endpoint</h2>' +
+        '<p style="color:var(--ink-soft); font-size:.92rem; margin-top:.5rem; line-height:1.7;">' + esc(d.advice) + '</p>' +
+        '<p style="color:var(--ink-faint); font-size:.85rem; margin-top:1rem;">Should point at:<br><code style="font-size:.82rem;">' + esc(d.webhookUrl) + '</code></p>' +
+        '<div style="margin-top:1.25rem;">' + rows + '</div>' +
+        (d.ready
+          ? '<p class="order-note" style="margin-top:1rem;">Nothing more to do here. If deliveries still fail, the signing secret in Netlify belongs to a different endpoint \u2014 replace it below to get a fresh one.</p>'
+          : '') +
+        '<div class="order-actions" style="margin-top:1.25rem;">' +
+          '<button type="button" class="btn btn-primary" id="stripeCreate">' +
+            (d.match ? "Replace the endpoint" : "Create the webhook endpoint") + '</button>' +
+          '<button type="button" class="btn btn-ghost" id="stripeRefresh">Re-check</button>' +
+        '</div>' +
+        varTable(d) +
+        '<div id="stripeResult"></div>' +
+      '</div>';
+
+      v.querySelector("#stripeRefresh").addEventListener("click", load);
+      v.querySelector("#stripeCreate").addEventListener("click", async function () {
+        var btn = this;
+        if (d.match && !window.confirm("This deletes the existing endpoint and creates a fresh one, which gives a NEW signing secret you\u2019ll have to paste into Netlify. Continue?")) return;
+        btn.disabled = true;
+        btn.textContent = "Creating\u2026";
+        var r = await api("stripe-setup", { method: "POST", body: JSON.stringify({ action: "create-webhook", replace: !!d.match }) });
+        btn.disabled = false;
+        if (!r.ok) {
+          v.querySelector("#stripeResult").innerHTML = '<p class="form-note form-note--error">' + esc((r.body && r.body.error) || "Failed.") + '</p>';
+          return;
+        }
+        showResult(r.body);
+      });
+    }
+
+    function showResult(b) {
+      var host = v.querySelector("#stripeResult");
+      if (b.alreadyCorrect) {
+        host.innerHTML = '<p class="form-note" style="margin-top:1rem;">' + esc(b.note) + '</p>';
+        return;
+      }
+      host.innerHTML = '<div class="order-card order-card--action" style="margin-top:1.5rem;">' +
+        '<p class="eyebrow">' + (b.livemode ? "Live" : "Test") + ' endpoint created</p>' +
+        '<h2>Copy this into Netlify now</h2>' +
+        '<p class="order-note" style="color:var(--accent-orange-text);"><strong>' + esc(b.warning) + '</strong></p>' +
+        (b.signingSecret
+          ? '<p style="margin-top:.75rem;"><code id="whsec" style="display:block; word-break:break-all; background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:.75rem; font-size:.82rem;">' + esc(b.signingSecret) + '</code></p>' +
+            '<div class="order-actions"><button type="button" class="btn btn-ghost btn-small" id="copyWhsec">Copy</button></div>'
+          : '') +
+        '<ol class="cart-steps" style="margin-top:1rem;">' +
+          b.nextSteps.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join("") +
+        '</ol></div>';
+
+      var copy = v.querySelector("#copyWhsec");
+      if (copy) copy.addEventListener("click", function () {
+        navigator.clipboard.writeText(b.signingSecret).then(function () {
+          copy.textContent = "Copied \u2713";
+        }, function () { copy.textContent = "Select it manually"; });
+      });
+    }
+
+    return v;
+  };
+
   views.dashboard = function () {
     if (!requireAuth()) return el("<div></div>");
     document.title = "Dashboard — My Account — Little Technical Solutions LLC";
@@ -653,6 +1087,8 @@
     var lede = document.getElementById("acctPageLede");
     if (lede) lede.textContent = "Everything for your website project lives here.";
     var v = el('<div>' +
+      '<div id="dashCart"></div>' +
+      '<div id="dashHero"></div>' +
       '<div id="dashOrder"></div>' +
       '<div class="account-shortcuts" id="dashShortcuts">' +
       '<a href="#documents" class="account-shortcut"><strong>&hellip;</strong><span>Documents</span></a>' +
@@ -665,6 +1101,8 @@
       '<div id="dashRecent"><p style="color:var(--ink-faint); font-size:.9rem;">Loading&hellip;</p></div></div>' +
       '</div>');
 
+    mountCartPrompt(v.querySelector("#dashCart"));
+    mountHeroBanner(v.querySelector("#dashHero"));
     mountOrder(v.querySelector("#dashOrder"));
 
     Promise.all([api("documents"), api("favorites"), api("notifications")]).then(function (results) {

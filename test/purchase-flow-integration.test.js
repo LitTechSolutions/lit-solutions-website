@@ -54,7 +54,8 @@ const orders = require("../netlify/functions/orders.js");
 const brief = require("../netlify/functions/project-brief.js");
 const verification = require("../netlify/functions/_lib/verification.js");
 const { renderBriefPdf } = require("../netlify/functions/_lib/brief_pdf.js");
-const { getPlan, listPlans } = require("../netlify/functions/_lib/plan_catalog.js");
+const { getProduct, listProducts } = require("../netlify/functions/_lib/product_catalog.js");
+const { priceCart, toStripeLineItems } = require("../netlify/functions/_lib/pricing.js");
 Module._load = origLoad;
 
 function reset() { blobs.clear(); sent.length = 0; mailShouldThrow = false; }
@@ -71,9 +72,37 @@ const ANSWERS = {
   services: "Repairs, installs, emergency callouts",
 };
 
-async function newOrder(plan = "premium") {
-  const r = await orders.handler(req("POST", { planKey: plan }), {}, deps(CUST));
-  return JSON.parse(r.body).order;
+/* checkout.js is the only thing that creates orders now (it has to be -- the
+ * order id travels in the Stripe session metadata). So these tests seed the
+ * store with exactly the record checkout.js writes, rather than going through
+ * a POST route that deliberately no longer exists. */
+let orderSeq = 0;
+async function newOrder(planKey = "plan-premium", opts = {}) {
+  const product = getProduct(planKey);
+  const items = [{ product, quantity: 1 }];
+  const priced = priceCart(items, { hero: !!opts.hero, payInFull: !!opts.payInFull });
+  const id = opts.id || `ord-${++orderSeq}`;
+  blobs.set(k("orders", id), {
+    id,
+    customerId: (opts.session || CUST).userId,
+    customerEmail: (opts.session || CUST).email,
+    items: [{ key: product.key, name: product.name, quantity: 1 }],
+    pricing: priced,
+    hero: !!opts.hero,
+    payInFull: !!opts.payInFull,
+    status: opts.status || "awaiting_payment",
+    provider: "stripe",
+    createdAt: NOW().toISOString(),
+  });
+  const r = await orders.handler(req("GET"), {}, deps(opts.session || CUST));
+  return JSON.parse(r.body).orders.find((o) => o.id === id);
+}
+/** Push an order to paid the way the Stripe webhook does. */
+async function markPaid(id) {
+  const o = blobs.get(k("orders", id));
+  o.status = "paid";
+  o.paidAt = NOW().toISOString();
+  blobs.set(k("orders", id), o);
 }
 async function statusOf(id) {
   const r = await orders.handler(req("GET"), {}, deps(CUST));
@@ -82,42 +111,110 @@ async function statusOf(id) {
 
 /* ------------------------------------------------- catalog consistency --- */
 
-test("every plan in the catalog is complete and internally consistent", () => {
-  const plans = listPlans();
-  assert.equal(plans.length, 3);
-  const seenLinks = new Set();
-  for (const p of plans) {
-    for (const field of ["key", "name", "deposit", "monthly", "depositLink", "subscriptionLink", "page", "summary"]) {
+test("every product in the catalog is complete and internally consistent", () => {
+  const products = listProducts();
+  assert.equal(products.length, 11, `catalog is ${products.length} products`);
+  // Owner's rule: website work is fixed-rate and payable on the site; IT work
+  // is quoted and invoiced. Nothing IT-side may become checkout-able by
+  // accident, because that would take money for a job nobody has scoped.
+  const itCategories = ["Cybersecurity", "Networking", "Small business IT", "Computer repair"];
+  for (const p of products) {
+    assert.ok(!itCategories.includes(p.category), `${p.key} is IT work and must not be in the cart`);
+  }
+  const seenKeys = new Set();
+  for (const p of products) {
+    for (const field of ["key", "kind", "category", "name", "summary"]) {
       assert.ok(p[field], `${p.key} missing ${field}`);
     }
-    // Prices in cents must agree with the display strings -- these are shown
-    // side by side on the cart and must never drift.
-    assert.equal(`$${p.depositCents / 100}`, p.deposit, `${p.key} deposit mismatch`);
-    assert.equal(`$${p.monthlyCents / 100}`, p.monthly, `${p.key} monthly mismatch`);
-    // A duplicated Square link would charge someone for the wrong tier.
-    for (const link of [p.depositLink, p.subscriptionLink]) {
-      assert.ok(!seenLinks.has(link), `${p.key} reuses a Square link: ${link}`);
-      seenLinks.add(link);
-    }
-    assert.match(p.page, /^plan-[a-z]+\.html$/);
+    assert.ok(!seenKeys.has(p.key), `duplicate product key ${p.key}`);
+    seenKeys.add(p.key);
+    assert.ok(["plan", "package", "subscription", "service"].includes(p.kind), `${p.key} bad kind`);
+
+    // Every kind must carry the amount its kind is priced from, or the
+    // pricing engine silently charges zero.
+    if (p.kind === "plan") { assert.ok(p.depositCents > 0); assert.ok(p.monthlyCents > 0); }
+    if (p.kind === "package") assert.ok(p.totalCents > 0);
+    if (p.kind === "subscription") assert.ok(p.monthlyCents > 0);
+    if (p.kind === "service") assert.ok(p.amountCents > 0);
   }
 });
 
-test("the browser catalog and the server catalog agree exactly", () => {
+test("a product never prices to zero, so no cart line can be free by accident", () => {
+  for (const p of listProducts()) {
+    const priced = priceCart([{ product: p, quantity: 1 }], {});
+    assert.ok(priced.chargedTodayCents > 0, `${p.key} charges nothing today`);
+  }
+});
+
+test("the generated browser catalog agrees with the server, price for price", () => {
   const fs = require("node:fs");
-  const src = fs.readFileSync(require("node:path").join(__dirname, "..", "js", "plan-catalog.js"), "utf8");
+  const src = fs.readFileSync(require("node:path").join(__dirname, "..", "js", "product-catalog.js"), "utf8");
   const sandbox = { window: {} };
   new Function("window", src)(sandbox.window);
-  const client = sandbox.window.LTS_PLANS.PLANS;
-  const server = listPlans();
-  assert.equal(client.length, server.length, "different number of plans");
-  for (const s of server) {
-    const c = client.find((x) => x.key === s.key);
-    assert.ok(c, `client catalog missing ${s.key}`);
-    for (const f of ["name", "deposit", "monthly", "depositLink", "subscriptionLink", "depositCents", "monthlyCents"]) {
-      assert.deepEqual(c[f], s[f], `${s.key}.${f} differs between client and server`);
+  const client = sandbox.window.LTS_PRODUCTS.PRODUCTS;
+  const server = listProducts();
+
+  assert.equal(client.length, server.length, "different number of products -- rebuild js/product-catalog.js");
+  for (const p of server) {
+    const c = client.find((x) => x.key === p.key);
+    assert.ok(c, `client catalog missing ${p.key} -- rebuild js/product-catalog.js`);
+    assert.equal(c.name, p.name);
+
+    // The figure on the card must be the figure checkout would quote. This is
+    // the assertion that stops a stale generated file quoting an old price.
+    const list = priceCart([{ product: p, quantity: 1 }], {});
+    const hero = priceCart([{ product: p, quantity: 1 }], { hero: true });
+    assert.equal(c.chargedTodayCents, list.chargedTodayCents, `${p.key} today differs`);
+    assert.equal(c.monthlyCents, list.monthlyCents, `${p.key} monthly differs`);
+    assert.equal(c.heroChargedTodayCents, hero.chargedTodayCents, `${p.key} hero today differs`);
+    assert.equal(c.heroMonthlyCents, hero.monthlyCents, `${p.key} hero monthly differs`);
+  }
+});
+
+test("what the cart shows is exactly what the Stripe line items add up to", () => {
+  // Every combination of hero and pay-in-full, over a representative cart.
+  const carts = [
+    ["plan-premium"], ["plan-standard"], ["package-business"], ["care-plan"],
+    ["svc-seo", "svc-domain-setup"], ["plan-executive", "care-plan"], ["package-starter", "svc-seo"],
+  ];
+  for (const keys of carts) {
+    for (const hero of [false, true]) {
+      for (const payInFull of [false, true]) {
+        const items = keys.map((key) => ({ product: getProduct(key), quantity: 1 }));
+        const priced = priceCart(items, { hero, payInFull });
+        const total = toStripeLineItems(priced).reduce((sum, l) => sum + l.price_data.unit_amount, 0);
+        assert.equal(total, priced.chargedTodayCents,
+          `${keys.join("+")} hero=${hero} full=${payInFull}: cart says ${priced.chargedTodayCents}, Stripe would take ${total}`);
+      }
     }
   }
+});
+
+test("a monthly subscription is billed once, not twice, in its first month", () => {
+  // The regression that mattered: a $39 plan emitting BOTH a "first month"
+  // one-off AND a recurring line, taking $78.
+  const priced = priceCart([{ product: getProduct("care-plan"), quantity: 1 }], {});
+  const lines = toStripeLineItems(priced);
+  assert.equal(lines.length, 1, `expected one line, got ${lines.length}`);
+  assert.ok(lines[0].price_data.recurring, "the single line must be the recurring one");
+  assert.equal(priced.chargedTodayCents, 3900);
+});
+
+test("the Heroes rate follows the component: 15% one-time, 5% recurring", () => {
+  const priced = priceCart([{ product: getProduct("plan-premium"), quantity: 1 }], { hero: true });
+  const line = priced.lines[0];
+  assert.equal(line.oneOffCents, Math.round(24900 * 0.85), "deposit is one-time work -- 15%");
+  assert.equal(line.monthlyCents, Math.round(12900 * 0.95), "the monthly fee is recurring -- 5%");
+});
+
+test("a website build splits 50/50 unless paid in full, and never loses the balance", () => {
+  const half = priceCart([{ product: getProduct("package-business"), quantity: 1 }], {});
+  assert.equal(half.chargedTodayCents + half.balanceAtLaunchCents, 129900);
+  assert.ok(half.chargedTodayCents >= half.balanceAtLaunchCents, "the balance must never be the larger half");
+
+  const full = priceCart([{ product: getProduct("package-business"), quantity: 1 }], { payInFull: true });
+  assert.equal(full.chargedTodayCents, 129900);
+  assert.equal(full.balanceAtLaunchCents, 0);
 });
 
 /* --------------------------------------------------- order state machine -- */
@@ -126,24 +223,49 @@ test("every illegal transition is refused, and the order is left untouched", asy
   reset();
   const o = await newOrder();
 
-  // confirm-payment from awaiting is allowed (admin skipping the report step)
-  // but the customer must never be able to reach `paid` themselves.
+  // A customer must never be able to reach `paid` themselves. With Square
+  // there was a "report-payment" middle state that let them claim it; Stripe
+  // confirms directly, so the claim route is gone and this is the only path.
   assert.equal((await orders.handler(req("PATCH", { id: o.id, action: "confirm-payment" }), {}, deps(CUST))).statusCode, 403);
   assert.equal(await statusOf(o.id), "awaiting_payment");
 
   assert.equal((await orders.handler(req("PATCH", { id: o.id, action: "delete" }), {}, deps(ADMIN))).statusCode, 400);
-  assert.equal((await orders.handler(req("PATCH", { id: "nope", action: "report-payment" }), {}, deps(CUST))).statusCode, 404);
+  assert.equal((await orders.handler(req("PATCH", { id: "nope", action: "cancel" }), {}, deps(CUST))).statusCode, 404);
   assert.equal(await statusOf(o.id), "awaiting_payment");
 });
 
-test("reporting payment twice does not re-notify or regress the status", async () => {
+test("orders can no longer be created through the API -- only at checkout", async () => {
+  reset();
+  // The order id has to exist BEFORE the Stripe session so it can ride in
+  // the metadata. An order minted anywhere else is one nothing can pay for.
+  const r = await orders.handler(req("POST", { planKey: "plan-premium" }), {}, deps(CUST));
+  assert.equal(r.statusCode, 410);
+  assert.match(JSON.parse(r.body).error, /checkout/i);
+  const list = JSON.parse((await orders.handler(req("GET"), {}, deps(CUST))).body).orders;
+  assert.equal(list.length, 0, "a rejected POST must not leave an order behind");
+});
+
+test("a customer can cancel an unpaid order but not a paid one", async () => {
+  reset();
+  const unpaid = await newOrder("plan-standard");
+  const r1 = await orders.handler(req("PATCH", { id: unpaid.id, action: "cancel" }), {}, deps(CUST));
+  assert.equal(r1.statusCode, 200);
+  assert.equal(await statusOf(unpaid.id), "cancelled");
+
+  const paid = await newOrder("plan-premium");
+  await markPaid(paid.id);
+  const r2 = await orders.handler(req("PATCH", { id: paid.id, action: "cancel" }), {}, deps(CUST));
+  assert.equal(r2.statusCode, 400, "a paid order must not be self-cancellable");
+  assert.equal(await statusOf(paid.id), "paid");
+});
+
+test("cancelling someone else's order is refused", async () => {
   reset();
   const o = await newOrder();
-  await orders.handler(req("PATCH", { id: o.id, action: "report-payment" }), {}, deps(CUST));
-  const after = sent.length;
-  await orders.handler(req("PATCH", { id: o.id, action: "report-payment" }), {}, deps(CUST));
-  assert.equal(sent.length, after, "a second report must not email again");
-  assert.equal(await statusOf(o.id), "payment_reported");
+  const res = await orders.handler(req("PATCH", { id: o.id, action: "cancel" }), {},
+    deps({ userId: "other", email: "o@x.test", role: "customer" }));
+  assert.equal(res.statusCode, 403);
+  assert.equal(await statusOf(o.id), "awaiting_payment");
 });
 
 test("a submitted order is terminal -- confirming payment afterwards can't undo it", async () => {
@@ -156,32 +278,49 @@ test("a submitted order is terminal -- confirming payment afterwards can't undo 
   assert.equal(await statusOf(o.id), "brief_submitted", "must not fall back to paid");
 });
 
-test("a finished order frees the customer to buy again", async () => {
+test("a customer can hold several orders at once without them colliding", async () => {
   reset();
-  const first = await newOrder("standard");
-  await orders.handler(req("PATCH", { id: first.id, action: "confirm-payment" }), {}, deps(ADMIN));
-  await brief.handler(req("POST", { orderId: first.id, answers: ANSWERS }), {}, deps(CUST));
+  // Square's one-paid-phase limit forced a one-open-order-at-a-time rule.
+  // With Stripe a customer can buy a website in one checkout and a support
+  // plan in another, and both must survive independently.
+  const a = await newOrder("plan-standard", { id: "ord-a" });
+  const b = await newOrder("care-plan", { id: "ord-b" });
+  await markPaid(a.id);
 
-  const r = await orders.handler(req("POST", { planKey: "executive" }), {}, deps(CUST));
-  assert.equal(r.statusCode, 201, "a completed order should not block a new one");
-  assert.equal(JSON.parse(r.body).order.planName, "Executive");
+  const list = JSON.parse((await orders.handler(req("GET"), {}, deps(CUST))).body).orders;
+  assert.equal(list.length, 2);
+  assert.equal(list.find((o) => o.id === "ord-a").status, "paid");
+  assert.equal(list.find((o) => o.id === "ord-b").status, "awaiting_payment");
 });
 
-test("concurrent checkout attempts converge on one order", async () => {
+test("an order reports what is actually in it, including whether it needs a brief", async () => {
   reset();
-  const results = await Promise.all([
-    orders.handler(req("POST", { planKey: "premium" }), {}, deps(CUST)),
-    orders.handler(req("POST", { planKey: "standard" }), {}, deps(CUST)),
-    orders.handler(req("POST", { planKey: "executive" }), {}, deps(CUST)),
-  ]);
-  const ids = new Set(results.map((r) => JSON.parse(r.body).order.id));
+  const build = await newOrder("plan-premium", { id: "ord-build" });
+  assert.equal(build.needsBrief, true, "a website build needs a brief");
+  assert.equal(build.summary, "Premium");
+  assert.equal(build.chargedTodayCents, 37800, "deposit plus the first month");
+  assert.equal(build.monthlyCents, 12900);
+
+  const services = await newOrder("svc-seo", { id: "ord-svc" });
+  assert.equal(services.needsBrief, false, "a one-off service has nothing to brief");
+});
+
+test("a Square-era order still renders on the dashboard after the migration", async () => {
+  reset();
+  // Written by the old flow: a planKey, no items, no pricing. It must not
+  // crash the list or come back blank.
+  blobs.set(k("orders", "legacy-1"), {
+    id: "legacy-1", customerId: CUST.userId, customerEmail: CUST.email,
+    planKey: "premium", planName: "Premium", status: "paid",
+    depositLink: "https://square.link/u/GaFznrtG",
+    createdAt: NOW().toISOString(), paidAt: NOW().toISOString(),
+  });
   const list = JSON.parse((await orders.handler(req("GET"), {}, deps(CUST))).body).orders;
-  // Blobs has no transaction, so a true race can double-insert. What must
-  // hold is that the customer is never shown two competing orders.
-  assert.ok(ids.size <= 3);
-  assert.ok(list.length >= 1);
-  const open = list.filter((o) => o.status !== "brief_submitted");
-  assert.ok(open.length >= 1, "at least one order must survive a race");
+  assert.equal(list.length, 1);
+  assert.equal(list[0].provider, "square");
+  assert.equal(list[0].summary, "Premium");
+  assert.equal(list[0].needsBrief, true);
+  assert.equal(list[0].depositLink, "https://square.link/u/GaFznrtG", "an in-flight legacy order must stay completable");
 });
 
 /* ------------------------------------------------------------ injection -- */
@@ -215,10 +354,14 @@ test("HTML in a customer's answers cannot escape into the admin email", async ()
   assert.deepEqual(cust.html.match(/<\s*(script|img|iframe)\b/gi) || [], []);
 });
 
-test("an email address with HTML in it is escaped in the order notification", async () => {
+test("an email address with HTML in it is escaped in the brief notification", async () => {
   reset();
-  await orders.handler(req("POST", { planKey: "premium" }), {}, deps({ ...CUST, email: '<b>x</b>@y.test' }));
-  const m = sent[0];
+  const nasty = { ...CUST, email: '<b>x</b>@y.test' };
+  const o = await newOrder("plan-premium", { session: nasty });
+  await markPaid(o.id);
+  await brief.handler(req("POST", { orderId: o.id, answers: ANSWERS }), {}, deps(nasty));
+  const m = sent.find((x) => x.to === "dylan@lit-solutions.tech");
+  assert.ok(m, "the admin should have been notified");
   assert.ok(!m.html.includes("<b>x</b>@"), "unescaped email in notification");
   assert.ok(m.html.includes("&lt;b&gt;"));
 });

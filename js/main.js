@@ -281,7 +281,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const agreeTerms = document.getElementById('agreeTerms');
   const termsBlock = document.getElementById('termsAgreeBlock');
   const termsWarning = document.getElementById('termsWarning');
-  const gatedPayButtons = document.querySelectorAll('a.pay-btn, a.pay-btn-sm');
+  // Any element carrying these classes, not just anchors: the Care Plan and
+  // IT Support controls became <button data-add-to-cart> when those plans
+  // moved to the site's own checkout, and an anchor-only selector would
+  // have quietly dropped them out of the Terms gate.
+  const gatedPayButtons = document.querySelectorAll('.pay-btn, .pay-btn-sm');
 
   if (agreeTerms && gatedPayButtons.length) {
     const updateLockState = () => {

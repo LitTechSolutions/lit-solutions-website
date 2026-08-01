@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Payments &amp; Subscriptions — Little Technical Solutions LLC</title>
-<meta name="description" content="Pay securely for a service or invoice, or enroll in a monthly Website Care Plan or Small Business IT Support subscription — all through Square.">
+<meta name="description" content="Pay securely for a service or invoice, or enroll in a monthly Website Care Plan or Small Business IT Support subscription — securely, and linked to your account.">
 <link rel="canonical" href="https://lit-solutions.tech/payment.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Little Technical Solutions LLC">
 <meta property="og:title" content="Payments &amp; Subscriptions — Little Technical Solutions LLC">
-<meta property="og:description" content="Pay securely for a service or invoice, or enroll in a monthly Website Care Plan or Small Business IT Support subscription — all through Square.">
+<meta property="og:description" content="Pay securely for a service or invoice, or enroll in a monthly Website Care Plan or Small Business IT Support subscription — securely, and linked to your account.">
 <meta property="og:url" content="https://lit-solutions.tech/payment.html">
 <meta property="og:image" content="https://lit-solutions.tech/assets/logo-full.png">
 <meta name="twitter:card" content="summary">
@@ -85,7 +85,7 @@
     <div class="wrap">
       <p class="eyebrow">Payments</p>
       <h1>Payments &amp; Subscriptions.</h1>
-      <p class="section-lede">All payments are processed securely by Square. We never see or store your card information. Pick one-time payment for a quoted job or invoice, or subscriptions for ongoing monthly plans.</p>
+      <p class="section-lede">All payments are processed securely by Square or Stripe &mdash; we never see or store your card information either way. Use the one-time option to settle a quoted job or an invoice; monthly plans and anything bought from the site go through your account, so your receipts and paperwork stay in one place.</p>
     </div>
   </section>
 
@@ -144,7 +144,7 @@
         <div class="price-list-wrap">
           <div style="padding: 0 1.75rem 1.75rem;">
             <p class="pay-block-copy">
-              Two ongoing support plans, billed automatically through Square so you never have to think about it. Cancel anytime — just tell us before your next billing date.
+              Two ongoing support plans, billed automatically each month so you never have to think about it. They go through your account, which is where you can update a card, download an invoice, or cancel — no need to call us to stop one.
             </p>
 
             <div class="sub-grid">
@@ -162,10 +162,10 @@
                 <div class="sub-price">
                   <span class="sub-price-amount">$39</span><span class="sub-price-period">/month</span>
                 </div>
-                <a href="https://square.link/u/lmJbZea7" class="btn btn-primary pay-btn" target="_blank" rel="noopener">Subscribe</a>
+                <button type="button" class="btn btn-primary pay-btn" data-add-to-cart="care-plan" data-then="cart.html"><span data-cart-label>Subscribe</span></button>
                 <p class="pay-vet-note">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z"/></svg>
-                  American Heroes Discount rate: <strong>$37/month</strong> — see <a href="heroes-pricing.html">eligibility & verification</a>.
+                  American Heroes Discount rate: <strong>$37.05/month</strong>, applied automatically once your account is verified — see <a href="heroes-pricing.html">eligibility & verification</a>.
                 </p>
               </article>
 
@@ -178,10 +178,10 @@
                 <div class="sub-price">
                   <span class="sub-price-amount">$79</span><span class="sub-price-period">/month</span>
                 </div>
-                <a href="https://square.link/u/CrpV0Rqf" class="btn btn-primary pay-btn" target="_blank" rel="noopener">Subscribe</a>
+                <button type="button" class="btn btn-primary pay-btn" data-add-to-cart="it-support" data-then="cart.html"><span data-cart-label>Subscribe</span></button>
                 <p class="pay-vet-note">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z"/></svg>
-                  American Heroes Discount rate: <strong>$75/month</strong> — see <a href="heroes-pricing.html">eligibility & verification</a>.
+                  American Heroes Discount rate: <strong>$75.05/month</strong>, applied automatically once your account is verified — see <a href="heroes-pricing.html">eligibility & verification</a>.
                 </p>
               </article>
 
@@ -189,7 +189,7 @@
 
             <div class="price-note" style="margin-top:1.5rem;">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
-              <p>Subscriptions are billed monthly through Square and renew automatically until canceled. You can cancel either of the two plans above anytime by telling us before your next billing date — a call, text, or email all work, and any of them counts. There is no long-term contract, no notice period, and no cancellation fee on these two. (Website Subscription plans are different — they carry a 12-month minimum term and are bought through your account, not this page.) Scope for Small Business IT Support is confirmed with you before your first billing cycle. Server and infrastructure costs behind these plans are not discounted, which is why the American Heroes Discount on subscriptions is 5% rather than 15%.</p>
+              <p>Subscriptions are billed monthly and renew automatically until canceled. You can cancel either of the two plans above anytime, either from your own dashboard or by telling us before your next billing date — a call, text, or email all work, and any of them counts. There is no long-term contract, no notice period, and no cancellation fee on these two. (Website Subscription plans are different — they carry a 12-month minimum term and are bought through your account, not this page.) Scope for Small Business IT Support is confirmed with you before your first billing cycle. Server and infrastructure costs behind these plans are not discounted, which is why the American Heroes Discount on subscriptions is 5% rather than 15%.</p>
             </div>
           </div>
         </div>
@@ -220,7 +220,7 @@
 
       <div class="price-note">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
-        <p>Payments are securely processed by Square. Little Technical Solutions LLC does not collect, see, or store your card details.</p>
+        <p>Payments are securely processed by Square and Stripe. Little Technical Solutions LLC does not collect, see, or store your card details.</p>
         <p><strong>Before you pay, here is the refund policy in plain English</strong> — you should not have to go read the Terms to find it. Cancel before we start and your deposit is refunded in full, less any transaction fee our processor has already taken. Cancel partway through and we refund the portion covering work not yet performed, and we will show you that breakdown in writing. After delivery, if something was not done as agreed, tell us within <strong>30 days</strong> and we will fix it at no charge or refund that portion. Our labor also carries a <strong>30-day workmanship warranty</strong>. Full detail in our <a href="terms.html">Terms</a>, sections 4 and 6A.</p>
         <p>Please contact us before opening a dispute with your bank or card issuer — nearly every billing problem is something we can sort out the same day. Nothing in our terms limits your legal right to dispute a charge with your card issuer.</p>
       </div>
@@ -341,10 +341,9 @@
   </div>
 </div>
 
-<script src="js/plan-catalog.js"></script>
+<script src="js/product-catalog.js"></script>
 <script src="js/cart.js"></script>
 <script src="js/main.js"></script>
 <script src="js/site-version.js"></script>
-<script src="js/subscribe-flow.js"></script>
 </body>
 </html>

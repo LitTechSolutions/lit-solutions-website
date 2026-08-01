@@ -419,3 +419,152 @@ Also note: `/plan-basic.html` and `/plan-pro.html` now 301 to the new URLs.
 `/plan-standard.html` deliberately has **no** redirect, because that name was
 reused — it used to be the middle tier and is now the entry tier. The pages
 had been live about a day, so index exposure is negligible.
+
+---
+
+## 8. Stripe is now the checkout for everything on the website (2026-08-01)
+
+Square Payment Links allowed **one paid phase per link**. That single
+limitation caused every awkward part of the old flow: two separate
+checkouts for a deposit plus a monthly plan, an "I've completed both
+payments" button that recorded the customer's *claim* rather than proof, a
+`payment_reported` status that meant "probably paid", and no way to know
+which order a payment belonged to because the links are static and shared.
+
+Stripe returns our own order id on the webhook, so all four of those are
+gone. An order now goes from `awaiting_payment` straight to `paid` on its
+own, and the project brief unlocks by itself.
+
+### 8a. TWO SETUP STEPS — nothing takes money until you do these
+
+Everything is written and tested, and **the payment path is dead until two
+environment variables exist in Netlify.** Full runbook:
+**`docs/development/STRIPE_SETUP.md`**.
+
+Two sets of credentials can sit in Netlify at once, and **`STRIPE_MODE`
+picks which is active** — so switching test↔live is one variable, not
+re-pasting keys:
+
+| `STRIPE_MODE` | key | webhook secret |
+|---|---|---|
+| `test` | `STRIPE_TEST_KEY` | `STRIPE_TEST_WEBHOOK_SECRET` |
+| `live` *(or unset)* | `STRIPE_SECRET_KEY` | `STRIPE_WEBHOOK_SECRET` |
+
+Then trigger a Netlify deploy so the new variables are picked up.
+
+**You don't have to build the webhook endpoint by hand.** Once a key is set
+and the site is deployed, sign in and open **My Account → Stripe setup**. It
+reads the key already in Netlify and creates the endpoint for you — right
+URL, right four events, automatically in whichever mode the key belongs to —
+then shows you the signing secret once to paste back into Netlify. It also
+tells you at a glance which mode is live and which of the four variables
+Netlify actually has.
+
+**Two guards you should know are there.** The key and the webhook secret are
+always resolved as a pair, because a live key checked against a test signing
+secret rejects every delivery and the only symptom is an order stuck on
+"Waiting on payment" — no error, no failed charge, nothing. And a key whose
+prefix disagrees with `STRIPE_MODE` is refused outright: `sk_live_` in the
+test slot would charge real cards while you believed you were testing.
+
+**Do not send either value to anyone, including in a chat with an AI
+assistant.** Set them in the Netlify UI. Both are revocable if exposed.
+
+Do the test-mode run described in the runbook before switching to live keys.
+It takes about five minutes and it is the only way to know the webhook is
+wired up correctly.
+
+### 8b. Website work is payable on the site. IT work is quoted and invoiced.
+
+Your rule, applied literally (confirmed 2026-08-01).
+
+**Payable in the cart — 11 things, all website work, all fixed rate:**
+
+| | |
+|---|---|
+| Standard / Premium / Executive | subscription plans |
+| Starter $699 / Business $1,299 | buy-outright builds |
+| Website Care Plan $39/mo | ongoing website support |
+| Domain & DNS setup $39 · Business email setup $59 · Basic SEO $99 · Domain management $39 | fixed-rate website services |
+
+The price shown is the price charged. No "starting at", no renegotiation.
+
+**Quoted and invoiced — never in the cart:** everything under Computer
+Services, Networking, Cybersecurity and Small Business IT. Those keep their
+published *"Starting at"* guide prices, and each of those four blocks on the
+pricing page now says plainly why: *"IT work depends on what we find when we
+look, so we quote the real number before starting and invoice you
+afterwards. We won't take money in a cart for a job nobody has scoped yet."*
+They're paid through **Pay a Bill**, which is exactly what Square is still
+there for.
+
+There is a test that fails if anything in the Cybersecurity, Networking,
+Small business IT or Computer repair categories ever becomes checkout-able
+again, and another that proves a hand-typed IT product key can't be priced
+or bought even by asking for it directly. The lists live at the top of
+`netlify/functions/_lib/product_catalog.js` (`PRODUCTS` = payable,
+`INVOICE_ONLY` = quoted and invoiced, `QUOTE_ONLY` = hourly/parts-driven).
+
+**One agreed exception:** *Small Business IT Support ($79/month)* stays
+payable on the site (your call, 2026-08-01). It's IT by name, but it's an
+ongoing **plan** with a card on file rather than a job that has to be scoped
+— the same shape as the Website Care Plan, and how you'd already set it up
+in Square. The Small Business IT block on the pricing page now draws that
+line in as many words: the one-off jobs are guide prices we quote and
+invoice, *"Ongoing IT support is different: it's a flat monthly plan you can
+start here."*
+
+So the working rule is really **"IT *jobs* are quoted and invoiced"**.
+Ongoing plans are a flat price by definition, so there's nothing to quote.
+
+### 8c. Buy now, pay later — on, and it obeys your rule
+
+Klarna, Affirm and Afterpay appear at checkout **only** on a cart that is
+entirely one-time work and above the provider minimum. Stripe does not
+support them alongside a subscription, which happens to match what you
+asked for: BNPL settles the **full** amount with us immediately and the
+customer repays the provider, so there is no 50/50 deposit to split. A
+request to use BNPL on a half-payment is refused outright rather than
+quietly charged to a card.
+
+You still have to switch the providers on in **Stripe → Settings →
+Payments → Payment methods**. Leaving them off just means the option never
+appears; nothing breaks.
+
+### 8d. The Heroes Discount now works the way you specified
+
+- A customer asks from **My Account → Heroes Discount**. They pick a
+  category and can add a note. **There is no upload field, deliberately** —
+  terms §10 and the privacy policy both promise we never receive an
+  unredacted DD-214, LES, or anything with an SSN on it, and the only way
+  to keep that promise reliably is to have nowhere to send one.
+- You get an email, and a queue at **My Account → Verify Heroes** (visible
+  only to your admin account). Approve or decline in one click.
+- Their status shows **on their dashboard at sign-in**, in your words: a
+  pending request says plainly that prices are still full price and that
+  we have to confirm before they pay.
+- Once approved it is **permanent on the account** and applies at every
+  checkout automatically. They are never asked to prove it twice.
+- **15% off one-time work, 5% off recurring** — and the rate follows the
+  *component*, so a plan's deposit gets 15% while its monthly fee gets 5%.
+
+The discount cannot be self-applied. A request that claims to be eligible
+is ignored; only the account record counts.
+
+### 8e. One thing customers will notice that you should be ready for
+
+Stripe charges a recurring line **immediately**. So a Premium plan takes
+**$378 today** ($249 deposit + the first $129 month), not $249. The cart
+says this in as many words — *"Today's total includes your first month"* —
+and the old two-checkout flow was really doing the same thing, just in two
+transactions. But it is the first question someone will ask on the phone.
+
+### 8f. Square is not retired
+
+It is still how you take money that didn't start on the website: in person,
+an invoice for quoted or hourly work, and the "Pay a Bill" links. What it no
+longer does is website plans.
+
+That makes **section 7 above (renaming the six Square products) optional
+now** — nothing on the site links to those six payment links any more. You
+can archive them in Square instead of renaming them.

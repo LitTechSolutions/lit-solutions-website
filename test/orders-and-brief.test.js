@@ -66,6 +66,31 @@ const req = (method, body, qs) => ({
   headers: {},
 });
 
+/* checkout.js creates orders now (it must -- the order id has to exist before
+ * the Stripe session so it can travel in the metadata). These tests seed the
+ * store with the record it writes. */
+const { getProduct } = require("../netlify/functions/_lib/product_catalog.js");
+const { priceCart } = require("../netlify/functions/_lib/pricing.js");
+
+let seedSeq = 0;
+function seedOrder(opts = {}) {
+  const product = getProduct(opts.key || "plan-premium");
+  const priced = priceCart([{ product, quantity: 1 }], {});
+  const session = opts.session || CUSTOMER;
+  const id = opts.id || `order-${++seedSeq}`;
+  blobs.set(key("orders", id), {
+    id,
+    customerId: session.userId,
+    customerEmail: session.email,
+    items: [{ key: product.key, name: product.name, quantity: 1 }],
+    pricing: priced,
+    status: opts.status || "awaiting_payment",
+    provider: "stripe",
+    createdAt: NOW().toISOString(),
+  });
+  return { id };
+}
+
 const fullAnswers = {
   businessName: "Riverside Plumbing",
   contactName: "Jane Doe",
@@ -75,82 +100,54 @@ const fullAnswers = {
 
 /* ------------------------------------------------------------- orders --- */
 
-test("an order can't be created without a session", async () => {
+test("orders can't be read without a session", async () => {
   reset();
-  const res = await orders.handler(req("POST", { planKey: "premium" }), {}, { readCookie: () => null, getSession: async () => null });
+  const res = await orders.handler(req("GET"), {}, { readCookie: () => null, getSession: async () => null });
   assert.equal(res.statusCode, 401);
 });
 
-test("the plan key is validated against the server catalog, not the cart", async () => {
-  reset();
-  const res = await orders.handler(req("POST", { planKey: "free-website-please" }), {}, deps(CUSTOMER));
-  assert.equal(res.statusCode, 400);
-  assert.match(JSON.parse(res.body).error, /Unknown plan/);
-});
-
-test("creating an order stores it and notifies the admin", async () => {
+test("the create route is closed -- orders come from checkout only", async () => {
   reset();
   const res = await orders.handler(req("POST", { planKey: "premium" }), {}, deps(CUSTOMER));
-  assert.equal(res.statusCode, 201);
-  const { order } = JSON.parse(res.body);
-  assert.equal(order.planName, "Premium");
-  assert.equal(order.deposit, "$249");
-  assert.equal(order.status, "awaiting_payment");
-  assert.equal(sent.length, 1);
-  assert.equal(sent[0].to, "dylan@lit-solutions.tech");
+  assert.equal(res.statusCode, 410);
 });
 
-test("checking out twice returns the same order rather than stacking duplicates", async () => {
+test("an order reads back with its items, its totals and its next step", async () => {
   reset();
-  await orders.handler(req("POST", { planKey: "standard" }), {}, deps(CUSTOMER));
-  const res = await orders.handler(req("POST", { planKey: "executive" }), {}, deps(CUSTOMER));
-  assert.equal(res.statusCode, 200);
-  assert.equal(JSON.parse(res.body).existing, true);
-  const list = await orders.handler(req("GET"), {}, deps(CUSTOMER));
-  assert.equal(JSON.parse(list.body).orders.length, 1);
+  seedOrder({ id: "order-1" });
+  const res = await orders.handler(req("GET"), {}, deps(CUSTOMER));
+  const [order] = JSON.parse(res.body).orders;
+  assert.equal(order.summary, "Premium");
+  assert.equal(order.chargedTodayCents, 37800, "deposit plus the first month, which Stripe bills immediately");
+  assert.equal(order.monthlyCents, 12900);
+  assert.equal(order.needsBrief, true);
+  assert.equal(order.status, "awaiting_payment");
 });
 
 test("a customer only ever sees their own orders", async () => {
   reset();
-  await orders.handler(req("POST", { planKey: "premium" }), {}, deps(CUSTOMER));
+  seedOrder();
   const other = await orders.handler(req("GET"), {}, deps({ userId: "cust-2", email: "someone@else.test", role: "customer" }));
   assert.deepEqual(JSON.parse(other.body).orders, []);
 });
 
-test("reporting payment is the customer's claim, and is labelled as such to the admin", async () => {
-  reset();
-  const created = JSON.parse((await orders.handler(req("POST", { planKey: "premium" }), {}, deps(CUSTOMER))).body).order;
-  sent.length = 0;
-  const res = await orders.handler(req("PATCH", { id: created.id, action: "report-payment" }), {}, deps(CUSTOMER));
-  assert.equal(JSON.parse(res.body).order.status, "payment_reported");
-  assert.match(sent[0].html, /their word, not Square/i);
-});
-
 test("a customer cannot confirm their own payment", async () => {
   reset();
-  const created = JSON.parse((await orders.handler(req("POST", { planKey: "premium" }), {}, deps(CUSTOMER))).body).order;
+  const created = seedOrder();
   const res = await orders.handler(req("PATCH", { id: created.id, action: "confirm-payment" }), {}, deps(CUSTOMER));
   assert.equal(res.statusCode, 403);
 });
 
-test("a customer cannot report payment on someone else's order", async () => {
+test("an admin can confirm payment by hand when a webhook never arrives", async () => {
   reset();
-  const created = JSON.parse((await orders.handler(req("POST", { planKey: "premium" }), {}, deps(CUSTOMER))).body).order;
-  const res = await orders.handler(req("PATCH", { id: created.id, action: "report-payment" }), {},
-    deps({ userId: "cust-2", email: "x@y.test", role: "customer" }));
-  assert.equal(res.statusCode, 403);
-});
-
-test("an admin can confirm payment", async () => {
-  reset();
-  const created = JSON.parse((await orders.handler(req("POST", { planKey: "premium" }), {}, deps(CUSTOMER))).body).order;
+  const created = seedOrder();
   const res = await orders.handler(req("PATCH", { id: created.id, action: "confirm-payment" }), {}, deps(ADMIN));
   assert.equal(JSON.parse(res.body).order.status, "paid");
 });
 
 test("the all-orders view is admin only", async () => {
   reset();
-  await orders.handler(req("POST", { planKey: "premium" }), {}, deps(CUSTOMER));
+  seedOrder();
   assert.equal((await orders.handler(req("GET", null, { all: "true" }), {}, deps(CUSTOMER))).statusCode, 403);
   assert.equal((await orders.handler(req("GET", null, { all: "true" }), {}, deps(ADMIN))).statusCode, 200);
 });
@@ -159,25 +156,33 @@ test("the all-orders view is admin only", async () => {
 
 async function paidOrder() {
   reset();
-  const created = JSON.parse((await orders.handler(req("POST", { planKey: "premium" }), {}, deps(CUSTOMER))).body).order;
-  await orders.handler(req("PATCH", { id: created.id, action: "confirm-payment" }), {}, deps(ADMIN));
+  const created = seedOrder({ status: "paid" });
   sent.length = 0;
   return created;
 }
 
-test("the brief is locked until payment is at least reported", async () => {
+test("the brief is locked until the payment is actually confirmed", async () => {
   reset();
-  const created = JSON.parse((await orders.handler(req("POST", { planKey: "premium" }), {}, deps(CUSTOMER))).body).order;
+  const created = seedOrder();
   const res = await brief.handler(req("POST", { orderId: created.id, answers: fullAnswers }), {}, deps(CUSTOMER));
   assert.equal(res.statusCode, 409);
 });
 
-test("the brief unlocks on payment_reported, not just confirmed", async () => {
+test("a delayed payment method still unlocks the brief while it settles", async () => {
   reset();
-  const created = JSON.parse((await orders.handler(req("POST", { planKey: "premium" }), {}, deps(CUSTOMER))).body).order;
-  await orders.handler(req("PATCH", { id: created.id, action: "report-payment" }), {}, deps(CUSTOMER));
+  // Some buy-now-pay-later methods complete the Stripe session before the
+  // money confirms. Making someone wait days on that kills the momentum the
+  // brief depends on, and nothing is built until the order reaches `paid`.
+  const created = seedOrder({ status: "payment_processing" });
   const res = await brief.handler(req("POST", { orderId: created.id, answers: fullAnswers }), {}, deps(CUSTOMER));
   assert.equal(res.statusCode, 200, res.body);
+});
+
+test("a cancelled order can't have a brief submitted against it", async () => {
+  reset();
+  const created = seedOrder({ status: "cancelled" });
+  const res = await brief.handler(req("POST", { orderId: created.id, answers: fullAnswers }), {}, deps(CUSTOMER));
+  assert.equal(res.statusCode, 409);
 });
 
 test("required fields are enforced, and named in the error", async () => {

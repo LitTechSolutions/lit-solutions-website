@@ -4,7 +4,12 @@
   "description": "Little Technical Solutions LLC website + admin content module (Netlify Functions + Blobs) + Business Care Hub (src/).",
   "scripts": {
     "test": "node --test",
-    "new-release-post": "node scripts/new-release-post.js"
+    "new-release-post": "node scripts/new-release-post.js",
+    "build:catalog": "node scripts/build-product-catalog.js",
+    "build:plans": "node scripts/build-plan-pages.js",
+    "sweep": "node scripts/page-sweep.cjs",
+    "serve": "node scripts/static-server.cjs 8087",
+    "stripe:check": "node scripts/stripe-preflight.cjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",

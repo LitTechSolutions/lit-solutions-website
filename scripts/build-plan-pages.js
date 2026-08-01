@@ -19,9 +19,28 @@
 
 const fs = require('fs');
 const path = require('path');
+const { getProduct } = require('../netlify/functions/_lib/product_catalog.js');
 
 const ROOT = path.join(__dirname, '..');
 const CHROME_SOURCE = 'service-website.html';
+
+/* Prices are NOT written in this file. They come from the product catalog --
+ * the same module the checkout endpoint prices against -- so a plan page can
+ * never quote a figure Stripe won't charge. Copy lives here; money doesn't. */
+function money(cents) {
+  return '$' + (cents / 100).toLocaleString('en-US', {
+    minimumFractionDigits: cents % 100 ? 2 : 0, maximumFractionDigits: 2,
+  });
+}
+function withPrices(plan) {
+  const p = getProduct('plan-' + plan.slug);
+  if (!p) throw new Error(`No catalog product for plan-${plan.slug}`);
+  return Object.assign({}, plan, {
+    name: p.name,
+    deposit: money(p.depositCents),
+    monthly: money(p.monthlyCents),
+  });
+}
 
 /* ---------------------------------------------------------------- data --- */
 
@@ -33,14 +52,10 @@ const COMMON_INCLUDED = [
   ['Support by phone, text or email', 'Seven days a week, 7:00am&ndash;7:00pm ET. You get a person, not a ticket queue.'],
 ];
 
-const PLANS = [
+const PLAN_COPY = [
   {
     slug: 'standard',
     name: 'Standard',
-    deposit: '$149',
-    monthly: '$79',
-    depositLink: 'https://square.link/u/lwgSQrWM',
-    subLink: 'https://square.link/u/fLTqZg7k',
     equivalent: 'Starter',
     equivalentPrice: '$699',
     tagline: 'A clean, professional site that gets you found and gets you called.',
@@ -61,10 +76,6 @@ const PLANS = [
     slug: 'premium',
     name: 'Premium',
     featured: true,
-    deposit: '$249',
-    monthly: '$129',
-    depositLink: 'https://square.link/u/GaFznrtG',
-    subLink: 'https://square.link/u/Y40Brp2x',
     equivalent: 'Business',
     equivalentPrice: '$1,299',
     tagline: 'A site that actually runs leads, bookings and content through it.',
@@ -88,10 +99,6 @@ const PLANS = [
   {
     slug: 'executive',
     name: 'Executive',
-    deposit: '$399',
-    monthly: '$199',
-    depositLink: 'https://square.link/u/av8VJj8O',
-    subLink: 'https://square.link/u/izfCOOLP',
     equivalent: 'Business plus accounts, admin tooling and hardening',
     equivalentPrice: 'about $2,500',
     tagline: 'For sites that need to <em>do</em> things &mdash; accounts, logins, content you manage yourself.',
@@ -273,7 +280,7 @@ ${li(COMMON_INCLUDED)}
         </li>
         <li>
           <h3>2. Pay the ${p.deposit} deposit from your dashboard</h3>
-          <p>Through Square, as normal. The deposit isn't an extra fee &mdash; it's what reserves your build slot. Your ${p.monthly}/month plan starts alongside it.</p>
+          <p>One checkout, through Stripe &mdash; card, Apple Pay or Google Pay. The deposit isn't an extra fee, it's what reserves your build slot, and your ${p.monthly}/month plan starts in the same transaction.</p>
         </li>
         <li>
           <h3>3. Fill in your project brief</h3>
@@ -310,7 +317,7 @@ ${li(COMMON_INCLUDED)}
         <h3>Get started with ${p.name}</h3>
         <p>Add it to your cart and you'll create an account at checkout &mdash; that's what gives you a dashboard to pay from, a place for your project brief, and somewhere your paperwork lives afterwards.</p>
         <div class="plan-checkout-actions">
-          <button type="button" class="btn btn-primary" data-add-to-cart="${p.slug}" data-then="cart.html"><span data-cart-label>Add ${p.name} to cart</span></button>
+          <button type="button" class="btn btn-primary" data-add-to-cart="plan-${p.slug}" data-then="cart.html"><span data-cart-label>Add ${p.name} to cart</span></button>
           <a href="cart.html" class="btn btn-ghost">View cart</a>
         </div>
 
@@ -339,13 +346,16 @@ ${others.map(o => `        <a href="plan-${o.slug}.html" class="plan-other-card"
 
 /* ---------------------------------------------------------------- main --- */
 
+// Copy + catalog prices, resolved once, so every reference below (including
+// the "other plans" cards) quotes the same numbers.
+const PLANS = PLAN_COPY.map(withPrices);
+
 const { head, foot } = chrome();
 let written = 0;
 for (const p of PLANS) {
   const html = renderHead(head, p)
     + body(p)
-    + foot.replace('<script src="js/main.js"></script>',
-        '<script src="js/main.js"></script>\n<script src="js/subscribe-flow.js"></script>');
+    + foot;
   const file = path.join(ROOT, `plan-${p.slug}.html`);
   fs.writeFileSync(file, html, 'utf8');
   console.log(`  wrote plan-${p.slug}.html  (${(html.length / 1024).toFixed(1)} KB)`);

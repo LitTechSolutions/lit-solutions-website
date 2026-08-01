@@ -15,7 +15,22 @@
 const crypto = require("node:crypto");
 const { readCookie, getSession, json, rateLimited } = require("./_lib/auth_utils");
 const { getJSON, setJSON } = require("./_lib/blob_store");
-const { getPlan } = require("./_lib/plan_catalog");
+const { getProduct } = require("./_lib/product_catalog");
+
+/** What this order is called, in one line, for the PDF, the email and the file. */
+function orderTitle(order) {
+  if (Array.isArray(order.items) && order.items.length) {
+    return order.items
+      .map((i) => {
+        const p = getProduct(i.key);
+        const name = i.name || (p ? p.name : i.key);
+        return i.quantity > 1 ? `${name} \u00d7 ${i.quantity}` : name;
+      })
+      .join(", ");
+  }
+  // Square-era order: a single plan key and nothing else.
+  return order.planName || order.planKey || "Your order";
+}
 const { renderBriefPdf, BRIEF_FIELDS } = require("./_lib/brief_pdf");
 const { sendEmail } = require("./_lib/email");
 
@@ -84,11 +99,12 @@ exports.handler = async (event, context, deps = {}) => {
   let body;
   try { body = JSON.parse(event.body || "{}"); } catch { return json(400, { error: "Invalid JSON" }); }
 
-  // The brief is what starts a build, so it opens as soon as payment is
-  // reported rather than waiting for confirmation -- momentum matters more
-  // than the small risk of someone filling in a form they haven't paid for.
-  // Nothing gets built until the order reaches `paid` regardless.
-  if (order.status === "awaiting_payment") {
+  // Stripe confirms payment directly, so the brief opens on real confirmation
+  // rather than on the customer's say-so. payment_processing is allowed too:
+  // a delayed method (some buy-now-pay-later) can take days to settle, and
+  // making someone wait on that kills the momentum the brief depends on.
+  // Nothing is built until the order reaches `paid` either way.
+  if (order.status !== "paid" && order.status !== "payment_processing" && order.status !== "brief_submitted") {
     return json(409, { error: "This becomes available once your payment is in." });
   }
 
@@ -110,16 +126,16 @@ exports.handler = async (event, context, deps = {}) => {
     return json(400, { error: `Please fill in: ${labels.join(", ")}`, missing });
   }
 
-  if (await rateLimited(event, "project-brief-submit", 5, 3600)) {
+  if (await rateLimited("project-brief-submit", session.userId, 5, 3600)) {
     return json(429, { error: "Too many submissions. Give us a call instead." });
   }
 
   const submittedAt = (deps.now ? deps.now() : new Date()).toISOString();
-  const plan = getPlan(order.planKey);
+  const title = orderTitle(order);
   const customer = { email: order.customerEmail || session.email || "unknown" };
 
   const pdf = (deps.renderBriefPdf || renderBriefPdf)({
-    order: { id: order.id, planKey: order.planKey, planName: plan ? plan.name : order.planKey },
+    order: { id: order.id, planKey: order.planKey || null, planName: title },
     answers,
     customer,
     submittedAt,
@@ -131,7 +147,7 @@ exports.handler = async (event, context, deps = {}) => {
   await setJSONFn("documents", documentId, {
     customerId: order.customerId,
     customerEmail: customer.email,
-    title: `Project brief — ${plan ? plan.name : order.planKey}`,
+    title: `Project brief — ${title}`,
     type: "paperwork",
     amount: "",
     status: "n/a",
@@ -147,9 +163,9 @@ exports.handler = async (event, context, deps = {}) => {
   // on a phone without opening anything.
   await sendEmailFn({
     to: ADMIN_EMAIL,
-    subject: `Project brief submitted — ${plan ? plan.name : order.planKey} — ${customer.email}`,
+    subject: `Project brief submitted — ${title} — ${customer.email}`,
     html:
-      `<p><strong>${esc(customer.email)}</strong> submitted their project brief for <strong>${esc(plan ? plan.name : order.planKey)}</strong>.</p>` +
+      `<p><strong>${esc(customer.email)}</strong> submitted their project brief for <strong>${esc(title)}</strong>.</p>` +
       `<p style="color:#666;font-size:13px;">Order ${esc(order.id)} · ${esc(new Date(submittedAt).toLocaleString("en-US"))}</p>` +
       `<hr style="border:none;border-top:1px solid #e5e5e5;margin:20px 0;">` +
       answersHtml(answers) +
