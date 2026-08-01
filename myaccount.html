@@ -585,9 +585,14 @@
         var big = ["businessDescription", "services", "mustHaves", "anythingElse", "sitesYouLike", "contentReady"].indexOf(fl.key) !== -1;
         return '<div class="form-row"><label for="bf-' + fl.key + '">' + esc(fl.label) +
           (req ? ' <span style="color:var(--accent-orange-text);">*</span>' : ' <span style="font-weight:400;color:var(--ink-faint);">(optional)</span>') + '</label>' +
+          // aria-required rather than the native `required` attribute: the
+          // form has its own validation that names every missing field at
+          // once, and native validation would pre-empt it with a browser
+          // tooltip on the first one. This announces the requirement without
+          // changing the behaviour.
           (big
-            ? '<textarea id="bf-' + fl.key + '" rows="3">' + esc(saved[fl.key] || "") + '</textarea>'
-            : '<input id="bf-' + fl.key + '" type="text" value="' + esc(saved[fl.key] || "") + '">') +
+            ? '<textarea id="bf-' + fl.key + '" rows="3"' + (req ? ' aria-required="true"' : '') + '>' + esc(saved[fl.key] || "") + '</textarea>'
+            : '<input id="bf-' + fl.key + '" type="text"' + (req ? ' aria-required="true"' : '') + ' value="' + esc(saved[fl.key] || "") + '">') +
           '</div>';
       }).join("");
 
@@ -599,7 +604,7 @@
           '<button class="btn btn-primary" id="bf-submit">Submit brief</button>' +
           '<span class="brief-saved" id="bf-saved"></span>' +
         '</div>' +
-        '<p class="form-note" id="bf-status"></p></div>';
+        '<p class="form-note" id="bf-status" role="status" aria-live="polite"></p></div>';
 
       function collect() {
         var out = {};
