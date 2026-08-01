@@ -268,27 +268,31 @@ ${li(COMMON_INCLUDED)}
 
       <ol class="plan-steps">
         <li>
-          <h3>1. Pay the ${p.deposit} deposit</h3>
-          <p>This is what gets your build booked in. It comes off nothing &mdash; it's the deposit, not an extra fee &mdash; and it's what reserves the time.</p>
+          <h3>1. Create your account</h3>
+          <p>Email and password, then a 6-digit code we email you straight away. It takes about a minute, and it's what gives you a dashboard, an inbox and a place for your paperwork.</p>
         </li>
         <li>
-          <h3>2. Start the ${p.monthly}/month plan</h3>
-          <p>A second, separate checkout. Square only allows one charge type per link, so the deposit and the monthly plan can't share one. Your first monthly payment is taken when you sign up, and monthly from then on.</p>
+          <h3>2. Pay the ${p.deposit} deposit from your dashboard</h3>
+          <p>Through Square, as normal. The deposit isn't an extra fee &mdash; it's what reserves your build slot. Your ${p.monthly}/month plan starts alongside it.</p>
         </li>
         <li>
-          <h3>3. We call you within one business day</h3>
+          <h3>3. Fill in your project brief</h3>
+          <p>It lands in your dashboard inbox the moment your payment is in &mdash; what your business does, who it's for, what you already have. A copy is saved to your Documents tab, and it's what we build from.</p>
+        </li>
+        <li>
+          <h3>4. We call you within one business day</h3>
           <p>A real conversation about your business, what the site needs to do, and what you already have &mdash; logo, photographs, existing copy. If you have none of that, we'll tell you what we need and how to get it.</p>
         </li>
         <li>
-          <h3>4. You get a written scope of work</h3>
+          <h3>5. You get a written scope of work</h3>
           <p>Exactly what's being built, the pages, the features, and the timeline. <strong>It also states in writing that this is a subscription plan and what that means for ownership.</strong> Nothing is built until you've approved it.</p>
         </li>
         <li>
-          <h3>5. We build it, and you review it</h3>
+          <h3>6. We build it, and you review it</h3>
           <p>Typically ${p.slug === 'standard' ? '1&ndash;2 weeks' : p.slug === 'premium' ? '2&ndash;4 weeks' : '3&ndash;6 weeks'} once we have your content. You see it on a private link before anyone else does, and you get revisions before launch.</p>
         </li>
         <li>
-          <h3>6. It goes live, and we keep it running</h3>
+          <h3>7. It goes live, and we keep it running</h3>
           <p>We handle the domain, hosting, SSL, and everything on the list above from that point on. You call us when you want something changed.</p>
         </li>
       </ol>
@@ -303,20 +307,11 @@ ${li(COMMON_INCLUDED)}
       </div>
 
       <div class="plan-checkout">
-        <h3>Sign up for ${p.name}</h3>
-        <p>Two checkouts, in this order. Both open in a new tab; this page stays put and will remind you about step 2.</p>
+        <h3>Get started with ${p.name}</h3>
+        <p>Add it to your cart and you'll create an account at checkout &mdash; that's what gives you a dashboard to pay from, a place for your project brief, and somewhere your paperwork lives afterwards.</p>
         <div class="plan-checkout-actions">
-          <a href="${p.depositLink}" class="btn btn-primary" target="_blank" rel="noopener" data-sub-step="deposit" data-sub-tier="${p.name}" data-sub-monthly="${p.monthly}">1. Pay ${p.deposit} deposit</a>
-          <a href="${p.subLink}" class="btn btn-ghost" target="_blank" rel="noopener" data-sub-step="subscribe" data-sub-tier="${p.name}">2. Start ${p.monthly}/month</a>
-        </div>
-
-        <div class="step2-reminder" id="step2Reminder" hidden role="status">
-          <div class="step2-reminder-body">
-            <strong>You've paid the deposit &mdash; one step left.</strong>
-            <span>Start your monthly plan to get your build booked in. Nothing begins until this is done.</span>
-          </div>
-          <a href="#" class="btn btn-primary btn-small" id="step2Link" target="_blank" rel="noopener">Finish: start my plan</a>
-          <button type="button" class="step2-dismiss" id="step2Dismiss" aria-label="Dismiss this reminder">&times;</button>
+          <button type="button" class="btn btn-primary" data-add-to-cart="${p.slug}" data-then="cart.html"><span data-cart-label>Add ${p.name} to cart</span></button>
+          <a href="cart.html" class="btn btn-ghost">View cart</a>
         </div>
 
         <p class="plan-checkout-alt">Rather talk to a person first? <a href="intake.html">Send us a note</a> or call <a href="tel:+18043090968">804-309-0968</a> &mdash; we answer seven days a week, 7:00am&ndash;7:00pm ET. Eligible for the <a href="heroes-pricing.html">American Heroes Discount</a>? Contact us before paying so we can confirm your rate.</p>

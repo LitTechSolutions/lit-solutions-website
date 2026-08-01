@@ -3,17 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>New Client Intake Form — Little Technical Solutions LLC</title>
-<meta name="description" content="Tell us about your project. Little Technical Solutions LLC will follow up within one business day.">
-<link rel="canonical" href="https://lit-solutions.tech/intake.html">
+<title>Your cart — Little Technical Solutions LLC</title>
+<meta name="description" content="Review your website plan before checking out.">
+<link rel="canonical" href="https://lit-solutions.tech/cart.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Little Technical Solutions LLC">
-<meta property="og:title" content="New Client Intake Form — Little Technical Solutions LLC">
-<meta property="og:description" content="Tell us about your project. Little Technical Solutions LLC will follow up within one business day.">
-<meta property="og:url" content="https://lit-solutions.tech/intake.html">
+<meta property="og:title" content="Website Services — Little Technical Solutions LLC">
+<meta property="og:description" content="Custom websites that load fast and actually bring in calls — built, hosted, and supported with direct, personal service.">
+<meta property="og:url" content="https://lit-solutions.tech/cart.html">
 <meta property="og:image" content="https://lit-solutions.tech/assets/logo-full.png">
 <meta name="twitter:card" content="summary">
+<meta name="robots" content="noindex, follow">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Little Technical Solutions LLC","image":"https://lit-solutions.tech/assets/logo-full.png","telephone":"+18043090968","email":"dylan@lit-solutions.tech","url":"https://lit-solutions.tech/","priceRange":"$$","areaServed":[{"@type":"City","name":"Montross, VA"},{"@type":"City","name":"Colonial Beach, VA"},{"@type":"City","name":"King George, VA"},{"@type":"City","name":"Dahlgren, VA"}],"sameAs":["https://www.facebook.com/profile.php?id=61591618750945","https://share.google/2HaFNAzBwHXCsMn72","https://nextdoor.com/page/little-technical-solutuons-llc/"],"address":{"@type":"PostalAddress","addressLocality":"Montross","addressRegion":"VA","addressCountry":"US"},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],"opens":"07:00","closes":"19:00"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Service","name":"Website Design","description":"Custom websites that load fast and actually bring in calls — built, hosted, and supported with direct, personal service.","url":"https://lit-solutions.tech/service-website.html","provider":{"@type":"LocalBusiness","name":"Little Technical Solutions LLC","telephone":"+18043090968","email":"dylan@lit-solutions.tech","url":"https://lit-solutions.tech/"},"areaServed":{"@type":"Country","name":"United States"}}</script>
 
 <link rel="stylesheet" href="css/style.css">
 <link rel="icon" type="image/png" href="assets/favicon.png">
@@ -78,64 +80,92 @@
     </button>
   </div>
 </header>
-
 <main id="main">
-  <section class="intake-hero">
+  <section class="page-hero">
     <div class="wrap">
-      <p class="eyebrow">Request service</p>
-      <h1>Tell us what you need.</h1>
-      <p class="section-lede">A few details and we'll take it from there — no long questionnaire, just enough for us to call you back with the right questions. We reply the same day, seven days a week.</p>
+      <p class="eyebrow">Checkout</p>
+      <h1>Your cart</h1>
     </div>
   </section>
 
-  <section class="intake-form-section">
-    <div class="wrap">
-      <form class="intake-form" id="intakeForm" novalidate>
-        <p class="visually-hidden" aria-hidden="true">
-          <label>Don't fill this out if you're human: <input name="bot-field" tabindex="-1" autocomplete="off"></label>
-        </p>
+  <section>
+    <div class="wrap cart-wrap">
 
-        <div class="intake-block">
-          <div class="form-row form-row--split">
-            <div>
-              <label for="full_name">Full Name *</label>
-              <input type="text" id="full_name" name="full_name" autocomplete="name" required data-required="always">
-            </div>
-            <div>
-              <label for="email">Email Address *</label>
-              <input type="email" id="email" name="email" autocomplete="email" required data-required="always">
-            </div>
-          </div>
+      <div class="cart-empty" id="cartEmpty" hidden>
+        <h2>Nothing in your cart yet.</h2>
+        <p>Have a look at the three website plans &mdash; each page explains exactly what you get, shows what the site will look like, and spells out the ownership terms before you commit to anything.</p>
+        <p style="margin-top:1.5rem;"><a href="pricing.html#website-subscription" class="btn btn-primary">See the plans</a></p>
+      </div>
 
-          <div class="form-row form-row--split">
-            <div>
-              <label for="phone">Phone Number <span class="label-optional">(optional)</span></label>
-              <input type="tel" id="phone" name="phone" autocomplete="tel" aria-describedby="phoneHint">
-              <p class="field-hint" id="phoneHint">Only needed if you'd like us to call or text you.</p>
-            </div>
-            <div data-required="always" data-label="Preferred contact method" role="radiogroup" aria-labelledby="contactMethodLabel">
-              <label id="contactMethodLabel">Preferred contact method *</label>
-              <div class="radio-row">
-                <label class="radio-pill"><input type="radio" name="contact_method" value="Phone Call"> Phone Call</label>
-                <label class="radio-pill"><input type="radio" name="contact_method" value="Text Message"> Text Message</label>
-                <label class="radio-pill"><input type="radio" name="contact_method" value="Email"> Email</label>
-                <label class="radio-pill"><input type="radio" name="contact_method" value="No preference"> No preference</label>
-              </div>
-            </div>
-          </div>
+      <div class="cart-live" id="cartLive" hidden>
+        <div class="cart-item" id="cartItem"></div>
 
-          <div class="form-row">
-            <label for="reason">What can we help you with? *</label>
-            <textarea id="reason" name="reason" rows="5" required data-required="always" placeholder="Tell us a bit about what you need — the more detail, the better we can prepare before reaching out."></textarea>
-          </div>
+        <div class="cart-summary">
+          <h2>What happens next</h2>
+          <ol class="cart-steps">
+            <li><strong>Create your account</strong> &mdash; email and password, then a 6-digit code we email you.</li>
+            <li><strong>Pay the deposit</strong> from your dashboard, through Square.</li>
+            <li><strong>Fill in your project brief</strong> &mdash; it appears in your inbox the moment payment is in.</li>
+            <li><strong>We call you</strong> within one business day to talk it through.</li>
+          </ol>
+          <a href="#" class="btn btn-primary btn-block" id="cartCheckout">Continue to checkout</a>
+          <p class="cart-fine" id="cartSignedInNote" hidden>You're signed in &mdash; this goes straight to your dashboard.</p>
+          <button type="button" class="cart-remove" data-cart-remove>Remove from cart</button>
         </div>
+      </div>
 
-        <p class="form-note form-note--missing" id="missingFieldsNote" role="alert" aria-live="assertive"></p>
-        <button type="submit" class="btn btn-primary btn-block">Submit Request</button>
-        <p class="form-note" id="formNote" role="status" aria-live="polite"></p>
-      </form>
     </div>
   </section>
+</main>
+
+<script src="js/plan-catalog.js"></script>
+<script src="js/cart.js"></script>
+<script>
+(function () {
+  var itemEl = document.getElementById('cartItem');
+  var emptyEl = document.getElementById('cartEmpty');
+  var liveEl = document.getElementById('cartLive');
+  var checkout = document.getElementById('cartCheckout');
+  var signedNote = document.getElementById('cartSignedInNote');
+  var signedIn = false;
+
+  // Ask once whether there's a session, so "Continue to checkout" can go
+  // straight to the dashboard for someone who already has an account rather
+  // than bouncing them through a sign-up they don't need.
+  fetch('/.netlify/functions/account', { credentials: 'same-origin' })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (d) { signedIn = !!(d && d.user); paint(); })
+    .catch(function () { paint(); });
+
+  function paint() {
+    var cart = window.LTS_CART.read();
+    emptyEl.hidden = !!cart;
+    liveEl.hidden = !cart;
+    if (!cart) return;
+
+    var plan = window.LTS_PLANS.getPlan(cart.planKey);
+    itemEl.innerHTML =
+      '<div class="cart-item-main">' +
+        '<p class="eyebrow">Website Subscription</p>' +
+        '<h2>' + plan.name + '</h2>' +
+        '<p class="cart-item-summary">' + plan.summary + '</p>' +
+        '<p class="cart-item-links"><a href="' + plan.page + '">Full details</a></p>' +
+      '</div>' +
+      '<div class="cart-item-price">' +
+        '<p class="cart-price-row"><span>Deposit today</span><strong>' + plan.deposit + '</strong></p>' +
+        '<p class="cart-price-row"><span>Then monthly</span><strong>' + plan.monthly + '</strong></p>' +
+        '<p class="cart-price-note">' + plan.minimumTermMonths + '-month minimum, then month to month. We own the build and license it to you while you subscribe &mdash; the full terms are on the plan page.</p>' +
+      '</div>';
+
+    signedNote.hidden = !signedIn;
+    checkout.setAttribute('href', signedIn ? 'myaccount.html#dashboard' : 'myaccount.html#register');
+  }
+
+  document.addEventListener('lts:cart-changed', paint);
+  document.addEventListener('DOMContentLoaded', paint);
+  paint();
+})();
+</script>
 </main>
 
 <footer class="site-footer">
@@ -202,10 +232,7 @@
   </div>
 </div>
 
-<script src="js/plan-catalog.js"></script>
-<script src="js/cart.js"></script>
 <script src="js/main.js"></script>
 <script src="js/site-version.js"></script>
-<script src="js/intake.js"></script>
 </body>
 </html>
