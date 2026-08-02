@@ -81,6 +81,21 @@ test("the signed-out layout spans the account area instead of occupying the old 
   assert.ok(window.document.querySelector(".auth-card"));
 });
 
+test("account registration uses a dedicated, fully labeled terms checkbox", async () => {
+  const { window } = loadMyAccountPage({
+    url: "http://localhost/myaccount.html#register",
+    responses: { account: { status: 401, body: { error: "Sign in required." } } },
+  });
+  await wait(50);
+
+  const field = window.document.querySelector(".account-terms");
+  const checkbox = field && field.querySelector('input[type="checkbox"]');
+  const label = field && field.querySelector('label[for="rg-terms"]');
+  assert.ok(field && checkbox && label, "agreement needs its own labeled checkbox treatment");
+  assert.ok(label.contains(checkbox), "the whole agreement label should toggle the checkbox");
+  assert.equal(checkbox.hasAttribute("style"), false, "generic inline sizing must not shrink the checkbox again");
+});
+
 test("a customer signs into the normal dashboard without any Care Hub membership handoff", async () => {
   let signedIn = false;
   const { window, capturedRequests } = loadMyAccountPage({

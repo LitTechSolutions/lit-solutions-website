@@ -2906,6 +2906,22 @@ body.has-price-bar .cookie-banner{
 .field input::placeholder{ color: var(--ink-faint); }
 .field-hint{ display:block; margin-top:.35rem; font-size:.78rem; color: var(--ink-faint); line-height:1.5; }
 
+/* The agreement is a choice, not a text field. Keep its native accessible
+   checkbox, but give it a clear control size and a full-sentence click target. */
+.field.account-terms label{
+  display:flex; align-items:flex-start; gap:.75rem; margin:0;
+  font-weight:400; font-size:.87rem; line-height:1.55; cursor:pointer;
+}
+.field.account-terms input[type="checkbox"]{
+  width:24px; min-width:24px; height:24px; min-height:24px;
+  padding:0; margin:.05rem 0 0; flex:0 0 24px;
+  border-radius:6px; accent-color:var(--accent-orange); cursor:pointer;
+}
+.field.account-terms input[type="checkbox"]:focus-visible{
+  outline:3px solid rgba(0,113,227,.25); outline-offset:3px;
+}
+.field.account-terms span{ min-width:0; }
+
 /* Inline validation. Only ever shown after someone has left a field or
    tried to submit -- flagging an email as invalid while it's still being
    typed is just nagging. */

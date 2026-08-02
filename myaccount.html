@@ -549,9 +549,9 @@
               hint: "We send your code and receipts here." }) +
       field({ id: "rg-password", label: "Password", type: "password", autocomplete: "new-password",
               hint: "At least 10 characters. A short phrase beats a complicated word." }) +
-      '<div class="field" data-field="rg-terms">' +
-        '<label style="display:flex; align-items:flex-start; gap:.6rem; font-weight:400; font-size:.87rem; line-height:1.6;">' +
-          '<input type="checkbox" id="rg-terms" style="margin-top:.25rem; width:auto;">' +
+      '<div class="field account-terms" data-field="rg-terms">' +
+        '<label for="rg-terms">' +
+          '<input type="checkbox" id="rg-terms">' +
           '<span>I agree to the <a href="terms.html" target="_blank" rel="noopener" style="color:var(--accent-orange-text); text-decoration:underline;">Terms &amp; Conditions</a> and <a href="privacy.html" target="_blank" rel="noopener" style="color:var(--accent-orange-text); text-decoration:underline;">Privacy Policy</a>.</span>' +
         '</label>' +
         '<span class="field-error" id="rg-terms-err" role="alert"></span>' +
