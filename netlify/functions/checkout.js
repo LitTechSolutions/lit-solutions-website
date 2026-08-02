@@ -64,11 +64,17 @@ exports.handler = async (event, context, deps = {}) => {
   const getJSONFn = deps.getJSON || getJSON;
   const setJSONFn = deps.setJSON || setJSON;
 
+  const t0 = Date.now();
+  const step = (name) => console.log(`[checkout] ${name} @${Date.now() - t0}ms`);
+
+  step("start");
   const token = readCookieFn(event, "lts_session");
   const session = token ? await getSessionFn(token) : null;
+  step(session ? "session ok" : "no session");
   if (!session) return json(401, { error: "Sign in required." });
 
   const user = await getJSONFn("users", String(session.email || "").toLowerCase());
+  step("user loaded");
   const hero = isVerifiedHero(user);
 
   /* ------------------------------------------------------------ pricing -- */
@@ -90,6 +96,7 @@ exports.handler = async (event, context, deps = {}) => {
   if (await rateLimited("checkout-create", session.userId, 20, 3600)) {
     return json(429, { error: "Too many checkout attempts. Try again shortly." });
   }
+  step("rate limit checked");
 
   let body;
   try { body = JSON.parse(event.body || "{}"); } catch { return json(400, { error: "Invalid JSON" }); }
@@ -157,6 +164,7 @@ exports.handler = async (event, context, deps = {}) => {
     updatedAt: now,
   });
   await setJSONFn("orders", orderId, order);
+  step("order written");
 
   const origin = siteOrigin(event);
   const mode = priced.hasRecurring ? "subscription" : "payment";
@@ -182,7 +190,9 @@ exports.handler = async (event, context, deps = {}) => {
   };
 
   try {
+    step("calling stripe");
     const stripeSession = await (deps.createCheckoutSession || createCheckoutSession)(params);
+    step("stripe returned");
     order.stripeSessionId = stripeSession.id;
     await setJSONFn("orders", orderId, order);
     return json(200, { url: stripeSession.url, orderId });
