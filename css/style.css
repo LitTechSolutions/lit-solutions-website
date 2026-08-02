@@ -3341,6 +3341,15 @@ h1,h2,h3{ letter-spacing:-.035em; }
 .ticket-code{ background:#F2F2F7; color:var(--ink-soft); border-radius:999px; }
 .why-card,.cred-card{ padding:1.8rem; }
 .cred-card svg{ color:var(--accent-orange); }
+.wd-quote-recap{
+  /* This element also carries the generic .card class. Keep its intentional
+     dark price-summary treatment after the global white-card rule above so
+     the white amount and breakdown always retain strong contrast. */
+  background:linear-gradient(145deg,#111113,#2C2C2E);
+  color:#fff;
+  border-color:rgba(255,255,255,.1);
+  box-shadow:0 22px 54px rgba(29,29,31,.18);
+}
 .nationwide-note{
   background:rgba(0,113,227,.06);
   border-color:rgba(0,113,227,.13);
