@@ -82,6 +82,29 @@ test("signed in shows the first name, initials, and a working menu", async () =>
   assert.equal(drop.hidden, true);
 });
 
+test("a confirmed account session replaces a stale sign-in header immediately", async () => {
+  const { doc, window } = mount({ user: null });
+  await settle();
+  assert.ok(doc.querySelector(".account-signin"));
+
+  window.LTS_ACCOUNT_SET({ name: "Dylan Little", email: "dylan@example.test", role: "customer" });
+
+  assert.equal(doc.querySelector(".account-signin"), null);
+  assert.equal(doc.querySelector(".account-name").textContent, "Dylan");
+  assert.equal(doc.querySelector(".account-avatar").textContent, "DL");
+});
+
+test("clearing a confirmed account session restores the sign-in control", async () => {
+  const { doc, window } = mount({ user: { name: "Dylan Little", email: "dylan@example.test", role: "customer" } });
+  await settle();
+  assert.ok(doc.querySelector(".account-trigger"));
+
+  window.LTS_ACCOUNT_SET(null);
+
+  assert.equal(doc.querySelector(".account-trigger"), null);
+  assert.ok(doc.querySelector(".account-signin"));
+});
+
 test("an admin gets admin destinations, a customer never does", async () => {
   const admin = mount({ user: { name: "Dylan Little", email: "d@x.test", role: "admin" } });
   await settle();

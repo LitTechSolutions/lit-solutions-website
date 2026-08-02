@@ -47,11 +47,25 @@
   }
   window.LTS_ACCOUNT_CLEAR = clearCache;
 
+  /* Let an account page that has already confirmed the server session update
+   * the global header immediately. This avoids a stale anonymous cache leaving
+   * "Sign in" visible above a fully signed-in dashboard. */
+  function setAccountHeader(user) {
+    if (user) {
+      writeCache(user);
+      renderSignedIn(user);
+    } else {
+      clearCache();
+      renderSignedOut();
+    }
+    host.removeAttribute('data-loading');
+  }
+  window.LTS_ACCOUNT_SET = setAccountHeader;
+
   async function refreshAccountHeader() {
     clearCache();
     var user = await loadUser();
-    if (user) renderSignedIn(user); else renderSignedOut();
-    host.removeAttribute('data-loading');
+    setAccountHeader(user);
     return user;
   }
   window.LTS_ACCOUNT_REFRESH = refreshAccountHeader;

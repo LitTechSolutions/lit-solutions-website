@@ -243,6 +243,8 @@
         e.preventDefault();
         await api("auth-logout", { method: "POST" });
         state.user = null;
+        if (window.LTS_ACCOUNT_SET) window.LTS_ACCOUNT_SET(null);
+        else if (window.LTS_ACCOUNT_CLEAR) window.LTS_ACCOUNT_CLEAR();
         renderTabs();
         window.location.hash = "#signin";
       });
@@ -308,6 +310,8 @@
   async function loadSession() {
     var r = await api("account");
     state.user = r.ok ? r.body.user : null;
+    if (window.LTS_ACCOUNT_SET) window.LTS_ACCOUNT_SET(state.user);
+    else if (!state.user && window.LTS_ACCOUNT_CLEAR) window.LTS_ACCOUNT_CLEAR();
   }
 
   var TYPE_LABEL = { invoice: "Invoice", receipt: "Receipt", paperwork: "Paperwork", other: "Other" };
@@ -458,8 +462,6 @@
       if (r.ok) {
         status.textContent = "Signed in.";
         status.className = "form-note";
-        if (window.LTS_ACCOUNT_REFRESH) await window.LTS_ACCOUNT_REFRESH();
-        else if (window.LTS_ACCOUNT_CLEAR) window.LTS_ACCOUNT_CLEAR();
         await loadSession();
         renderTabs();
         if (followNext()) return;
@@ -699,7 +701,7 @@
       if (r.ok && r.body && r.body.user) {
         state.user = r.body.user;
         state.pendingEmail = null;
-        if (window.LTS_ACCOUNT_REFRESH) await window.LTS_ACCOUNT_REFRESH();
+        if (window.LTS_ACCOUNT_SET) window.LTS_ACCOUNT_SET(state.user);
         else if (window.LTS_ACCOUNT_CLEAR) window.LTS_ACCOUNT_CLEAR();
         renderTabs();
         if (followNext()) return;
@@ -1979,7 +1981,10 @@
       var r = await api("account", { method: "POST", body: JSON.stringify({ action: "update-name", newName: v.querySelector("#pf-name").value }) });
       status.textContent = (r.body && (r.body.message || r.body.error)) || "Something went wrong.";
       status.className = "form-note" + (r.ok ? "" : " form-note--error");
-      if (r.ok) { state.user.name = r.body.user.name; }
+      if (r.ok) {
+        state.user.name = r.body.user.name;
+        if (window.LTS_ACCOUNT_SET) window.LTS_ACCOUNT_SET(state.user);
+      }
     });
     v.querySelector("#pf-prefs-submit").addEventListener("click", async function () {
       var status = v.querySelector("#pf-prefs-status");
@@ -1996,14 +2001,26 @@
       var r = await api("account", { method: "POST", body: JSON.stringify({ action: "update-email", newEmail: v.querySelector("#pf-new-email").value, currentPassword: v.querySelector("#pf-email-pw").value }) });
       status.textContent = (r.body && (r.body.message || r.body.error)) || "Something went wrong.";
       status.className = "form-note" + (r.ok ? "" : " form-note--error");
-      if (r.ok) { state.user = null; renderTabs(); setTimeout(function () { window.location.hash = "#signin"; }, 1200); }
+      if (r.ok) {
+        state.user = null;
+        if (window.LTS_ACCOUNT_SET) window.LTS_ACCOUNT_SET(null);
+        else if (window.LTS_ACCOUNT_CLEAR) window.LTS_ACCOUNT_CLEAR();
+        renderTabs();
+        setTimeout(function () { window.location.hash = "#signin"; }, 1200);
+      }
     });
     v.querySelector("#pf-pw-submit").addEventListener("click", async function () {
       var status = v.querySelector("#pf-pw-status");
       var r = await api("account", { method: "POST", body: JSON.stringify({ action: "update-password", newPassword: v.querySelector("#pf-new-pw").value, currentPassword: v.querySelector("#pf-current-pw").value }) });
       status.textContent = (r.body && (r.body.message || r.body.error)) || "Something went wrong.";
       status.className = "form-note" + (r.ok ? "" : " form-note--error");
-      if (r.ok) { state.user = null; renderTabs(); setTimeout(function () { window.location.hash = "#signin"; }, 1200); }
+      if (r.ok) {
+        state.user = null;
+        if (window.LTS_ACCOUNT_SET) window.LTS_ACCOUNT_SET(null);
+        else if (window.LTS_ACCOUNT_CLEAR) window.LTS_ACCOUNT_CLEAR();
+        renderTabs();
+        setTimeout(function () { window.location.hash = "#signin"; }, 1200);
+      }
     });
 
     return v;
