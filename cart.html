@@ -347,6 +347,7 @@
         var listFull = q.totalCents;
         var due = state.payInFull ? full : Math.ceil(full / 2);
         var listDue = state.payInFull ? listFull : Math.ceil(listFull / 2);
+        var dueAtLaunch = state.payInFull ? 0 : full - due;
         lines.push({
           key: item.key, quantity: 1,
           label: q.packageName + ' \u2014 custom build' + (state.payInFull ? ', paid in full' : ', 50% deposit'),
@@ -355,8 +356,16 @@
               ? q.packageName + ' base plus ' + q.featureCount + ' added feature' + (q.featureCount === 1 ? '' : 's') + '.'
               : q.packageName + ' base configuration.' },
           chargedTodayCents: due, listTodayCents: listDue,
-          monthlyCents: 0, balanceAtLaunchCents: state.payInFull ? 0 : full - due,
+          monthlyCents: 0, balanceAtLaunchCents: dueAtLaunch,
         });
+        // Configured Website Designer quotes take a separate branch from
+        // catalog products. The line used to render its correct deposit but
+        // return before contributing that deposit to the summary, producing
+        // the impossible-looking "$0 charged today" shown to signed-out
+        // customers. Keep the accumulator in the same branch as the line.
+        today += due;
+        listToday += listDue;
+        balance += dueAtLaunch;
         return;
       }
       if (p.kind === 'package') anyPackage = true;
