@@ -194,7 +194,11 @@ exports.handler = async (event, context, deps = {}) => {
   } catch (err) {
     // Leave a breadcrumb on the order so a failed checkout is diagnosable
     // rather than an order that silently never got paid.
-    const reason = String(err.message || err).slice(0, 300);
+    // NOT truncated for the admin path: Stripe's most useful errors put the
+    // remedy in the final sentence, and a 300-character cap silently ate the
+    // one that said how to fix this.
+    const full = String(err.message || err);
+    const reason = full.slice(0, 300);
     // Netlify function logs are the only record when nobody is watching a
     // browser, and "couldn't start checkout" is useless without the cause.
     console.error("[checkout] Stripe rejected the session:", reason,
@@ -208,7 +212,7 @@ exports.handler = async (event, context, deps = {}) => {
     // to stare at when the real answer is that an env var was never set.
     const body = { error: "Couldn't start checkout. Please try again, or call us on 804-309-0968." };
     if (session.role === "admin") {
-      body.adminDetail = reason;
+      body.adminDetail = full.slice(0, 2000);
       body.adminStripeCode = err.stripeCode || null;
       body.adminStripeStatus = err.stripeStatus || null;
       if (/STRIPE_SECRET_KEY/.test(reason)) {

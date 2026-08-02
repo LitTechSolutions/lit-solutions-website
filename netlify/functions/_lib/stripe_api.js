@@ -82,6 +82,24 @@ async function createCheckoutSession(input) {
     allow_promotion_codes: true,
     billing_address_collection: "auto",
     metadata: input.metadata || {},
+    // Managed Payments is ON BY DEFAULT for new Stripe accounts, and it makes
+    // Stripe the merchant of record: it collects and remits sales tax, and
+    // charges 3.5% on top of normal processing fees.
+    //
+    // We turn it off, deliberately, because this business is not eligible for
+    // it. Stripe restricts Managed Payments to DIGITAL products and names
+    // "professional services (consulting, marketing, design, development,
+    // tech support)" and "any service involving human intervention" as
+    // ineligible -- which is nearly everything Little Technical Solutions
+    // sells. Only the hosting component would qualify.
+    // https://docs.stripe.com/payments/managed-payments/eligibility
+    //
+    // The tempting shortcut when Stripe rejects a session is to re-code a
+    // website build as "Software" so the validator passes. Don't: that
+    // misreports tax in the owner's name and makes Stripe merchant of record
+    // for services it explicitly doesn't cover. Turning the feature off is
+    // the honest fix, and it also saves the 3.5%.
+    managed_payments: { enabled: input.managedPayments === true },
   };
   if (input.customerEmail) params.customer_email = input.customerEmail;
   // Metadata on the session is not copied onto the subscription, and the

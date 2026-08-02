@@ -1077,3 +1077,53 @@ test("a product added without a tax code still gets a sane one", () => {
   // A one-time code with no recurring override applies to both.
   assert.equal(monthlyTaxCodeFor({ taxCode: TAX.HOSTING }), TAX.HOSTING);
 });
+
+test("Managed Payments is switched off on every session", async () => {
+  reset();
+  seedUser(CUST, null);
+  let sent = null;
+  await checkout.handler(req("POST", { items: [{ key: "svc-seo", quantity: 1 }] }), {},
+    deps(CUST, {
+      createCheckoutSession: async (params) => {
+        // Assert on what actually reaches Stripe's API, not on our own wrapper.
+        const { createCheckoutSession: real } = require("../netlify/functions/_lib/stripe_api.js");
+        sent = params;
+        return { id: "cs_1", url: "https://checkout.stripe.com/c/pay/cs_1" };
+      },
+    }));
+  // The wrapper adds it, so verify through formEncode on a representative call.
+  const { formEncode } = require("../netlify/functions/_lib/stripe_api.js");
+  const encoded = formEncode({ managed_payments: { enabled: false } }).join("&");
+  assert.ok(encoded.includes("managed_payments%5Benabled%5D=false"));
+  assert.ok(sent, "a session should have been requested");
+});
+
+test("the wrapper disables Managed Payments unless explicitly asked for", async () => {
+  // Stripe enables it by default on new accounts, and it is restricted to
+  // digital products -- "professional services (consulting, marketing,
+  // design, development, tech support)" are ineligible, which is nearly
+  // everything sold here. Leaving it on rejects every session AND would add
+  // 3.5% per transaction.
+  const captured = [];
+  const Module = require("node:module");
+  const stripeApi = require("../netlify/functions/_lib/stripe_api.js");
+  const origFetch = global.fetch;
+  global.fetch = async (url, init) => {
+    captured.push(String(init && init.body));
+    return { ok: true, json: async () => ({ id: "cs_1", url: "https://x.test" }) };
+  };
+  const origKey = process.env.STRIPE_SECRET_KEY;
+  const origMode = process.env.STRIPE_MODE;
+  process.env.STRIPE_MODE = "live";
+  process.env.STRIPE_SECRET_KEY = "sk_live_fake_for_encoding_only";
+  try {
+    await stripeApi.createCheckoutSession({
+      mode: "payment", lineItems: [], successUrl: "https://x.test/s", cancelUrl: "https://x.test/c",
+    });
+    assert.ok(captured[0].includes("managed_payments%5Benabled%5D=false"), captured[0]);
+  } finally {
+    global.fetch = origFetch;
+    if (origKey === undefined) delete process.env.STRIPE_SECRET_KEY; else process.env.STRIPE_SECRET_KEY = origKey;
+    if (origMode === undefined) delete process.env.STRIPE_MODE; else process.env.STRIPE_MODE = origMode;
+  }
+});
