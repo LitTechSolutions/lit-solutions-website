@@ -24,6 +24,13 @@
   var catalog = window.LTS_PRODUCTS;
   if (!catalog) return;
 
+  /* A Website Designer configuration. Not a catalog product -- its price is
+   * held server-side against this id -- so it's validated by shape instead. */
+  var QUOTE_KEY = /^quote:q[a-f0-9]{20}$/;
+  function isValidKey(key) {
+    return typeof key === 'string' && (QUOTE_KEY.test(key) || !!catalog.get(key));
+  }
+
   /* ---- state ---- */
 
   function clampQty(n) {
@@ -41,7 +48,7 @@
       var key = it && it.key;
       // Validate against the catalog rather than trusting what's stored -- a
       // stale key from a renamed product must not render as a blank line.
-      if (!key || seen[key] || !catalog.get(key)) continue;
+      if (!key || seen[key] || !isValidKey(key)) continue;
       seen[key] = true;
       items.push({ key: key, qty: clampQty(it.qty) });
     }
@@ -56,7 +63,7 @@
       if (!old) return null;
       localStorage.removeItem(LEGACY_KEY);
       var v = JSON.parse(old);
-      if (!v || !v.planKey || !catalog.get(v.planKey)) return null;
+      if (!v || !v.planKey || !isValidKey(v.planKey)) return null;
       return { items: [{ key: v.planKey, qty: 1 }], payInFull: false };
     } catch (e) { return null; }
   }
@@ -90,7 +97,7 @@
   /* ---- operations ---- */
 
   function add(key, qty) {
-    if (!catalog.get(key)) return false;
+    if (!isValidKey(key)) return false;
     var state = read();
     var line = find(state, key);
     if (line) line.qty = clampQty(line.qty + (qty ? clampQty(qty) : 1));

@@ -284,7 +284,20 @@
 
     state.items.forEach(function (item) {
       var p = P.get(item.key);
-      if (!p) return;
+      if (!p) {
+        // A Website Designer build. Priced entirely server-side, so until the
+        // quote comes back there is nothing honest to show but a placeholder.
+        if (/^quote:/.test(item.key)) {
+          lines.push({
+            key: item.key, product: { category: 'Website build', kind: 'quote',
+              summary: 'Your custom configuration, priced when you built it.' },
+            quantity: 1, label: 'Custom website build',
+            chargedTodayCents: 0, listTodayCents: 0, monthlyCents: 0, balanceAtLaunchCents: 0,
+          });
+          anyPackage = true;
+        }
+        return;
+      }
       if (p.kind === 'package') anyPackage = true;
       var pr = P.priceFor(p, hero);
       var list = P.priceFor(p, false);
@@ -400,7 +413,7 @@
 
   function stepsHTML(v) {
     var s = [];
-    if (!signedIn) s.push('<li><strong>Create your account</strong> &mdash; email and password, then a 6-digit code we email you.</li>');
+    if (!signedIn) s.push('<li><strong>Sign in</strong> &mdash; or create an account if you're new. We email you a 6-digit code to confirm it.</li>');
     s.push('<li><strong>Pay securely</strong> through Stripe &mdash; card, Apple Pay or Google Pay.</li>');
     if (v.lines.some(function (l) { return (l.product || {}).kind === 'plan' || (l.product || {}).kind === 'package'; })) {
       s.push('<li><strong>Fill in your project brief</strong> &mdash; it unlocks in your account the moment payment lands.</li>');
@@ -438,10 +451,12 @@
     heroPending.hidden = heroState !== 'pending';
     heroOffer.hidden   = !signedIn || heroState !== 'none';
 
-    checkoutEl.textContent = signedIn ? 'Pay ' + money(v.chargedTodayCents) + ' securely' : 'Create an account to check out';
+    checkoutEl.textContent = signedIn
+      ? 'Pay ' + money(v.chargedTodayCents) + ' securely'
+      : 'Sign in to check out';
     fineEl.innerHTML = signedIn
       ? 'Secure checkout by Stripe. We never see or store your card details.'
-      : 'You need an account so your order, your project brief and your paperwork all live in one place.';
+      : 'Sign in or create an account &mdash; it takes a minute, and it\'s where your receipt, your project brief and your paperwork live.';
   }
 
   /* ------------------------------------------------------------ actions -- */
@@ -466,9 +481,11 @@
 
   checkoutEl.addEventListener('click', function () {
     if (!signedIn) {
-      // Come back here after they've made an account, so the cart isn't a
-      // dead end they have to re-find.
-      window.location.href = 'myaccount.html?next=cart#register';
+      // Sign IN, not register: most people arriving here already have an
+      // account, and the sign-in panel carries a "create one" link for those
+      // who don't. Sending everyone to a signup form assumes they're new.
+      // They come straight back here afterwards either way.
+      window.location.href = 'myaccount.html?next=cart#signin';
       return;
     }
     errorEl.hidden = true;

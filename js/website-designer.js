@@ -33,8 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const includedTitle = document.getElementById('wdIncludedTitle');
   const bundleTilesContainer = document.getElementById('wdBundleTiles');
   const customRequestEl = document.getElementById('wdCustomRequest');
-  const quickForm = document.getElementById('wdQuickForm');
-  const quickFormStatus = document.getElementById('wdQuickFormStatus');
+  const quickFormStatus = document.getElementById('wdCheckoutStatus');
   const doneMessageEl = document.getElementById('wdDoneMessage');
   const wdPromptYesBtn = document.getElementById('wdPromptYesBtn');
   const wdFinishLaterBtn = document.getElementById('wdFinishLaterBtn');
@@ -139,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // catalog/form structure that's since changed.
   const WD_DRAFT_KEY = 'lts-wd-draft';
   const WD_DRAFT_VERSION = 3; // bumped: bundle-only selection model replaces individual-feature checkboxes
-  const QUICK_FORM_FIELD_IDS = ['wdBusinessName', 'wdName', 'wdEmail', 'wdPhone', 'wdPreferredContact', 'wdCustomRequest'];
+  const QUICK_FORM_FIELD_IDS = [];
   let saveDraftTimer = null;
 
   function collectFieldValues(ids) {
@@ -404,8 +403,12 @@ document.addEventListener('DOMContentLoaded', () => {
     return Array.from(document.querySelectorAll(`input[data-priority="${priority}"]:checked`));
   }
 
+  // Always false here. The American Heroes Discount is held on the customer's
+  // account and verified before payment, so the configurator shows list price
+  // and the discount is applied at checkout from the account record. A
+  // self-attested checkbox was only ever a price the customer picked.
   function heroesEligible() {
-    return !!(heroesCheckbox && heroesCheckbox.checked);
+    return false;
   }
 
   // Raw (undiscounted) sum of every currently-checked priced item -- used
@@ -620,14 +623,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // Debounced draft save on every keystroke in the quick-quote form (event
   // delegation via bubbling 'input', so this covers every current and
   // future named field in the form with one listener).
-  quickForm?.addEventListener('input', saveDraft);
 
   function selectionPayload() {
     const rawOptionalSum = computeRawOptionalSum();
     const bundlesTotal = computeBundlesTotal();
     return {
       optionalSelected: selectedInputs('C').map(el => ({ title: el.dataset.title, price: Number(el.dataset.price) || 0 })),
-      customRequest: (customRequestEl?.value || '').trim(),
+      customRequest: '',
       heroesDiscount: heroesEligible(),
       bundledCategories: bundledCategories(),
       // Derived from the same flat bundle prices shown on screen (not a
@@ -689,70 +691,61 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Quick quote capture. Minimal fields only (name/email/phone/preferred
-  // contact method) -- no content brief, no PDF -- so a lead reaches
-  // Dylan's inbox the moment someone decides the price works for them,
-  // instead of requiring the full project-details form first.
-  if (quickForm) {
-    quickForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
+  /* Add to cart.
+   *
+   * This page used to end in a contact form: name, email, phone, preferred
+   * contact method, and a promise to follow up. That made a configurator into
+   * a lead magnet. It now ends in a purchase.
+   *
+   * The configuration is posted to designer-quote, which prices it again
+   * server-side with the same recomputeEstimate the lead flow used and stores
+   * the result. What goes in the cart is an opaque quote id -- so a
+   * hand-edited cart can change which design is bought, never what it costs.
+   */
+  const addToCartBtn = document.getElementById('wdAddToCart');
+  if (addToCartBtn) {
+    addToCartBtn.addEventListener('click', async () => {
       if (!state.package) return;
-      if (document.getElementById('wdHoneypot').value) return; // bot
+      const status = document.getElementById('wdCheckoutStatus');
+      const sel = selectionPayload();
 
-      const submitBtn = document.getElementById('wdQuickSubmitBtn');
-      submitBtn.disabled = true;
-      quickFormStatus.textContent = tDyn('status_sending_quote', 'Sending your quote request...');
+      addToCartBtn.disabled = true;
+      const originalLabel = addToCartBtn.textContent;
+      addToCartBtn.textContent = tDyn('adding_to_cart', 'Saving your build\u2026');
+      if (status) { status.textContent = ''; status.className = 'form-status'; }
 
-      const { optionalSelected, customRequest, heroesDiscount, bundledCategories: bundled, bundleSavings, selectedBundles } = selectionPayload();
-      const customerName = document.getElementById('wdName').value;
-      const email = document.getElementById('wdEmail').value;
-      const phone = document.getElementById('wdPhone').value;
-      const preferredContact = document.getElementById('wdPreferredContact').value;
-
-      const payload = {
-        stage: 'quick',
-        package: state.package,
-        businessName: document.getElementById('wdBusinessName').value,
-        customerName, email, phone, preferredContact,
-        subtotal: Math.round(computeSubtotal()),
-        estimateTotal: Math.round(computeTotal()),
-        heroesDiscount,
-        bundledCategories: bundled,
-        bundleSavings: Math.round(bundleSavings),
-        optionalSelected, customRequest, selectedBundles,
-      };
-
-      fetch('/.netlify/functions/website-designer', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      })
-        .then(async (res) => {
-          const data = await res.json().catch(() => ({}));
-          if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
-          state.quickLeadId = data.id || submissionId();
-          state.resumeToken = data.resumeToken || null;
-          state.customerName = customerName;
-          state.customerEmail = email;
-          state.customerPhone = phone;
-          state.preferredContact = preferredContact;
-          document.getElementById('wdSubmissionId').textContent = state.quickLeadId;
-          saveDraftNow();
-          // A real page navigation (not an inline panel swap) so this
-          // moment has a stable URL -- design-submitted.html only ever
-          // loads after this real 201 response, making it usable as a
-          // Google Ads conversion-tracking destination. Resume token
-          // travels via the URL fragment, never a query string, matching
-          // the existing worksheet-link convention (see worksheetUrl()
-          // below) -- never sent to the server, never logged.
-          window.location.href = 'design-submitted.html#resume=' + encodeURIComponent(state.quickLeadId + '.' + state.resumeToken);
-        })
-        .catch((err) => {
-          quickFormStatus.textContent = err.message && err.message !== 'Failed to fetch'
-            ? err.message
-            : tDyn('error_generic_submit', 'Something went wrong sending your project -- please call 804-309-0968 or email dylan@lit-solutions.tech directly.');
-          submitBtn.disabled = false;
+      try {
+        const res = await fetch('/.netlify/functions/designer-quote', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            package: state.package,
+            optionalSelected: sel.optionalSelected,
+            bundledCategories: sel.bundledCategories,
+          }),
         });
+        const body = await res.json().catch(() => ({}));
+        if (!res.ok || !body.cartKey) {
+          throw new Error(body.error || 'We could not save that build.');
+        }
+
+        // The cart validates against the catalog, so a quote key is added
+        // through the same API rather than written to storage directly.
+        if (window.LTS_CART && window.LTS_CART.add(body.cartKey)) {
+          clearDraft();
+          window.location.href = 'cart.html';
+          return;
+        }
+        throw new Error('We could not add that to your cart.');
+      } catch (err) {
+        if (status) {
+          status.textContent = (err && err.message) ||
+            'Something went wrong \u2014 please call 804-309-0968 and we\u2019ll take it from here.';
+          status.className = 'form-status form-status--error';
+        }
+        addToCartBtn.disabled = false;
+        addToCartBtn.textContent = originalLabel;
+      }
     });
   }
 

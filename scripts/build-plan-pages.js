@@ -315,7 +315,7 @@ ${li(COMMON_INCLUDED)}
 
       <div class="plan-checkout">
         <h3>Get started with ${p.name}</h3>
-        <p>Add it to your cart and you'll create an account at checkout &mdash; that's what gives you a dashboard to pay from, a place for your project brief, and somewhere your paperwork lives afterwards.</p>
+        <p>Add it to your cart, then sign in at checkout &mdash; or create an account if you're new. That's what gives you a dashboard to pay from, a place for your project brief, and somewhere your paperwork lives afterwards.</p>
         <div class="plan-checkout-actions">
           <button type="button" class="btn btn-primary" data-add-to-cart="plan-${p.slug}" data-then="cart.html"><span data-cart-label>Add ${p.name} to cart</span></button>
           <a href="cart.html" class="btn btn-ghost">View cart</a>

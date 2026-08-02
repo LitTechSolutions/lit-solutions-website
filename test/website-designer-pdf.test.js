@@ -130,7 +130,6 @@ test("PDF button click produces a real, non-empty premium PDF document", async (
   selectStarterPackage(window);
   await flush();
 
-  window.document.getElementById("wdBusinessName").value = "Riverside Plumbing";
 
   // jsdom has no Blob-URL machinery, which the real jsPDF.save() needs to
   // trigger a browser download -- stub it so save() can run to completion,
@@ -179,58 +178,6 @@ test("the full project-brief form/panel no longer exists inline on website-desig
   assert.equal(window.document.getElementById("wdLogoFile"), null);
 });
 
-test("accepting the post-quote prompt opens the worksheet in a new tab via a URL fragment resume token, never a query string", async () => {
-  const { window, capturedRequests } = await loadDesignerPage();
-  selectStarterPackage(window);
-  await flush();
-
-  window.document.getElementById("wdBusinessName").value = "Riverside Plumbing";
-  window.document.getElementById("wdName").value = "Jane Doe";
-  window.document.getElementById("wdEmail").value = "jane@example.com";
-  window.document.getElementById("wdPhone").value = "555-0100";
-  window.document.getElementById("wdPreferredContact").value = "email";
-  window.document.getElementById("wdConsent").checked = true;
-
-  window.document.getElementById("wdQuickForm").dispatchEvent(new window.Event("submit", { bubbles: true, cancelable: true }));
-  await flush();
-
-  const quickSubmission = capturedRequests.find((r) => r.stage === "quick");
-  assert.ok(quickSubmission, "expected a stage:\"quick\" request to have been sent");
-  // This test's mocked fetch (above, in loadDesignerPage) returns a fixed
-  // resumeToken for every request -- confirms the client actually reads
-  // and uses whatever the server hands back rather than inventing its own.
-
-  let openedUrl = null;
-  let openedTarget = null;
-  let openedFeatures = null;
-  const fakePopup = { closed: false };
-  window.open = (url, target, features) => {
-    openedUrl = url;
-    openedTarget = target;
-    openedFeatures = features;
-    return fakePopup; // truthy -- simulates the popup NOT being blocked
-  };
-
-  const yesBtn = window.document.getElementById("wdPromptYesBtn");
-  assert.ok(yesBtn, "expected the post-quote prompt's \"open project worksheet\" button");
-  yesBtn.dispatchEvent(new window.Event("click", { bubbles: true }));
-
-  assert.ok(openedUrl, "expected window.open to have been called");
-  assert.equal(openedTarget, "_blank");
-  // Deliberately NOT passing the literal 'noopener' feature string -- per
-  // spec, a browser that honors it (confirmed in real Safari) returns null
-  // from window.open() even on success, which would make every popup look
-  // "blocked" to this code. Reverse-tabnabbing protection is instead
-  // applied manually on the returned reference (see the assertion below).
-  assert.equal(openedFeatures, undefined);
-  assert.equal(fakePopup.opener, null, "the new tab's window.opener must be severed manually since 'noopener' isn't passed");
-  assert.match(openedUrl, /^website-project-brief\.html#resume=/, "resume token must travel in a URL fragment, not a query string");
-  assert.doesNotMatch(openedUrl, /\?/, "no query string at all on the worksheet URL");
-
-  // Never a "full" submission from this page -- that only ever happens from
-  // the worksheet now.
-  assert.equal(capturedRequests.some((r) => r.stage === "full"), false);
-});
 
 // Regression: selectionPayload() always computed selectedBundles correctly
 // (the quick-quote PDF built on this page was never wrong), but the quick-
@@ -239,61 +186,7 @@ test("accepting the post-quote prompt opens the worksheet in a new tab via a URL
 // had no way to know which bundles were selected, and its own PDF always
 // showed "(none selected)". Confirms the field now makes it into the
 // outbound request that's actually persisted server-side.
-test("selecting a bundle includes it in the quick-submission payload's selectedBundles", async () => {
-  const { window, capturedRequests } = await loadDesignerPage();
-  selectStarterPackage(window);
-  await flush();
 
-  const tile = window.document.querySelector(".wd-bundle-tile");
-  assert.ok(tile, "expected at least one bundle tile to render for the starter catalog");
-  const checkbox = tile.querySelector(".wd-bundle-tile-checkbox");
-  checkbox.checked = true;
-  checkbox.dispatchEvent(new window.Event("change", { bubbles: true }));
-  await flush();
-
-  const expectedName = tile.querySelector(".wd-bundle-tile-name").textContent;
-  const expectedPrice = Number(tile.querySelector(".wd-bundle-tile-price").textContent.replace(/[^0-9.]/g, ""));
-
-  window.document.getElementById("wdBusinessName").value = "Riverside Plumbing";
-  window.document.getElementById("wdName").value = "Jane Doe";
-  window.document.getElementById("wdEmail").value = "jane@example.com";
-  window.document.getElementById("wdPhone").value = "555-0100";
-  window.document.getElementById("wdPreferredContact").value = "email";
-  window.document.getElementById("wdConsent").checked = true;
-  window.document.getElementById("wdQuickForm").dispatchEvent(new window.Event("submit", { bubbles: true, cancelable: true }));
-  await flush();
-
-  const quickSubmission = capturedRequests.find((r) => r.stage === "quick");
-  assert.ok(quickSubmission, "expected a stage:\"quick\" request to have been sent");
-  assert.ok(Array.isArray(quickSubmission.selectedBundles), "quick-submission payload must include selectedBundles so the backend can persist it for the worksheet's later PDF");
-  assert.equal(quickSubmission.selectedBundles.length, 1);
-  assert.equal(quickSubmission.selectedBundles[0].name, expectedName);
-  assert.equal(quickSubmission.selectedBundles[0].price, expectedPrice);
-});
-
-test("if the worksheet popup is blocked, a direct fallback link appears with the same URL", async () => {
-  const { window } = await loadDesignerPage();
-  selectStarterPackage(window);
-  await flush();
-
-  window.document.getElementById("wdBusinessName").value = "Riverside Plumbing";
-  window.document.getElementById("wdName").value = "Jane Doe";
-  window.document.getElementById("wdEmail").value = "jane@example.com";
-  window.document.getElementById("wdPhone").value = "555-0100";
-  window.document.getElementById("wdPreferredContact").value = "email";
-  window.document.getElementById("wdConsent").checked = true;
-  window.document.getElementById("wdQuickForm").dispatchEvent(new window.Event("submit", { bubbles: true, cancelable: true }));
-  await flush();
-
-  window.open = () => null; // simulates a blocked popup
-
-  window.document.getElementById("wdPromptYesBtn").dispatchEvent(new window.Event("click", { bubbles: true }));
-
-  const fallback = window.document.getElementById("wdWorksheetFallback");
-  const fallbackLink = window.document.getElementById("wdWorksheetFallbackLink");
-  assert.equal(fallback.hidden, false);
-  assert.match(fallbackLink.getAttribute("href"), /^website-project-brief\.html#resume=/);
-});
 
 // Real-Safari-observed case: window.open() hands back a truthy Window
 // reference even though the popup was actually blocked (Chromium reliably
@@ -302,26 +195,57 @@ test("if the worksheet popup is blocked, a direct fallback link appears with the
 // plain `if (!win)` check misses this and would wrongly claim success,
 // leaving the customer on the "worksheet opened" panel with no worksheet
 // anywhere -- the bug this test guards against.
-test("if window.open returns a truthy but already-closed reference (Safari), the fallback link still appears", async () => {
+
+/* ---------------------------------------------------------- add to cart -- */
+
+test("the page ends in a purchase, not a contact form", async () => {
+  // It used to collect name, email, phone and preferred contact method and
+  // promise a follow-up -- a configurator acting as a lead magnet. Every one
+  // of those fields is gone, and so is the self-attested Heroes checkbox
+  // (eligibility lives on the account and is verified before payment).
+  const html = fs.readFileSync(path.join(__dirname, "..", "website-designer.html"), "utf8");
+  for (const gone of ["wdBusinessName", "wdName", "wdEmail", "wdPhone", "wdPreferredContact",
+                      "wdConsent", "wdHeroesDiscount", "wdCustomRequest", 'id="wdQuickForm"']) {
+    assert.ok(!html.includes(gone), `${gone} should no longer exist on the page`);
+  }
+  assert.ok(html.includes('id="wdAddToCart"'), "the page must offer Add to cart");
+  assert.ok(html.includes("half now, half at launch"), "the 50/50 split must be stated before checkout");
+});
+
+test("Add to cart prices the build server-side and never trusts the page's total", async () => {
   const { window } = await loadDesignerPage();
   selectStarterPackage(window);
   await flush();
 
-  window.document.getElementById("wdBusinessName").value = "Riverside Plumbing";
-  window.document.getElementById("wdName").value = "Jane Doe";
-  window.document.getElementById("wdEmail").value = "jane@example.com";
-  window.document.getElementById("wdPhone").value = "555-0100";
-  window.document.getElementById("wdPreferredContact").value = "email";
-  window.document.getElementById("wdConsent").checked = true;
-  window.document.getElementById("wdQuickForm").dispatchEvent(new window.Event("submit", { bubbles: true, cancelable: true }));
+  let posted = null;
+  window.fetch = async (url, opts) => {
+    posted = { url: String(url), body: JSON.parse(opts.body) };
+    return { ok: true, status: 201, json: async () => ({
+      quoteId: "q" + "a".repeat(20), cartKey: "quote:q" + "a".repeat(20), totalCents: 69900,
+    }) };
+  };
+  // Stand in for the cart module. jsdom won't allow window.location to be
+  // replaced, so the navigation itself isn't asserted here -- landing the
+  // quote id in the cart is the part that matters, and the redirect is one
+  // line immediately after it.
+  const added = [];
+  window.LTS_CART = { add: (k) => { added.push(k); return true; } };
+
+  window.document.getElementById("wdAddToCart").click();
   await flush();
 
-  window.open = () => ({ closed: true }); // simulates Safari's truthy-but-blocked case
+  assert.ok(posted, "a quote should have been requested");
+  assert.match(posted.url, /designer-quote/);
+  assert.equal(posted.body.package, "starter");
+  assert.ok(Array.isArray(posted.body.optionalSelected));
 
-  window.document.getElementById("wdPromptYesBtn").dispatchEvent(new window.Event("click", { bubbles: true }));
+  // The selections go up; the PRICE does not. A cart that could name its own
+  // total would be the cart telling us what to charge.
+  assert.equal(posted.body.total, undefined, "the page must not tell the server what to charge");
+  assert.equal(posted.body.estimateTotal, undefined);
+  assert.equal(posted.body.subtotal, undefined);
+  // Eligibility is decided by the account record, never by this page.
+  assert.equal(posted.body.heroesDiscount, undefined);
 
-  const fallback = window.document.getElementById("wdWorksheetFallback");
-  const fallbackLink = window.document.getElementById("wdWorksheetFallbackLink");
-  assert.equal(fallback.hidden, false, "expected the fallback link to appear instead of the 'worksheet opened' panel");
-  assert.match(fallbackLink.getAttribute("href"), /^website-project-brief\.html#resume=/);
+  assert.deepEqual(added, ["quote:q" + "a".repeat(20)], "the quote id should land in the cart");
 });

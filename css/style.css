@@ -2738,6 +2738,20 @@ body.has-price-bar .cookie-banner{
 }
 
 
+
+/* ---- Website Designer checkout ---- */
+.wd-checkout{ margin-top:1.5rem; }
+.wd-checkout-note{
+  margin-top:.85rem; font-size:.85rem; line-height:1.65; color: var(--ink-soft); max-width:62ch;
+}
+.wd-checkout-note strong{ color: var(--ink); }
+.wd-checkout-note a{ color: var(--accent-orange-text); text-decoration:underline; }
+.wd-checkout-note--hero{
+  padding:.75rem .9rem; border-left:3px solid var(--accent-teal);
+  background: var(--paper-alt); border-radius:0 8px 8px 0; color: var(--ink-soft);
+}
+.form-status--error{ color:#B3261E; }
+
 /* ---- Pay an invoice (payment.html) ---- */
 .invoice-form{ margin-top:1.25rem; }
 .invoice-fields{ display:grid; grid-template-columns:1fr 1fr; gap:1rem; }

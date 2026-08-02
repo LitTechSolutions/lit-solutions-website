@@ -268,20 +268,7 @@
           <p class="wd-note">Each bundle covers a full group of related features at one flat price. Mix and match any that fit your project -- we'll confirm the final scope and price with you.</p>
           <div id="wdBundleTiles" class="wd-bundle-grid"></div>
 
-          <h2 class="wd-section-title">Anything else?</h2>
-          <p class="wd-note">E-commerce, online accounts, integrations, something else entirely -- describe it and we'll follow up with a custom quote.</p>
-          <div class="wd-field">
-            <label for="wdCustomRequest">Optional details</label>
-            <textarea id="wdCustomRequest" rows="3" placeholder="e.g. I'd like to sell products online and let customers create accounts..."></textarea>
-          </div>
-
-          <label class="wd-heroes-toggle wd-heroes-toggle--inline">
-            <input type="checkbox" id="wdHeroesDiscount">
-            <span>I self-attest that I qualify for the <a href="heroes-pricing.html" target="_blank" rel="noopener">American Heroes Discount</a> (15% off one-time work) &mdash; eligibility is confirmed with you directly before your final price is set</span>
-          </label>
-
-          <h2 class="wd-section-title" id="wdStep3Heading" tabindex="-1">Get your quote</h2>
-          <p class="wd-note">Just your contact info -- no long form required. We'll follow up, and you can add full project details now or later.</p>
+          <h2 class="wd-section-title" id="wdStep3Heading" tabindex="-1">Your build</h2>
 
           <div class="card wd-quote-recap">
             <span class="wd-quote-recap-label">Your estimate</span>
@@ -298,83 +285,24 @@
           <button type="button" class="btn btn-ghost btn-block" id="wdDownloadPdf" hidden>Download summary (PDF)</button>
           <p class="wd-pdf-error" id="wdPdfError" role="alert" hidden>The PDF summary tool didn't load correctly. You can still submit your project -- we'll follow up directly -- or refresh the page to try again.</p>
 
-          <form id="wdQuickForm">
-            <p class="visually-hidden" aria-hidden="true"><label>Don't fill this out: <input name="wd-bot-field" id="wdHoneypot" tabindex="-1" autocomplete="off"></label></p>
-
-            <div class="wd-bizname-field">
-              <label for="wdBusinessName">Your business name *</label>
-              <input type="text" id="wdBusinessName" name="business_name" placeholder="e.g. Riverside Plumbing" autocomplete="organization" required>
-            </div>
-
-            <div class="form-row form-row--split">
-              <div>
-                <label for="wdName">Your name *</label>
-                <input type="text" id="wdName" name="customer_name" required>
-              </div>
-              <div>
-                <label for="wdEmail">Email *</label>
-                <input type="email" id="wdEmail" name="email" required>
-              </div>
-            </div>
-            <div class="form-row form-row--split">
-              <div>
-                <label for="wdPhone">Phone *</label>
-                <input type="tel" id="wdPhone" name="phone" required>
-              </div>
-              <div>
-                <label for="wdPreferredContact">Preferred contact method *</label>
-                <select id="wdPreferredContact" name="preferred_contact" required>
-                  <option value="">Choose one</option>
-                  <option value="phone">Phone call</option>
-                  <option value="text">Text message</option>
-                  <option value="email">Email</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="form-row form-row--checkbox-trigger">
-              <label class="checkbox-pill">
-                <input type="checkbox" id="wdConsent" name="privacy_ack" value="Yes" required>
-                <span>I understand this is a starting estimate, not a final quote, and I agree to be contacted about my project. See our <a href="privacy.html" target="_blank" rel="noopener" style="color:var(--accent-orange-text); text-decoration:underline;">Privacy Policy</a>.</span>
-              </label>
-            </div>
-
-            <div class="wd-panel-actions">
-              <button type="button" class="btn btn-ghost" data-back="1">Back to package</button>
-              <button type="submit" class="btn btn-primary" id="wdQuickSubmitBtn">Get my quote</button>
-            </div>
-            <p class="form-status" role="status" id="wdQuickFormStatus"></p>
-          </form>
-        </div>
-
-        <!-- Prompt shown right after the quick quote is sent -->
-        <div class="wd-panel" id="wdStepPrompt" data-panel="prompt">
-          <div class="card wd-done-card">
-            <h2 id="wdStepPromptHeading" tabindex="-1">Want to finish your project details now?</h2>
-            <p>The more we know up front, the faster we can start once you're ready -- but it's completely optional. We'll follow up either way using the contact method you picked.</p>
-            <div class="wd-panel-actions">
-              <button type="button" class="btn btn-ghost" data-prompt-choice="no">Not right now</button>
-              <button type="button" class="btn btn-primary" id="wdPromptYesBtn">Yes, open project worksheet</button>
-            </div>
-            <p class="wd-note">This opens a separate project details worksheet in a new browser tab -- your quote request has already been sent either way.</p>
-            <p class="wd-note wd-fallback-link" id="wdWorksheetFallback" hidden>
-              <span>Your browser blocked the new tab.</span>
-              <a href="#" id="wdWorksheetFallbackLink" target="_blank" rel="noopener">Open your project worksheet</a>
+          <div class="wd-checkout">
+            <button type="button" class="btn btn-primary btn-block" id="wdAddToCart">Add to cart</button>
+            <p class="wd-checkout-note">
+              You'll sign in at checkout &mdash; or create an account if you're new. That's what gives
+              you somewhere to pay, track the build, and keep your paperwork. Then it's <strong>half now, half at launch</strong>,
+              and a copy of this spec lands in your Documents.
             </p>
+            <p class="wd-checkout-note wd-checkout-note--hero">
+              Military, veteran, teacher or first responder? The
+              <a href="heroes-pricing.html">American Heroes Discount</a> is 15% off &mdash; request it from your
+              account before you pay and it applies automatically.
+            </p>
+            <p class="form-status" role="status" id="wdCheckoutStatus"></p>
+            <button type="button" class="btn btn-ghost btn-block" data-back="1" style="margin-top:.75rem;">Back to packages</button>
           </div>
         </div>
 
-        <!-- Shown after the worksheet tab has been opened -->
-        <div class="wd-panel" id="wdStepWorksheetOpened" data-panel="worksheet-opened">
-          <div class="card wd-done-card">
-            <h2 id="wdStepWorksheetOpenedHeading" tabindex="-1">Your project worksheet opened in a new tab.</h2>
-            <p>Your quote request has already been received. Finish the worksheet whenever you're ready -- it stays open in that tab.</p>
-            <div class="wd-panel-actions">
-              <button type="button" class="btn btn-ghost" id="wdFinishLaterBtn">Finish later</button>
-              <button type="button" class="btn btn-primary" id="wdOpenWorksheetAgainBtn">Open worksheet again</button>
-            </div>
-          </div>
-        </div>
+
 
         <!-- Confirmation -->
         <div class="wd-panel" id="wdStepDone" data-panel="done">
