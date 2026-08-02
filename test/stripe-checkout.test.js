@@ -52,12 +52,21 @@ Module._load = origLoad;
 
 function reset() { blobs.clear(); sent.length = 0; }
 
-const CUST = { userId: "cust-1", email: "jane@example.test", role: "customer" };
-const ADMIN = { userId: "admin-1", email: "dylan@lit-solutions.tech", role: "admin" };
+/* A REAL session is exactly {sessionId, userId, role, expiresAt} -- see
+ * auth_utils.createSession(userId, role). It carries NO email. These doubles
+ * used to include one, which is precisely why the suite stayed green while
+ * production hung for 25 seconds on getJSON("users", "") and died with
+ * "Failed to parse URL from undefined". Do not add an email back. */
+const CUST_EMAIL = "jane@example.test";
+const ADMIN_EMAIL_ADDR = "dylan@lit-solutions.tech";
+const CUST = { sessionId: "s-1", userId: "cust-1", role: "customer", expiresAt: 4102444800000 };
+const ADMIN = { sessionId: "s-2", userId: "admin-1", role: "admin", expiresAt: 4102444800000 };
+const emailOf = (session) => (session.userId === "admin-1" ? ADMIN_EMAIL_ADDR : CUST_EMAIL);
 
-function seedUser(session, heroState) {
-  blobs.set(k("users", session.email.toLowerCase()), {
-    id: session.userId, email: session.email, name: "Jane",
+function seedUser(session, heroState, email) {
+  const addr = email || emailOf(session);
+  blobs.set(k("users", addr.toLowerCase()), {
+    id: session.userId, email: addr, name: "Jane",
     heroStatus: heroState ? { state: heroState, category: "Veteran" } : undefined,
   });
 }
@@ -228,7 +237,7 @@ test("the order exists before the Stripe session, and its id rides in the metada
   assert.equal(lastSessionParams.metadata.orderId, "ord-test");
   assert.equal(lastSessionParams.mode, "payment");
   assert.match(lastSessionParams.successUrl, /checkout=success/);
-  assert.equal(lastSessionParams.customerEmail, "jane@example.test");
+  assert.equal(lastSessionParams.customerEmail, CUST_EMAIL, "the address must come from the user record, not the session");
 });
 
 test("a cart with anything recurring runs in subscription mode", async () => {
@@ -401,8 +410,8 @@ test("resuming someone else's order, or a paid one, is refused", async () => {
   seedUser(CUST, null);
   await checkout.handler(req("POST", { items: [{ key: "svc-seo", quantity: 1 }] }), {}, deps(CUST));
 
-  const other = { userId: "cust-2", email: "someone@else.test", role: "customer" };
-  seedUser(other, null);
+  const other = { sessionId: "s-3", userId: "cust-2", role: "customer", expiresAt: 4102444800000 };
+  seedUser(other, null, "someone@else.test");
   assert.equal((await checkout.handler(req("POST", { orderId: "ord-test" }), {}, deps(other))).statusCode, 403);
 
   const o = blobs.get(k("orders", "ord-test"));
@@ -431,7 +440,7 @@ const whDeps = { env: { STRIPE_WEBHOOK_SECRET: WH_SECRET }, now: NOW };
 function seedOrder(over = {}) {
   const priced = priceCart([{ product: getProduct("plan-premium"), quantity: 1 }], {});
   const o = {
-    id: "ord-test", customerId: CUST.userId, customerEmail: CUST.email,
+    id: "ord-test", customerId: CUST.userId, customerEmail: CUST_EMAIL,
     items: [{ key: "plan-premium", name: "Premium", quantity: 1 }],
     pricing: priced, status: "awaiting_payment", provider: "stripe",
     createdAt: NOW().toISOString(), ...over,
@@ -582,9 +591,9 @@ test("a customer can request the discount but cannot grant it to themselves", as
   assert.equal(JSON.parse(res.body).status.state, "pending", "a request is pending, never verified");
 
   // The admin-only route must refuse them.
-  const escalate = await heroStatus.handler(req("PATCH", { customerEmail: CUST.email, decision: "verified" }), {}, deps(CUST));
+  const escalate = await heroStatus.handler(req("PATCH", { customerEmail: CUST_EMAIL, decision: "verified" }), {}, deps(CUST));
   assert.equal(escalate.statusCode, 403);
-  assert.equal(blobs.get(k("users", CUST.email)).heroStatus.state, "pending");
+  assert.equal(blobs.get(k("users", CUST_EMAIL)).heroStatus.state, "pending");
 });
 
 test("an invented category is refused", async () => {
@@ -601,7 +610,7 @@ test("the request email tells the owner how to verify without an SSN document", 
 
   const toOwner = sent.find((m) => m.to === "dylan@lit-solutions.tech");
   assert.match(toOwner.html, /Do not accept an unredacted DD-214/i);
-  const toCustomer = sent.find((m) => m.to === CUST.email);
+  const toCustomer = sent.find((m) => m.to === CUST_EMAIL);
   assert.match(toCustomer.html, /Social Security number/i);
 });
 
@@ -611,21 +620,21 @@ test("an admin decision sticks, and the customer is told either way", async () =
   await heroStatus.handler(req("POST", { category: "Teacher" }), {}, deps(CUST));
   sent.length = 0;
 
-  await heroStatus.handler(req("PATCH", { customerEmail: CUST.email, decision: "verified" }), {}, deps(ADMIN));
-  assert.equal(blobs.get(k("users", CUST.email)).heroStatus.state, "verified");
-  assert.match(sent.find((m) => m.to === CUST.email).html, /15% off one-time work/);
+  await heroStatus.handler(req("PATCH", { customerEmail: CUST_EMAIL, decision: "verified" }), {}, deps(ADMIN));
+  assert.equal(blobs.get(k("users", CUST_EMAIL)).heroStatus.state, "verified");
+  assert.match(sent.find((m) => m.to === CUST_EMAIL).html, /15% off one-time work/);
 
   sent.length = 0;
-  await heroStatus.handler(req("PATCH", { customerEmail: CUST.email, decision: "declined" }), {}, deps(ADMIN));
-  assert.equal(blobs.get(k("users", CUST.email)).heroStatus.state, "declined");
-  assert.match(sent.find((m) => m.to === CUST.email).html, /804-309-0968/);
+  await heroStatus.handler(req("PATCH", { customerEmail: CUST_EMAIL, decision: "declined" }), {}, deps(ADMIN));
+  assert.equal(blobs.get(k("users", CUST_EMAIL)).heroStatus.state, "declined");
+  assert.match(sent.find((m) => m.to === CUST_EMAIL).html, /804-309-0968/);
 });
 
 test("the verification queue is admin-only and ordered oldest first", async () => {
   reset();
   seedUser(CUST, null);
-  const other = { userId: "cust-2", email: "bob@example.test", role: "customer" };
-  seedUser(other, null);
+  const other = { sessionId: "s-4", userId: "cust-2", role: "customer", expiresAt: 4102444800000 };
+  seedUser(other, null, "bob@example.test");
 
   await heroStatus.handler(req("POST", { category: "Veteran" }), {}, deps(other, { now: () => new Date("2026-07-01T00:00:00Z") }));
   await heroStatus.handler(req("POST", { category: "Police" }), {}, deps(CUST));
@@ -642,7 +651,7 @@ test("re-requesting when already verified doesn't downgrade the account", async 
   reset();
   seedUser(CUST, "verified");
   await heroStatus.handler(req("POST", { category: "Doctor" }), {}, deps(CUST));
-  assert.equal(blobs.get(k("users", CUST.email)).heroStatus.state, "verified");
+  assert.equal(blobs.get(k("users", CUST_EMAIL)).heroStatus.state, "verified");
 });
 
 /* ========================================================= billing portal = */
@@ -658,7 +667,7 @@ test("the billing portal needs a real Stripe customer, and only your own", async
   const ok = await billing.handler(req("POST", {}), {}, portalDeps(CUST));
   assert.equal(JSON.parse(ok.body).url, "https://billing.stripe.com/cus_1");
 
-  const other = { userId: "cust-2", email: "x@y.test", role: "customer" };
+  const other = { sessionId: "s-5", userId: "cust-2", role: "customer", expiresAt: 4102444800000 };
   const none = await billing.handler(req("POST", {}), {}, portalDeps(other));
   assert.equal(none.statusCode, 404, "someone with no payments has no portal");
 
@@ -981,4 +990,45 @@ test("the setup screen reports a mode mismatch instead of talking to Stripe", as
   assert.equal(body.keyMode, "mismatch");
   assert.equal(body.keyVar, "STRIPE_TEST_KEY");
   assert.match(body.advice, /real cards/i);
+});
+
+
+/* ============================================== the session-shape outage = */
+
+test("a session carries no email, and checkout resolves the address by id", async () => {
+  reset();
+  seedUser(CUST, null);
+  // The exact production shape: no `email` anywhere on the session.
+  assert.equal(CUST.email, undefined, "test doubles must match auth_utils.createSession");
+
+  const res = await checkout.handler(req("POST", { items: [{ key: "svc-seo", quantity: 1 }] }), {}, deps(CUST));
+  assert.equal(res.statusCode, 200);
+
+  const order = blobs.get(k("orders", "ord-test"));
+  // Before the fix this was null, so the paid-confirmation email and the
+  // admin notification both had nowhere to go.
+  assert.equal(order.customerEmail, CUST_EMAIL);
+  assert.equal(lastSessionParams.customerEmail, CUST_EMAIL);
+});
+
+test("hero-status resolves its own account by id too", async () => {
+  reset();
+  seedUser(CUST, null);
+  const res = await heroStatus.handler(req("POST", { category: "Veteran" }), {}, deps(CUST));
+  assert.equal(res.statusCode, 200, res.body);
+  assert.equal(blobs.get(k("users", CUST_EMAIL)).heroStatus.state, "pending");
+  // The customer's acknowledgement has to reach a real address.
+  assert.ok(sent.find((m) => m.to === CUST_EMAIL), "the customer should have been emailed");
+});
+
+test("an empty blob key is refused immediately instead of hanging", () => {
+  const { assertKey } = require("../netlify/functions/_lib/blob_store.js");
+  // Netlify Blobs turns an empty key into an undefined URL, retries with
+  // backoff, and times out ~25s later with an error that names neither the
+  // store nor the key. That cost a live outage; fail fast and say where.
+  for (const bad of ["", "   ", undefined, null, 0, {}]) {
+    assert.throws(() => assertKey("users", bad), /empty key on the "users" store/,
+      `accepted ${JSON.stringify(bad)}`);
+  }
+  assert.equal(assertKey("users", "jane@example.test"), "jane@example.test");
 });

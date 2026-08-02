@@ -23,6 +23,7 @@ const { getJSON, setJSON } = require("./_lib/blob_store");
 const { getProduct } = require("./_lib/product_catalog");
 const { priceCart, toStripeLineItems, bnplAvailable } = require("./_lib/pricing");
 const { isVerifiedHero } = require("./hero-status");
+const { findUserById } = require("./_lib/users");
 const { createCheckoutSession } = require("./_lib/stripe_api");
 
 const MAX_LINES = 12;
@@ -64,18 +65,16 @@ exports.handler = async (event, context, deps = {}) => {
   const getJSONFn = deps.getJSON || getJSON;
   const setJSONFn = deps.setJSON || setJSON;
 
-  const t0 = Date.now();
-  const step = (name) => console.log(`[checkout] ${name} @${Date.now() - t0}ms`);
-
-  step("start");
   const token = readCookieFn(event, "lts_session");
   const session = token ? await getSessionFn(token) : null;
-  step(session ? "session ok" : "no session");
   if (!session) return json(401, { error: "Sign in required." });
 
-  const user = await getJSONFn("users", String(session.email || "").toLowerCase());
-  step("user loaded");
+  // Resolved BY ID. A session record is {userId, role, expiresAt} and carries
+  // no address, so keying the users store off it produced an empty key --
+  // which Netlify Blobs turned into a 25-second hang. See _lib/users.js.
+  const user = await (deps.findUserById || findUserById)(session.userId);
   const hero = isVerifiedHero(user);
+  const customerEmail = (user && user.email) || null;
 
   /* ------------------------------------------------------------ pricing -- */
   if (event.httpMethod === "GET") {
@@ -96,7 +95,6 @@ exports.handler = async (event, context, deps = {}) => {
   if (await rateLimited("checkout-create", session.userId, 20, 3600)) {
     return json(429, { error: "Too many checkout attempts. Try again shortly." });
   }
-  step("rate limit checked");
 
   let body;
   try { body = JSON.parse(event.body || "{}"); } catch { return json(400, { error: "Invalid JSON" }); }
@@ -151,7 +149,7 @@ exports.handler = async (event, context, deps = {}) => {
   const order = Object.assign({}, existingOrder, {
     id: orderId,
     customerId: session.userId,
-    customerEmail: session.email || null,
+    customerEmail,
     items: items.map(({ product, quantity }) => ({ key: product.key, name: product.name, quantity })),
     // Re-priced on every attempt, so a hero verified between abandoning a
     // checkout and resuming it gets their discount without re-adding anything.
@@ -164,7 +162,6 @@ exports.handler = async (event, context, deps = {}) => {
     updatedAt: now,
   });
   await setJSONFn("orders", orderId, order);
-  step("order written");
 
   const origin = siteOrigin(event);
   const mode = priced.hasRecurring ? "subscription" : "payment";
@@ -184,15 +181,13 @@ exports.handler = async (event, context, deps = {}) => {
     lineItems,
     successUrl: `${origin}/myaccount.html?checkout=success&order=${encodeURIComponent(orderId)}#dashboard`,
     cancelUrl: `${origin}/cart.html?checkout=cancelled`,
-    customerEmail: session.email || undefined,
+    customerEmail: customerEmail || undefined,
     metadata: { orderId, customerId: session.userId, hero: String(hero), payInFull: String(payInFull) },
     idempotencyKey: `order-${orderId}-${contentHash}`,
   };
 
   try {
-    step("calling stripe");
     const stripeSession = await (deps.createCheckoutSession || createCheckoutSession)(params);
-    step("stripe returned");
     order.stripeSessionId = stripeSession.id;
     await setJSONFn("orders", orderId, order);
     return json(200, { url: stripeSession.url, orderId });

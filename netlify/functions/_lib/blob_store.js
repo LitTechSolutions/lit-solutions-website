@@ -52,12 +52,32 @@ function store(name) {
   return getStore(opts);
 }
 
+/**
+ * An empty or non-string key is always a caller bug, and Netlify Blobs
+ * handles it terribly: it builds an undefined URL, retries with backoff, and
+ * the function times out ~25s later with "Failed to parse URL from
+ * undefined" -- naming neither the store nor the key. That cost a live
+ * outage on the checkout endpoint. Fail immediately instead, and say which
+ * store was asked.
+ */
+function assertKey(storeName, key) {
+  if (typeof key !== "string" || key.trim() === "") {
+    throw new TypeError(
+      `blob_store: refusing to use an empty key on the "${storeName}" store ` +
+      `(got ${JSON.stringify(key)}). This is a caller bug -- see _lib/users.js.`
+    );
+  }
+  return key;
+}
+
 async function getJSON(storeName, key) {
+  assertKey(storeName, key);
   const raw = await store(storeName).get(key, { type: "json" });
   return raw || null;
 }
 
 async function setJSON(storeName, key, value) {
+  assertKey(storeName, key);
   await store(storeName).setJSON(key, value);
 }
 
@@ -65,4 +85,5 @@ async function deleteKey(storeName, key) {
   await store(storeName).delete(key);
 }
 
-module.exports = { store, getJSON, setJSON, deleteKey };
+module.exports = {
+  assertKey, store, getJSON, setJSON, deleteKey };

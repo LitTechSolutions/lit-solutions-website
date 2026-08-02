@@ -20,6 +20,7 @@
 const { readCookie, getSession, json, rateLimited } = require("./_lib/auth_utils");
 const { getJSON, setJSON, store } = require("./_lib/blob_store");
 const { sendEmail } = require("./_lib/email");
+const { findUserRecordById, findUserByEmail: findByEmail } = require("./_lib/users");
 
 const ADMIN_EMAIL = process.env.ADMIN_NOTIFY_EMAIL || "dylan@lit-solutions.tech";
 
@@ -68,7 +69,9 @@ function isVerifiedHero(user) {
 }
 
 async function findUserByEmail(email) {
-  return getJSON("users", String(email || "").toLowerCase());
+  // Guards the empty string, which as an empty blob key hangs for 25 seconds
+  // and then throws an error naming nothing. See _lib/users.js.
+  return findByEmail(email);
 }
 
 exports.handler = async (event, context, deps = {}) => {
@@ -81,7 +84,9 @@ exports.handler = async (event, context, deps = {}) => {
   if (!session) return json(401, { error: "Sign in required." });
 
   const isAdmin = session.role === "admin";
-  const selfEmail = String(session.email || "").toLowerCase();
+  // A session carries no address -- resolve the account by id instead.
+  const selfRecord = await (deps.findUserRecordById || findUserRecordById)(session.userId);
+  const selfEmail = (selfRecord && selfRecord.key) || null;
 
   if (event.httpMethod === "GET") {
     if (event.queryStringParameters && event.queryStringParameters.pending === "true") {
@@ -104,8 +109,7 @@ exports.handler = async (event, context, deps = {}) => {
       return json(200, { pending: queue });
     }
 
-    const user = await findUserByEmail(selfEmail);
-    return json(200, { status: publicStatus(user) });
+    return json(200, { status: publicStatus(selfRecord && selfRecord.user) });
   }
 
   if (event.httpMethod === "POST") {
@@ -118,8 +122,8 @@ exports.handler = async (event, context, deps = {}) => {
     const category = CATEGORIES.find((c) => c === body.category);
     if (!category) return json(400, { error: "Choose the category that applies to you." });
 
-    const user = await findUserByEmail(selfEmail);
-    if (!user) return json(404, { error: "Account not found." });
+    const user = selfRecord && selfRecord.user;
+    if (!user || !selfEmail) return json(404, { error: "Account not found." });
     if (isVerifiedHero(user)) return json(200, { status: publicStatus(user) });
 
     user.heroStatus = {
