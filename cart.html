@@ -450,10 +450,24 @@
       .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
       .then(function (res) {
         if (res.ok && res.d.url) { window.location.href = res.d.url; return; }
-        throw new Error((res.d && res.d.error) || "We couldn't start checkout.");
+        var e = new Error((res.d && res.d.error) || "We couldn't start checkout.");
+        e.detail = res.d || {};
+        throw e;
       })
       .catch(function (err) {
-        errorEl.textContent = err.message + ' If it keeps happening, call us on 804-309-0968 and we\'ll take it over the phone.';
+        var d = err.detail || {};
+        errorEl.innerHTML = esc(err.message) +
+          " If it keeps happening, call us on 804-309-0968 and we'll take it over the phone.";
+        // An admin gets the real cause. A customer never does -- the server
+        // only includes these fields for an admin session, so there is
+        // nothing here to leak.
+        if (d.adminDetail) {
+          errorEl.innerHTML +=
+            '<br><br><strong>Admin detail:</strong> <code>' + esc(d.adminDetail) + '</code>' +
+            (d.adminStripeCode ? '<br>Stripe code: <code>' + esc(d.adminStripeCode) + '</code>' : '') +
+            (d.adminStripeStatus ? '<br>HTTP ' + esc(d.adminStripeStatus) : '') +
+            (d.adminHint ? '<br><br>' + esc(d.adminHint) : '');
+        }
         errorEl.hidden = false;
         checkoutEl.disabled = false;
         paint();

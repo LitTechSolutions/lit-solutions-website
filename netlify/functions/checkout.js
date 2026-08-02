@@ -190,6 +190,10 @@ exports.handler = async (event, context, deps = {}) => {
     // Leave a breadcrumb on the order so a failed checkout is diagnosable
     // rather than an order that silently never got paid.
     const reason = String(err.message || err).slice(0, 300);
+    // Netlify function logs are the only record when nobody is watching a
+    // browser, and "couldn't start checkout" is useless without the cause.
+    console.error("[checkout] Stripe rejected the session:", reason,
+      err.stripeCode ? `(code ${err.stripeCode})` : "", err.stripeStatus ? `(http ${err.stripeStatus})` : "");
     order.status = "checkout_failed";
     order.checkoutError = reason;
     await setJSONFn("orders", orderId, order);
@@ -200,6 +204,8 @@ exports.handler = async (event, context, deps = {}) => {
     const body = { error: "Couldn't start checkout. Please try again, or call us on 804-309-0968." };
     if (session.role === "admin") {
       body.adminDetail = reason;
+      body.adminStripeCode = err.stripeCode || null;
+      body.adminStripeStatus = err.stripeStatus || null;
       if (/STRIPE_SECRET_KEY/.test(reason)) {
         body.adminHint = "Set STRIPE_SECRET_KEY in Netlify (Site configuration -> Environment variables), " +
           "then trigger a redeploy -- Netlify needs one to pick up a newly added variable. " +
