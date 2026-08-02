@@ -1,9 +1,9 @@
-# Admin CMS + customer accounts setup (v1.18)
+# Admin workspace + customer accounts setup
 
-This site has a sign-in-protected staff dashboard (the Care Hub, at
-`/care-hub/`) and a public customer portal at `/myaccount.html`, both backed
-by Netlify Functions + Netlify Blobs. This doc is the one-time setup
-checklist for both.
+This site has one account path at `/myaccount.html`. Customers see their own
+purchases, documents, and messages; administrators see the operations
+workspace after completing an emailed security-code check. Both are backed by
+Netlify Functions + Netlify Blobs.
 
 ## 1. Install the dependency
 
@@ -53,15 +53,14 @@ Functions > pick a function). If you hit that:
 `SITE_ID` is already set automatically by Netlify for every function — you
 only need to add the token above.
 
-## 4. (Recommended) Set up email sending
+## 4. Set up email sending (required for administrator access)
 
 Every new account — staff or customer — now has to verify their email before
 they can sign in, which is the main defense against bot/junk registrations on
-`myaccount.html` (registration is open to the public there). Without an email
-provider configured, verification links just get logged to the function
-console instead of delivered — the site still works, but you'll need to fetch
-tokens from the Netlify Blobs dashboard by hand (see step 7 and "Forgot your
-password?" below), which doesn't scale past testing it yourself.
+`myaccount.html` (registration is open to the public there). Administrator
+sign-in also sends a one-time six-digit code and fails closed if delivery is
+not configured or the provider rejects the message. Configure email before
+promoting the owner account in step 7.
 
 To wire up real delivery, this site uses [Resend](https://resend.com) (a
 single HTTP call, no SDK/dependency needed — see
@@ -125,40 +124,30 @@ self-service way to become `admin`, on purpose. To finish setup:
 
 ## 8. Sign in and use it
 
-Go to `https://yourdomain/care-hub/login` (or click **Staff Sign In** in
+Go to `https://yourdomain/myaccount.html#signin` (or click **Staff Sign In** in
 the footer of any page — it's deliberately not in the main navigation, since
-this is for you, not visitors). From the sidebar you can manage:
+this is for you, not visitors). After your emailed security code, the sidebar
+provides:
 
-- **Site Content** — Blog Posts, Portfolio, Testimonials, and Gallery, each
-  its own tab in one screen. Blog Posts take a title, URL slug, category,
-  date, excerpt, full article body, and an optional featured photo — saved
-  posts show up on `blog.html` automatically (newest first, above the 3
-  original articles) and get their own page at
-  `blog-post.html?slug=your-slug`. Portfolio (title, description, optional
-  photo) replaces the "still building it out" placeholder on
-  `portfolio.html` as soon as you add one. Gallery is a plain photo grid at
-  `gallery.html`, separate from Portfolio (which is project write-ups) —
-  photo and alt text are required, caption is optional, and nothing shows
-  on the public page until the first photo is added. Testimonials (quote,
-  author, role/company) follows the same pattern — the first one you add
-  replaces the honest placeholder on `testimonials.html`.
-- **Image Library** — a running list of everything you've uploaded, for
-  reference. You don't need to use this directly; each item's own form in
-  Site Content has its own photo upload built in.
-- **Customer Support** — an inbox of every customer conversation (newest
-  first, with unread counts), a lookup box to pull up any customer by
-  email, and from there: upload documents for them (title, type, amount,
-  status, date, notes, optional PDF/image attachment), read/reply to their
-  messages, and send a one-off **notification** (e.g. "Appointment
-  rescheduled") for anything that doesn't need a back-and-forth reply.
-  Uploading a document also raises a notification automatically. See
-  "Customer accounts" below for the customer side of this.
-- **Account** — change your own login email or password, right from the
-  sidebar (each requires your current password, and signs you out
-  afterward so you sign back in with the new credentials). This is the
-  normal way to update your login going forward — you only need the
-  Netlify Blobs dashboard for the one-time initial promotion to admin in
-  step 7 above.
+- **Overview** — new leads, unread conversations, open orders, discount
+  requests, customer count, collected revenue, and the newest activity.
+- **Customers** — searchable customer accounts with order count, lifetime
+  value, documents, last activity, and a direct route to their conversation.
+- **Sales & orders** — paid and pending orders, subscriptions, recorded
+  amounts, manual payment confirmation (for verified off-platform payments),
+  and cancellation of unpaid orders.
+- **Projects** — paid website work separated by whether the project brief is
+  ready, with a direct route to message the customer.
+- **Leads** — website quotes and service requests in one searchable pipeline;
+  move each through new, contacted, qualified, won, lost, or archived.
+- **Inbox** — every customer conversation, with unread counts and real replies.
+- **Documents** — upload a private PDF or image to a customer's account and
+  notify them automatically by email and in-app notification.
+- **Heroes** — approve or decline American Heroes Discount requests.
+- **System health** — customer checkout, Stripe mode/webhook readiness, email
+  delivery, and private document storage, without exposing any secret values.
+- **Account settings** — change your own name, login email, password, and
+  notification preferences.
 
 Everything saves immediately and is live on the site the moment you save —
 no rebuild, no redeploy.
@@ -174,11 +163,11 @@ Separate from your own staff login, customers can create their own accounts:
    in at all — this is the main anti-bot measure for open registration.
 3. **Documents.** To attach an invoice, receipt, or other document to a
    customer, they need to have registered (and verified) first. Go to
-   **Customer Support** in the Care Hub, look them up by email, and upload.
+   **Documents** in the admin workspace, enter their email, and upload.
    They see it — with a download link for any attached file — at
    `myaccount.html#dashboard`.
 4. **Messages.** Customers can message you from `myaccount.html#messages`.
-   You'll see it in the **Customer Support** inbox in the Care Hub (and get
+   You'll see it in the **Inbox** in the admin workspace (and get
    an email if you set `ADMIN_NOTIFY_EMAIL`), and can reply from the same
    lookup panel — it's a real back-and-forth thread, not a one-off contact
    form. This is separate from the existing Contact page form, which is
@@ -205,23 +194,18 @@ interface, and was verified directly (see `CHANGES-v1.15.md` through
 
 ## Forgot your password?
 
-`/care-hub/reset-password` (staff/admin) or `myaccount.html#reset-request`
-(customers) generates a reset token, but automatic email delivery only
+`myaccount.html#reset-request` generates a reset token for any account, but automatic email delivery only
 works if you completed step 4 above. Without it, find the token yourself:
 Netlify dashboard > **Blobs** > `tokens` store (most recent key with
 `"type":"password-reset"`), then open
-`/care-hub/reset-password?token=<that token>` or
 `myaccount.html#reset?token=<that token>`. A customer who can't do this
 themselves will need to call or email you.
 
 ## Known limitations, honestly
 
-- **Email delivery is opt-in.** Verification links, password resets, and
-  message notifications all work without a provider configured — they just
-  log instead of send, meaning you (or the customer) have to fetch the
-  token from the Netlify Blobs dashboard by hand. Fine for testing, not for
-  real customers at any real volume — set up Resend (step 4) before you
-  expect real people to use `myaccount.html`.
+- **Email delivery is required for administrator sign-in.** Customer-facing
+  verification and reset emails also depend on it for a usable production
+  experience. Set up Resend (step 4) before anyone uses `myaccount.html`.
 - **Blog post SEO is templated, not per-page.** The 3 original blog articles
   are real static HTML pages with their own title/description/Open Graph
   tags. Posts you add through the admin panel all share one template

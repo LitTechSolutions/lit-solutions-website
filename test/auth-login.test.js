@@ -1,12 +1,6 @@
-// Focused tests for the Session 20 MFA branching added to this endpoint.
-// Pre-existing login behavior (rate limiting, generic-error shape,
-// unverified-account gate) is exercised indirectly here via the deps
-// seam this session added; nothing about the underlying password check
-// changed.
-
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { handler } = require("../netlify/functions/auth-login");
+const { handler, maskedEmail, generateCode } = require("../netlify/functions/auth-login");
 
 function adminUser(overrides = {}) {
   return { id: "admin-1", email: "dylan@lit-solutions.tech", name: "Dylan", role: "admin", passwordHash: "irrelevant", verified: true, ...overrides };
@@ -20,7 +14,7 @@ function baseEvent(overrides = {}) {
   return { httpMethod: "POST", headers: {}, body: JSON.stringify({ email: "x@example.com", password: "correct-password" }), ...overrides };
 }
 
-test("a non-admin user still gets a real session cookie directly (MFA is platform_admin-only)", async () => {
+test("a non-admin user still receives a real session directly", async () => {
   const res = await handler(baseEvent(), {}, {
     rateLimited: async () => false,
     getJSON: async () => customerUser(),
@@ -29,56 +23,82 @@ test("a non-admin user still gets a real session cookie directly (MFA is platfor
   });
   assert.equal(res.statusCode, 200);
   assert.match(res.headers["Set-Cookie"], /^lts_session=/);
-  assert.equal(JSON.parse(res.body).mfaRequired, undefined);
+  assert.equal(JSON.parse(res.body).emailCodeRequired, undefined);
 });
 
-test("an admin user with MFA already enabled gets a pre-auth cookie, not a real session, and enrollmentRequired: false", async () => {
+test("an admin password issues an emailed, hashed, expiring challenge and no session", async () => {
+  const writes = [];
+  const emails = [];
+  const now = 1_900_000_000_000;
   const res = await handler(baseEvent(), {}, {
     rateLimited: async () => false,
     getJSON: async () => adminUser({ mfaEnabled: true }),
     verifyPassword: async () => true,
-    createSingleUseToken: (type, uid, ttl) => `pre-auth-token:${type}:${uid}:${ttl}`,
+    challengeId: () => "abcdef0123456789abcdef0123456789abcd",
+    generateCode: () => "041209",
+    hashCode: () => "a".repeat(64),
+    now: () => now,
+    setJSON: async (...args) => writes.push(args),
+    sendEmail: async (message) => { emails.push(message); return { sent: true, id: "mail-1" }; },
   });
   assert.equal(res.statusCode, 200);
+  assert.equal(res.headers["Set-Cookie"], undefined);
   const body = JSON.parse(res.body);
-  assert.equal(body.mfaRequired, true);
-  assert.equal(body.enrollmentRequired, false);
-  assert.match(res.headers["Set-Cookie"], /^lts_mfa_pending=pre-auth-token:mfa_pending:admin-1:300/);
-  assert.doesNotMatch(res.headers["Set-Cookie"], /^lts_session=/);
+  assert.equal(body.emailCodeRequired, true);
+  assert.equal(body.challengeId, "abcdef0123456789abcdef0123456789abcd");
+  assert.match(body.maskedEmail, /^dy.*@lit-solutions\.tech$/);
+  assert.equal(writes.length, 1);
+  assert.equal(writes[0][0], "admin-login");
+  assert.equal(writes[0][2].codeHash, "a".repeat(64));
+  assert.equal(JSON.stringify(writes[0][2]).includes("041209"), false, "the readable code must not be persisted");
+  assert.equal(writes[0][2].expiresAt, now + 10 * 60 * 1000);
+  assert.match(emails[0].subject, /041209/);
+  assert.match(emails[0].html, /041209/);
 });
 
-test("an admin user with no MFA enrolled yet gets enrollmentRequired: true", async () => {
-  const res = await handler(baseEvent(), {}, {
-    rateLimited: async () => false,
-    getJSON: async () => adminUser({ mfaEnabled: false }),
-    verifyPassword: async () => true,
-    createSingleUseToken: () => "pre-auth-token",
-  });
-  assert.equal(res.statusCode, 200);
-  assert.equal(JSON.parse(res.body).enrollmentRequired, true);
+test("legacy authenticator enrollment state does not affect the new email-code flow", async () => {
+  for (const mfaEnabled of [true, false, undefined]) {
+    const res = await handler(baseEvent(), {}, {
+      rateLimited: async () => false,
+      getJSON: async () => adminUser({ mfaEnabled }),
+      verifyPassword: async () => true,
+      challengeId: () => "abcdef0123456789abcdef0123456789abcd",
+      generateCode: () => "123456",
+      hashCode: () => "a".repeat(64),
+      setJSON: async () => {},
+      sendEmail: async () => ({ sent: true }),
+    });
+    assert.equal(JSON.parse(res.body).emailCodeRequired, true);
+    assert.equal(JSON.parse(res.body).enrollmentRequired, undefined);
+  }
 });
 
-test("an admin user with mfaEnabled undefined (never touched this field) is treated as needing enrollment", async () => {
+test("admin sign-in fails closed when the security email is not accepted", async () => {
   const res = await handler(baseEvent(), {}, {
     rateLimited: async () => false,
     getJSON: async () => adminUser(),
     verifyPassword: async () => true,
-    createSingleUseToken: () => "pre-auth-token",
+    challengeId: () => "abcdef0123456789abcdef0123456789abcd",
+    generateCode: () => "123456",
+    hashCode: () => "a".repeat(64),
+    setJSON: async () => {},
+    sendEmail: async () => ({ sent: false, reason: "provider error" }),
   });
-  assert.equal(JSON.parse(res.body).enrollmentRequired, true);
+  assert.equal(res.statusCode, 503);
+  assert.equal(res.headers["Set-Cookie"], undefined);
 });
 
-test("wrong password never reaches the MFA branch, even for an admin account", async () => {
+test("wrong password never reaches the email-code branch", async () => {
   const res = await handler(baseEvent(), {}, {
     rateLimited: async () => false,
-    getJSON: async () => adminUser({ mfaEnabled: true }),
+    getJSON: async () => adminUser(),
     verifyPassword: async () => false,
   });
   assert.equal(res.statusCode, 401);
   assert.equal(res.headers["Set-Cookie"], undefined);
 });
 
-test("an unverified admin account is still blocked before MFA is ever considered", async () => {
+test("an unverified admin account remains blocked before a code is sent", async () => {
   const res = await handler(baseEvent(), {}, {
     rateLimited: async () => false,
     getJSON: async () => adminUser({ verified: false }),
@@ -88,9 +108,17 @@ test("an unverified admin account is still blocked before MFA is ever considered
   assert.equal(JSON.parse(res.body).code, "unverified");
 });
 
-test("rate limiting still applies before any credential check", async () => {
-  const res = await handler(baseEvent(), {}, { rateLimited: async () => true, getJSON: async () => { throw new Error("should not be reached"); } });
+test("login rate limiting applies before any credential check", async () => {
+  const res = await handler(baseEvent(), {}, { rateLimited: async () => true });
   assert.equal(res.statusCode, 429);
+});
+
+test("masking keeps the destination recognizable without exposing the full address", () => {
+  assert.equal(maskedEmail("dylan@example.com"), "dy•••@example.com");
+});
+
+test("generated codes are always six digits", () => {
+  for (let i = 0; i < 30; i += 1) assert.match(generateCode(), /^\d{6}$/);
 });
 
 test("unsupported method returns 405", async () => {

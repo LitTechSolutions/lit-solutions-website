@@ -3,19 +3,38 @@
 // auth-register.js / auth-verify-email.js) are blocked from signing in at
 // all -- the main point of email verification is exactly this gate.
 //
-// Session 20 MFA: platform_admin ("admin" role) accounts never get a
-// real session cookie directly from this endpoint anymore. Once the
-// password checks out, this issues a short-lived pre-authentication
-// token (lts_mfa_pending cookie, 5 minutes) and tells the caller whether
-// to go to mfa-enroll.js (no TOTP set up yet -- mandatory at next
-// successful login, per the Session 20 directive) or mfa-verify.js
-// (already enrolled). The real lts_session cookie is only ever set by
-// those two endpoints, after a valid TOTP code or recovery code.
-// Customer/staff accounts are unaffected -- MFA is platform_admin-only
-// in this first release.
+// Administrator accounts use an emailed six-digit code as their second
+// factor. A correct password creates a short-lived, single-use challenge;
+// auth-admin-code.js is the only endpoint that can exchange that challenge
+// for a real session. Customer/staff accounts still receive a session here.
 
-const { verifyPassword, createSession, sessionCookie, createSingleUseToken, mfaPendingCookie, MFA_PENDING_TTL_SECONDS, json, rateLimited } = require("./_lib/auth_utils");
-const { getJSON } = require("./_lib/blob_store");
+const crypto = require("node:crypto");
+const { verifyPassword, createSession, sessionCookie, json, rateLimited } = require("./_lib/auth_utils");
+const { getJSON, setJSON } = require("./_lib/blob_store");
+const { sendEmail } = require("./_lib/email");
+
+const ADMIN_CODE_TTL_SECONDS = 10 * 60;
+
+function generateCode() {
+  return String(crypto.randomInt(0, 1000000)).padStart(6, "0");
+}
+
+function hashCode(challengeId, code) {
+  const secret = process.env.LTS_SESSION_SECRET;
+  if (!secret) throw new Error("LTS_SESSION_SECRET is not set.");
+  return crypto.createHmac("sha256", secret).update(`${challengeId}.${code}`).digest("hex");
+}
+
+function maskedEmail(email) {
+  const [local, domain] = String(email || "").split("@");
+  if (!domain) return "your email address";
+  const visible = local.slice(0, Math.min(2, local.length));
+  return `${visible}${"•".repeat(Math.max(3, local.length - visible.length))}@${domain}`;
+}
+
+function esc(value) {
+  return String(value || "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
 
 exports.handler = async (event, context, deps = {}) => {
   if (event.httpMethod !== "POST") return json(405, { error: "Method not allowed" });
@@ -47,20 +66,50 @@ exports.handler = async (event, context, deps = {}) => {
   }
 
   if (user.role === "admin") {
-    const createSingleUseTokenFn = deps.createSingleUseToken || createSingleUseToken;
-    const preAuthToken = createSingleUseTokenFn("mfa_pending", user.id, MFA_PENDING_TTL_SECONDS);
-    const enrollmentRequired = !user.mfaEnabled;
-    return json(
-      200,
-      {
-        mfaRequired: true,
-        enrollmentRequired,
-        message: enrollmentRequired
-          ? "Two-factor authentication is required for administrator accounts. Set it up to continue."
-          : "Enter your authenticator app code to continue.",
-      },
-      { "Set-Cookie": mfaPendingCookie(preAuthToken, MFA_PENDING_TTL_SECONDS) }
-    );
+    if (await rateLimitedFn("admin-code-send", user.id, 5, 3600)) {
+      return json(429, { error: "Too many security codes requested. Try again later." });
+    }
+
+    const challengeId = (deps.challengeId || (() => crypto.randomBytes(18).toString("hex")))();
+    const code = (deps.generateCode || generateCode)();
+    const now = deps.now ? deps.now() : Date.now();
+    const hashCodeFn = deps.hashCode || hashCode;
+    const setJSONFn = deps.setJSON || setJSON;
+    await setJSONFn("admin-login", challengeId, {
+      userId: user.id,
+      email: user.email,
+      codeHash: hashCodeFn(challengeId, code),
+      createdAt: now,
+      expiresAt: now + ADMIN_CODE_TTL_SECONDS * 1000,
+      attempts: 0,
+      used: false,
+    });
+
+    const sendEmailFn = deps.sendEmail || sendEmail;
+    const sent = await sendEmailFn({
+      to: user.email,
+      subject: `${code} is your LTS admin sign-in code`,
+      html:
+        `<p>Hi ${esc(user.name || "there")},</p>` +
+        `<p>Use this one-time code to finish signing in to the Little Technical Solutions admin workspace:</p>` +
+        `<p style="font-size:32px;font-weight:750;letter-spacing:7px;margin:24px 0;color:#0b2b54;">${code}</p>` +
+        `<p>The code expires in 10 minutes and can only be used once.</p>` +
+        `<p style="font-size:13px;color:#666;margin-top:28px;">If you did not try to sign in, change your password and contact support. Never share this code.</p>`,
+    });
+
+    if (!sent || sent.sent !== true) {
+      // Fail closed: an admin must never receive a session because email is
+      // unavailable. The unusable challenge expires automatically.
+      return json(503, { error: "We couldn't send your security code. Please try again shortly." });
+    }
+
+    return json(200, {
+      emailCodeRequired: true,
+      challengeId,
+      maskedEmail: maskedEmail(user.email),
+      expiresInSeconds: ADMIN_CODE_TTL_SECONDS,
+      message: `We sent a security code to ${maskedEmail(user.email)}.`,
+    });
   }
 
   const createSessionFn = deps.createSession || createSession;
@@ -72,3 +121,8 @@ exports.handler = async (event, context, deps = {}) => {
     { "Set-Cookie": sessionCookie(token, maxAge) }
   );
 };
+
+module.exports.generateCode = generateCode;
+module.exports.hashCode = hashCode;
+module.exports.maskedEmail = maskedEmail;
+module.exports.ADMIN_CODE_TTL_SECONDS = ADMIN_CODE_TTL_SECONDS;

@@ -93,8 +93,21 @@
 
         <article class="patch-entry">
           <div class="patch-entry-head">
-            <span class="patch-version patch-version--current">v4.8.0</span>
+            <span class="patch-version patch-version--current">v4.9.0</span>
             <span class="patch-tag">Current</span>
+          </div>
+          <ul class="patch-changes">
+            <li><strong>Replaced the separate Care Hub with one normal sign-in path.</strong> Customers and administrators now enter through My Account, and old Care Hub bookmarks safely return to that page.</li>
+            <li><strong>Administrator two-factor verification now uses a one-time email code.</strong> Codes expire after 10 minutes, are stored only as hashes, allow six attempts, and never create an admin session unless email delivery and code verification both succeed.</li>
+            <li><strong>Added a real operations workspace for the business.</strong> It brings customers, sales, active projects, leads, the customer inbox, document delivery, Heroes verification, and service health into one understandable admin suite.</li>
+            <li>Added lead-stage management, customer search, manual payment confirmation safeguards, project-brief readiness, customer replies, private document uploads, and live configuration checks.</li>
+            <li>Fixed the wide-screen sign-in layout that squeezed the login form into the old sidebar column.</li>
+          </ul>
+        </article>
+
+        <article class="patch-entry">
+          <div class="patch-entry-head">
+            <span class="patch-version">v4.8.0</span>
           </div>
           <ul class="patch-changes">
             <li><strong>Rebuilt the customer dashboard around clear next steps.</strong> The new Overview shows the current project action, purchase and document counts, live order status, and direct routes to the project brief, paperwork, messages, and payments.</li>
@@ -631,7 +644,7 @@
     </nav>
   </div>
   <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. <span>All rights reserved.</span></p>
-  <p class="footer-version"><a href="/care-hub/login">Staff Sign In</a></p>
+  <p class="footer-version"><a href="myaccount.html#signin">Staff Sign In</a></p>
 </footer>
 
 <div id="cookie-banner" class="cookie-banner" hidden role="region" aria-label="Cookie notice">

@@ -1,15 +1,5 @@
-// Covers 3 fixes to myaccount.html (previously untested):
-//   1. Signing out used to leave the old tab bar (Dashboard/Documents/
-//      Messages/.../Sign out) visibly rendered above the sign-in form
-//      that then loaded, since the click handler never called
-//      renderTabs() again after clearing state.user (unlike the
-//      update-email/update-password success handlers, which already did).
-//   2. A customer who's enrolled in Care Hub (has a real organization
-//      membership) is now automatically redirected to /care-hub/ instead
-//      of being left on this older, simpler account page -- both right
-//      after signing in and on a plain page load with an existing session.
-//   3. A customer with no Care Hub membership is completely unaffected --
-//      confirms the redirect never fires for the common case.
+// Exercises the shipped unified account page: customer login, emailed admin
+// verification, the admin workspace, sign-out cleanup, and purchase views.
 //
 // Loads the real myaccount.html with its inline script actually executing
 // (JSDOM's runScripts: "dangerously"), rather than reimplementing any of
@@ -84,41 +74,14 @@ test("signing out clears the tab bar instead of leaving it visible above the sig
   assert.equal(tabsEl.innerHTML, "", "no stale tab links should remain in the DOM after signing out");
 });
 
-test("a customer enrolled in Care Hub (has an organization membership) is redirected to /care-hub/ right after signing in", async () => {
-  let signedIn = false;
-  const { window, capturedRequests } = loadMyAccountPage({
-    responses: {
-      account: () => (signedIn
-        ? { body: { user: { id: "u1", name: "Jane", email: "jane@example.com", role: "customer" } } }
-        : { status: 401, body: { error: "Sign in required." } }),
-      "auth-login": () => {
-        signedIn = true;
-        return { body: { user: { id: "u1", name: "Jane", email: "jane@example.com", role: "customer" } } };
-      },
-      "my-memberships": { body: { memberships: [{ organizationId: "org-1", organizationName: "Acme Co", role: "org_owner", status: "active" }] } },
-    },
-  });
+test("the signed-out layout spans the account area instead of occupying the old sidebar column", async () => {
+  const { window } = loadMyAccountPage({ responses: { account: { status: 401, body: { error: "Sign in required." } } } });
   await wait(50);
-
-  window.location.hash = "#signin";
-  await wait(20);
-  window.document.getElementById("si-email").value = "jane@example.com";
-  window.document.getElementById("si-password").value = "correct-password";
-  window.document.getElementById("si-submit").dispatchEvent(new window.Event("click", { bubbles: true, cancelable: true }));
-  await wait(100);
-
-  // jsdom doesn't implement cross-document navigation, so a
-  // window.location.href assignment to a different path never actually
-  // takes -- confirm the redirect branch was taken (and returned early)
-  // by checking it never got as far as the normal post-login flow: the
-  // hash never advances to #dashboard, and the tab bar (only rendered by
-  // that later renderTabs() call) never appears.
-  assert.ok(capturedRequests.some((r) => r.path === "my-memberships"), "expected a my-memberships check after a successful sign-in");
-  assert.equal(window.location.hash, "#signin", "should have returned before ever navigating to #dashboard");
-  assert.equal(window.document.getElementById("accountTabs").hidden, true, "tab bar must never render -- the redirect should fire first");
+  assert.ok(window.document.getElementById("accountPortalShell").classList.contains("is-auth"));
+  assert.ok(window.document.querySelector(".auth-card"));
 });
 
-test("a customer with no Care Hub membership stays on myaccount.html and sees the normal dashboard", async () => {
+test("a customer signs into the normal dashboard without any Care Hub membership handoff", async () => {
   let signedIn = false;
   const { window, capturedRequests } = loadMyAccountPage({
     responses: {
@@ -129,7 +92,6 @@ test("a customer with no Care Hub membership stays on myaccount.html and sees th
         signedIn = true;
         return { body: { user: { id: "u2", name: "Bob", email: "bob@example.com", role: "customer" } } };
       },
-      "my-memberships": { body: { memberships: [] } },
       documents: { body: { documents: [] } },
       messages: { body: { messages: [] } },
       notifications: { body: { unreadCount: 0 } },
@@ -145,9 +107,10 @@ test("a customer with no Care Hub membership stays on myaccount.html and sees th
   window.document.getElementById("si-submit").dispatchEvent(new window.Event("click", { bubbles: true, cancelable: true }));
   await wait(100);
 
-  assert.ok(capturedRequests.some((r) => r.path === "my-memberships"), "expected the membership check to still run");
-  assert.equal(window.location.hash, "#dashboard", "should land on this page's own dashboard as before");
-  assert.equal(window.document.getElementById("accountTabs").hidden, false, "the normal tab bar should render since there's no redirect");
+  assert.ok(!capturedRequests.some((r) => r.path === "my-memberships"), "the retired Care Hub must not participate in sign-in");
+  assert.equal(window.location.hash, "#dashboard");
+  assert.equal(window.document.getElementById("accountTabs").hidden, false);
+  assert.ok(!window.document.getElementById("accountPortalShell").classList.contains("is-auth"));
 });
 
 test("a successful Stripe return renders the paid order instead of crashing the dashboard", async () => {
@@ -208,11 +171,16 @@ test("the Purchases tab shows a customer's receipt, recurring price, and project
   assert.ok(record.querySelector("[data-billing]"), "a recurring plan should offer Stripe billing management");
 });
 
-test("an admin with MFA enabled continues to the authenticator-code screen after a correct password", async () => {
+test("an admin enters the emailed code on the normal sign-in path and reaches the admin workspace", async () => {
+  let signedIn = false;
   const { window, capturedRequests } = loadMyAccountPage({
     responses: {
-      account: { status: 401, body: { error: "Sign in required." } },
-      "auth-login": { body: { mfaRequired: true, enrollmentRequired: false, message: "Enter your authenticator app code to continue." } },
+      account: () => signedIn
+        ? { body: { user: { id: "admin-1", name: "Dylan", email: "admin@example.com", role: "admin" } } }
+        : { status: 401, body: { error: "Sign in required." } },
+      "auth-login": { body: { emailCodeRequired: true, challengeId: "abcdef0123456789abcdef0123456789abcd", maskedEmail: "ad•••@example.com" } },
+      "auth-admin-code": () => { signedIn = true; return { body: { user: { id: "admin-1", role: "admin" } } }; },
+      "admin-dashboard": { body: { metrics: {}, customers: [], orders: [], leads: [], recentMessages: [] } },
     },
   });
   await wait(50);
@@ -222,46 +190,15 @@ test("an admin with MFA enabled continues to the authenticator-code screen after
   window.document.getElementById("si-email").value = "admin@example.com";
   window.document.getElementById("si-password").value = "correct-password";
   window.document.getElementById("si-submit").dispatchEvent(new window.Event("click", { bubbles: true, cancelable: true }));
-  await wait(50);
-
-  const status = window.document.getElementById("si-status");
+  await wait(60);
   assert.ok(capturedRequests.some((r) => r.path === "auth-login"), "expected the password to be submitted");
-  assert.match(status.textContent, /Password accepted/);
-  assert.equal(status.querySelector("a").getAttribute("href"), "/care-hub/mfa/verify");
-  assert.notEqual(window.location.hash, "#dashboard", "an MFA response must not enter the account dashboard without a second factor");
-});
-
-test("an admin who has not enrolled in MFA continues to secure setup after a correct password", async () => {
-  const { window } = loadMyAccountPage({
-    responses: {
-      account: { status: 401, body: { error: "Sign in required." } },
-      "auth-login": { body: { mfaRequired: true, enrollmentRequired: true, message: "Set up two-factor authentication to continue." } },
-    },
-  });
-  await wait(50);
-
-  window.location.hash = "#signin";
-  await wait(20);
-  window.document.getElementById("si-email").value = "admin@example.com";
-  window.document.getElementById("si-password").value = "correct-password";
-  window.document.getElementById("si-submit").dispatchEvent(new window.Event("click", { bubbles: true, cancelable: true }));
-  await wait(50);
-
-  const link = window.document.querySelector("#si-status a");
-  assert.ok(link, "expected a visible fallback link to MFA enrollment");
-  assert.equal(link.getAttribute("href"), "/care-hub/mfa/enroll");
-  assert.notEqual(window.location.hash, "#dashboard", "an admin must finish MFA enrollment before receiving a session");
-});
-
-test("an existing session with a Care Hub membership is redirected on a plain page load too, not just at sign-in", async () => {
-  const { window, capturedRequests } = loadMyAccountPage({
-    responses: {
-      account: { body: { user: { id: "u3", name: "Priya", email: "priya@example.com", role: "customer" } } },
-      "my-memberships": { body: { memberships: [{ organizationId: "org-2", organizationName: "Beta LLC", role: "org_member", status: "active" }] } },
-    },
-  });
-  await wait(80);
-
-  assert.ok(capturedRequests.some((r) => r.path === "my-memberships"), "expected the membership check to run on initial load too");
-  assert.equal(window.document.getElementById("accountTabs").hidden, true, "tab bar/route() must never run -- the redirect should fire first");
+  assert.equal(window.location.hash, "#admin-code");
+  assert.match(window.document.querySelector(".auth-card").textContent, /ad•••@example\.com/);
+  window.document.getElementById("admin-code-input").value = "123456";
+  window.document.getElementById("admin-code-submit").dispatchEvent(new window.Event("click", { bubbles: true, cancelable: true }));
+  await wait(120);
+  assert.ok(capturedRequests.some((r) => r.path === "auth-admin-code"));
+  assert.equal(window.location.hash, "#admin");
+  assert.match(window.document.getElementById("accountTabs").textContent, /Customers/);
+  assert.match(window.document.getElementById("accountTabs").textContent, /System health/);
 });

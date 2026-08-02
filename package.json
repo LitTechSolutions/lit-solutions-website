@@ -1,7 +1,7 @@
 {
   "name": "lts-website",
   "private": true,
-  "description": "Little Technical Solutions LLC website + admin content module (Netlify Functions + Blobs) + Business Care Hub (src/).",
+  "description": "Little Technical Solutions LLC website, customer account, and admin operations workspace (Netlify Functions + Blobs).",
   "scripts": {
     "test": "node --test",
     "new-release-post": "node scripts/new-release-post.js",

@@ -86,14 +86,15 @@ test("an admin gets admin destinations, a customer never does", async () => {
   const admin = mount({ user: { name: "Dylan Little", email: "d@x.test", role: "admin" } });
   await settle();
   const adminLinks = [...admin.doc.querySelectorAll(".account-drop-links a")].map((a) => a.getAttribute("href"));
-  assert.ok(adminLinks.some((h) => h.includes("#stripe")), "admin should reach Stripe setup");
+  assert.ok(adminLinks.some((h) => h.includes("#admin-system")), "admin should reach system health and Stripe setup");
+  assert.ok(adminLinks.some((h) => h.includes("#admin-projects")));
   assert.ok(adminLinks.some((h) => h.includes("#heroqueue")));
 
   const cust = mount({ user: { name: "Jane Doe", email: "j@x.test", role: "customer" } });
   await settle();
   const custLinks = [...cust.doc.querySelectorAll(".account-drop-links a")].map((a) => a.getAttribute("href"));
   assert.ok(custLinks.some((h) => h.includes("#purchases")), "customers should reach their order history from every page");
-  assert.ok(!custLinks.some((h) => h.includes("#stripe")), "a customer must not be offered admin destinations");
+  assert.ok(!custLinks.some((h) => h.includes("#admin-system")), "a customer must not be offered admin destinations");
   assert.ok(!custLinks.some((h) => h.includes("#heroqueue")));
 });
 

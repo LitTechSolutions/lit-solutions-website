@@ -8,10 +8,7 @@
 //      a single-use token and emails a reset link to the account
 //      (best-effort -- see _lib/email.js's no-op behavior when
 //      RESEND_API_KEY/EMAIL_FROM aren't configured). The link destination
-//      is derived from the account's own stored role rather than a
-//      caller-supplied value: customers get myaccount.html's #reset view,
-//      admin/staff get the Care Hub's /reset-password route -- both land
-//      on the same { action: "confirm", token, newPassword } shape below.
+//      always lands on the unified My Account reset view.
 // POST { action: "confirm", token, newPassword }
 //   -> validates the token, sets the new password, revokes existing
 //      sessions (rotation on privilege change).
@@ -38,9 +35,7 @@ exports.handler = async (event) => {
     if (user) {
       const resetToken = createSingleUseToken("password-reset", user.id);
       await setJSON("tokens", resetToken, { type: "password-reset", userId: user.id, used: false });
-      const link = user.role === "admin" || user.role === "staff"
-        ? `${siteOrigin(event)}/care-hub/reset-password?token=${resetToken}`
-        : `${siteOrigin(event)}/myaccount.html#reset?token=${resetToken}`;
+      const link = `${siteOrigin(event)}/myaccount.html#reset?token=${resetToken}`;
       await sendEmail({
         to: user.email,
         subject: "Reset your password — Little Technical Solutions LLC",

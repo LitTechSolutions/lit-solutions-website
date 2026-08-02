@@ -2,8 +2,8 @@
 # (repo root) technically covers them -- gitignore syntax, applied after
 # the build command runs. This is distinct from .gitignore: node_modules
 # is never uploaded because it's git-ignored (Netlify builds from a git
-# clone), but care-hub-app/ itself IS committed to git (it's the Care
-# Hub's real source) and must still be kept out of the served static
-# site -- only its build OUTPUT (../care-hub, built by netlify.toml's
-# build.command) should ever be publicly reachable.
+# clone). Care Hub was retired in v4.9, so both its old source and its last
+# built output stay out of the deploy upload. netlify.toml redirects every
+# old Care Hub URL to the unified My Account sign-in.
 care-hub-app/
+care-hub/

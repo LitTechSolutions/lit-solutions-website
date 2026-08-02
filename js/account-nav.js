@@ -47,6 +47,15 @@
   }
   window.LTS_ACCOUNT_CLEAR = clearCache;
 
+  async function refreshAccountHeader() {
+    clearCache();
+    var user = await loadUser();
+    if (user) renderSignedIn(user); else renderSignedOut();
+    host.removeAttribute('data-loading');
+    return user;
+  }
+  window.LTS_ACCOUNT_REFRESH = refreshAccountHeader;
+
   async function loadUser() {
     var cached = readCache();
     if (cached) return cached.user;
@@ -95,8 +104,9 @@
   function renderSignedIn(user) {
     var isAdmin = user.role === 'admin';
     var links = isAdmin
-      ? [['#dashboard', 'Overview'], ['#purchases', 'Purchases'], ['#heroqueue', 'Verify Heroes'], ['#stripe', 'Stripe setup'],
-         ['#documents', 'Documents'], ['#messages', 'Messages'], ['#profile', 'Account settings']]
+      ? [['#admin', 'Admin overview'], ['#admin-customers', 'Customers'], ['#admin-sales', 'Sales & orders'],
+         ['#admin-projects', 'Projects'], ['#admin-leads', 'Leads'], ['#admin-inbox', 'Inbox'], ['#admin-documents', 'Documents'],
+         ['#heroqueue', 'Verify Heroes'], ['#admin-system', 'System health'], ['#profile', 'Account settings']]
       : [['#dashboard', 'Overview'], ['#purchases', 'Purchases'], ['#pay', 'Make a payment'], ['#brief', 'Project brief'],
          ['#documents', 'Documents'], ['#messages', 'Messages'], ['#hero', 'Heroes Discount'],
          ['#profile', 'Account settings']];

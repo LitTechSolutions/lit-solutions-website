@@ -1,13 +1,5 @@
 [build]
   publish = "."
-  # Only the Care Hub (care-hub-app/) has a real build step -- the 33
-  # public pages stay static/build-less exactly as before, untouched by
-  # this command. Output goes to ../care-hub (repo root, see
-  # care-hub-app/vite.config.ts), which becomes part of the published
-  # directory tree alongside every existing static page. care-hub-app/
-  # itself (source + node_modules) is excluded from the deploy upload by
-  # .netlifyignore, so it's never served.
-  command = "npm --prefix care-hub-app install && npm --prefix care-hub-app run build"
 
 [functions]
   directory = "netlify/functions"
@@ -74,15 +66,19 @@
   to = "/myaccount.html#pay"
   status = 301
 
-# Care Hub is a client-side-routed single-page app (React Router) --
-# any path under /care-hub/ that isn't a real built file (JS/CSS/images)
-# must fall through to its index.html so the router can take over.
-# Must come before the catch-all /* -> 404 rule below, since redirects
-# are evaluated in order and the first match wins.
+# Care Hub was retired in v4.9. Old bookmarks now enter the single account
+# path. Force these redirects so stale built files cannot be served.
+[[redirects]]
+  from = "/care-hub"
+  to = "/myaccount.html#signin"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "/care-hub/*"
-  to = "/care-hub/index.html"
-  status = 200
+  to = "/myaccount.html#signin"
+  status = 301
+  force = true
 
 # This catch-all has no method restriction, so it also matches POST
 # requests -- including a POST to "/" itself, which is how native Netlify

@@ -86,7 +86,7 @@
 
   <section>
     <div class="wrap account-portal-wrap">
-      <div class="account-portal-shell">
+      <div class="account-portal-shell is-auth" id="accountPortalShell">
         <nav class="account-tabs" id="accountTabs" aria-label="Customer account" hidden></nav>
         <div id="accountView"></div>
       </div>
@@ -146,7 +146,7 @@
     </nav>
   </div>
   <p class="footer-legal">&copy; <span id="year"></span> Little Technical Solutions LLC. All rights reserved.</p>
-  <p class="footer-version"><a href="/care-hub/login">Staff Sign In</a></p>
+  <p class="footer-version"><a href="myaccount.html#signin">Staff Sign In</a></p>
 </footer>
 
 <div id="cookie-banner" class="cookie-banner" hidden role="region" aria-label="Cookie notice">
@@ -166,7 +166,7 @@
 <script>
 (function () {
   var API = "/.netlify/functions/";
-  var state = { user: null };
+  var state = { user: null, adminData: null, adminChallenge: null };
 
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -181,6 +181,14 @@
   // brief" followed by "Sign in to view your invoices" in particular.
   var LEDES = {
     "Sign in": "",
+    "Security check": "Enter the one-time code we sent to your email.",
+    "Admin workspace": "Your customers, sales, leads, conversations, and service health in one place.",
+    "Customers": "A complete customer list with purchase value, documents, and recent activity.",
+    "Sales & orders": "Track payments, subscriptions, and orders that need attention.",
+    "Leads": "Move every website inquiry and service request toward a clear next step.",
+    "Customer inbox": "See every customer conversation and reply without leaving the workspace.",
+    "Customer documents": "Upload invoices, paperwork, and files directly to a customer's account.",
+    "System health": "See whether checkout, Stripe, email, and document storage are ready.",
     "Create an account": "",
     "Enter your code": "",
     "Verify your email": "One quick step to confirm it's really your email address.",
@@ -219,12 +227,18 @@
 
   function renderTabs() {
     var tabsEl = document.getElementById("accountTabs");
+    var shell = document.getElementById("accountPortalShell");
     if (state.user) {
+      shell.classList.remove("is-auth");
       tabsEl.hidden = false;
-      tabsEl.innerHTML = '<a href="#dashboard">Overview</a><a href="#purchases">Purchases</a><a href="#documents">Documents</a><a href="#messages">Messages</a>' +
-        '<a href="#notifications">Notifications<span class="tab-badge" id="notifTabBadge" hidden>0</span></a><a href="#pay">Make a payment</a>' +
-        (state.user.role === "admin" ? '<a href="#heroqueue">Verify Heroes</a><a href="#stripe">Stripe setup</a>' : '<a href="#hero">Heroes Discount</a>') +
-        '<a href="#profile">Account Settings</a><a href="#" id="account-signout">Sign out</a>';
+      tabsEl.setAttribute("aria-label", state.user.role === "admin" ? "Admin workspace" : "Customer account");
+      tabsEl.innerHTML = state.user.role === "admin"
+        ? '<a href="#admin">Overview</a><a href="#admin-customers">Customers</a><a href="#admin-sales">Sales &amp; orders</a>' +
+          '<a href="#admin-projects">Projects</a><a href="#admin-leads">Leads</a><a href="#admin-inbox">Inbox</a><a href="#admin-documents">Documents</a>' +
+          '<a href="#heroqueue">Heroes</a><a href="#admin-system">System health</a><a href="#profile">Account settings</a><a href="#" id="account-signout">Sign out</a>'
+        : '<a href="#dashboard">Overview</a><a href="#purchases">Purchases</a><a href="#documents">Documents</a><a href="#messages">Messages</a>' +
+          '<a href="#notifications">Notifications<span class="tab-badge" id="notifTabBadge" hidden>0</span></a><a href="#pay">Make a payment</a>' +
+          '<a href="#hero">Heroes Discount</a><a href="#profile">Account Settings</a><a href="#" id="account-signout">Sign out</a>';
       document.getElementById("account-signout").addEventListener("click", async function (e) {
         e.preventDefault();
         await api("auth-logout", { method: "POST" });
@@ -232,8 +246,9 @@
         renderTabs();
         window.location.hash = "#signin";
       });
-      refreshNotifBadge();
+      if (state.user.role !== "admin") refreshNotifBadge();
     } else {
+      shell.classList.add("is-auth");
       tabsEl.hidden = true;
       tabsEl.innerHTML = "";
     }
@@ -284,27 +299,15 @@
     return true;
   }
 
+  function requireAdmin() {
+    if (!requireAuth()) return false;
+    if (state.user.role !== "admin") { window.location.hash = "#dashboard"; return false; }
+    return true;
+  }
+
   async function loadSession() {
     var r = await api("account");
     state.user = r.ok ? r.body.user : null;
-  }
-
-  // Care Hub (/care-hub/) is the newer, more capable customer portal --
-  // this page is the older/simpler one. A customer with a real
-  // organization membership is "enrolled" in Care Hub, so send them
-  // straight there instead of leaving them on this more basic account
-  // view. Checked after every fresh sign-in AND on a plain page load with
-  // an existing session, so it applies any time a customer lands here,
-  // not just once at login. Returns true if it navigated away (callers
-  // should stop rendering this page in that case).
-  async function maybeRedirectToCareHub() {
-    if (!state.user || state.user.role !== "customer") return false;
-    var r = await api("my-memberships");
-    if (r.ok && r.body && r.body.memberships && r.body.memberships.length > 0) {
-      window.location.href = "/care-hub/";
-      return true;
-    }
-    return false;
   }
 
   var TYPE_LABEL = { invoice: "Invoice", receipt: "Receipt", paperwork: "Paperwork", other: "Other" };
@@ -442,28 +445,25 @@
 
       busy(btn, true, "Signing in\u2026");
       var r = await api("auth-login", { method: "POST", body: JSON.stringify({ email: email, password: password }) });
-      if (r.ok && r.body && r.body.mfaRequired) {
-        // A correct admin password creates a short-lived MFA cookie rather
-        // than a complete session. Continue that same secure flow in Care
-        // Hub, where enrollment and authenticator-code entry are supported.
-        // Keep a visible link as a fallback if the browser blocks navigation.
-        var mfaDestination = r.body.enrollmentRequired ? "/care-hub/mfa/enroll" : "/care-hub/mfa/verify";
+      if (r.ok && r.body && r.body.emailCodeRequired) {
+        state.adminChallenge = {
+          id: r.body.challengeId,
+          maskedEmail: r.body.maskedEmail || "your email address",
+        };
+        try { sessionStorage.setItem("lts-admin-challenge", JSON.stringify(state.adminChallenge)); } catch (e) {}
         busy(btn, false);
-        status.innerHTML = 'Password accepted. Continuing to the secure admin sign-in&hellip; ' +
-          '<a href="' + mfaDestination + '" style="color:var(--accent-orange-text); text-decoration:underline;">Continue now</a>';
-        status.className = "form-note";
-        window.location.href = mfaDestination;
+        window.location.hash = "#admin-code";
         return;
       }
       if (r.ok) {
         status.textContent = "Signed in.";
         status.className = "form-note";
-        if (window.LTS_ACCOUNT_CLEAR) window.LTS_ACCOUNT_CLEAR();
+        if (window.LTS_ACCOUNT_REFRESH) await window.LTS_ACCOUNT_REFRESH();
+        else if (window.LTS_ACCOUNT_CLEAR) window.LTS_ACCOUNT_CLEAR();
         await loadSession();
-        if (await maybeRedirectToCareHub()) return;
         renderTabs();
         if (followNext()) return;
-        window.location.hash = "#dashboard";
+        window.location.hash = state.user && state.user.role === "admin" ? "#admin" : "#dashboard";
         return;
       }
       busy(btn, false);
@@ -486,6 +486,53 @@
     v.querySelector("#si-submit").addEventListener("click", submit);
     wireForm(v, submit);
     setTimeout(function () { v.querySelector("#si-email").focus(); }, 50);
+    return v;
+  };
+
+  views["admin-code"] = function () {
+    setPageTitle("Security check");
+    if (!state.adminChallenge) {
+      try { state.adminChallenge = JSON.parse(sessionStorage.getItem("lts-admin-challenge") || "null"); } catch (e) {}
+    }
+    if (!state.adminChallenge || !state.adminChallenge.id) {
+      window.location.hash = "#signin";
+      return el("<div></div>");
+    }
+    var v = el('<div class="card auth-card">' +
+      '<p class="eyebrow">Administrator verification</p><h2>Check your email</h2>' +
+      '<p class="auth-lede">We sent a six-digit code to <strong>' + esc(state.adminChallenge.maskedEmail) + '</strong>. It expires in 10 minutes.</p>' +
+      field({ id: "admin-code-input", label: "Security code", type: "text", autocomplete: "one-time-code", inputmode: "numeric", maxlength: 6, cls: "code-input", placeholder: "000000" }) +
+      '<button class="btn btn-primary btn-block" id="admin-code-submit">Verify and open admin</button>' +
+      '<p class="form-note" id="admin-code-status" role="status" aria-live="polite"></p>' +
+      '<p class="auth-alt"><a href="#signin">Use a different account or send a new code</a></p></div>');
+
+    async function submit() {
+      var input = v.querySelector("#admin-code-input");
+      var status = v.querySelector("#admin-code-status");
+      var btn = v.querySelector("#admin-code-submit");
+      var code = input.value.replace(/\D/g, "");
+      clearFieldErrors(v);
+      if (!/^\d{6}$/.test(code)) { setFieldError(v, "admin-code-input", "Enter all six digits."); input.focus(); return; }
+      busy(btn, true, "Verifying\u2026");
+      var r = await api("auth-admin-code", { method: "POST", body: JSON.stringify({ challengeId: state.adminChallenge.id, code: code }) });
+      if (!r.ok) {
+        busy(btn, false);
+        status.textContent = (r.body && r.body.error) || "That code could not be verified.";
+        status.className = "form-note form-note--error";
+        input.select();
+        return;
+      }
+      try { sessionStorage.removeItem("lts-admin-challenge"); } catch (e) {}
+      state.adminChallenge = null;
+      if (window.LTS_ACCOUNT_REFRESH) await window.LTS_ACCOUNT_REFRESH();
+      else if (window.LTS_ACCOUNT_CLEAR) window.LTS_ACCOUNT_CLEAR();
+      await loadSession();
+      renderTabs();
+      window.location.hash = "#admin";
+    }
+    v.querySelector("#admin-code-submit").addEventListener("click", submit);
+    wireForm(v, submit);
+    setTimeout(function () { v.querySelector("#admin-code-input").focus(); }, 50);
     return v;
   };
 
@@ -652,7 +699,8 @@
       if (r.ok && r.body && r.body.user) {
         state.user = r.body.user;
         state.pendingEmail = null;
-        if (window.LTS_ACCOUNT_CLEAR) window.LTS_ACCOUNT_CLEAR();
+        if (window.LTS_ACCOUNT_REFRESH) await window.LTS_ACCOUNT_REFRESH();
+        else if (window.LTS_ACCOUNT_CLEAR) window.LTS_ACCOUNT_CLEAR();
         renderTabs();
         if (followNext()) return;
         window.location.hash = "#dashboard";
@@ -1277,6 +1325,216 @@
     return v;
   };
 
+  /* ================================================================
+   * Admin operations workspace. Every control below calls an existing
+   * authenticated endpoint or the admin-only aggregate endpoint; there are
+   * no sample charts, invented customers, or dead-end buttons.
+   * ================================================================ */
+  async function loadAdminData(force) {
+    if (state.adminData && !force) return { ok: true, body: state.adminData };
+    var r = await api("admin-dashboard");
+    if (r.ok) state.adminData = r.body;
+    return r;
+  }
+
+  function adminLoading() {
+    return '<div class="admin-loading">' + skeleton(4) + skeleton(3) + '</div>';
+  }
+
+  function adminError(result) {
+    return '<div class="card"><p class="form-note form-note--error">' +
+      esc((result.body && result.body.error) || "We couldn\'t load this workspace. Try again.") + '</p></div>';
+  }
+
+  function orderStatusLabel(status) {
+    return ({ paid:"Paid", brief_submitted:"Brief received", awaiting_payment:"Payment needed", payment_processing:"Processing", checkout_failed:"Checkout failed", cancelled:"Cancelled", checkout_expired:"Expired" })[status] || String(status || "Unknown").replace(/_/g, " ");
+  }
+
+  views.admin = function () {
+    if (!requireAdmin()) return el("<div></div>");
+    setPageTitle("Admin workspace");
+    var v = el('<div class="admin-workspace" id="adminHome">' + adminLoading() + '</div>');
+    loadAdminData(true).then(function (r) {
+      if (!r.ok) { v.innerHTML = adminError(r); return; }
+      var d = r.body;
+      var m = d.metrics || {};
+      var recentOrders = (d.orders || []).slice(0, 5);
+      var recentLeads = (d.leads || []).slice(0, 5);
+      v.innerHTML = '<div class="admin-welcome card"><div><p class="eyebrow">Today at LTS</p><h2>Good to see you, ' + esc((state.user.name || "Dylan").split(" ")[0]) + '.</h2>' +
+        '<p>Start with the work that needs a response, then check sales and service health.</p></div><a class="btn btn-primary" href="#admin-leads">Work new leads</a></div>' +
+        '<div class="admin-metrics">' +
+          '<a href="#admin-leads"><strong>' + esc(m.newLeads || 0) + '</strong><span>New leads</span><small>Need a next step</small></a>' +
+          '<a href="#admin-inbox"><strong>' + esc(m.unreadMessages || 0) + '</strong><span>Unread messages</span><small>Customer replies</small></a>' +
+          '<a href="#admin-sales"><strong>' + esc(m.openOrders || 0) + '</strong><span>Open orders</span><small>Payment or review</small></a>' +
+          '<a href="#heroqueue"><strong>' + esc(m.pendingHeroes || 0) + '</strong><span>Hero requests</span><small>Awaiting verification</small></a>' +
+          '<a href="#admin-customers"><strong>' + esc(m.customers || 0) + '</strong><span>Customers</span><small>Verified accounts</small></a>' +
+          '<a href="#admin-sales"><strong>' + money(m.grossCents || 0) + '</strong><span>Collected</span><small>Net of recorded refunds</small></a>' +
+        '</div>' +
+        '<div class="admin-two-column"><section><div class="dashboard-section-head"><div><p class="eyebrow">Sales</p><h2>Recent orders</h2></div><a href="#admin-sales">View all</a></div>' +
+          '<div class="admin-list">' + (recentOrders.length ? recentOrders.map(function (o) { return '<a href="#admin-sales"><span><strong>' + esc(o.summary) + '</strong><small>' + esc(o.customerEmail || "Customer") + ' &middot; ' + esc(orderStatusLabel(o.status)) + '</small></span><b>' + money(o.amountPaidCents || o.chargedTodayCents) + '</b></a>'; }).join("") : emptyState("No orders yet", "Paid and pending orders will appear here.")) + '</div></section>' +
+          '<section><div class="dashboard-section-head"><div><p class="eyebrow">Pipeline</p><h2>Newest leads</h2></div><a href="#admin-leads">View all</a></div>' +
+          '<div class="admin-list">' + (recentLeads.length ? recentLeads.map(function (lead) { return '<a href="#admin-leads"><span><strong>' + esc(lead.businessName || lead.name || lead.email || "New inquiry") + '</strong><small>' + esc(lead.service || "Service request") + ' &middot; ' + esc(lead.status) + '</small></span><b>&rsaquo;</b></a>'; }).join("") : emptyState("No leads yet", "Website quotes and service requests will appear here.")) + '</div></section></div>' +
+        '<div class="dashboard-section-head"><div><p class="eyebrow">Quick actions</p><h2>Run the business</h2></div></div>' +
+        '<div class="dashboard-actions admin-actions"><a href="#admin-inbox"><span>M</span><strong>Reply to customers</strong><small>Open the shared inbox</small></a><a href="#admin-documents"><span>D</span><strong>Send a document</strong><small>Add it to a customer account</small></a><a href="#heroqueue"><span>H</span><strong>Verify a discount</strong><small>Review Heroes requests</small></a><a href="#admin-system"><span>S</span><strong>Check systems</strong><small>Checkout, Stripe, email, storage</small></a></div>';
+    });
+    return v;
+  };
+
+  views["admin-customers"] = function () {
+    if (!requireAdmin()) return el("<div></div>");
+    setPageTitle("Customers");
+    var v = el('<div class="admin-workspace"><div class="admin-toolbar"><label class="admin-search"><span>Search customers</span><input id="customerSearch" type="search" placeholder="Name or email"></label></div><div id="customerList">' + adminLoading() + '</div></div>');
+    loadAdminData().then(function (r) {
+      if (!r.ok) { v.querySelector("#customerList").innerHTML = adminError(r); return; }
+      var customers = r.body.customers || [];
+      function draw() {
+        var q = v.querySelector("#customerSearch").value.trim().toLowerCase();
+        var filtered = customers.filter(function (c) { return !q || (c.name + " " + c.email).toLowerCase().includes(q); });
+        v.querySelector("#customerList").innerHTML = filtered.length ? '<div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Customer</th><th>Orders</th><th>Lifetime value</th><th>Documents</th><th>Last activity</th><th></th></tr></thead><tbody>' + filtered.map(function (c) {
+          return '<tr><td><strong>' + esc(c.name || "Unnamed") + '</strong><small>' + esc(c.email) + (c.verified ? '' : ' &middot; Unverified') + '</small></td><td>' + esc(c.orderCount) + '</td><td>' + money(c.lifetimeValueCents) + '</td><td>' + esc(c.documentCount) + '</td><td>' + (c.lastActivityAt ? esc(new Date(c.lastActivityAt).toLocaleDateString()) : '&mdash;') + '</td><td><button class="btn btn-ghost btn-small" data-customer-email="' + esc(c.email) + '">Open conversation</button></td></tr>';
+        }).join("") + '</tbody></table></div>' : emptyState("No matching customers", "Try a different name or email address.");
+        v.querySelectorAll("[data-customer-email]").forEach(function (btn) { btn.addEventListener("click", function () { state.adminCustomerEmail = btn.getAttribute("data-customer-email"); window.location.hash = "#admin-inbox"; }); });
+      }
+      draw();
+      v.querySelector("#customerSearch").addEventListener("input", draw);
+    });
+    return v;
+  };
+
+  views["admin-sales"] = function () {
+    if (!requireAdmin()) return el("<div></div>");
+    setPageTitle("Sales & orders");
+    var v = el('<div class="admin-workspace"><div class="admin-toolbar"><label class="admin-search"><span>Search orders</span><input id="orderSearch" type="search" placeholder="Customer, order, or product"></label><button class="btn btn-ghost btn-small" id="refreshOrders">Refresh</button></div><div id="adminOrderList">' + adminLoading() + '</div></div>');
+    function load(force) {
+      loadAdminData(force).then(function (r) {
+        if (!r.ok) { v.querySelector("#adminOrderList").innerHTML = adminError(r); return; }
+        var orders = r.body.orders || [];
+        function draw() {
+          var q = v.querySelector("#orderSearch").value.toLowerCase().trim();
+          var shown = orders.filter(function (o) { return !q || (o.id + " " + o.customerEmail + " " + o.summary + " " + o.status).toLowerCase().includes(q); });
+          v.querySelector("#adminOrderList").innerHTML = shown.length ? shown.map(function (o) {
+            var needsManual = ["awaiting_payment", "checkout_failed", "payment_processing"].includes(o.status);
+            return '<article class="purchase-record"><div class="purchase-record-head"><div><span class="purchase-status ' + (o.status === "paid" || o.status === "brief_submitted" ? "is-paid" : needsManual ? "is-due" : "") + '">' + esc(orderStatusLabel(o.status)) + '</span><h3>' + esc(o.summary) + '</h3><p>' + esc(o.customerEmail || "No customer email") + ' &middot; ' + esc(o.id) + '</p></div><strong class="purchase-record-total">' + money(o.amountPaidCents || o.chargedTodayCents) + '</strong></div><div class="purchase-record-meta">' + (o.monthlyCents ? '<span><small>Recurring</small>' + money(o.monthlyCents) + '/month</span>' : '') + (o.hasSubscription ? '<span><small>Subscription</small>' + esc(o.subscriptionStatus || "Active") + '</span>' : '') + '<span><small>Created</small>' + esc(new Date(o.createdAt).toLocaleDateString()) + '</span></div>' + (needsManual ? '<div class="purchase-record-actions"><button class="btn btn-primary btn-small" data-confirm-order="' + esc(o.id) + '">Confirm payment manually</button><button class="btn btn-ghost btn-small" data-cancel-order="' + esc(o.id) + '">Cancel order</button></div>' : '') + '</article>';
+          }).join("") : emptyState("No matching orders", "Try a customer email, product name, or order number.");
+          v.querySelectorAll("[data-confirm-order]").forEach(function (btn) { btn.addEventListener("click", async function () { if (!window.confirm("Only confirm this if payment was received outside Stripe or the webhook definitely failed. Continue?")) return; btn.disabled = true; await api("orders", { method:"PATCH", body:JSON.stringify({ id:btn.getAttribute("data-confirm-order"), action:"confirm-payment" }) }); state.adminData = null; load(true); }); });
+          v.querySelectorAll("[data-cancel-order]").forEach(function (btn) { btn.addEventListener("click", async function () { if (!window.confirm("Cancel this unpaid order?")) return; btn.disabled = true; await api("orders", { method:"PATCH", body:JSON.stringify({ id:btn.getAttribute("data-cancel-order"), action:"cancel" }) }); state.adminData = null; load(true); }); });
+        }
+        draw();
+        v.querySelector("#orderSearch").oninput = draw;
+      });
+    }
+    v.querySelector("#refreshOrders").addEventListener("click", function () { state.adminData = null; load(true); });
+    load(false);
+    return v;
+  };
+
+  views["admin-projects"] = function () {
+    if (!requireAdmin()) return el("<div></div>");
+    setPageTitle("Projects", "Paid website work, project-brief readiness, and the next customer touchpoint.");
+    var v = el('<div class="admin-workspace"><div id="adminProjects">' + adminLoading() + '</div></div>');
+    loadAdminData().then(function (r) {
+      var host = v.querySelector("#adminProjects");
+      if (!r.ok) { host.innerHTML = adminError(r); return; }
+      var projects = (r.body.orders || []).filter(function (o) { return (o.status === "paid" || o.status === "brief_submitted") && o.needsBrief; });
+      host.innerHTML = projects.length ? '<div class="lead-board">' + projects.map(function (o) {
+        var ready = !!o.briefSubmittedAt || o.status === "brief_submitted";
+        return '<article class="lead-card"><div class="lead-card-head"><div><span class="purchase-status ' + (ready ? "is-paid" : "is-due") + '">' + (ready ? "Brief received" : "Waiting on brief") + '</span><h3>' + esc(o.summary) + '</h3><p>' + esc(o.customerEmail || "Customer") + '</p></div><strong>' + money(o.amountPaidCents || o.chargedTodayCents) + '</strong></div><p class="lead-service">Order ' + esc(o.id) + '</p><p class="lead-summary">' + (ready ? "The customer supplied the project details. This build is ready for planning and kickoff." : "Payment is confirmed, but the customer still needs to complete the project brief before production starts.") + '</p><div class="lead-card-actions"><button class="btn btn-primary btn-small" data-project-email="' + esc(o.customerEmail) + '">Message customer</button>' + (o.receiptDocumentId ? '<a class="btn btn-ghost btn-small" href="#admin-documents">Documents</a>' : '') + '</div></article>';
+      }).join("") + '</div>' : emptyState("No active website projects", "Paid website orders will appear here automatically.");
+      host.querySelectorAll("[data-project-email]").forEach(function (btn) { btn.addEventListener("click", function () { state.adminCustomerEmail = btn.getAttribute("data-project-email"); window.location.hash = "#admin-inbox"; }); });
+    });
+    return v;
+  };
+
+  views["admin-leads"] = function () {
+    if (!requireAdmin()) return el("<div></div>");
+    setPageTitle("Leads");
+    var v = el('<div class="admin-workspace"><div class="admin-toolbar"><label class="admin-search"><span>Search leads</span><input id="leadSearch" type="search" placeholder="Business, person, email, or service"></label><select id="leadFilter" aria-label="Filter by status"><option value="">All statuses</option><option>new</option><option>contacted</option><option>qualified</option><option>won</option><option>lost</option><option>archived</option></select></div><div id="leadList">' + adminLoading() + '</div></div>');
+    loadAdminData().then(function (r) {
+      if (!r.ok) { v.querySelector("#leadList").innerHTML = adminError(r); return; }
+      var leads = r.body.leads || [];
+      function draw() {
+        var q = v.querySelector("#leadSearch").value.toLowerCase().trim();
+        var status = v.querySelector("#leadFilter").value;
+        var shown = leads.filter(function (lead) { return (!status || lead.status === status) && (!q || (lead.businessName + " " + lead.name + " " + lead.email + " " + lead.service).toLowerCase().includes(q)); });
+        v.querySelector("#leadList").innerHTML = shown.length ? '<div class="lead-board">' + shown.map(function (lead) {
+          return '<article class="lead-card"><div class="lead-card-head"><div><span class="purchase-status">' + esc(lead.status) + '</span><h3>' + esc(lead.businessName || lead.name || lead.email || "New inquiry") + '</h3><p>' + esc(lead.name || "") + (lead.name && lead.email ? ' &middot; ' : '') + esc(lead.email || "") + '</p></div><strong>' + (lead.estimateTotal ? '$' + esc(Number(lead.estimateTotal).toLocaleString()) : '') + '</strong></div><p class="lead-service">' + esc(lead.service || "Service request") + '</p>' + (lead.summary ? '<p class="lead-summary">' + esc(lead.summary) + '</p>' : '') + '<div class="lead-card-actions"><a class="btn btn-ghost btn-small" href="mailto:' + encodeURIComponent(lead.email || "") + '">Email</a>' + (lead.phone ? '<a class="btn btn-ghost btn-small" href="tel:' + esc(lead.phone) + '">Call</a>' : '') + '<label>Stage<select data-lead-status data-id="' + esc(lead.id) + '" data-source="' + esc(lead.source) + '"><option>new</option><option>contacted</option><option>qualified</option><option>won</option><option>lost</option><option>archived</option></select></label></div></article>';
+        }).join("") + '</div>' : emptyState("No matching leads", "Change the search or status filter.");
+        v.querySelectorAll("[data-lead-status]").forEach(function (select) {
+          select.value = shown.find(function (l) { return l.id === select.getAttribute("data-id") && l.source === select.getAttribute("data-source"); }).status;
+          select.addEventListener("change", async function () { select.disabled = true; var result = await api("admin-dashboard", { method:"PATCH", body:JSON.stringify({ action:"update-lead", source:select.getAttribute("data-source"), id:select.getAttribute("data-id"), status:select.value }) }); select.disabled = false; if (result.ok) { var found = leads.find(function (l) { return l.id === result.body.lead.id && l.source === result.body.lead.source; }); if (found) found.status = result.body.lead.status; state.adminData = null; } else { alert((result.body && result.body.error) || "Could not update the lead."); } });
+        });
+      }
+      draw();
+      v.querySelector("#leadSearch").addEventListener("input", draw);
+      v.querySelector("#leadFilter").addEventListener("change", draw);
+    });
+    return v;
+  };
+
+  views["admin-inbox"] = function () {
+    if (!requireAdmin()) return el("<div></div>");
+    setPageTitle("Customer inbox");
+    var v = el('<div class="admin-inbox"><aside id="adminInboxList"><p>Loading conversations&hellip;</p></aside><section class="card" id="adminThread">' + emptyState("Choose a conversation", "Select a customer on the left to read and reply.") + '</section></div>');
+    function openThread(email) {
+      state.adminCustomerEmail = email;
+      var host = v.querySelector("#adminThread");
+      host.innerHTML = '<p>Loading conversation&hellip;</p>';
+      api("messages?customerEmail=" + encodeURIComponent(email)).then(function (r) {
+        if (!r.ok) { host.innerHTML = adminError(r); return; }
+        var msgs = r.body.messages || [];
+        host.innerHTML = '<div class="admin-thread-head"><div><p class="eyebrow">Customer</p><h2>' + esc((r.body.customer && r.body.customer.name) || email) + '</h2><p>' + esc(email) + '</p></div><a class="btn btn-ghost btn-small" href="mailto:' + encodeURIComponent(email) + '">Email directly</a></div><div class="msg-thread admin-msg-thread">' + (msgs.length ? msgs.map(function (m) { return '<div class="msg-bubble ' + (m.from === "staff" ? "msg-bubble--mine" : "msg-bubble--theirs") + '"><p class="msg-bubble-meta">' + esc(m.from === "staff" ? "You" : m.fromName || "Customer") + ' &middot; ' + esc(new Date(m.createdAt).toLocaleString()) + '</p><p class="msg-bubble-body">' + esc(m.body) + '</p></div>'; }).join("") : '<p>No messages yet.</p>') + '</div><div class="admin-reply"><label for="adminReply">Reply</label><textarea id="adminReply" rows="4" placeholder="Write a clear, helpful reply"></textarea><button class="btn btn-primary" id="adminReplySend">Send reply</button><p class="form-note" id="adminReplyStatus"></p></div>';
+        host.querySelector("#adminReplySend").addEventListener("click", async function () { var body = host.querySelector("#adminReply").value.trim(); var status = host.querySelector("#adminReplyStatus"); if (!body) { status.textContent = "Write a reply first."; return; } var btn = this; btn.disabled = true; var sent = await api("messages", { method:"POST", body:JSON.stringify({ customerEmail:email, body:body }) }); btn.disabled = false; if (sent.ok) openThread(email); else { status.textContent = (sent.body && sent.body.error) || "Could not send."; status.className = "form-note form-note--error"; } });
+      });
+    }
+    api("messages?inbox=1").then(function (r) {
+      var list = v.querySelector("#adminInboxList");
+      if (!r.ok) { list.innerHTML = '<p>Could not load conversations.</p>'; return; }
+      var rows = r.body.customers || [];
+      list.innerHTML = rows.length ? '<h2>Conversations</h2>' + rows.map(function (row) { return '<button type="button" data-inbox-email="' + esc(row.customerEmail) + '"><span><strong>' + esc(row.customerEmail) + '</strong><small>' + esc(row.lastMessageSnippet) + '</small></span>' + (row.unreadCount ? '<b>' + esc(row.unreadCount) + '</b>' : '') + '</button>'; }).join("") : emptyState("Inbox is clear", "Customer conversations will appear here.");
+      list.querySelectorAll("[data-inbox-email]").forEach(function (btn) { btn.addEventListener("click", function () { openThread(btn.getAttribute("data-inbox-email")); }); });
+      if (state.adminCustomerEmail) openThread(state.adminCustomerEmail);
+      else if (rows.length) openThread(rows[0].customerEmail);
+    });
+    return v;
+  };
+
+  views["admin-documents"] = function () {
+    if (!requireAdmin()) return el("<div></div>");
+    setPageTitle("Customer documents");
+    var v = el('<div class="admin-workspace"><div class="card admin-document-form"><h2>Send a document to a customer</h2><p>The customer receives an email and the file appears in their Documents tab.</p><div class="admin-form-grid"><label>Customer email<input id="adminDocEmail" type="email" placeholder="customer@example.com"></label><label>Document title<input id="adminDocTitle" type="text" placeholder="August website receipt"></label><label>Type<select id="adminDocType"><option value="paperwork">Paperwork</option><option value="invoice">Invoice</option><option value="receipt">Receipt</option><option value="other">Other</option></select></label><label>Status<select id="adminDocStatus"><option value="n/a">Not applicable</option><option value="paid">Paid</option><option value="unpaid">Unpaid</option></select></label><label>Amount<input id="adminDocAmount" type="text" placeholder="$0.00"></label><label>Date<input id="adminDocDate" type="date"></label></div><label class="admin-file-field">Attach PDF or image<input id="adminDocFile" type="file" accept="application/pdf,image/png,image/jpeg,image/webp"></label><label class="admin-file-field">Notes<textarea id="adminDocNotes" rows="3" placeholder="Optional note for the customer"></textarea></label><button class="btn btn-primary" id="adminDocSend">Upload and notify customer</button><p class="form-note" id="adminDocStatusText" role="status"></p></div></div>');
+    v.querySelector("#adminDocDate").value = new Date().toISOString().slice(0, 10);
+    v.querySelector("#adminDocSend").addEventListener("click", async function () {
+      var btn = this, status = v.querySelector("#adminDocStatusText"), file = v.querySelector("#adminDocFile").files[0];
+      var email = v.querySelector("#adminDocEmail").value.trim(), title = v.querySelector("#adminDocTitle").value.trim();
+      if (!looksLikeEmail(email) || !title) { status.textContent = "Enter a valid customer email and a document title."; status.className = "form-note form-note--error"; return; }
+      if (file && file.size > 3 * 1024 * 1024) { status.textContent = "The attachment must be under 3 MB."; status.className = "form-note form-note--error"; return; }
+      btn.disabled = true; status.textContent = "Uploading\u2026"; status.className = "form-note";
+      var fileDataUri = "";
+      if (file) fileDataUri = await new Promise(function (resolve, reject) { var reader = new FileReader(); reader.onload = function () { resolve(reader.result); }; reader.onerror = reject; reader.readAsDataURL(file); }).catch(function () { return ""; });
+      var r = await api("documents", { method:"POST", body:JSON.stringify({ action:"upload", customerEmail:email, title:title, type:v.querySelector("#adminDocType").value, status:v.querySelector("#adminDocStatus").value, amount:v.querySelector("#adminDocAmount").value, date:v.querySelector("#adminDocDate").value, notes:v.querySelector("#adminDocNotes").value, fileName:file ? file.name : "", fileDataUri:fileDataUri }) });
+      btn.disabled = false; status.textContent = (r.body && (r.body.message || r.body.error)) || "Something went wrong."; status.className = "form-note" + (r.ok ? "" : " form-note--error"); if (r.ok) { v.querySelector("#adminDocTitle").value = ""; v.querySelector("#adminDocAmount").value = ""; v.querySelector("#adminDocNotes").value = ""; v.querySelector("#adminDocFile").value = ""; state.adminData = null; }
+    });
+    return v;
+  };
+
+  views["admin-system"] = function () {
+    if (!requireAdmin()) return el("<div></div>");
+    setPageTitle("System health");
+    var v = el('<div class="admin-workspace" id="adminSystem">' + adminLoading() + '</div>');
+    api("admin-dashboard?view=system").then(function (r) {
+      if (!r.ok) { v.innerHTML = adminError(r); return; }
+      var s = r.body.system;
+      function check(label, okay, detail, action) { return '<article class="system-check ' + (okay ? "is-ready" : "needs-attention") + '"><span aria-hidden="true">' + (okay ? '&#10003;' : '!') + '</span><div><h3>' + esc(label) + '</h3><p>' + esc(detail) + '</p></div>' + (action || '') + '</article>'; }
+      v.innerHTML = '<div class="admin-welcome card"><div><p class="eyebrow">Live readiness</p><h2>Business systems</h2><p>These checks report configuration only. Secret values never leave the server.</p></div><button class="btn btn-ghost" id="systemRefresh">Run checks again</button></div><div class="system-checks">' +
+        check("Customer checkout", s.checkout.enabled, s.checkout.enabled ? "Open to customers." : s.checkout.reason, '<a class="btn btn-ghost btn-small" href="#stripe">Stripe details</a>') +
+        check("Stripe payments", s.stripe.ready && s.stripe.webhookSecretConfigured, (s.stripe.mode || "unknown").toUpperCase() + " mode; " + (s.stripe.webhookSecretConfigured ? "webhook secret present." : "webhook secret missing."), '<a class="btn btn-ghost btn-small" href="#stripe">Open setup</a>') +
+        check("Email delivery", s.emailConfigured, s.emailConfigured ? "Resend and the sender address are configured." : "Email delivery is not fully configured.", '') +
+        check("Private document storage", s.fileStorageConfigured, s.fileStorageConfigured ? "Cloudinary private storage is configured." : "Cloudinary document storage is not fully configured.", '') + '</div>';
+      v.querySelector("#systemRefresh").addEventListener("click", function () { window.location.hash = "#admin"; setTimeout(function () { window.location.hash = "#admin-system"; }, 0); });
+    });
+    return v;
+  };
+
   /* Settling a quote or invoice.
    *
    * This used to be a top-level "Pay a Bill" page with an open-amount Square
@@ -1765,9 +2023,12 @@
 
   window.addEventListener("hashchange", route);
   loadSession()
-    .then(async function () {
-      if (await maybeRedirectToCareHub()) return;
+    .then(function () {
       renderTabs();
+      if (state.user && (!window.location.hash || window.location.hash === "#signin")) {
+        window.location.hash = state.user.role === "admin" ? "#admin" : "#dashboard";
+        return;
+      }
       route();
     })
     .catch(function () { renderTabs(); route(); });
