@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Website Subscription Plans &mdash; Little Technical Solutions LLC</title>
-<meta name="description" content="Compare Standard, Premium and Executive website subscriptions. Clear due-today pricing, hosting, maintenance, security updates and direct support included.">
+<meta name="description" content="Use the three-question plan finder, compare Standard, Premium and Executive website subscriptions, and understand pricing, updates, ownership and DIY trade-offs.">
 <link rel="canonical" href="https://lit-solutions.tech/website-plans.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Little Technical Solutions LLC">
 <meta property="og:title" content="Website Subscription Plans &mdash; Little Technical Solutions LLC">
-<meta property="og:description" content="Compare Standard, Premium and Executive website subscriptions. Clear due-today pricing, hosting, maintenance, security updates and direct support included.">
+<meta property="og:description" content="Use the three-question plan finder, compare Standard, Premium and Executive website subscriptions, and understand pricing, updates, ownership and DIY trade-offs.">
 <meta property="og:url" content="https://lit-solutions.tech/website-plans.html">
 <meta property="og:image" content="https://lit-solutions.tech/assets/logo-full.png">
 <meta name="twitter:card" content="summary">
@@ -85,7 +85,41 @@
       <p class="plan-hero-tagline">Three clear plans. Custom design, hosting, maintenance, security updates and direct support are included in every one.</p>
       <div class="plan-hero-actions">
         <a href="#plans" class="btn btn-primary">Compare the plans</a>
-        <a href="intake.html" class="btn btn-ghost">Help me choose</a>
+        <a href="#planFinder" class="btn btn-ghost">Help me choose</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="plan-finder-section" aria-labelledby="planFinderTitle">
+    <div class="wrap plan-narrow">
+      <div class="plan-finder" id="planFinder">
+        <p class="eyebrow">Three-question plan finder</p>
+        <h2 id="planFinderTitle">Get a starting recommendation.</h2>
+        <p class="plan-lede">Choose the closest answer to each question. This gives you a useful starting point without collecting your contact information.</p>
+        <form id="planFinderForm">
+          <div class="plan-finder-grid">
+            <fieldset class="plan-question">
+              <legend><span>1</span> What should the site do?</legend>
+              <label class="plan-choice"><input type="radio" name="goal" value="presence" required> <span><strong>Build trust and get calls</strong><small>A clear business presence with essential pages.</small></span></label>
+              <label class="plan-choice"><input type="radio" name="goal" value="leads"> <span><strong>Generate leads or bookings</strong><small>Service pages, forms, proof, and ongoing content.</small></span></label>
+              <label class="plan-choice"><input type="radio" name="goal" value="advanced"> <span><strong>Run accounts or custom tools</strong><small>Sign-ins, dashboards, uploads, or advanced workflows.</small></span></label>
+            </fieldset>
+            <fieldset class="plan-question">
+              <legend><span>2</span> How much content?</legend>
+              <label class="plan-choice"><input type="radio" name="content" value="small" required> <span><strong>Up to 5 pages</strong><small>Home, About, Services, Contact, plus one.</small></span></label>
+              <label class="plan-choice"><input type="radio" name="content" value="growing"> <span><strong>6–10 pages</strong><small>Individual services, FAQ, reviews, blog, or gallery.</small></span></label>
+              <label class="plan-choice"><input type="radio" name="content" value="advanced"> <span><strong>Portals or managed content</strong><small>Private areas, profiles, or a media library.</small></span></label>
+            </fieldset>
+            <fieldset class="plan-question">
+              <legend><span>3</span> How should updates work?</legend>
+              <label class="plan-choice"><input type="radio" name="updates" value="light" required> <span><strong>One small request monthly</strong><small>Send a price, paragraph, or photo change to us.</small></span></label>
+              <label class="plan-choice"><input type="radio" name="updates" value="regular"> <span><strong>Several requests monthly</strong><small>More frequent updates or recurring content.</small></span></label>
+              <label class="plan-choice"><input type="radio" name="updates" value="self"> <span><strong>I need to edit it myself</strong><small>Use administrator tools instead of waiting on us.</small></span></label>
+            </fieldset>
+          </div>
+          <button type="submit" class="btn btn-primary">Show my recommendation</button>
+        </form>
+        <div class="plan-result" id="planFinderResult" role="status" aria-live="polite" hidden></div>
       </div>
     </div>
   </section>
@@ -98,7 +132,7 @@
         <p class="section-lede">The amount due today includes the setup deposit and your first month. Each plan has a 12-month minimum, then continues month to month.</p>
       </header>
       <div class="subscription-plan-grid website-plan-grid">
-        <article class="subscription-plan">
+        <article class="subscription-plan" id="plan-standard">
           <p class="plan-card-outcome">Get your business online</p>
           <h3>Standard</h3>
           <p class="website-plan-due"><strong>$228</strong> due today</p>
@@ -114,7 +148,7 @@
             <a href="plan-standard.html" class="btn btn-ghost">See full details</a>
           </div>
         </article>
-        <article class="subscription-plan subscription-plan--featured">
+        <article class="subscription-plan subscription-plan--featured" id="plan-premium">
           <span class="package-badge">Most popular</span>
           <p class="plan-card-outcome">Generate leads and bookings</p>
           <h3>Premium</h3>
@@ -131,7 +165,7 @@
             <a href="plan-premium.html" class="btn btn-ghost">See full details</a>
           </div>
         </article>
-        <article class="subscription-plan">
+        <article class="subscription-plan" id="plan-executive">
           <p class="plan-card-outcome">Add accounts and advanced tools</p>
           <h3>Executive</h3>
           <p class="website-plan-due"><strong>$598</strong> due today</p>
@@ -151,15 +185,54 @@
     </div>
   </section>
 
-  <section class="alt-bg">
-    <div class="wrap plan-narrow">
-      <h2>How ownership works</h2>
-      <ul class="plan-ownership-list plan-ownership-list--plain">
-        <li><strong>You always keep</strong> your domain, content, logo, photographs and business data.</li>
-        <li><strong>We own and host the build</strong> while your subscription is active.</li>
-        <li><strong>You can buy it outright later</strong> and your plan payments are credited toward the buyout.</li>
-      </ul>
-      <p class="plan-lede">Prefer to own the website from day one? <a href="pricing.html#website-packages">Compare one-time packages from $699.</a></p>
+  <section class="alt-bg" aria-labelledby="comparisonTitle">
+    <div class="wrap">
+      <header class="section-head">
+        <p class="eyebrow">An honest comparison</p>
+        <h2 id="comparisonTitle">DIY builder or done-for-you?</h2>
+        <p class="section-lede">A DIY platform such as Squarespace can be a sensible fit if you enjoy building and editing the site yourself. Little Technical Solutions is for owners who would rather hand the work to one direct point of contact.</p>
+      </header>
+      <div class="comparison-table-wrap">
+        <table class="comparison-table">
+          <thead><tr><th scope="col">What matters</th><th scope="col">DIY website builder</th><th scope="col">LTS done-for-you</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Design</th><td>You select and customize a template.</td><td>We design around your business, audience, and brand.</td></tr>
+            <tr><th scope="row">Setup and content</th><td>You assemble pages, copy, images, forms, and settings.</td><td>We organize the content, build the pages, test, and launch.</td></tr>
+            <tr><th scope="row">Ongoing edits</th><td>You make them inside the platform.</td><td>Send requests to us, or choose Executive for admin editing tools.</td></tr>
+            <tr><th scope="row">Maintenance and security</th><td>The platform is maintained; your content and configuration remain your responsibility.</td><td>Hosting, maintenance, security updates, and support are included.</td></tr>
+            <tr><th scope="row">Support</th><td>Platform help center or support channel.</td><td>A direct LTS point of contact by phone, text, account message, or email.</td></tr>
+            <tr><th scope="row">Best fit</th><td>You want hands-on control and are comfortable spending time building.</td><td>You want the site handled so you can stay focused on the business.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="controlTitle">
+    <div class="wrap">
+      <header class="section-head">
+        <p class="eyebrow">No mystery about control</p>
+        <h2 id="controlTitle">What you keep and how changes happen.</h2>
+      </header>
+      <div class="control-grid">
+        <article class="control-card">
+          <h3>Your business assets stay yours</h3>
+          <p>On every plan, you keep your domain, content, logo, photographs, and business data. Customer domains are registered in the customer's name.</p>
+        </article>
+        <article class="control-card">
+          <h3>Send changes the way you prefer</h3>
+          <p>Use your LTS account, call, text, or email. Standard includes one small content change per month, Premium includes three, and Executive includes unlimited reasonable changes plus admin editing tools.</p>
+        </article>
+        <article class="control-card">
+          <h3>The ownership trade-off is clear</h3>
+          <p>LTS owns and hosts a subscription build while the plan is active. You can buy it outright later, with subscription payments credited toward the buyout. If the plan ends without a buyout, the site comes offline only after written notice.</p>
+        </article>
+        <article class="control-card">
+          <h3>Own it from day one if you prefer</h3>
+          <p>Choose a one-time package and the finished website files, source, and design become yours after final payment.</p>
+          <p><a href="pricing.html#website-packages">Compare one-time packages from $699 &rarr;</a></p>
+        </article>
+      </div>
     </div>
   </section>
 
@@ -243,6 +316,7 @@
 <script src="js/cart.js"></script>
 <script src="js/account-nav.js"></script>
 <script src="js/google-ads.js"></script>
+<script src="js/plan-recommender.js"></script>
 <script src="js/main.js"></script>
 <script src="js/site-version.js"></script>
 </body>
