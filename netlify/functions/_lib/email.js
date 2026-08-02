@@ -41,7 +41,16 @@ async function sendEmail({ to, subject, html, attachments }) {
       console.error(`[email send failed] status=${res.status} ${detail}`);
       return { sent: false, reason: `provider error ${res.status}` };
     }
-    return { sent: true };
+    // Log the accepted id. Silence used to be ambiguous -- it could mean
+    // "sent fine" or "this code path never ran" -- and that ambiguity cost
+    // real time chasing a signup problem. A 202 from Resend means ACCEPTED,
+    // not delivered: if the sending domain isn't verified, Resend accepts
+    // everything and only actually delivers to the account owner's own
+    // address. So this id is what you paste into resend.com/emails to see
+    // whether it was delivered, bounced, or silently dropped.
+    const accepted = await res.json().catch(() => ({}));
+    console.log(`[email accepted by Resend] id=${accepted && accepted.id} to=${to} subject="${subject}"`);
+    return { sent: true, id: (accepted && accepted.id) || null };
   } catch (e) {
     console.error("[email send failed]", e.message);
     return { sent: false, reason: e.message };
