@@ -45,6 +45,7 @@ const webhook = require("../netlify/functions/stripe-webhook.js");
 const heroStatus = require("../netlify/functions/hero-status.js");
 const billing = require("../netlify/functions/billing-portal.js");
 const stripeSetup = require("../netlify/functions/stripe-setup.js");
+const checkoutStatusEndpoint = require("../netlify/functions/checkout-status.js");
 const { priceCart, toStripeLineItems, bnplAvailable } = require("../netlify/functions/_lib/pricing.js");
 const { getProduct, listProducts } = require("../netlify/functions/_lib/product_catalog.js");
 const { formEncode } = require("../netlify/functions/_lib/stripe_api.js");
@@ -1337,6 +1338,26 @@ test("admin-only canary mode opens checkout only for an administrator", async ()
   const admin = await checkout.handler(req("POST", { items: [{ key: "svc-seo", quantity: 1 }] }), {},
     deps(ADMIN, { checkoutEnabled: undefined, checkoutAllowed: gate }));
   assert.equal(admin.statusCode, 200);
+});
+
+test("checkout status unlocks the private canary UI only for an administrator", async () => {
+  const env = { CHECKOUT_ENABLED: "admin" };
+  const status = async (session) => checkoutStatusEndpoint.handler(req("GET"), {}, {
+    env,
+    readCookie: () => session ? "t" : null,
+    getSession: async () => session,
+  });
+
+  assert.equal(JSON.parse((await status(null)).body).enabled, false, "signed-out visitors stay blocked");
+  assert.equal(JSON.parse((await status(CUST)).body).enabled, false, "customers stay blocked");
+  assert.equal(JSON.parse((await status(ADMIN)).body).enabled, true, "the administrator can start the canary");
+
+  const publicStatus = await checkoutStatusEndpoint.handler(req("GET"), {}, {
+    env: { CHECKOUT_ENABLED: "true" },
+    readCookie: () => null,
+    getSession: async () => null,
+  });
+  assert.equal(JSON.parse(publicStatus.body).enabled, true, "public mode remains visible before sign-in");
 });
 
 test("a paused checkout refuses before writing an order or calling Stripe", async () => {

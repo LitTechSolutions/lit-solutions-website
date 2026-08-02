@@ -210,6 +210,14 @@ test("the page ends in a purchase, not a contact form", async () => {
   }
   assert.ok(html.includes('id="wdAddToCart"'), "the page must offer Add to cart");
   assert.ok(html.includes("half now, half at launch"), "the 50/50 split must be stated before checkout");
+
+  for (const plan of ["standard", "premium", "executive"]) {
+    const add = html.indexOf(`data-add-to-cart="plan-${plan}"`);
+    const learn = html.indexOf(`href="plan-${plan}.html"`);
+    assert.ok(add !== -1, `${plan} must have an Add to cart action`);
+    assert.ok(learn !== -1, `${plan} must keep its Learn more link`);
+    assert.ok(add < learn, `${plan} Add to cart must appear above Learn more`);
+  }
 });
 
 test("Add to cart prices the build server-side and never trusts the page's total", async () => {
