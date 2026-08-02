@@ -69,6 +69,7 @@ test("signed in shows the first name, initials, and a working menu", async () =>
 
   const trigger = doc.querySelector("#accountTrigger");
   const drop = doc.querySelector("#accountDrop");
+  assert.equal(trigger.getAttribute("aria-label"), "Open account menu");
   assert.equal(drop.hidden, true, "menu starts closed");
   assert.equal(trigger.getAttribute("aria-expanded"), "false");
 

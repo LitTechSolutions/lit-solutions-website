@@ -1892,6 +1892,8 @@ textarea{ resize: vertical; }
   border-radius: var(--radius) var(--radius) 0 0;
   box-shadow: 0 -6px 24px rgba(20,33,61,0.18);
   padding:.85rem 1.1rem;
+  -webkit-user-select:none; user-select:none;
+  -webkit-touch-callout:none;
 }
 .wd-price-bar[hidden]{ display:none; }
 .wd-price-bar-info{ display:flex; flex-direction:column; min-width:0; text-align:left; }
@@ -1921,6 +1923,8 @@ textarea{ resize: vertical; }
 .wd-quote-recap{
   background: var(--navy-deep); color: var(--on-dark); border-radius: var(--radius);
   padding:1.4rem 1.5rem; text-align:center; margin-bottom:1.5rem;
+  -webkit-user-select:none; user-select:none;
+  -webkit-touch-callout:none;
 }
 .wd-quote-recap-label{ display:block; font-family: var(--font-display); font-size:.76rem; letter-spacing:.05em; text-transform:uppercase; color: var(--accent-teal); margin-bottom:.4rem; }
 .wd-quote-recap-amount{ display:block; font-family: var(--font-display); font-size:2.6rem; font-weight:700; line-height:1.1; }
@@ -2838,6 +2842,22 @@ body.has-price-bar .cookie-banner{
   .account-signin span{ display:none; }
   .account-signin{ width:34px; padding:0; justify-content:center; }
   .account-drop{ right:-.5rem; }
+}
+
+@media (max-width:560px){
+  /* The account control is the first item in the wrapped mobile action row.
+     Right-aligning its menu to the trigger therefore pushes most of the menu
+     off the left edge. Anchor it to the trigger's left edge instead and keep
+     it within the available viewport height. */
+  .account-drop{
+    left:-.25rem;
+    right:auto;
+    width:min(230px, calc(100vw - 2rem));
+    min-width:0;
+    max-height:calc(100dvh - 7.5rem);
+    overflow-y:auto;
+    overscroll-behavior:contain;
+  }
 }
 
 /* =========================================================

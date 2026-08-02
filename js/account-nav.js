@@ -103,7 +103,7 @@
 
     host.innerHTML =
       '<div class="account-menu">' +
-        '<button type="button" class="account-trigger" id="accountTrigger" aria-expanded="false" aria-haspopup="true" aria-controls="accountDrop">' +
+        '<button type="button" class="account-trigger" id="accountTrigger" aria-label="Open account menu" aria-expanded="false" aria-haspopup="true" aria-controls="accountDrop">' +
           '<span class="account-avatar" aria-hidden="true">' + esc(initials(user.name)) + '</span>' +
           '<span class="account-name">' + esc(firstName(user.name)) + '</span>' +
           '<svg class="account-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>' +
