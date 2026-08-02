@@ -39,6 +39,7 @@ function withPrices(plan) {
     name: p.name,
     deposit: money(p.depositCents),
     monthly: money(p.monthlyCents),
+    dueToday: money(p.depositCents + p.monthlyCents),
   });
 }
 
@@ -58,6 +59,7 @@ const PLAN_COPY = [
     name: 'Standard',
     equivalent: 'Starter',
     equivalentPrice: '$699',
+    outcome: 'Get your business online',
     tagline: 'A clean, professional site that gets you found and gets you called.',
     who: 'You need to exist online properly &mdash; somewhere to send people, that loads fast, works on a phone, and shows up when someone searches your name. You don\'t need a blog or a booking system, and you\'d rather not pretend otherwise.',
     pages: ['Home', 'About', 'Services', 'Contact', '+ one more of your choosing'],
@@ -78,6 +80,7 @@ const PLAN_COPY = [
     featured: true,
     equivalent: 'Business',
     equivalentPrice: '$1,299',
+    outcome: 'Generate leads and bookings',
     tagline: 'A site that actually runs leads, bookings and content through it.',
     who: 'Your website has a job beyond existing. You want people booking time with you, finding answers before they call, and seeing proof that other people have hired you. You have things to say and somewhere to say them.',
     pages: ['Home', 'About', 'Individual service pages', 'Blog / news', 'FAQ', 'Testimonials', 'Gallery / portfolio', 'Booking', 'Contact', '+ one more'],
@@ -101,6 +104,7 @@ const PLAN_COPY = [
     name: 'Executive',
     equivalent: 'Business plus accounts, admin tooling and hardening',
     equivalentPrice: 'about $2,500',
+    outcome: 'Add accounts and advanced tools',
     tagline: 'For sites that need to <em>do</em> things &mdash; accounts, logins, content you manage yourself.',
     who: 'Your customers need to sign in. Maybe they check an order, download something that\'s theirs, or see history you keep for them. And you want to change your own content without emailing anyone.',
     pages: ['Everything in Premium', 'Sign-in &amp; registration', 'Customer dashboard', 'Profile &amp; preferences', 'Admin content editor', 'Media manager'],
@@ -219,20 +223,22 @@ function body(p) {
 
   <section class="plan-hero${p.featured ? ' plan-hero--featured' : ''}">
     <div class="wrap">
-      <p class="eyebrow"><a href="pricing.html#website-subscription">Website Subscription</a> &rarr; ${p.name}</p>
-      <h1>${p.name}</h1>
+      <p class="eyebrow"><a href="website-plans.html">Website plans</a> &rarr; ${p.name}</p>
+      <h1>${p.name}: ${p.outcome}</h1>
       <p class="plan-hero-tagline">${p.tagline}</p>
       <div class="plan-hero-price">
-        <span><strong>${p.deposit}</strong> to start</span>
-        <span class="plan-hero-plus">then</span>
-        <span><strong>${p.monthly}</strong>/month</span>
+        <span><strong>${p.dueToday}</strong> due today</span>
       </div>
-      <p class="plan-hero-note">12-month minimum, then month to month. Equivalent one-off build: ${p.equivalent} (${p.equivalentPrice}) &mdash; <a href="pricing.html">compare buying outright</a>.</p>
-      <a href="#subscribe" class="btn btn-primary">Jump to how it starts &amp; sign up</a>
+      <p class="plan-hero-breakdown">${p.deposit} setup deposit + your first ${p.monthly} month. Then ${p.monthly}/month.</p>
+      <p class="plan-hero-note">12-month minimum, then month to month. Your hosting, maintenance, security updates and support are included.</p>
+      <div class="plan-hero-actions">
+        <button type="button" class="btn btn-primary" data-add-to-cart="plan-${p.slug}" data-then="cart.html"><span data-cart-label>Start ${p.name}</span></button>
+        <a href="#included" class="btn btn-ghost">See what's included</a>
+      </div>
     </div>
   </section>
 
-  <section>
+  <section id="included">
     <div class="wrap plan-narrow">
       <h2>Who this is for</h2>
       <p class="plan-lede">${p.who}</p>
@@ -270,55 +276,41 @@ ${li(COMMON_INCLUDED)}
 
   <section class="alt-bg" id="subscribe">
     <div class="wrap plan-narrow">
-      <h2>How this actually starts</h2>
-      <p class="plan-lede">No surprises about what happens after you pay. This is the whole process.</p>
+      <h2>From checkout to launch</h2>
+      <p class="plan-lede">Three clear steps. You approve the scope and the finished website before it goes live.</p>
 
       <ol class="plan-steps">
         <li>
-          <h3>1. Create your account</h3>
-          <p>Email and password, then a 6-digit code we email you straight away. It takes about a minute, and it's what gives you a dashboard, an inbox and a place for your paperwork.</p>
+          <h3>1. Choose ${p.name} and pay ${p.dueToday} today</h3>
+          <p>Create your account and check out securely through Stripe. Today's total is the ${p.deposit} setup deposit plus your first ${p.monthly} month.</p>
         </li>
         <li>
-          <h3>2. Pay the ${p.deposit} deposit from your dashboard</h3>
-          <p>One checkout, through Stripe &mdash; card, Apple Pay or Google Pay. The deposit isn't an extra fee, it's what reserves your build slot, and your ${p.monthly}/month plan starts in the same transaction.</p>
+          <h3>2. Complete a short brief and talk with us</h3>
+          <p>Your project brief opens in your dashboard immediately. We call within one business day, confirm the pages and features, and send a written scope for your approval.</p>
         </li>
         <li>
-          <h3>3. Fill in your project brief</h3>
-          <p>It lands in your dashboard inbox the moment your payment is in &mdash; what your business does, who it's for, what you already have. A copy is saved to your Documents tab, and it's what we build from.</p>
-        </li>
-        <li>
-          <h3>4. We call you within one business day</h3>
-          <p>A real conversation about your business, what the site needs to do, and what you already have &mdash; logo, photographs, existing copy. If you have none of that, we'll tell you what we need and how to get it.</p>
-        </li>
-        <li>
-          <h3>5. You get a written scope of work</h3>
-          <p>Exactly what's being built, the pages, the features, and the timeline. <strong>It also states in writing that this is a subscription plan and what that means for ownership.</strong> Nothing is built until you've approved it.</p>
-        </li>
-        <li>
-          <h3>6. We build it, and you review it</h3>
-          <p>Typically ${p.slug === 'standard' ? '1&ndash;2 weeks' : p.slug === 'premium' ? '2&ndash;4 weeks' : '3&ndash;6 weeks'} once we have your content. You see it on a private link before anyone else does, and you get revisions before launch.</p>
-        </li>
-        <li>
-          <h3>7. It goes live, and we keep it running</h3>
-          <p>We handle the domain, hosting, SSL, and everything on the list above from that point on. You call us when you want something changed.</p>
+          <h3>3. Review, approve and launch</h3>
+          <p>We typically build ${p.slug === 'standard' ? 'in 1&ndash;2 weeks' : p.slug === 'premium' ? 'in 2&ndash;4 weeks' : 'in 3&ndash;6 weeks'} once we have your content. You review a private version first; after approval, we launch it and keep it running.</p>
         </li>
       </ol>
 
       <div class="plan-catch">
-        <h3>Before you pay, the trade-off in plain English</h3>
-        <p><strong>On a subscription plan we own the website build and license it to you for as long as you're subscribed.</strong> That is the trade for paying ${p.deposit} instead of ${p.equivalentPrice} upfront. It is not rent-to-own and it does not become yours over time.</p>
-        <p><strong>If the subscription ends, we stop hosting the site and it goes offline</strong> &mdash; always after written notice, never as a surprise.</p>
-        <p><strong>Yours regardless, in every circumstance, free:</strong> your domain, your content (text, photographs, logo, anything you gave us or added), and your business data including every enquiry the site collected. If we registered your domain it is in <em>your</em> name from day one, and you get at least 30 days' written notice before we stop covering the renewal.</p>
-        <p><strong>You can buy it outright whenever you like</strong> &mdash; we quote what the build would have cost as a one-off, less everything you've already paid us. Nothing you've paid is wasted.</p>
-        <p class="plan-catch-fine">Full terms: <a href="terms.html">Terms &amp; Conditions</a>, section 9. If you'd rather own it from day one, our <a href="pricing.html">one-off packages</a> start at $699 and over a few years cost less.</p>
+        <h3>How ownership works</h3>
+        <ul class="plan-ownership-list">
+          <li><strong>You always keep</strong> your domain, content, photographs, logo and business data.</li>
+          <li><strong>We own and host the website build</strong> while the subscription is active. It is not rent-to-own.</li>
+          <li><strong>The minimum term is 12 months.</strong> After that, the plan continues month to month. If it ends, the hosted site goes offline after written notice.</li>
+          <li><strong>You can buy the website outright at any time.</strong> What you have already paid toward the plan is credited toward the buyout.</li>
+        </ul>
+        <p class="plan-catch-fine">Read the complete agreement in <a href="terms.html">Terms &amp; Conditions</a>, section 9, or <a href="pricing.html">compare one-time ownership</a>.</p>
       </div>
 
       <div class="plan-checkout">
         <h3>Get started with ${p.name}</h3>
-        <p>Add it to your cart, then sign in at checkout &mdash; or create an account if you're new. That's what gives you a dashboard to pay from, a place for your project brief, and somewhere your paperwork lives afterwards.</p>
+        <p><strong>${p.dueToday} is due today:</strong> the ${p.deposit} setup deposit and your first ${p.monthly} month. Future billing is ${p.monthly}/month.</p>
         <div class="plan-checkout-actions">
-          <button type="button" class="btn btn-primary" data-add-to-cart="plan-${p.slug}" data-then="cart.html"><span data-cart-label>Add ${p.name} to cart</span></button>
-          <a href="cart.html" class="btn btn-ghost">View cart</a>
+          <button type="button" class="btn btn-primary" data-add-to-cart="plan-${p.slug}" data-then="cart.html"><span data-cart-label>Start ${p.name}</span></button>
+          <a href="website-plans.html" class="btn btn-ghost">Compare all plans</a>
         </div>
 
         <p class="plan-checkout-alt">Rather talk to a person first? <a href="intake.html">Send us a note</a> or call <a href="tel:+18043090968">804-309-0968</a> &mdash; we answer seven days a week, 7:00am&ndash;7:00pm ET. Eligible for the <a href="heroes-pricing.html">American Heroes Discount</a>? Contact us before paying so we can confirm your rate.</p>
@@ -332,15 +324,82 @@ ${li(COMMON_INCLUDED)}
       <div class="plan-others">
 ${others.map(o => `        <a href="plan-${o.slug}.html" class="plan-other-card">
           <span class="plan-other-name">${o.name}</span>
-          <span class="plan-other-price">${o.deposit} to start, then ${o.monthly}/month</span>
+          <span class="plan-other-price">${o.dueToday} today, then ${o.monthly}/month</span>
           <span class="plan-other-tagline">${o.tagline}</span>
           <span class="plan-other-cta">Learn more &rarr;</span>
         </a>`).join('\n')}
       </div>
     </div>
   </section>
+`;
+}
 
-</main>
+function comparisonBody() {
+  return `
+<main id="main">
+  <section class="plan-hero plan-hero--featured">
+    <div class="wrap">
+      <p class="eyebrow">Website subscriptions</p>
+      <h1>Choose the website your business needs now.</h1>
+      <p class="plan-hero-tagline">Three clear plans. Custom design, hosting, maintenance, security updates and direct support are included in every one.</p>
+      <div class="plan-hero-actions">
+        <a href="#plans" class="btn btn-primary">Compare the plans</a>
+        <a href="intake.html" class="btn btn-ghost">Help me choose</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="plans">
+    <div class="wrap">
+      <header class="section-head">
+        <p class="eyebrow">Pick by outcome</p>
+        <h2>Start simple. Move up only when the website needs to do more.</h2>
+        <p class="section-lede">The amount due today includes the setup deposit and your first month. Each plan has a 12-month minimum, then continues month to month.</p>
+      </header>
+      <div class="subscription-plan-grid website-plan-grid">
+${PLANS.map(p => `        <article class="subscription-plan${p.featured ? ' subscription-plan--featured' : ''}">
+${p.featured ? '          <span class="package-badge">Most popular</span>\n' : ''}          <p class="plan-card-outcome">${p.outcome}</p>
+          <h3>${p.name}</h3>
+          <p class="website-plan-due"><strong>${p.dueToday}</strong> due today</p>
+          <p class="website-plan-breakdown">${p.deposit} setup + first ${p.monthly} month</p>
+          <p class="website-plan-monthly">Then <strong>${p.monthly}/month</strong></p>
+          <p class="subscription-plan-note">${p.tagline}</p>
+          <ul class="subscription-features">
+            ${p.pages.slice(0, p.slug === 'executive' ? 5 : 6).map(x => `<li>${x}</li>`).join('')}
+            <li>Hosting, maintenance, security &amp; support</li>
+          </ul>
+          <div class="subscription-plan-actions">
+            <button type="button" class="btn btn-primary" data-add-to-cart="plan-${p.slug}" data-then="cart.html"><span data-cart-label>Start ${p.name}</span></button>
+            <a href="plan-${p.slug}.html" class="btn btn-ghost">See full details</a>
+          </div>
+        </article>`).join('\n')}
+      </div>
+    </div>
+  </section>
+
+  <section class="alt-bg">
+    <div class="wrap plan-narrow">
+      <h2>How ownership works</h2>
+      <ul class="plan-ownership-list plan-ownership-list--plain">
+        <li><strong>You always keep</strong> your domain, content, logo, photographs and business data.</li>
+        <li><strong>We own and host the build</strong> while your subscription is active.</li>
+        <li><strong>You can buy it outright later</strong> and your plan payments are credited toward the buyout.</li>
+      </ul>
+      <p class="plan-lede">Prefer to own the website from day one? <a href="pricing.html#website-packages">Compare one-time packages from $699.</a></p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap plan-narrow plan-help-card">
+      <p class="eyebrow">Not sure?</p>
+      <h2>Tell us what the website needs to accomplish.</h2>
+      <p class="plan-lede">Send a short note or call 804-309-0968. We will recommend the smallest plan that does the job.</p>
+      <div class="plan-hero-actions">
+        <a href="intake.html" class="btn btn-primary">Help me choose</a>
+        <a href="tel:+18043090968" class="btn btn-ghost">Call 804-309-0968</a>
+      </div>
+    </div>
+  </section>
 `;
 }
 
@@ -361,4 +420,18 @@ for (const p of PLANS) {
   console.log(`  wrote plan-${p.slug}.html  (${(html.length / 1024).toFixed(1)} KB)`);
   written++;
 }
-console.log(`\n${written} plan pages generated from scripts/build-plan-pages.js`);
+
+const comparisonTitle = 'Website Subscription Plans &mdash; Little Technical Solutions LLC';
+const comparisonDesc = 'Compare Standard, Premium and Executive website subscriptions. Clear due-today pricing, hosting, maintenance, security updates and direct support included.';
+const comparisonHead = head
+  .replace(/<title>[\s\S]*?<\/title>/, `<title>${comparisonTitle}</title>`)
+  .replace(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${comparisonDesc}">`)
+  .replace(/<link rel="canonical" href="[^"]*">/, '<link rel="canonical" href="https://lit-solutions.tech/website-plans.html">')
+  .replace(/<meta property="og:title" content="[^"]*">/, `<meta property="og:title" content="${comparisonTitle}">`)
+  .replace(/<meta property="og:description" content="[^"]*">/, `<meta property="og:description" content="${comparisonDesc}">`)
+  .replace(/<meta property="og:url" content="[^"]*">/, '<meta property="og:url" content="https://lit-solutions.tech/website-plans.html">');
+fs.writeFileSync(path.join(ROOT, 'website-plans.html'), comparisonHead + comparisonBody() + foot, 'utf8');
+written++;
+console.log('  wrote website-plans.html');
+
+console.log(`\n${written} website plan pages generated from scripts/build-plan-pages.js`);

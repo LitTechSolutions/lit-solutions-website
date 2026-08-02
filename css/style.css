@@ -677,6 +677,8 @@ section{ padding: 5.5rem 0; }
   font-size: clamp(1.9rem, 3.6vw, 2.6rem); color:#fff; font-weight:600; margin-top:.6rem;
 }
 .intake-hero .section-lede{ color: rgba(245,245,244,0.75); margin-top:1rem; max-width: 62ch; }
+.intake-hero .btn-ghost{ border-color:rgba(245,245,244,.4); color:#fff; }
+.intake-hero .btn-ghost:hover{ border-color:#fff; }
 
 .intake-form-section{ padding: 3.5rem 0 5rem; }
 .intake-form{ max-width: 780px; margin: 0 auto; }
@@ -2303,8 +2305,14 @@ body.has-price-bar .cookie-banner{
 }
 .plan-hero-price strong{ font-family: var(--font-display); font-size:2.1rem; color:#fff; }
 .plan-hero-plus{ opacity:.6; }
+.plan-hero-breakdown{
+  margin:0 0 .35rem; color:rgba(245,245,244,.82); font-size:.95rem; line-height:1.6;
+}
 .plan-hero-note{ font-size:.85rem; color: rgba(245,245,244,.6); max-width:62ch; line-height:1.65; margin-bottom:1.5rem; }
 .plan-hero-note a{ color: var(--accent-orange-on-dark); text-decoration:underline; }
+.plan-hero-actions{ display:flex; flex-wrap:wrap; gap:.75rem; align-items:center; margin-top:1.4rem; }
+.plan-hero .btn-ghost{ border-color:rgba(245,245,244,.4); color:#fff; }
+.plan-hero .btn-ghost:hover{ border-color:#fff; }
 .plan-hero--featured{ border-bottom:4px solid var(--accent-teal); }
 
 .plan-narrow{ max-width: 760px; }
@@ -2350,6 +2358,14 @@ body.has-price-bar .cookie-banner{
 .plan-catch strong{ color:inherit; font-weight:700; }
 .plan-catch a{ color:inherit; text-decoration:underline; }
 .plan-catch-fine{ font-size:.83rem !important; opacity:.9; }
+.plan-ownership-list{ list-style:none; padding:0; margin:0 0 1rem; display:grid; gap:.75rem; }
+.plan-ownership-list li{ position:relative; padding-left:1.5rem; font-size:.9rem; line-height:1.65; }
+.plan-ownership-list li::before{
+  content:""; position:absolute; left:0; top:.55em; width:8px; height:8px;
+  border-radius:50%; background:var(--accent-teal);
+}
+.plan-ownership-list--plain{ margin:1.5rem 0; color:var(--ink-soft); }
+.plan-ownership-list--plain strong{ color:var(--ink); }
 
 .plan-checkout{
   background: var(--paper-alt); border:1px solid var(--line);
@@ -2372,6 +2388,34 @@ body.has-price-bar .cookie-banner{
 .plan-other-price{ font-size:.88rem; color: var(--ink); font-weight:600; }
 .plan-other-tagline{ font-size:.85rem; color: var(--ink-soft); line-height:1.6; }
 .plan-other-cta{ margin-top:.5rem; font-size:.85rem; font-weight:600; color: var(--accent-orange-text); }
+
+/* Focused website-plan comparison page. */
+.website-plan-grid{ margin-top:2.5rem; align-items:stretch; }
+.website-plan-grid .subscription-plan{ display:flex; flex-direction:column; background:var(--paper); }
+.website-plan-grid .subscription-features{ margin-bottom:1.5rem; }
+.website-plan-grid .subscription-plan-actions{ margin-top:auto; }
+.plan-card-outcome{
+  margin:0 0 .35rem; color:var(--accent-orange-text); font-size:.72rem;
+  font-weight:700; letter-spacing:.07em; text-transform:uppercase;
+}
+.website-plan-due{ margin:.4rem 0 .1rem; color:var(--ink); }
+.website-plan-due strong{ font-family:var(--font-display); font-size:1.9rem; }
+.website-plan-breakdown{ margin:0; color:var(--ink-faint); font-size:.8rem; line-height:1.5; }
+.website-plan-monthly{ margin:.55rem 0 1rem; color:var(--ink-soft); font-size:.9rem; }
+.website-plan-monthly strong{ color:var(--ink); }
+.plan-help-card{
+  background:var(--paper-alt); border:1px solid var(--line); border-left:4px solid var(--accent-teal);
+  border-radius:var(--radius); padding:2rem;
+}
+.plan-help-card h2{ margin-top:.2rem; }
+
+@media (max-width:600px){
+  .plan-hero{ padding:2.75rem 0; }
+  .plan-hero-price{ margin-top:1.25rem; }
+  .plan-hero-actions{ flex-direction:column; align-items:stretch; }
+  .plan-hero-actions .btn{ width:100%; text-align:center; }
+  .plan-help-card{ padding:1.5rem; }
+}
 
 /* ---- Wireframe mockups ---- */
 .mockup-grid{ display:grid; gap:2rem; }
@@ -2564,9 +2608,8 @@ body.has-price-bar .cookie-banner{
   padding:2rem 1.75rem; background: var(--paper);
   border:1px solid var(--line); border-radius: var(--radius);
 }
-/* The middle card is the one most small businesses should take, so it gets
-   the emphasis -- not because it earns more, but because it's the one that
-   gets someone online without several hundred pounds up front. */
+/* The subscription card is the most direct route for a small business that
+   wants to get online without paying the full project price up front. */
 .buy-card--featured{
   border-color: var(--accent-orange); box-shadow:0 10px 30px rgba(53,72,196,.10);
 }

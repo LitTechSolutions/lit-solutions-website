@@ -96,6 +96,12 @@
     "excerpt": "Discounted pricing for military, veterans, teachers, first responders, and more."
   },
   {
+    "title": "Website Subscription Plans",
+    "href": "website-plans.html",
+    "scope": "Pricing",
+    "excerpt": "Compare Standard, Premium, and Executive website subscriptions by outcome, first payment, and monthly price."
+  },
+  {
     "title": "FAQ",
     "href": "faq.html",
     "scope": "Resources",
@@ -147,19 +153,19 @@
     "title": "Standard Website Subscription",
     "href": "plan-standard.html",
     "scope": "Pricing",
-    "excerpt": "Discounted pricing for military, veterans, teachers, first responders, and more."
+    "excerpt": "A five-page professional website with hosting, maintenance, security updates, and direct support for $228 due today, then $79 per month."
   },
   {
     "title": "Premium Website Subscription",
     "href": "plan-premium.html",
     "scope": "Pricing",
-    "excerpt": "Discounted pricing for military, veterans, teachers, first responders, and more."
+    "excerpt": "A lead-generating website with service pages, booking or lead forms, blog, hosting, maintenance, and support for $378 due today, then $129 per month."
   },
   {
     "title": "Executive Website Subscription",
     "href": "plan-executive.html",
     "scope": "Pricing",
-    "excerpt": "Discounted pricing for military, veterans, teachers, first responders, and more."
+    "excerpt": "An advanced website with customer accounts, dashboards, content tools, hosting, maintenance, and support for $598 due today, then $199 per month."
   },
   {
     "title": "Your cart",
