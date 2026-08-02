@@ -24,7 +24,7 @@ const { getProduct } = require("./_lib/product_catalog");
 const { priceCart, toStripeLineItems, bnplAvailable } = require("./_lib/pricing");
 const { TAX } = require("./_lib/product_catalog");
 const { parseCartKey: parseQuoteKey } = require("./designer-quote");
-const { checkoutEnabled, DISABLED_MESSAGE } = require("./_lib/checkout_status");
+const { checkoutAllowed, DISABLED_MESSAGE } = require("./_lib/checkout_status");
 const { isVerifiedHero } = require("./hero-status");
 const { findUserById } = require("./_lib/users");
 const { createCheckoutSession } = require("./_lib/stripe_api");
@@ -181,7 +181,11 @@ exports.handler = async (event, context, deps = {}) => {
       // A configured build splits 50/50 exactly like the fixed packages do.
       canPayInFull: items.some(({ product }) => product.kind === "package") || gQuotes.length > 0,
       expiredQuotes: quoteKeysIn(raw).length - gQuotes.length,
-      checkoutEnabled: (deps.checkoutEnabled || checkoutEnabled)(),
+      checkoutEnabled: deps.checkoutAllowed
+        ? deps.checkoutAllowed(session.role)
+        : deps.checkoutEnabled
+          ? deps.checkoutEnabled()
+          : checkoutAllowed(session.role),
     });
   }
 
@@ -189,7 +193,12 @@ exports.handler = async (event, context, deps = {}) => {
 
   // The kill switch. Checked before anything is written or charged, so a
   // paused checkout leaves no half-made order behind. See _lib/checkout_status.js.
-  if (!(deps.checkoutEnabled || checkoutEnabled)()) {
+  const allowed = deps.checkoutAllowed
+    ? deps.checkoutAllowed(session.role)
+    : deps.checkoutEnabled
+      ? deps.checkoutEnabled()
+      : checkoutAllowed(session.role);
+  if (!allowed) {
     return json(503, { error: DISABLED_MESSAGE, checkoutDisabled: true });
   }
 

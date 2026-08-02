@@ -25,24 +25,41 @@ const DISABLED_MESSAGE =
   "Call us on 804-309-0968 or email dylan@lit-solutions.tech and we'll take " +
   "your order directly — you won't lose anything you've put in your cart.";
 
-function checkoutEnabled(env) {
+function checkoutMode(env) {
   const e = env || process.env;
-  return String(e.CHECKOUT_ENABLED || "").trim().toLowerCase() === "true";
+  const configured = String(e.CHECKOUT_ENABLED || "").trim().toLowerCase();
+  if (configured === "true" || configured === "public") return "public";
+  if (configured === "admin" || configured === "admin-only" || configured === "admin_only") return "admin";
+  return "off";
+}
+
+function checkoutEnabled(env) {
+  return checkoutMode(env) === "public";
+}
+
+function checkoutAllowed(role, env) {
+  const mode = checkoutMode(env);
+  return mode === "public" || (mode === "admin" && role === "admin");
 }
 
 /** Why it's off, for the admin screen. Never shown to a customer. */
 function checkoutStatus(env) {
   const e = env || process.env;
-  const enabled = checkoutEnabled(e);
+  const mode = checkoutMode(e);
+  const enabled = mode === "public";
   return {
     enabled,
-    reason: enabled
+    mode,
+    reason: mode === "public"
       ? null
-      : "CHECKOUT_ENABLED is not set to \"true\". Payments are blocked server-side.",
+      : mode === "admin"
+        ? "Checkout is in admin-only canary mode. Customers remain blocked server-side."
+        : "CHECKOUT_ENABLED is not set to \"true\". Payments are blocked server-side.",
     howToEnable:
-      "Set CHECKOUT_ENABLED=true in Netlify and redeploy — but confirm STRIPE_MODE is \"live\" first, " +
-      "or customers will pay into test mode and no money will move.",
+      "Set CHECKOUT_ENABLED=admin for a private live canary first. After it succeeds, set " +
+      "CHECKOUT_ENABLED=true and redeploy — but confirm STRIPE_MODE is \"live\" first, or customers " +
+      "will pay into test mode and no money will move.",
   };
 }
 
-module.exports = { checkoutEnabled, checkoutStatus, DISABLED_MESSAGE };
+module.exports = { checkoutMode, checkoutEnabled, checkoutAllowed, checkoutStatus, DISABLED_MESSAGE };

@@ -1,8 +1,8 @@
 // stripe-setup.js -- one-time Stripe wiring, done from the admin dashboard
 // instead of by hand in the Stripe dashboard.
 //
-// Why this exists. Creating the webhook endpoint by hand means getting four
-// things right at once: the exact function URL, the exact four event names,
+// Why this exists. Creating the webhook endpoint by hand means getting several
+// things right at once: the exact function URL, the exact event names,
 // the test/live mode matching the secret key, and then copying the signing
 // secret across without transcription errors. Every one of those is a silent
 // failure -- the only symptom of any of them is an order stuck forever on
@@ -31,17 +31,26 @@
 const { readCookie, getSession, json, rateLimited } = require("./_lib/auth_utils");
 const {
   listWebhookEndpoints, createWebhookEndpoint, deleteWebhookEndpoint,
+  expireCheckoutSession,
 } = require("./_lib/stripe_api");
 const { resolveStripe } = require("./_lib/stripe_config");
+const { getJSON, setJSON, store } = require("./_lib/blob_store");
 
-// The four the handler actually implements. Kept here rather than duplicated
+// The events the handler actually implements. Kept here rather than duplicated
 // as prose in a runbook, so the endpoint we create and the events we handle
 // cannot drift apart.
 const REQUIRED_EVENTS = [
   "checkout.session.completed",
   "checkout.session.async_payment_succeeded",
   "checkout.session.async_payment_failed",
+  "checkout.session.expired",
+  "invoice.paid",
+  "invoice.payment_failed",
+  "invoice.payment_action_required",
+  "customer.subscription.updated",
   "customer.subscription.deleted",
+  "charge.refunded",
+  "charge.dispute.created",
 ];
 
 const WEBHOOK_PATH = "/.netlify/functions/stripe-webhook";
@@ -74,6 +83,10 @@ exports.handler = async (event, context, deps = {}) => {
   const listFn = deps.listWebhookEndpoints || listWebhookEndpoints;
   const createFn = deps.createWebhookEndpoint || createWebhookEndpoint;
   const deleteFn = deps.deleteWebhookEndpoint || deleteWebhookEndpoint;
+  const expireFn = deps.expireCheckoutSession || expireCheckoutSession;
+  const getJSONFn = deps.getJSON || getJSON;
+  const setJSONFn = deps.setJSON || setJSON;
+  const storeFn = deps.store || store;
   const resolveFn = deps.resolveStripe || resolveStripe;
 
   const token = readCookieFn(event, "lts_session");
@@ -166,6 +179,11 @@ exports.handler = async (event, context, deps = {}) => {
 
   /* ------------------------------------------------------------- create -- */
   if (body.action === "create-webhook") {
+    if (mode === "live") {
+      return json(403, {
+        error: "Create the live webhook in Stripe Workbench. Live credentials should not have permission to create or delete webhook endpoints.",
+      });
+    }
     let existing = [];
     try {
       const res = await listFn();
@@ -218,6 +236,41 @@ exports.handler = async (event, context, deps = {}) => {
       warning: created.secret
         ? "This is the only time Stripe will show this secret. Copy it now."
         : "Stripe didn't return a signing secret. Reveal it on the endpoint's page in the Stripe dashboard.",
+    });
+  }
+
+  /* ------------------------------------------------ emergency shutdown -- */
+  if (body.action === "expire-open-sessions") {
+    const listing = await storeFn("orders").list();
+    const candidates = [];
+    for (const blob of (listing.blobs || [])) {
+      const order = await getJSONFn("orders", blob.key);
+      if (!order || !order.stripeSessionId) continue;
+      if (!["awaiting_payment", "payment_processing", "checkout_failed"].includes(order.status)) continue;
+      candidates.push(order);
+    }
+
+    const expired = [];
+    const failed = [];
+    for (const order of candidates.slice(0, 100)) {
+      try {
+        await expireFn(order.stripeSessionId);
+        order.status = "checkout_expired";
+        order.stripeSessionExpiredAt = new Date().toISOString();
+        order.updatedAt = order.stripeSessionExpiredAt;
+        await setJSONFn("orders", order.id, order);
+        expired.push(order.id);
+      } catch (err) {
+        failed.push({ orderId: order.id, reason: String(err.message || err).slice(0, 180) });
+      }
+    }
+    return json(200, {
+      inspected: candidates.length,
+      expiredCount: expired.length,
+      failedCount: failed.length,
+      expiredOrderIds: expired,
+      failures: failed,
+      note: "New checkout must also remain disabled in Netlify; expiring sessions only closes links that were already issued.",
     });
   }
 

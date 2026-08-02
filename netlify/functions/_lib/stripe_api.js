@@ -12,6 +12,11 @@
 const { requireSecretKey, resolveStripe } = require("./stripe_config");
 
 const STRIPE_API = "https://api.stripe.com/v1";
+// Keep direct REST calls deterministic. Without this header they inherit the
+// account's default version, so an unrelated Dashboard upgrade can change the
+// response shape underneath deployed code. Upgrade this deliberately, with
+// the payment test matrix, rather than implicitly.
+const STRIPE_API_VERSION = "2026-02-25.clover";
 
 // Throws with the exact variable to fix, rather than a bare "not configured".
 function assertKey() {
@@ -45,6 +50,7 @@ async function stripeRequest(pathname, params, opts = {}) {
   const headers = {
     Authorization: `Bearer ${key}`,
     "Content-Type": "application/x-www-form-urlencoded",
+    "Stripe-Version": STRIPE_API_VERSION,
   };
   // Idempotency matters most on session creation: a double-clicked checkout
   // must not produce two Stripe sessions for the same order.
@@ -79,7 +85,10 @@ async function createCheckoutSession(input) {
     // Wallets (Apple Pay, Google Pay, Link) are enabled by Stripe
     // automatically for hosted Checkout when the device supports them --
     // there is nothing to switch on here, and nothing to build.
-    allow_promotion_codes: true,
+    // Discounts are calculated by this site's verified Heroes workflow.
+    // Enabling Stripe promotion codes here would let a valid Dashboard code
+    // stack a second discount after our server has priced the order.
+    allow_promotion_codes: false,
     billing_address_collection: "auto",
     metadata: input.metadata || {},
     // Managed Payments is ON BY DEFAULT for new Stripe accounts, and it makes
@@ -120,9 +129,13 @@ async function retrieveSession(sessionId) {
   return stripeRequest(`/checkout/sessions/${encodeURIComponent(sessionId)}`, null, { method: "GET" });
 }
 
+async function expireCheckoutSession(sessionId) {
+  return stripeRequest(`/checkout/sessions/${encodeURIComponent(sessionId)}/expire`, {});
+}
+
 /* ------------------------------------------------------ setup helpers --- */
 /* Used once, by stripe-setup.js, so the webhook endpoint doesn't have to be
- * hand-built in the dashboard with the right URL, the right four events and
+ * hand-built in the dashboard with the right URL, the right event set and
  * the right test/live mode. Getting any of those wrong produces a silent
  * failure whose only symptom is an order stuck on "Waiting on payment". */
 
@@ -134,6 +147,7 @@ async function createWebhookEndpoint({ url, enabledEvents, description }) {
   return stripeRequest("/webhook_endpoints", {
     url,
     enabled_events: enabledEvents,
+    api_version: STRIPE_API_VERSION,
     description: description || "Little Technical Solutions LLC website",
   });
 }
@@ -155,7 +169,8 @@ function keyMode(env) {
 }
 
 module.exports = {
-  createCheckoutSession, createBillingPortalSession, retrieveSession,
+  createCheckoutSession, createBillingPortalSession, retrieveSession, expireCheckoutSession,
   listWebhookEndpoints, createWebhookEndpoint, deleteWebhookEndpoint, keyMode,
   stripeRequest, formEncode,
+  STRIPE_API_VERSION,
 };

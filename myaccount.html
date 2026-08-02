@@ -964,7 +964,7 @@
 
   /* Stripe wiring, driven from here rather than from the Stripe dashboard.
    * The secret key already sits in Netlify's environment, so it can create
-   * its own webhook endpoint -- with the right URL, the right four events,
+   * its own test webhook endpoint -- with the right URL and event set,
    * and automatically in whichever mode the key belongs to. That last part
    * is the one that silently breaks hand-made setups: a test-mode endpoint
    * behind a live key 401s every delivery and the only symptom a customer
@@ -1057,16 +1057,25 @@
           ? '<p class="order-note" style="margin-top:1rem;">Nothing more to do here. If deliveries still fail, the signing secret in Netlify belongs to a different endpoint \u2014 replace it below to get a fresh one.</p>'
           : '') +
         '<div class="order-actions" style="margin-top:1.25rem;">' +
-          '<button type="button" class="btn btn-primary" id="stripeCreate">' +
-            (d.match ? "Replace the endpoint" : "Create the webhook endpoint") + '</button>' +
+          (d.mode === "live"
+            ? '<a class="btn btn-primary" href="https://dashboard.stripe.com/webhooks" target="_blank" rel="noopener">Manage live webhook in Stripe</a>'
+            : '<button type="button" class="btn btn-primary" id="stripeCreate">' +
+                (d.match ? "Replace the endpoint" : "Create the webhook endpoint") + '</button>') +
           '<button type="button" class="btn btn-ghost" id="stripeRefresh">Re-check</button>' +
         '</div>' +
         varTable(d) +
         '<div id="stripeResult"></div>' +
+        '<div style="border-top:1px solid var(--line); margin-top:1.75rem; padding-top:1.5rem;">' +
+          '<h3 style="font-size:.95rem;">Emergency stop</h3>' +
+          '<p style="color:var(--ink-soft);font-size:.86rem;line-height:1.6;margin-top:.35rem;">After pausing checkout in Netlify, close any unpaid Stripe checkout links that were already issued.</p>' +
+          '<button type="button" class="btn btn-ghost btn-small" id="stripeExpire" style="margin-top:.75rem;">Expire outstanding checkout links</button>' +
+          '<div id="stripeExpireResult"></div>' +
+        '</div>' +
       '</div>';
 
       v.querySelector("#stripeRefresh").addEventListener("click", load);
-      v.querySelector("#stripeCreate").addEventListener("click", async function () {
+      var createButton = v.querySelector("#stripeCreate");
+      if (createButton) createButton.addEventListener("click", async function () {
         var btn = this;
         if (d.match && !window.confirm("This deletes the existing endpoint and creates a fresh one, which gives a NEW signing secret you\u2019ll have to paste into Netlify. Continue?")) return;
         btn.disabled = true;
@@ -1078,6 +1087,23 @@
           return;
         }
         showResult(r.body);
+      });
+      v.querySelector("#stripeExpire").addEventListener("click", async function () {
+        if (!window.confirm("First confirm checkout is paused in Netlify. This will permanently close every outstanding unpaid Stripe checkout link. Continue?")) return;
+        var btn = this;
+        btn.disabled = true;
+        btn.textContent = "Expiring…";
+        var r = await api("stripe-setup", { method: "POST", body: JSON.stringify({ action: "expire-open-sessions" }) });
+        btn.disabled = false;
+        btn.textContent = "Expire outstanding checkout links";
+        var host = v.querySelector("#stripeExpireResult");
+        if (!r.ok) {
+          host.innerHTML = '<p class="form-note form-note--error" style="margin-top:.75rem;">' + esc((r.body && r.body.error) || "Couldn\'t expire the links.") + '</p>';
+          return;
+        }
+        host.innerHTML = '<p class="form-note" style="margin-top:.75rem;">Closed ' + esc(r.body.expiredCount) +
+          ' link' + (r.body.expiredCount === 1 ? '' : 's') + '.' +
+          (r.body.failedCount ? ' ' + esc(r.body.failedCount) + ' could not be closed and should be checked in Stripe.' : '') + '</p>';
       });
     }
 

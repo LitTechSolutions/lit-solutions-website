@@ -476,7 +476,7 @@ test("a valid completed session marks the order paid and tells both sides", asyn
   seedOrder();
   const res = await webhook.handler(signed({
     type: "checkout.session.completed",
-    data: { object: { metadata: { orderId: "ord-test" }, payment_status: "paid", amount_total: 37800, customer: "cus_1", subscription: "sub_1" } },
+    data: { object: { metadata: { orderId: "ord-test" }, payment_status: "paid", amount_total: 37800, currency: "usd", customer: "cus_1", subscription: "sub_1" } },
   }), {}, whDeps);
 
   assert.equal(res.statusCode, 200);
@@ -490,12 +490,33 @@ test("a valid completed session marks the order paid and tells both sides", asyn
   assert.ok(sent.find((m) => m.to === "jane@example.test"), "the customer should be told");
 });
 
+test("a signed Stripe event cannot fulfill an order for the wrong amount or checkout session", async () => {
+  reset();
+  seedOrder({ stripeSessionId: "cs_expected" });
+  const res = await webhook.handler(signed({
+    id: "evt_mismatch",
+    type: "checkout.session.completed",
+    data: { object: {
+      object: "checkout.session", id: "cs_different", metadata: { orderId: "ord-test" },
+      payment_status: "paid", amount_total: 1, currency: "usd",
+    } },
+  }), {}, whDeps);
+
+  assert.equal(res.statusCode, 200, "Stripe should not retry a payment that needs human review forever");
+  const order = blobs.get(k("orders", "ord-test"));
+  assert.equal(order.status, "payment_review", "the project brief must stay locked");
+  assert.match(order.paymentReviewReason, /session does not match/);
+  assert.match(order.paymentReviewReason, /Expected \$378/);
+  assert.equal(sent.filter((m) => m.to === CUST_EMAIL).length, 0, "never tell the customer fulfillment is ready");
+  assert.ok(sent.find((m) => m.to === ADMIN_EMAIL_ADDR), "the owner needs an immediate review alert");
+});
+
 test("a redelivered webhook doesn't email twice or reopen a finished order", async () => {
   reset();
   seedOrder();
   const evt = signed({
     type: "checkout.session.completed",
-    data: { object: { metadata: { orderId: "ord-test" }, payment_status: "paid", amount_total: 37800 } },
+    data: { object: { metadata: { orderId: "ord-test" }, payment_status: "paid", amount_total: 37800, currency: "usd" } },
   });
   await webhook.handler(evt, {}, whDeps);
   const after = sent.length;
@@ -522,7 +543,7 @@ test("a delayed payment method is held at processing until the money confirms", 
 
   await webhook.handler(signed({
     type: "checkout.session.async_payment_succeeded",
-    data: { object: { metadata: { orderId: "ord-test" }, payment_status: "paid", amount_total: 37800 } },
+    data: { object: { metadata: { orderId: "ord-test" }, payment_status: "paid", amount_total: 37800, currency: "usd" } },
   }), {}, whDeps);
   assert.equal(blobs.get(k("orders", "ord-test")).status, "paid");
 });
@@ -565,12 +586,62 @@ test("a cancelled subscription is recorded and flagged for written notice", asyn
   assert.match(mail.html, /written notice/i);
 });
 
+test("subscription renewals and failures stay synchronized with the order", async () => {
+  reset();
+  seedOrder({ status: "paid", stripeSubscriptionId: "sub_1" });
+
+  await webhook.handler(signed({
+    id: "evt_invoice_failed",
+    type: "invoice.payment_failed",
+    data: { object: { id: "in_failed", subscription: "sub_1", payment_intent: "pi_retry" } },
+  }), {}, whDeps);
+  let order = blobs.get(k("orders", "ord-test"));
+  assert.equal(order.subscriptionStatus, "past_due");
+  assert.equal(order.lastStripeInvoiceId, "in_failed");
+  assert.ok(sent.find((m) => m.to === CUST_EMAIL && /payment needs attention/i.test(m.subject)));
+  assert.ok(sent.find((m) => m.to === ADMIN_EMAIL_ADDR && /payment failed/i.test(m.subject)));
+
+  await webhook.handler(signed({
+    id: "evt_invoice_paid",
+    type: "invoice.paid",
+    data: { object: { id: "in_paid", subscription: "sub_1", payment_intent: "pi_paid", amount_paid: 12900 } },
+  }), {}, whDeps);
+  order = blobs.get(k("orders", "ord-test"));
+  assert.equal(order.subscriptionStatus, "active");
+  assert.equal(order.lastSubscriptionAmountPaidCents, 12900);
+  assert.ok(order.stripePaymentIntentIds.includes("pi_paid"), "future refund/dispute events must be matchable");
+});
+
+test("refunds and disputes are attached to the paid order and alert the owner", async () => {
+  reset();
+  seedOrder({ status: "paid", stripePaymentIntentId: "pi_1", stripePaymentIntentIds: ["pi_1"] });
+
+  await webhook.handler(signed({
+    id: "evt_refund",
+    type: "charge.refunded",
+    data: { object: { id: "ch_1", payment_intent: "pi_1", refunded: false, amount_refunded: 5000 } },
+  }), {}, whDeps);
+  let order = blobs.get(k("orders", "ord-test"));
+  assert.equal(order.refundStatus, "partial");
+  assert.equal(order.amountRefundedCents, 5000);
+
+  await webhook.handler(signed({
+    id: "evt_dispute",
+    type: "charge.dispute.created",
+    data: { object: { id: "dp_1", payment_intent: "pi_1", amount: 37800, reason: "fraudulent" } },
+  }), {}, whDeps);
+  order = blobs.get(k("orders", "ord-test"));
+  assert.equal(order.paymentDisputeStatus, "open");
+  assert.equal(order.paymentDisputeId, "dp_1");
+  assert.ok(sent.find((m) => /Urgent: payment dispute opened/.test(m.subject)));
+});
+
 test("a base64 body verifies against the decoded bytes", async () => {
   reset();
   seedOrder();
   const plain = signed({
     type: "checkout.session.completed",
-    data: { object: { metadata: { orderId: "ord-test" }, payment_status: "paid", amount_total: 37800 } },
+    data: { object: { metadata: { orderId: "ord-test" }, payment_status: "paid", amount_total: 37800, currency: "usd" } },
   });
   const encoded = { ...plain, body: Buffer.from(plain.body, "utf8").toString("base64"), isBase64Encoded: true };
   assert.equal((await webhook.handler(encoded, {}, whDeps)).statusCode, 200);
@@ -772,12 +843,9 @@ test("an endpoint pointing elsewhere, or missing events, is not called ready", a
   const partial = body.endpoints.find((e) => e.id === "we_partial");
   assert.equal(partial.urlMatches, true);
   assert.equal(partial.healthy, false);
-  // The three it doesn't cover must be named, not just counted.
-  assert.deepEqual(partial.missingEvents.sort(), [
-    "checkout.session.async_payment_failed",
-    "checkout.session.async_payment_succeeded",
-    "customer.subscription.deleted",
-  ]);
+  // Everything except the one event it covers must be named, not just counted.
+  assert.deepEqual(partial.missingEvents.sort(),
+    stripeSetup.REQUIRED_EVENTS.filter((evt) => evt !== "checkout.session.completed").sort());
 });
 
 test("a correct endpoint reads as ready, and a wildcard subscription counts", async () => {
@@ -807,6 +875,37 @@ test("creating an endpoint subscribes to exactly what the handler implements", a
   assert.deepEqual(captured.enabledEvents.sort(), stripeSetup.REQUIRED_EVENTS.slice().sort());
   assert.equal(body.signingSecret, "whsec_generated");
   assert.match(body.warning, /only time/i);
+});
+
+test("live credentials cannot create or delete webhook endpoints from the website", async () => {
+  reset();
+  let created = false;
+  const res = await stripeSetup.handler(req("POST", { action: "create-webhook" }), {}, setupDeps(ADMIN, {
+    resolveStripe: () => resolveStripe({ STRIPE_MODE: "live", STRIPE_SECRET_KEY: "rk_live_restricted", STRIPE_WEBHOOK_SECRET: "whsec_live" }),
+    createWebhookEndpoint: async () => { created = true; return {}; },
+  }));
+  assert.equal(res.statusCode, 403);
+  assert.equal(created, false, "the production key should not need webhook write permission");
+  assert.match(JSON.parse(res.body).error, /Stripe Workbench/);
+});
+
+test("the emergency stop expires outstanding unpaid Stripe checkout links", async () => {
+  reset();
+  blobs.set(k("orders", "open-1"), { id: "open-1", status: "awaiting_payment", stripeSessionId: "cs_open_1" });
+  blobs.set(k("orders", "processing-1"), { id: "processing-1", status: "payment_processing", stripeSessionId: "cs_open_2" });
+  blobs.set(k("orders", "paid-1"), { id: "paid-1", status: "paid", stripeSessionId: "cs_paid" });
+  const expired = [];
+
+  const res = await stripeSetup.handler(req("POST", { action: "expire-open-sessions" }), {}, setupDeps(ADMIN, {
+    expireCheckoutSession: async (id) => { expired.push(id); return { id, status: "expired" }; },
+  }));
+  const body = JSON.parse(res.body);
+  assert.equal(res.statusCode, 200);
+  assert.deepEqual(expired.sort(), ["cs_open_1", "cs_open_2"]);
+  assert.equal(body.expiredCount, 2);
+  assert.equal(blobs.get(k("orders", "open-1")).status, "checkout_expired");
+  assert.equal(blobs.get(k("orders", "processing-1")).status, "checkout_expired");
+  assert.equal(blobs.get(k("orders", "paid-1")).status, "paid", "a paid order must never be expired");
 });
 
 test("the events we subscribe to are exactly the ones the webhook handles", () => {
@@ -958,7 +1057,7 @@ test("the webhook rejects deliveries when the ACTIVE mode has no secret", async 
 test("the webhook verifies against the ACTIVE mode's secret, not whichever exists", async () => {
   reset();
   seedOrder();
-  const evt = { type: "checkout.session.completed", data: { object: { metadata: { orderId: "ord-test" }, payment_status: "paid", amount_total: 37800 } } };
+  const evt = { type: "checkout.session.completed", data: { object: { metadata: { orderId: "ord-test" }, payment_status: "paid", amount_total: 37800, currency: "usd" } } };
 
   // Signed with the TEST secret, running in test mode: accepted.
   const ok = await webhook.handler(signed(evt, { secret: "whsec_test_value" }), {}, {
@@ -1108,11 +1207,13 @@ test("the wrapper disables Managed Payments unless explicitly asked for", async 
   // everything sold here. Leaving it on rejects every session AND would add
   // 3.5% per transaction.
   const captured = [];
+  const capturedHeaders = [];
   const Module = require("node:module");
   const stripeApi = require("../netlify/functions/_lib/stripe_api.js");
   const origFetch = global.fetch;
   global.fetch = async (url, init) => {
     captured.push(String(init && init.body));
+    capturedHeaders.push(init && init.headers);
     return { ok: true, json: async () => ({ id: "cs_1", url: "https://x.test" }) };
   };
   const origKey = process.env.STRIPE_SECRET_KEY;
@@ -1124,6 +1225,8 @@ test("the wrapper disables Managed Payments unless explicitly asked for", async 
       mode: "payment", lineItems: [], successUrl: "https://x.test/s", cancelUrl: "https://x.test/c",
     });
     assert.ok(captured[0].includes("managed_payments%5Benabled%5D=false"), captured[0]);
+    assert.ok(captured[0].includes("allow_promotion_codes=false"), "Stripe promo codes must not stack with the Heroes Discount");
+    assert.equal(capturedHeaders[0]["Stripe-Version"], stripeApi.STRIPE_API_VERSION, "direct REST calls must not inherit a mutable account default");
   } finally {
     global.fetch = origFetch;
     if (origKey === undefined) delete process.env.STRIPE_SECRET_KEY; else process.env.STRIPE_SECRET_KEY = origKey;
@@ -1205,7 +1308,7 @@ test("one customer's abandoned orders never touch another's", async () => {
 /* ============================================================ kill switch = */
 
 test("checkout is OFF unless explicitly enabled", () => {
-  const { checkoutEnabled } = require("../netlify/functions/_lib/checkout_status.js");
+  const { checkoutEnabled, checkoutAllowed, checkoutMode } = require("../netlify/functions/_lib/checkout_status.js");
   // Opt-in, not opt-out: the safe state has to be the one you get by doing
   // nothing, including on a fresh deploy, a rollback, or a restored backup.
   assert.equal(checkoutEnabled({}), false, "an unset variable must block payments");
@@ -1215,6 +1318,25 @@ test("checkout is OFF unless explicitly enabled", () => {
   assert.equal(checkoutEnabled({ CHECKOUT_ENABLED: "false" }), false);
   assert.equal(checkoutEnabled({ CHECKOUT_ENABLED: "true" }), true);
   assert.equal(checkoutEnabled({ CHECKOUT_ENABLED: " TRUE " }), true, "trimmed and case-insensitive");
+  assert.equal(checkoutMode({ CHECKOUT_ENABLED: "admin" }), "admin");
+  assert.equal(checkoutAllowed("admin", { CHECKOUT_ENABLED: "admin" }), true, "the owner can run a private live canary");
+  assert.equal(checkoutAllowed("customer", { CHECKOUT_ENABLED: "admin" }), false, "customers remain blocked during the canary");
+});
+
+test("admin-only canary mode opens checkout only for an administrator", async () => {
+  reset();
+  seedUser(CUST, null);
+  seedUser(ADMIN, null);
+  const mode = require("../netlify/functions/_lib/checkout_status.js");
+  const gate = (role) => mode.checkoutAllowed(role, { CHECKOUT_ENABLED: "admin" });
+
+  const customer = await checkout.handler(req("POST", { items: [{ key: "svc-seo", quantity: 1 }] }), {},
+    deps(CUST, { checkoutEnabled: undefined, checkoutAllowed: gate }));
+  assert.equal(customer.statusCode, 503);
+
+  const admin = await checkout.handler(req("POST", { items: [{ key: "svc-seo", quantity: 1 }] }), {},
+    deps(ADMIN, { checkoutEnabled: undefined, checkoutAllowed: gate }));
+  assert.equal(admin.statusCode, 200);
 });
 
 test("a paused checkout refuses before writing an order or calling Stripe", async () => {

@@ -35,9 +35,12 @@ that the two functions report deployed (a 401 from `checkout` is the correct
 answer for a signed-out request — it means "sign in required", i.e. the
 function is alive).
 
-## 1. Get the secret key
+## 1. Get the server key
 
-Stripe dashboard → **Developers → API keys** → *Secret key* → **Reveal**.
+Stripe dashboard → **Developers → API keys**. Use a test secret key while
+validating. For production, prefer a restricted live key with only the
+Checkout Session, Billing Portal Session, and read-only webhook permissions
+this integration needs. The code accepts either `sk_live_…` or `rk_live_…`.
 
 - It starts `sk_live_…` in live mode, `sk_test_…` in test mode.
 - **Start in test mode.** Do the whole runbook with `sk_test_…` first, prove
@@ -51,7 +54,7 @@ Stripe dashboard → **Developers → API keys** → *Secret key* → **Reveal**
 
 ## 2. Create the webhook endpoint
 
-### The easy way: let the site do it
+### Test mode: let the site do it
 
 Once step 0 is done and `STRIPE_SECRET_KEY` is set, sign in as the admin
 account and go to **My Account → Stripe setup**. That page uses the key
@@ -61,14 +64,18 @@ already in Netlify's environment to:
   causes most failed setups, and which is otherwise invisible;
 - list every webhook endpoint on the account and say exactly what is wrong
   with each one (points elsewhere / missing these events / disabled);
-- create the endpoint for you, at the right URL, subscribed to exactly the
-  four events the handler implements, automatically in the matching mode;
+- create the test endpoint for you, at the right URL, subscribed to exactly
+  the events the handler implements;
 - show you the signing secret once, to copy into Netlify.
 
-A test asserts the four events it subscribes to are the four
+A test asserts the events it subscribes to are the events
 `stripe-webhook.js` actually handles, so the two cannot drift apart.
 
-That page never returns the secret key — only `"test"` or `"live"`, read
+Live webhook creation is deliberately read-only from the website. Create the
+live endpoint in Stripe Workbench so the production restricted key does not
+need permission to create or delete webhook endpoints.
+
+That page never returns the server key — only `"test"` or `"live"`, read
 from the key's documented prefix. And it deliberately does **not** write the
 Netlify variable: that would need Netlify credentials, and an env var this
 code could rewrite is one a bug in this code could rewrite.
@@ -108,14 +115,21 @@ running several isolated test environments at once, which we don't need.
 Then **Add endpoint** (or *Add destination*):
 
 - **Endpoint URL:** `https://lit-solutions.tech/.netlify/functions/stripe-webhook`
-- **Events to send** — exactly these four, no more:
+- **Events to send** — exactly these events, no more:
 
   | Event | What it does here |
   |---|---|
   | `checkout.session.completed` | Marks the order paid and unlocks the project brief |
   | `checkout.session.async_payment_succeeded` | The same, for buy-now-pay-later and other delayed methods |
   | `checkout.session.async_payment_failed` | Returns the order to awaiting, and emails the customer that nothing was charged |
+  | `checkout.session.expired` | Retires an abandoned Stripe checkout link safely |
+  | `invoice.paid` | Records a successful subscription renewal |
+  | `invoice.payment_failed` | Flags a past-due subscription and tells both sides |
+  | `invoice.payment_action_required` | Tells the customer when their bank needs another confirmation |
+  | `customer.subscription.updated` | Keeps the subscription status and renewal period synchronized |
   | `customer.subscription.deleted` | Records that billing stopped, and reminds you that §9.2 requires written notice before anything goes offline |
+  | `charge.refunded` | Records full or partial refunds against the order |
+  | `charge.dispute.created` | Raises an urgent owner alert with the matching order |
 
   Subscribing to more events is harmless — anything else is acknowledged with
   a 200 and ignored — but there is no reason to.
@@ -129,9 +143,10 @@ Then **Add endpoint** (or *Add destination*):
 
 Netlify → **Site configuration → Environment variables → Add a variable**.
 
-Both a test and a live set can live there at once. **`STRIPE_MODE` decides
-which pair is active**, so switching between them is one variable, not
-re-pasting keys:
+Use context-specific variables so production never has to choose between a
+test and live key at runtime. Production receives the live pair; deploy
+previews receive the test pair. **`STRIPE_MODE` still decides which pair is
+active** inside each context:
 
 | `STRIPE_MODE` | Key variable | Webhook secret variable |
 |---|---|---|
@@ -176,6 +191,15 @@ Environment variables are read at function invocation, but Netlify needs a
 deploy to pick up a newly added variable. **Deploys → Trigger deploy →
 Deploy site.**
 
+Keep `CHECKOUT_ENABLED` unset or `false` throughout setup. For the first real
+payment set it to `admin`, redeploy, and use an administrator account: real
+checkout opens only for the administrator while every customer still sees the
+maintenance message. After the canary succeeds, set it to `true` and redeploy.
+
+For an emergency stop, set it back to `false`, redeploy, then use **My Account
+→ Stripe setup → Expire outstanding checkout links**. The environment switch
+blocks new sessions; expiring closes unpaid links that were already issued.
+
 ## 5. Turn on the payment methods
 
 Stripe dashboard → **Settings → Payments → Payment methods**.
@@ -218,7 +242,9 @@ again: an admin gets the real cause back (`adminDetail`, plus a hint naming
 the missing variable), where a customer gets the friendly "call us" line.
 Check the browser console on `cart.html` for it.
 
-**Switch to live keys only after all of the above passes.** Remember to
+**Switch production to live keys only after all of the above passes.** Keep
+test credentials out of the production context rather than deleting the
+ability to test. Remember to
 create the live-mode webhook endpoint separately — test and live endpoints
 have different signing secrets, and a test secret will 401 against live
 traffic.
