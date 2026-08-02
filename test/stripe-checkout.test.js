@@ -85,6 +85,9 @@ function deps(session, extra = {}) {
     getSession: async () => session,
     now: NOW,
     idGenerator: () => "ord-test",
+    // These tests exercise checkout itself, so it runs enabled. The kill
+    // switch has its own tests at the bottom of this file.
+    checkoutEnabled: () => true,
     createCheckoutSession: async (params) => {
       lastSessionParams = params;
       return { id: "cs_test_123", url: "https://checkout.stripe.com/c/pay/cs_test_123" };
@@ -1197,4 +1200,48 @@ test("one customer's abandoned orders never touch another's", async () => {
 
   assert.equal(blobs.get(k("orders", "ord-mine")).status, "awaiting_payment",
     "another customer's checkout must not supersede mine");
+});
+
+/* ============================================================ kill switch = */
+
+test("checkout is OFF unless explicitly enabled", () => {
+  const { checkoutEnabled } = require("../netlify/functions/_lib/checkout_status.js");
+  // Opt-in, not opt-out: the safe state has to be the one you get by doing
+  // nothing, including on a fresh deploy, a rollback, or a restored backup.
+  assert.equal(checkoutEnabled({}), false, "an unset variable must block payments");
+  assert.equal(checkoutEnabled({ CHECKOUT_ENABLED: "" }), false);
+  assert.equal(checkoutEnabled({ CHECKOUT_ENABLED: "1" }), false, "only the literal word counts");
+  assert.equal(checkoutEnabled({ CHECKOUT_ENABLED: "yes" }), false);
+  assert.equal(checkoutEnabled({ CHECKOUT_ENABLED: "false" }), false);
+  assert.equal(checkoutEnabled({ CHECKOUT_ENABLED: "true" }), true);
+  assert.equal(checkoutEnabled({ CHECKOUT_ENABLED: " TRUE " }), true, "trimmed and case-insensitive");
+});
+
+test("a paused checkout refuses before writing an order or calling Stripe", async () => {
+  reset();
+  seedUser(CUST, null);
+  let stripeCalled = false;
+  const res = await checkout.handler(req("POST", { items: [{ key: "svc-seo", quantity: 1 }] }), {},
+    deps(CUST, {
+      checkoutEnabled: () => false,
+      createCheckoutSession: async () => { stripeCalled = true; return {}; },
+    }));
+
+  assert.equal(res.statusCode, 503);
+  assert.equal(JSON.parse(res.body).checkoutDisabled, true);
+  assert.match(JSON.parse(res.body).error, /804-309-0968/, "tell them how to order anyway");
+  assert.equal(stripeCalled, false, "Stripe must not be contacted");
+  // No half-made order left behind for the customer to find on their dashboard.
+  assert.equal([...blobs.keys()].filter((k) => k.startsWith("orders::")).length, 0);
+});
+
+test("pricing still works while checkout is paused", async () => {
+  reset();
+  seedUser(CUST, null);
+  // Someone browsing should still see what things cost -- they just can't pay.
+  const res = await checkout.handler(req("GET", null, { items: "svc-seo:1" }), {}, deps(CUST, { checkoutEnabled: () => false }));
+  assert.equal(res.statusCode, 200);
+  const body = JSON.parse(res.body);
+  assert.equal(body.priced.chargedTodayCents, 9900);
+  assert.equal(body.checkoutEnabled, false, "the cart needs to know so it can say so");
 });

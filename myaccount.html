@@ -1152,6 +1152,14 @@
       status.className = "form-note" + (bad ? " form-note--error" : "");
     }
 
+    // Checkout can be paused globally; say so before they type an amount.
+    api("checkout-status").then(function (r) {
+      if (r.ok && r.body && r.body.enabled === false) {
+        v.querySelector("#paySubmit").disabled = true;
+        say(r.body.message, true);
+      }
+    });
+
     v.querySelector("#payForm").addEventListener("submit", async function (e) {
       e.preventDefault();
       var agree = v.querySelector("#agreeTerms");
