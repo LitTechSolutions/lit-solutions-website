@@ -2461,6 +2461,69 @@ body.has-price-bar .cookie-banner{
 
 
 
+
+/* =========================================================
+   Homepage: buy a website
+   ========================================================= */
+.buy-site{ background: var(--paper-alt); }
+.buy-grid{
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+  gap:1.5rem; margin-top:2.5rem; align-items:stretch;
+}
+.buy-card{
+  position:relative; display:flex; flex-direction:column;
+  padding:2rem 1.75rem; background: var(--paper);
+  border:1px solid var(--line); border-radius: var(--radius);
+}
+/* The middle card is the one most small businesses should take, so it gets
+   the emphasis -- not because it earns more, but because it's the one that
+   gets someone online without several hundred pounds up front. */
+.buy-card--featured{
+  border-color: var(--accent-orange); box-shadow:0 10px 30px rgba(53,72,196,.10);
+}
+.buy-card-flag{
+  position:absolute; top:-.7rem; left:50%; transform:translateX(-50%);
+  background: var(--accent-orange); color:#fff; white-space:nowrap;
+  font-size:.66rem; font-weight:700; letter-spacing:.07em; text-transform:uppercase;
+  padding:.3rem .75rem; border-radius:999px;
+}
+.buy-card-eyebrow{
+  font-size:.68rem; letter-spacing:.09em; text-transform:uppercase;
+  font-weight:700; color: var(--ink-faint); margin-bottom:.4rem;
+}
+.buy-card h3{ font-size:1.35rem; margin-bottom:.6rem; }
+.buy-card-price{
+  font-family: var(--font-display); font-size:2rem; font-weight:700;
+  color: var(--ink); line-height:1.1; margin-bottom:.9rem;
+}
+.buy-card-price span{
+  display:block; font-family: var(--font-body); font-size:.72rem;
+  font-weight:600; letter-spacing:.08em; text-transform:uppercase; color: var(--ink-faint);
+}
+.buy-card-price small{ font-size:1rem; font-weight:600; color: var(--ink-soft); }
+.buy-card-body{ font-size:.92rem; color: var(--ink-soft); line-height:1.7; margin-bottom:1.1rem; }
+.buy-card-list{ list-style:none; padding:0; margin:0 0 1.75rem; display:grid; gap:.5rem; }
+.buy-card-list li{
+  position:relative; padding-left:1.5rem; font-size:.87rem; color: var(--ink-soft); line-height:1.55;
+}
+.buy-card-list li::before{
+  content:""; position:absolute; left:0; top:.42em;
+  width:8px; height:8px; border-radius:50%; background: var(--accent-teal);
+}
+/* Pins every button to the bottom so three cards of different lengths still
+   line up. */
+.buy-card .btn{ margin-top:auto; }
+.buy-foot{
+  margin-top:2rem; text-align:center; font-size:.88rem;
+  color: var(--ink-soft); line-height:1.7; max-width:70ch; margin-left:auto; margin-right:auto;
+}
+.buy-foot a{ color: var(--accent-orange-text); text-decoration:underline; }
+
+@media (max-width:600px){
+  .buy-card{ padding:1.75rem 1.4rem; }
+  .buy-grid{ gap:1.75rem; margin-top:2rem; }
+}
+
 /* =========================================================
    Account: forms, states, and the small things that make it
    feel finished rather than assembled
