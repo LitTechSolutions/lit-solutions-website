@@ -178,9 +178,9 @@
   // read as a non-sequitur on every view that isn't about those -- "Project
   // brief" followed by "Sign in to view your invoices" in particular.
   var LEDES = {
-    "Sign in": "Sign in to view your invoices, receipts, and paperwork, and manage your login.",
-    "Create an account": "Your account is where you pay, fill in your project brief, and keep your paperwork.",
-    "Enter your code": "One quick step to confirm it's really your email address.",
+    "Sign in": "",
+    "Create an account": "",
+    "Enter your code": "",
     "Verify your email": "One quick step to confirm it's really your email address.",
     "Reset your password": "We'll email you a link to set a new one.",
     "Set a new password": "Choose something long. A passphrase beats a short, complicated password.",
@@ -307,80 +307,246 @@
   var TYPE_LABEL = { invoice: "Invoice", receipt: "Receipt", paperwork: "Paperwork", other: "Other" };
   var STATUS_LABEL = { paid: "Paid", unpaid: "Unpaid", "n/a": "" };
 
+
+  /* ---- form helpers -------------------------------------------------
+   * Small, but they're the difference between "a form" and "a form that
+   * behaves the way every other site's does": password managers can see
+   * the fields, Enter submits, errors appear where the mistake is, and the
+   * button says what it's doing.
+   */
+  function field(opts) {
+    var id = opts.id;
+    var isPw = opts.type === "password";
+    return '<div class="field' + (isPw ? ' field-password' : '') + '" data-field="' + id + '">' +
+      '<label for="' + id + '">' + esc(opts.label) + '</label>' +
+      '<input id="' + id + '" type="' + (opts.type || "text") + '"' +
+        (opts.autocomplete ? ' autocomplete="' + opts.autocomplete + '"' : '') +
+        (opts.inputmode ? ' inputmode="' + opts.inputmode + '"' : '') +
+        (opts.placeholder ? ' placeholder="' + esc(opts.placeholder) + '"' : '') +
+        (opts.maxlength ? ' maxlength="' + opts.maxlength + '"' : '') +
+        (opts.cls ? ' class="' + opts.cls + '"' : '') +
+        ' aria-required="true" aria-describedby="' + id + '-err">' +
+      (isPw ? '<button type="button" class="field-reveal" data-reveal="' + id + '" aria-label="Show password">Show</button>' : '') +
+      (opts.hint ? '<span class="field-hint">' + opts.hint + '</span>' : '') +
+      '<span class="field-error" id="' + id + '-err" role="alert"></span>' +
+    '</div>';
+  }
+
+  function setFieldError(root, id, message) {
+    var wrap = root.querySelector('[data-field="' + id + '"]');
+    if (!wrap) return;
+    wrap.classList.toggle("is-invalid", !!message);
+    wrap.querySelector(".field-error").textContent = message || "";
+  }
+
+  function clearFieldErrors(root) {
+    root.querySelectorAll('[data-field]').forEach(function (w) {
+      w.classList.remove("is-invalid");
+      w.querySelector(".field-error").textContent = "";
+    });
+  }
+
+  function wireForm(root, onSubmit) {
+    // Reveal toggles.
+    root.querySelectorAll("[data-reveal]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var input = root.querySelector("#" + btn.getAttribute("data-reveal"));
+        var showing = input.type === "text";
+        input.type = showing ? "password" : "text";
+        btn.textContent = showing ? "Show" : "Hide";
+        btn.setAttribute("aria-label", showing ? "Show password" : "Hide password");
+        input.focus();
+      });
+    });
+    // Enter submits from any field -- people expect it, and without it a
+    // keyboard user has to tab past every field to reach the button.
+    root.querySelectorAll("input").forEach(function (input) {
+      input.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") { e.preventDefault(); onSubmit(); }
+      });
+      // Clear a field's error as soon as they start correcting it.
+      input.addEventListener("input", function () {
+        var wrap = input.closest("[data-field]");
+        if (wrap && wrap.classList.contains("is-invalid")) {
+          wrap.classList.remove("is-invalid");
+          wrap.querySelector(".field-error").textContent = "";
+        }
+      });
+    });
+  }
+
+  function busy(btn, on, labelWhenBusy) {
+    if (!btn) return;
+    if (on) {
+      btn.dataset.label = btn.dataset.label || btn.textContent;
+      btn.textContent = labelWhenBusy || btn.dataset.label;
+      btn.setAttribute("aria-busy", "true");
+      btn.disabled = true;
+    } else {
+      btn.textContent = btn.dataset.label || btn.textContent;
+      btn.removeAttribute("aria-busy");
+      btn.disabled = false;
+    }
+  }
+
+  function looksLikeEmail(v) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v || "").trim());
+  }
+
+  function skeleton(lines) {
+    var out = '<div class="skeleton-card" aria-hidden="true">';
+    for (var i = 0; i < (lines || 3); i++) out += '<div class="skeleton skeleton-line"></div>';
+    return out + '</div>';
+  }
+
+  function emptyState(title, body, actionHtml) {
+    return '<div class="empty-state">' +
+      '<span class="empty-state-icon" aria-hidden="true">' +
+        '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">' +
+        '<path d="M4 7h16M4 12h16M4 17h10"/></svg>' +
+      '</span>' +
+      '<h3>' + esc(title) + '</h3><p>' + body + '</p>' +
+      (actionHtml || '') + '</div>';
+  }
+
   var views = {};
 
   views.signin = function () {
     setPageTitle("Sign in");
-    var v = el('<div class="card"><h2 style="font-size:1.2rem; margin-bottom:1rem;">Sign in</h2>' +
-      '<div class="form-row"><label for="si-email">Email</label><input id="si-email" type="email"></div>' +
-      '<div class="form-row"><label for="si-password">Password</label><input id="si-password" type="password"></div>' +
-      '<button class="btn btn-primary" id="si-submit">Sign in</button>' +
-      '<p class="form-note" id="si-status"></p>' +
-      '<p style="margin-top:1rem; font-size:.88rem;"><a href="#reset-request" style="color:var(--accent-orange-text); text-decoration:underline;">Forgot password?</a></p>' +
-      '<p style="margin-top:.5rem; font-size:.88rem;">New here? <a href="#register" style="color:var(--accent-orange-text); text-decoration:underline;">Create an account</a></p>' +
-      '</div>');
-    v.querySelector("#si-submit").addEventListener("click", async function () {
+    var v = el('<div class="card auth-card">' +
+      '<h2>Welcome back</h2>' +
+      '<p class="auth-lede">Sign in to pay, track your project, and get to your paperwork.</p>' +
+      field({ id: "si-email", label: "Email", type: "email", autocomplete: "username", placeholder: "you@example.com" }) +
+      field({ id: "si-password", label: "Password", type: "password", autocomplete: "current-password" }) +
+      '<button class="btn btn-primary btn-block" id="si-submit">Sign in</button>' +
+      '<p class="form-note" id="si-status" role="status" aria-live="polite"></p>' +
+      '<p class="auth-alt">New here? <a href="#register">Create an account</a></p>' +
+      '<p class="auth-alt"><a href="#reset-request">Forgot your password?</a></p>' +
+    '</div>');
+
+    async function submit() {
       var status = v.querySelector("#si-status");
-      var emailValue = v.querySelector("#si-email").value;
-      var r = await api("auth-login", { method: "POST", body: JSON.stringify({ email: emailValue, password: v.querySelector("#si-password").value }) });
+      var btn = v.querySelector("#si-submit");
+      var email = v.querySelector("#si-email").value.trim();
+      var password = v.querySelector("#si-password").value;
+
+      clearFieldErrors(v);
+      status.textContent = "";
+      var bad = false;
+      if (!looksLikeEmail(email)) { setFieldError(v, "si-email", "Enter a valid email address."); bad = true; }
+      if (!password) { setFieldError(v, "si-password", "Enter your password."); bad = true; }
+      if (bad) { v.querySelector(".is-invalid input").focus(); return; }
+
+      busy(btn, true, "Signing in\u2026");
+      var r = await api("auth-login", { method: "POST", body: JSON.stringify({ email: email, password: password }) });
       if (r.ok) {
         status.textContent = "Signed in.";
         status.className = "form-note";
+        if (window.LTS_ACCOUNT_CLEAR) window.LTS_ACCOUNT_CLEAR();
         await loadSession();
         if (await maybeRedirectToCareHub()) return;
         renderTabs();
         if (followNext()) return;
         window.location.hash = "#dashboard";
-      } else if (r.body && r.body.code === "unverified") {
-        status.innerHTML = "Please verify your email before signing in. " +
-          '<a href="#" id="resend-verify-link" style="color:var(--accent-orange-text); text-decoration:underline;">Resend verification email</a>';
-        status.className = "form-note form-note--error";
-        var resendLink = document.getElementById("resend-verify-link");
-        if (resendLink) resendLink.addEventListener("click", async function (e) {
-          e.preventDefault();
-          status.textContent = "Sending…";
-          status.className = "form-note";
-          var rr = await api("auth-verify-email", { method: "POST", body: JSON.stringify({ action: "resend", email: emailValue }) });
-          status.textContent = (rr.body && rr.body.message) || "If that account exists, a new link was sent.";
-          status.className = "form-note";
-        });
-      } else {
-        status.textContent = (r.body && r.body.error) || "Sign-in failed.";
-        status.className = "form-note form-note--error";
+        return;
       }
-    });
+      busy(btn, false);
+      if (r.body && r.body.code === "unverified") {
+        status.innerHTML = 'Please verify your email first. <a href="#" id="resend-verify-link" style="color:var(--accent-orange-text); text-decoration:underline;">Send a new code</a>';
+        status.className = "form-note form-note--error";
+        var link = v.querySelector("#resend-verify-link");
+        if (link) link.addEventListener("click", async function (e) {
+          e.preventDefault();
+          await api("auth-verify-email", { method: "POST", body: JSON.stringify({ action: "resend", email: email }) });
+          state.pendingEmail = email;
+          window.location.hash = "#code";
+        });
+        return;
+      }
+      if (r.body && r.body.mfaRequired) {
+        // Admin accounts require two-factor, which this portal doesn't
+        // implement -- say so plainly instead of looping them back here.
+        status.innerHTML = 'This account uses two-factor authentication. Sign in through the <a href="/care-hub/login" style="color:var(--accent-orange-text); text-decoration:underline;">staff portal</a>, then come back \u2014 you\u2019ll already be signed in.';
+        status.className = "form-note form-note--error";
+        return;
+      }
+      status.textContent = (r.body && r.body.error) || "Couldn't sign you in. Try again.";
+      status.className = "form-note form-note--error";
+    }
+
+    v.querySelector("#si-submit").addEventListener("click", submit);
+    wireForm(v, submit);
+    setTimeout(function () { v.querySelector("#si-email").focus(); }, 50);
     return v;
   };
 
   views.register = function () {
     setPageTitle("Create an account");
-    var v = el('<div class="card"><h2 style="font-size:1.2rem; margin-bottom:1rem;">Create an account</h2>' +
-      '<p style="font-size:.88rem; color:var(--ink-soft); margin-bottom:1rem;">Your account is where you pay for a website plan, fill in your project brief, and keep your paperwork afterwards. We\'ll email you a 6-digit code to confirm your address &mdash; it takes about a minute.</p>' +
-      '<div class="form-row"><label for="rg-name">Name</label><input id="rg-name" type="text"></div>' +
-      '<div class="form-row"><label for="rg-email">Email</label><input id="rg-email" type="email"></div>' +
-      '<div class="form-row"><label for="rg-password">Password <span style="font-weight:400; color:var(--ink-faint);">(at least 10 characters)</span></label><input id="rg-password" type="password"></div>' +
-      '<div class="form-row" style="display:flex; align-items:flex-start; gap:.5rem;">' +
-      '<input type="checkbox" id="rg-terms" style="margin-top:.2rem;">' +
-      '<label for="rg-terms">I have read and agree to the <a href="terms.html" target="_blank" rel="noopener" style="color:var(--accent-orange-text); text-decoration:underline;">Terms &amp; Conditions</a> and <a href="privacy.html" target="_blank" rel="noopener" style="color:var(--accent-orange-text); text-decoration:underline;">Privacy Policy</a>.</label>' +
+    var v = el('<div class="card auth-card">' +
+      '<h2>Create your account</h2>' +
+      '<p class="auth-lede">It\u2019s where you pay, track your build, and keep your paperwork. We\u2019ll email a 6-digit code to confirm your address &mdash; about a minute.</p>' +
+      field({ id: "rg-name", label: "Your name", type: "text", autocomplete: "name", placeholder: "Jane Doe" }) +
+      field({ id: "rg-email", label: "Email", type: "email", autocomplete: "email", placeholder: "you@example.com",
+              hint: "We send your code and receipts here." }) +
+      field({ id: "rg-password", label: "Password", type: "password", autocomplete: "new-password",
+              hint: "At least 10 characters. A short phrase beats a complicated word." }) +
+      '<div class="field" data-field="rg-terms">' +
+        '<label style="display:flex; align-items:flex-start; gap:.6rem; font-weight:400; font-size:.87rem; line-height:1.6;">' +
+          '<input type="checkbox" id="rg-terms" style="margin-top:.25rem; width:auto;">' +
+          '<span>I agree to the <a href="terms.html" target="_blank" rel="noopener" style="color:var(--accent-orange-text); text-decoration:underline;">Terms &amp; Conditions</a> and <a href="privacy.html" target="_blank" rel="noopener" style="color:var(--accent-orange-text); text-decoration:underline;">Privacy Policy</a>.</span>' +
+        '</label>' +
+        '<span class="field-error" id="rg-terms-err" role="alert"></span>' +
       '</div>' +
-      '<button class="btn btn-primary" id="rg-submit">Create account</button>' +
-      '<p class="form-note" id="rg-status"></p></div>');
-    v.querySelector("#rg-submit").addEventListener("click", async function () {
+      '<button class="btn btn-primary btn-block" id="rg-submit">Create account</button>' +
+      '<p class="form-note" id="rg-status" role="status" aria-live="polite"></p>' +
+      '<p class="auth-alt">Already have an account? <a href="#signin">Sign in</a></p>' +
+    '</div>');
+
+    async function submit() {
       var status = v.querySelector("#rg-status");
+      var btn = v.querySelector("#rg-submit");
+      var name = v.querySelector("#rg-name").value.trim();
+      var email = v.querySelector("#rg-email").value.trim();
+      var password = v.querySelector("#rg-password").value;
+
+      clearFieldErrors(v);
+      status.textContent = "";
+      var bad = false;
+      if (!name) { setFieldError(v, "rg-name", "Tell us what to call you."); bad = true; }
+      if (!looksLikeEmail(email)) { setFieldError(v, "rg-email", "Enter a valid email address."); bad = true; }
+      if (password.length < 10) { setFieldError(v, "rg-password", "Passwords need to be at least 10 characters."); bad = true; }
       if (!v.querySelector("#rg-terms").checked) {
-        status.textContent = "You must agree to the Terms of Service and acknowledge the Privacy Policy to continue.";
-        status.className = "form-note form-note--error";
+        setFieldError(v, "rg-terms", "Please agree to the Terms and Privacy Policy to continue."); bad = true;
+      }
+      if (bad) {
+        var firstBad = v.querySelector(".is-invalid input");
+        if (firstBad) firstBad.focus();
         return;
       }
-      var email = v.querySelector("#rg-email").value;
-      var r = await api("auth-register", { method: "POST", body: JSON.stringify({ name: v.querySelector("#rg-name").value, email: email, password: v.querySelector("#rg-password").value, termsAccepted: true }) });
-      status.textContent = (r.body && (r.body.message || r.body.error)) || "Something went wrong.";
-      status.className = "form-note" + (r.ok ? "" : " form-note--error");
-      // Straight to the code screen rather than a sign-in form -- they're
-      // mid-purchase with a cart in this tab, and bouncing them to a second
-      // form to retype a password they set ten seconds ago loses people.
-      if (r.ok) { state.pendingEmail = email; window.location.hash = "#code"; }
+
+      busy(btn, true, "Creating your account\u2026");
+      var r = await api("auth-register", { method: "POST",
+        body: JSON.stringify({ name: name, email: email, password: password, termsAccepted: true }) });
+
+      if (r.ok) {
+        // Straight to the code screen rather than a sign-in form -- they're
+        // often mid-purchase, and asking them to retype a password they set
+        // ten seconds ago loses people.
+        state.pendingEmail = email;
+        window.location.hash = "#code";
+        return;
+      }
+      busy(btn, false);
+      status.textContent = (r.body && r.body.error) || "Something went wrong. Try again.";
+      status.className = "form-note form-note--error";
+    }
+
+    v.querySelector("#rg-submit").addEventListener("click", submit);
+    v.querySelector("#rg-terms").addEventListener("change", function () {
+      if (this.checked) setFieldError(v, "rg-terms", "");
     });
+    wireForm(v, submit);
+    setTimeout(function () { v.querySelector("#rg-name").focus(); }, 50);
     return v;
   };
 
@@ -444,217 +610,74 @@
   // dashboard with their cart intact.
   views.code = function () {
     setPageTitle("Enter your code");
-    var pending = state.pendingEmail || "";
-    var v = el('<div class="card" style="max-width:420px;">' +
-      '<h2 style="font-size:1.2rem; margin-bottom:.5rem;">Check your email</h2>' +
-      '<p style="font-size:.9rem; color:var(--ink-soft); margin-bottom:1.25rem;">We\'ve sent a 6-digit code to <strong>' + esc(pending || "your email address") + '</strong>. It expires in 30 minutes.</p>' +
-      (pending ? '' : '<div class="form-row"><label for="cd-email">Email</label><input id="cd-email" type="email" autocomplete="email"></div>') +
-      '<div class="form-row"><label for="cd-code">6-digit code</label>' +
-      '<input id="cd-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" ' +
-      'style="font-size:1.6rem; letter-spacing:.5rem; text-align:center; font-family:var(--font-display);"></div>' +
+    var target = state.pendingEmail || "";
+    var v = el('<div class="card auth-card">' +
+      '<h2>Check your email</h2>' +
+      '<p class="auth-lede">We sent a 6-digit code' + (target ? ' to <strong>' + esc(target) + '</strong>' : '') +
+        '. It expires in 30 minutes.</p>' +
+      field({ id: "cd-code", label: "Verification code", type: "text", inputmode: "numeric",
+              autocomplete: "one-time-code", maxlength: 6, placeholder: "000000", cls: "code-input" }) +
       '<button class="btn btn-primary btn-block" id="cd-submit">Verify and continue</button>' +
-      '<p class="form-note" id="cd-status"></p>' +
-      '<p style="font-size:.83rem; color:var(--ink-faint); margin-top:1rem; text-align:center;">' +
-      'Didn\'t get it? <button type="button" id="cd-resend" style="background:none;border:none;padding:0;font:inherit;color:var(--accent-orange-text);text-decoration:underline;cursor:pointer;">Send a new code</button></p>' +
-      '</div>');
+      '<p class="form-note" id="cd-status" role="status" aria-live="polite"></p>' +
+      '<p class="auth-alt">Didn\u2019t get it? <a href="#" id="cd-resend">Send another</a><br>' +
+        '<span style="font-size:.82rem; color:var(--ink-faint);">Check your spam folder &mdash; a new sending domain often lands there the first time.</span></p>' +
+    '</div>');
 
     var input = v.querySelector("#cd-code");
     var status = v.querySelector("#cd-status");
-    function emailValue() {
-      return pending || (v.querySelector("#cd-email") ? v.querySelector("#cd-email").value : "");
-    }
 
     async function submit() {
-      var code = input.value.trim();
-      if (code.length !== 6) { status.textContent = "Enter the 6 digits from your email."; status.className = "form-note form-note--error"; return; }
-      status.textContent = "Checking\u2026"; status.className = "form-note";
-      var r = await api("auth-verify-email", { method: "POST", body: JSON.stringify({ action: "confirm-code", email: emailValue(), code: code }) });
+      var code = input.value.replace(/\D/g, "");
+      clearFieldErrors(v);
+      if (code.length !== 6) {
+        setFieldError(v, "cd-code", "Enter all six digits from the email.");
+        input.focus();
+        return;
+      }
+      var btn = v.querySelector("#cd-submit");
+      busy(btn, true, "Checking\u2026");
+      status.textContent = "";
+      var r = await api("auth-verify-email", { method: "POST",
+        body: JSON.stringify({ action: "confirm-code", email: state.pendingEmail, code: code }) });
+
       if (r.ok && r.body && r.body.user) {
         state.user = r.body.user;
         state.pendingEmail = null;
+        if (window.LTS_ACCOUNT_CLEAR) window.LTS_ACCOUNT_CLEAR();
         renderTabs();
         if (followNext()) return;
         window.location.hash = "#dashboard";
         return;
       }
+      busy(btn, false);
       if (r.ok && r.body && r.body.alreadyVerified) { window.location.hash = "#signin"; return; }
-      status.textContent = (r.body && r.body.error) || "That code isn't right.";
-      status.className = "form-note form-note--error";
+      setFieldError(v, "cd-code", (r.body && r.body.error) || "That code isn't right.");
+      input.select();
     }
 
-    v.querySelector("#cd-submit").addEventListener("click", submit);
-    input.addEventListener("keydown", function (e) { if (e.key === "Enter") submit(); });
-    // Typing the sixth digit is the natural moment to submit; nobody wants to
-    // reach for a button after keying a code.
+    // Six digits and nothing else, and submit as soon as they're in -- nobody
+    // wants to reach for a button after typing a code they just read.
     input.addEventListener("input", function () {
-      input.value = input.value.replace(/\D/g, "").slice(0, 6);
-      if (input.value.length === 6) submit();
+      var digits = input.value.replace(/\D/g, "").slice(0, 6);
+      if (input.value !== digits) input.value = digits;
+      if (digits.length === 6) submit();
     });
-    v.querySelector("#cd-resend").addEventListener("click", async function () {
-      status.textContent = "Sending\u2026"; status.className = "form-note";
-      await api("auth-verify-email", { method: "POST", body: JSON.stringify({ action: "resend", email: emailValue() }) });
-      status.textContent = "If that address has an unverified account, a new code is on its way.";
+    v.querySelector("#cd-submit").addEventListener("click", submit);
+    wireForm(v, submit);
+
+    v.querySelector("#cd-resend").addEventListener("click", async function (e) {
+      e.preventDefault();
+      status.textContent = "Sending a new code\u2026";
       status.className = "form-note";
+      await api("auth-verify-email", { method: "POST",
+        body: JSON.stringify({ action: "resend", email: state.pendingEmail }) });
+      status.textContent = "Sent. It can take a minute \u2014 check spam if it doesn't appear.";
     });
+
     setTimeout(function () { input.focus(); }, 50);
     return v;
   };
 
-
-  /* ---- orders: pay, then the project brief ----------------------------
-   * Orders are created by checkout.js before it opens the Stripe session, so
-   * by the time anyone lands here the order already exists. This view's job
-   * is to say what state it's in and offer the one action that moves it on.
-   */
-  function money(cents) {
-    if (cents == null) return "";
-    return "$" + (cents / 100).toLocaleString("en-US", {
-      minimumFractionDigits: cents % 100 ? 2 : 0, maximumFractionDigits: 2,
-    });
-  }
-
-  async function mountOrder(host) {
-    if (!host) return;
-
-    // Back from a successful Stripe checkout. The webhook is what actually
-    // marks the order paid, and it can land a second either side of the
-    // redirect -- so say something true while we wait rather than showing
-    // "unpaid" to someone who just paid.
-    var params = new URLSearchParams(window.location.search);
-    var justPaid = params.get("checkout") === "success";
-    var justPaidOrder = params.get("order");
-    if (justPaid) {
-      history.replaceState(null, "", window.location.pathname + window.location.hash);
-      // The cart is theirs no longer -- it's an order now.
-      if (window.LTS_CART) window.LTS_CART.clear();
-    }
-
-    var r = await api("orders");
-    var orders = (r.ok && r.body && r.body.orders) || [];
-    // "superseded" is an order the customer replaced by checking out with a
-    // different cart; "cancelled" is one they abandoned. Neither is news.
-    var live = orders.filter(function (o) {
-      return o.status !== "cancelled" && o.status !== "superseded";
-    });
-    if (!live.length) { host.innerHTML = ""; return; }
-
-    host.innerHTML = live.map(function (o) { return card(o, justPaid && o.id === justPaidOrder); }).join("");
-    wire();
-
-    function statusLine(o, optimistic) {
-      if (optimistic && o.status === "awaiting_payment") {
-        return { cls: "is-pending", text: "Payment received \u2014 we\u2019re just confirming it with Stripe. This page updates on its own." };
-      }
-      switch (o.status) {
-        case "awaiting_payment": return { cls: "is-pending", text: "Waiting on payment." };
-        case "payment_processing": return { cls: "is-pending", text: "Your payment is settling. Some pay-over-time methods take a day or two \u2014 nothing is held up in the meantime." };
-        case "checkout_failed": return { cls: "is-pending", text: "Checkout didn\u2019t open last time. Nothing was charged." };
-        case "paid": return { cls: "is-confirmed", text: "Payment confirmed. Your build is booked in." };
-        case "brief_submitted": return { cls: "is-confirmed", text: "Paid, and your brief is in. We\u2019ll be in touch within one business day." };
-        default: return { cls: "is-pending", text: "" };
-      }
-    }
-
-    function priceLines(o) {
-      var rows = [];
-      if (o.status === "awaiting_payment" || o.status === "checkout_failed") {
-        if (o.chargedTodayCents != null) rows.push("<strong>" + money(o.chargedTodayCents) + "</strong> due now");
-      } else if (o.amountPaidCents != null) {
-        rows.push("<strong>" + money(o.amountPaidCents) + "</strong> paid");
-      } else if (o.chargedTodayCents != null) {
-        rows.push("<strong>" + money(o.chargedTodayCents) + "</strong> paid");
-      }
-      if (o.monthlyCents) rows.push(money(o.monthlyCents) + "/month");
-      if (o.balanceAtLaunchCents) rows.push(money(o.balanceAtLaunchCents) + " at launch");
-      return rows.join(" &middot; ");
-    }
-
-    function card(o, optimistic) {
-      var st = statusLine(o, optimistic);
-      var unpaid = (o.status === "awaiting_payment" || o.status === "checkout_failed") && !optimistic;
-      var canBrief = (o.status === "paid" || o.status === "payment_processing") && o.needsBrief;
-
-      var actions = [];
-      if (unpaid) actions.push('<button type="button" class="btn btn-primary" data-pay="' + esc(o.id) + '">Pay ' + money(o.chargedTodayCents) + ' securely</button>');
-      if (canBrief) actions.push('<a class="btn btn-primary" href="#brief">Fill in your project brief</a>');
-      if (o.hasSubscription) actions.push('<button type="button" class="btn btn-ghost" data-billing="' + esc(o.id) + '">Manage billing</button>');
-      if (o.status === "brief_submitted") actions.push('<a class="btn btn-ghost" href="#documents">See your paperwork</a>');
-
-      return '<div class="order-card' + (unpaid || canBrief ? ' order-card--action' : '') + '">' +
-        '<p class="eyebrow">Your order</p>' +
-        '<h2>' + esc(o.summary) + '</h2>' +
-        '<p class="order-line">' + priceLines(o) + '</p>' +
-        (o.hero ? '<p class="order-note" style="color:var(--accent-teal-text);">American Heroes Discount applied.</p>' : '') +
-        '<p class="order-status ' + st.cls + '">' + st.text + '</p>' +
-        (canBrief ? '<p class="order-note">One thing left: your project brief. It\u2019s what we build from, and we can\u2019t start without it.</p>' : '') +
-        (unpaid ? '<p class="order-note">Card, Apple Pay or Google Pay \u2014 secure checkout by Stripe. Nothing has been charged yet.</p>' : '') +
-        (actions.length ? '<div class="order-actions">' + actions.join("") + '</div>' : '') +
-        (unpaid ? '<button type="button" class="order-paid-link" data-cancel="' + esc(o.id) + '">Cancel this order</button>' : '') +
-      '</div>';
-    }
-
-    function wire() {
-      host.querySelectorAll("[data-pay]").forEach(function (btn) {
-        btn.addEventListener("click", async function () {
-          btn.disabled = true;
-          var was = btn.textContent;
-          btn.textContent = "Opening secure checkout\u2026";
-          var res = await api("checkout", { method: "POST", body: JSON.stringify({ orderId: btn.getAttribute("data-pay") }) });
-          if (res.ok && res.body && res.body.url) { window.location.href = res.body.url; return; }
-          btn.disabled = false;
-          btn.textContent = was;
-          alert((res.body && res.body.error) || "Couldn\u2019t start checkout. Call us on 804-309-0968 and we\u2019ll take it over the phone.");
-        });
-      });
-
-      host.querySelectorAll("[data-billing]").forEach(function (btn) {
-        btn.addEventListener("click", async function () {
-          btn.disabled = true;
-          var res = await api("billing-portal", { method: "POST", body: JSON.stringify({ orderId: btn.getAttribute("data-billing") }) });
-          if (res.ok && res.body && res.body.url) { window.location.href = res.body.url; return; }
-          btn.disabled = false;
-          alert((res.body && res.body.error) || "Couldn\u2019t open billing just now.");
-        });
-      });
-
-      host.querySelectorAll("[data-cancel]").forEach(function (btn) {
-        btn.addEventListener("click", async function () {
-          if (!window.confirm("Cancel this order? Nothing has been charged, and you can order again any time.")) return;
-          await api("orders", { method: "PATCH", body: JSON.stringify({ id: btn.getAttribute("data-cancel"), action: "cancel" }) });
-          mountOrder(host);
-        });
-      });
-    }
-
-    // The webhook usually lands within a second or two of the redirect. Poll
-    // briefly so the card resolves itself instead of asking them to refresh,
-    // then stop -- an indefinite poll on a quiet dashboard is just noise.
-    if (justPaid) {
-      var tries = 0;
-      var poll = setInterval(async function () {
-        tries++;
-        var rr = await api("orders");
-        var got = ((rr.ok && rr.body && rr.body.orders) || []).find(function (o) { return o.id === justPaidOrder; });
-        if ((got && got.status !== "awaiting_payment") || tries >= 10) {
-          clearInterval(poll);
-          if (got && got.status !== "awaiting_payment") mountOrder(host);
-        }
-      }, 3000);
-    }
-  }
-
-
-  /* ---- American Heroes Discount ---------------------------------------
-   * Verified BEFORE payment, never after: the discount is a price, and a
-   * price can't be applied retrospectively to a card that has already been
-   * charged. So this view exists to get the request in early, and the state
-   * is shown at sign-in on the dashboard so nobody discovers it too late.
-   *
-   * There is deliberately no upload field. terms.html section 10 and the
-   * privacy policy both promise we never receive an unredacted DD-214, LES,
-   * or anything carrying an SSN -- and the surest way to keep that promise
-   * is to have nowhere to send one.
-   */
   views.hero = function () {
     if (!requireAuth()) return el("<div></div>");
     setPageTitle("American Heroes Discount");

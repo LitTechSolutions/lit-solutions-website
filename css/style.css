@@ -2460,6 +2460,121 @@ body.has-price-bar .cookie-banner{
 }
 
 
+
+/* =========================================================
+   Account: forms, states, and the small things that make it
+   feel finished rather than assembled
+   ========================================================= */
+
+/* Auth cards are narrower than the dashboard -- a sign-in form stretched to
+   full width reads as an admin panel, not a front door. */
+.auth-card{ max-width:440px; margin:0 auto; }
+.auth-card h2{ font-size:1.35rem; margin-bottom:.35rem; }
+.auth-lede{ color: var(--ink-soft); font-size:.9rem; line-height:1.6; margin-bottom:1.5rem; }
+
+.field{ margin-bottom:1.15rem; }
+.field label{
+  display:block; font-weight:600; font-size:.85rem; color: var(--ink); margin-bottom:.4rem;
+}
+.field input,
+.field select,
+.field textarea{
+  width:100%; padding:.7rem .85rem; font: inherit; font-size:.95rem;
+  color: var(--ink); background: var(--paper);
+  border:1px solid var(--line); border-radius:10px;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
+  outline:none; border-color: var(--accent-orange);
+  box-shadow:0 0 0 3px var(--accent-orange-dark);
+}
+.field input::placeholder{ color: var(--ink-faint); }
+.field-hint{ display:block; margin-top:.35rem; font-size:.78rem; color: var(--ink-faint); line-height:1.5; }
+
+/* Inline validation. Only ever shown after someone has left a field or
+   tried to submit -- flagging an email as invalid while it's still being
+   typed is just nagging. */
+.field.is-invalid input,
+.field.is-invalid select{ border-color:#B3261E; }
+.field.is-invalid input:focus{ box-shadow:0 0 0 3px rgba(179,38,30,.15); }
+.field-error{
+  display:none; margin-top:.35rem; font-size:.79rem; color:#B3261E; line-height:1.5;
+}
+.field.is-invalid .field-error{ display:block; }
+
+/* Password managers need a real reveal control, and people mistype
+   passwords far more often than they mistype anything else. */
+.field-password{ position:relative; }
+.field-password input{ padding-right:3.4rem; }
+.field-reveal{
+  position:absolute; right:.35rem; top:50%; transform:translateY(-50%);
+  border:none; background:none; cursor:pointer; padding:.4rem .6rem;
+  font: inherit; font-size:.76rem; font-weight:600; color: var(--ink-faint);
+  border-radius:8px;
+}
+.field-reveal:hover{ color: var(--ink); background: var(--paper-alt); }
+
+.btn-block{ width:100%; }
+.btn[aria-busy="true"]{ opacity:.75; cursor:progress; }
+
+.auth-alt{
+  margin-top:1.25rem; padding-top:1.25rem; border-top:1px solid var(--line);
+  font-size:.87rem; color: var(--ink-soft); text-align:center;
+}
+.auth-alt a{ color: var(--accent-orange-text); text-decoration:underline; font-weight:600; }
+.auth-alt + .auth-alt{ margin-top:.5rem; padding-top:0; border-top:none; }
+
+/* A 6-digit code deserves to look like one. */
+.code-input{
+  width:100%; text-align:center; letter-spacing:.5em; text-indent:.5em;
+  font-family: var(--font-display); font-size:1.6rem; font-weight:700;
+  padding:.85rem .5rem;
+}
+
+/* Skeletons. "Loading…" as body text reads like a bug; a shape that matches
+   what's about to arrive reads like a page that's working. */
+.skeleton{
+  background: linear-gradient(90deg, var(--paper-alt) 25%, #ececf0 50%, var(--paper-alt) 75%);
+  background-size:200% 100%; border-radius:8px;
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+.skeleton-line{ height:.85rem; margin-bottom:.6rem; }
+.skeleton-line:last-child{ width:60%; margin-bottom:0; }
+.skeleton-card{
+  padding:1.5rem; border:1px solid var(--line); border-radius: var(--radius);
+  background: var(--paper); margin-bottom:1rem;
+}
+@keyframes skeleton-pulse{
+  0%{ background-position:200% 0; }
+  100%{ background-position:-200% 0; }
+}
+@media (prefers-reduced-motion: reduce){
+  .skeleton{ animation:none; }
+}
+
+/* Empty states should say what to do next, not just that there's nothing. */
+.empty-state{
+  text-align:center; padding:2.5rem 1.5rem;
+  border:1px dashed var(--line); border-radius: var(--radius); background: var(--paper);
+}
+.empty-state-icon{
+  width:44px; height:44px; margin:0 auto 1rem; border-radius:50%;
+  background: var(--paper-alt); color: var(--ink-faint);
+  display:flex; align-items:center; justify-content:center;
+}
+.empty-state h3{ font-size:1.05rem; color: var(--ink); margin-bottom:.4rem; }
+.empty-state p{
+  font-size:.88rem; color: var(--ink-soft); line-height:1.65; max-width:44ch; margin:0 auto 1.25rem;
+}
+.empty-state p:last-child{ margin-bottom:0; }
+
+@media (max-width:520px){
+  .auth-card{ max-width:none; }
+  .code-input{ font-size:1.35rem; letter-spacing:.35em; text-indent:.35em; }
+}
+
 /* =========================================================
    Account control in the header
    ========================================================= */
