@@ -93,8 +93,19 @@
 
         <article class="patch-entry">
           <div class="patch-entry-head">
-            <span class="patch-version patch-version--current">v4.6.0</span>
+            <span class="patch-version patch-version--current">v4.7.0</span>
             <span class="patch-tag">Current</span>
+          </div>
+          <ul class="patch-changes">
+            <li><strong>Secure online checkout is now live through Stripe.</strong> Real payments were verified end to end with a live purchase, the production webhook, the customer account, and a successful refund before checkout was opened to customers.</li>
+            <li><strong>Standard, Premium, and Executive can now be added directly to the cart from the Website Designer.</strong> Each plan keeps its full details link immediately below the new purchase button.</li>
+            <li>Fixed the customer dashboard so a successful Stripe return displays the paid order and confirmation instead of stopping before the order cards appeared.</li>
+          </ul>
+        </article>
+
+        <article class="patch-entry">
+          <div class="patch-entry-head">
+            <span class="patch-version">v4.6.0</span>
           </div>
           <ul class="patch-changes">
             <li><strong>One checkout instead of two.</strong> A subscription plan used to mean paying a deposit, then going back for the monthly plan separately &mdash; two trips, and it was entirely possible to do the first and forget the second. Now it is a single secure checkout that sets up both at once, and your dashboard updates itself the moment payment lands. No more "I've completed both payments" button, and nothing waiting on us to check by hand.</li>
