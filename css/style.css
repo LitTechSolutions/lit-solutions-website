@@ -2474,6 +2474,35 @@ body.has-price-bar .cookie-banner{
 
 
 
+
+/* ---- Ongoing support (pricing.html) ---- */
+.ongoing-support{ margin: 3.5rem 0 2.5rem; }
+.support-grid{
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+  gap:1.5rem; margin-top:2rem;
+}
+.support-card{
+  display:flex; flex-direction:column;
+  padding:1.85rem 1.65rem; background: var(--paper);
+  border:1px solid var(--line); border-radius: var(--radius);
+}
+.support-card h3{ font-size:1.2rem; margin-bottom:.5rem; }
+.support-price{
+  font-family: var(--font-display); font-size:2rem; font-weight:700;
+  color: var(--ink); line-height:1; margin-bottom:.9rem;
+}
+.support-price span{ font-family: var(--font-body); font-size:.9rem; font-weight:500; color: var(--ink-soft); }
+.support-body{ font-size:.9rem; color: var(--ink-soft); line-height:1.7; margin-bottom:.85rem; }
+.support-caveat{
+  font-size:.8rem; color: var(--ink-faint); line-height:1.6;
+  padding-left:.8rem; border-left:2px solid var(--line); margin-bottom:1.5rem;
+}
+.support-card .btn{ margin-top:auto; }
+.support-foot{
+  margin-top:1.5rem; font-size:.86rem; color: var(--ink-soft); line-height:1.7; max-width:70ch;
+}
+.support-foot a{ color: var(--accent-orange-text); text-decoration:underline; }
+
 /* =========================================================
    Homepage: buy a website
    ========================================================= */
