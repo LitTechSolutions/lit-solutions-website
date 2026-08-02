@@ -240,7 +240,7 @@ test("the order exists before the Stripe session, and its id rides in the metada
   // knowing exactly which order was paid.
   assert.equal(lastSessionParams.metadata.orderId, "ord-test");
   assert.equal(lastSessionParams.mode, "payment");
-  assert.match(lastSessionParams.successUrl, /checkout=success/);
+  assert.equal(lastSessionParams.successUrl, "https://lit-solutions.tech/thank-you.html?order=ord-test");
   assert.equal(lastSessionParams.customerEmail, CUST_EMAIL, "the address must come from the user record, not the session");
 });
 
@@ -486,9 +486,26 @@ test("a valid completed session marks the order paid and tells both sides", asyn
   assert.equal(order.amountPaidCents, 37800);
   assert.equal(order.stripeCustomerId, "cus_1");
   assert.equal(order.stripeSubscriptionId, "sub_1");
+  assert.equal(order.receiptDocumentId, "purchase-receipt-ord-test");
+
+  const receiptDoc = blobs.get(k("documents", order.receiptDocumentId));
+  assert.equal(receiptDoc.type, "receipt");
+  assert.equal(receiptDoc.status, "paid");
+  assert.equal(receiptDoc.amount, "$378");
+  assert.match(receiptDoc.fileDataUri, /^data:application\/pdf;base64,/);
+  assert.equal(Buffer.from(receiptDoc.fileDataUri.split(",")[1], "base64").slice(0, 5).toString(), "%PDF-");
+
+  const receiptNotice = blobs.get(k("notifications", "purchase-receipt-ord-test"));
+  assert.equal(receiptNotice.userId, CUST.userId);
+  assert.match(receiptNotice.title, /receipt/i);
 
   assert.ok(sent.find((m) => m.to === "dylan@lit-solutions.tech"), "the owner should be told");
-  assert.ok(sent.find((m) => m.to === "jane@example.test"), "the customer should be told");
+  const customerMail = sent.find((m) => m.to === "jane@example.test");
+  assert.ok(customerMail, "the customer should be told");
+  assert.match(customerMail.subject, /receipt/i);
+  assert.equal(customerMail.attachments.length, 1);
+  assert.equal(Buffer.from(customerMail.attachments[0].content, "base64").slice(0, 5).toString(), "%PDF-");
+  assert.match(customerMail.html, /Open your customer dashboard/);
 });
 
 test("a signed Stripe event cannot fulfill an order for the wrong amount or checkout session", async () => {
@@ -521,8 +538,11 @@ test("a redelivered webhook doesn't email twice or reopen a finished order", asy
   });
   await webhook.handler(evt, {}, whDeps);
   const after = sent.length;
+  const receiptCount = [...blobs.keys()].filter((key) => key.startsWith("documents::purchase-receipt-")).length;
   await webhook.handler(evt, {}, whDeps);
   assert.equal(sent.length, after, "a redelivery must not re-notify");
+  assert.equal([...blobs.keys()].filter((key) => key.startsWith("documents::purchase-receipt-")).length, receiptCount,
+    "a redelivery must not create a second receipt");
 
   // And it must not drag a submitted brief back to merely paid.
   const o = blobs.get(k("orders", "ord-test"));

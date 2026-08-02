@@ -93,8 +93,21 @@
 
         <article class="patch-entry">
           <div class="patch-entry-head">
-            <span class="patch-version patch-version--current">v4.7.0</span>
+            <span class="patch-version patch-version--current">v4.8.0</span>
             <span class="patch-tag">Current</span>
+          </div>
+          <ul class="patch-changes">
+            <li><strong>Rebuilt the customer dashboard around clear next steps.</strong> The new Overview shows the current project action, purchase and document counts, live order status, and direct routes to the project brief, paperwork, messages, and payments.</li>
+            <li><strong>Added a permanent Purchases area.</strong> Customers can revisit every order, payment status, monthly commitment, launch balance, refund state, receipt, project brief, and Stripe billing control from one place.</li>
+            <li><strong>Added a dedicated post-purchase thank-you page.</strong> It confirms the owned order against the server, handles delayed payment methods honestly, and provides a stable conversion destination for Google Ads without counting an unconfirmed payment.</li>
+            <li><strong>Every successful purchase now creates a branded PDF receipt automatically.</strong> The professional LTS project summary is attached to the confirmation email, saved privately in Documents, and paired with an in-account notification.</li>
+            <li>Hardened Stripe retry handling so a redelivered payment event cannot create duplicate receipts, notifications, or emails.</li>
+          </ul>
+        </article>
+
+        <article class="patch-entry">
+          <div class="patch-entry-head">
+            <span class="patch-version">v4.7.0</span>
           </div>
           <ul class="patch-changes">
             <li><strong>Secure online checkout is now live through Stripe.</strong> Real payments were verified end to end with a live purchase, the production webhook, the customer account, and a successful refund before checkout was opened to customers.</li>

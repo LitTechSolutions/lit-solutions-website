@@ -179,6 +179,35 @@ test("a successful Stripe return renders the paid order instead of crashing the 
   assert.match(orderCard.textContent, /Payment confirmed/);
 });
 
+test("the Purchases tab shows a customer's receipt, recurring price, and project action", async () => {
+  const { window } = loadMyAccountPage({
+    url: "http://localhost/myaccount.html#purchases",
+    responses: {
+      account: { body: { user: { id: "u4", name: "Maria", email: "maria@example.com", role: "customer" } } },
+      "my-memberships": { body: { memberships: [] } },
+      notifications: { body: { unreadCount: 0 } },
+      orders: { body: { orders: [{
+        id: "ord-4", status: "paid", summary: "Premium Website Plan", amountPaidCents: 37800,
+        monthlyCents: 12900, balanceAtLaunchCents: 0, paidAt: "2026-08-02T12:00:00Z",
+        needsBrief: true, receiptDocumentId: "purchase-receipt-ord-4", hasSubscription: true,
+        items: [{ key: "plan-premium", name: "Premium", quantity: 1 }],
+      }] } },
+    },
+  });
+  await wait(100);
+
+  const active = window.document.querySelector('#accountTabs a[href="#purchases"]');
+  assert.ok(active.classList.contains("is-active"), "Purchases should be visibly selected");
+  const record = window.document.querySelector(".purchase-record");
+  assert.ok(record);
+  assert.match(record.textContent, /Premium Website Plan/);
+  assert.match(record.textContent, /\$378 paid|Paid/i);
+  assert.match(record.textContent, /\$129\/month/);
+  assert.ok(record.querySelector('a[href="#documents"]'), "the saved PDF receipt should be reachable");
+  assert.ok(record.querySelector('a[href="#brief"]'), "a paid website project should offer the brief");
+  assert.ok(record.querySelector("[data-billing]"), "a recurring plan should offer Stripe billing management");
+});
+
 test("an admin with MFA enabled continues to the authenticator-code screen after a correct password", async () => {
   const { window, capturedRequests } = loadMyAccountPage({
     responses: {

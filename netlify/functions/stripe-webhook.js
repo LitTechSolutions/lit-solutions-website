@@ -29,6 +29,7 @@
 const { json } = require("./_lib/auth_utils");
 const { getJSON, setJSON, store } = require("./_lib/blob_store");
 const { sendEmail } = require("./_lib/email");
+const { renderPurchaseReceiptPdf, orderSummary, orderNeedsBrief } = require("./_lib/purchase_receipt");
 const { verifyWebhookSignature } = require("../../src/webhooks/webhookVerification");
 const { resolveStripe } = require("./_lib/stripe_config");
 
@@ -175,6 +176,7 @@ exports.handler = async (event, context, deps = {}) => {
   const setJSONFn = deps.setJSON || setJSON;
   const storeFn = deps.store || store;
   const sendEmailFn = deps.sendEmail || sendEmail;
+  const renderPurchaseReceiptPdfFn = deps.renderPurchaseReceiptPdf || renderPurchaseReceiptPdf;
   const type = evt.type;
   const object = (evt.data && evt.data.object) || {};
   const now = deps.now ? deps.now() : new Date();
@@ -263,8 +265,49 @@ exports.handler = async (event, context, deps = {}) => {
 
     const p = order.pricing || {};
     try {
+      // Stripe may redeliver the event. A stable document key plus the flag on
+      // the order makes the receipt exactly-once from the customer's point of
+      // view, even if a later email attempt needs retrying.
+      const receipt = renderPurchaseReceiptPdfFn({
+        order,
+        customer: { name: order.customerName, email: order.customerEmail },
+        issuedAt: order.paidAt || nowIso,
+      });
+      if (!order.receiptDocumentId) {
+        const receiptDocumentId = `purchase-receipt-${order.id}`;
+        await setJSONFn("documents", receiptDocumentId, {
+          customerId: order.customerId,
+          customerEmail: order.customerEmail,
+          title: `${receipt.title} — ${orderSummary(order)}`,
+          type: "receipt",
+          amount: money(order.amountPaidCents != null ? order.amountPaidCents : p.chargedTodayCents),
+          status: "paid",
+          date: (order.paidAt || nowIso).slice(0, 10),
+          notes: "Automatically generated after your secure Stripe payment.",
+          fileDataUri: `data:application/pdf;base64,${receipt.base64}`,
+          fileName: receipt.filename,
+          uploadedBy: "stripe-webhook",
+          uploadedAt: now.getTime(),
+          orderId: order.id,
+        });
+        order.receiptDocumentId = receiptDocumentId;
+        order.receiptGeneratedAt = nowIso;
+        await save(order);
+      }
+      if (!order.receiptNotificationCreatedAt) {
+        await setJSONFn("notifications", `purchase-receipt-${order.id}`, {
+          userId: order.customerId,
+          title: "Your payment receipt is ready",
+          body: `${orderSummary(order)} is confirmed. Your branded receipt is available in Documents.`,
+          href: "myaccount.html#documents",
+          read: false,
+          createdAt: now.getTime(),
+        });
+        order.receiptNotificationCreatedAt = nowIso;
+        await save(order);
+      }
       if (!order.adminPaymentEmailSentAt) {
-        await sendEmailFn({
+        const adminMail = await sendEmailFn({
           to: ADMIN_EMAIL,
           subject: `Paid — ${money(order.amountPaidCents != null ? order.amountPaidCents : p.chargedTodayCents)} — ${esc(order.customerEmail || "unknown")}`,
           html:
@@ -276,18 +319,35 @@ exports.handler = async (event, context, deps = {}) => {
             (order.hero ? `<br>American Heroes Discount applied` : "") +
             `</p><p>Their project brief has unlocked automatically. Order ${esc(order.id)}.</p>`,
         });
+        if (adminMail && adminMail.sent === false) throw new Error(adminMail.reason || "Admin payment email was rejected");
         order.adminPaymentEmailSentAt = nowIso;
         await save(order);
       }
       if (!order.customerPaymentEmailSentAt) {
-        await sendEmailFn({
+        const needsBrief = orderNeedsBrief(order);
+        const customerMail = await sendEmailFn({
           to: order.customerEmail,
-          subject: "Payment received — your project brief is ready",
+          subject: `Your receipt from Little Technical Solutions LLC — ${money(order.amountPaidCents != null ? order.amountPaidCents : p.chargedTodayCents)}`,
           html:
-            `<p>Thanks — that's gone through.</p>` +
-            `<p>The last thing we need is your project brief. It's waiting in your account now, and it's what we build from.</p>` +
-            `<p>We'll call you within one business day to talk it through.</p>`,
+            `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#1d1d1f;line-height:1.6;max-width:620px;margin:0 auto;">` +
+            `<p style="font-size:13px;font-weight:700;letter-spacing:.08em;color:#0062cc;margin:0 0 20px;">LITTLE TECHNICAL SOLUTIONS LLC</p>` +
+            `<h1 style="font-size:28px;line-height:1.15;margin:0 0 12px;">Thank you for your purchase.</h1>` +
+            `<p style="color:#5c5c61;margin:0 0 24px;">Your payment is confirmed and your receipt is attached.</p>` +
+            `<div style="background:#f5f8fc;border-radius:16px;padding:20px 22px;margin-bottom:22px;">` +
+            `<p style="margin:0 0 8px;"><strong>${esc(orderSummary(order))}</strong></p>` +
+            `<p style="margin:0;color:#5c5c61;">Paid today: <strong style="color:#1d1d1f;">${money(order.amountPaidCents != null ? order.amountPaidCents : p.chargedTodayCents)}</strong>` +
+            (p.monthlyCents ? `<br>Ongoing plan: <strong style="color:#1d1d1f;">${money(p.monthlyCents)}/month</strong>` : "") +
+            (p.balanceAtLaunchCents ? `<br>Balance due at launch: <strong style="color:#1d1d1f;">${money(p.balanceAtLaunchCents)}</strong>` : "") +
+            `</p></div>` +
+            (needsBrief
+              ? `<p><strong>Your next step:</strong> complete the project brief in your dashboard. It gives us what we need to begin.</p>`
+              : `<p>We have everything needed to record your payment. We'll contact you within one business day if we need any project details.</p>`) +
+            `<p><a href="https://lit-solutions.tech/myaccount.html#${needsBrief ? "brief" : "purchases"}" style="display:inline-block;background:#0071e3;color:#fff;text-decoration:none;font-weight:700;padding:12px 20px;border-radius:999px;">Open your customer dashboard</a></p>` +
+            `<p style="color:#6e6e73;font-size:13px;margin-top:28px;">Order ${esc(order.id)}<br>Questions? Reply to this email or call 804-309-0968.</p>` +
+            `</div>`,
+          attachments: [{ filename: receipt.filename, content: receipt.base64 }],
         });
+        if (customerMail && customerMail.sent === false) throw new Error(customerMail.reason || "Customer receipt email was rejected");
         order.customerPaymentEmailSentAt = nowIso;
         await save(order);
       }

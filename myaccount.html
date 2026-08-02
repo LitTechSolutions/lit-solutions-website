@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="css/style.css">
 <link rel="icon" type="image/png" href="assets/favicon.png">
 </head>
-<body>
+<body class="account-page">
 
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header" id="siteHeader">
@@ -85,9 +85,11 @@
   </section>
 
   <section>
-    <div class="wrap" style="max-width:640px;">
-      <nav class="account-tabs" id="accountTabs" hidden></nav>
-      <div id="accountView"></div>
+    <div class="wrap account-portal-wrap">
+      <div class="account-portal-shell">
+        <nav class="account-tabs" id="accountTabs" aria-label="Customer account" hidden></nav>
+        <div id="accountView"></div>
+      </div>
     </div>
   </section>
 
@@ -186,6 +188,7 @@
     "Set a new password": "Choose something long. A passphrase beats a short, complicated password.",
     "Project brief": "Tell us about your business and what the site needs to do. This is what we build from.",
     "My documents": "Invoices, receipts, paperwork, and a copy of your project brief.",
+    "Purchases": "Your order history, receipts, subscriptions, and payment status.",
     "Favorites & saved searches": "Pages you've saved for later.",
     "Notifications": "Updates about your account and your project.",
     "Messages": "Talk to us directly. We answer seven days a week.",
@@ -218,8 +221,8 @@
     var tabsEl = document.getElementById("accountTabs");
     if (state.user) {
       tabsEl.hidden = false;
-      tabsEl.innerHTML = '<a href="#dashboard">Dashboard</a><a href="#pay">Make a payment</a><a href="#documents">Documents</a><a href="#messages">Messages</a>' +
-        '<a href="#favorites">Favorites</a><a href="#notifications">Notifications<span class="tab-badge" id="notifTabBadge" hidden>0</span></a>' +
+      tabsEl.innerHTML = '<a href="#dashboard">Overview</a><a href="#purchases">Purchases</a><a href="#documents">Documents</a><a href="#messages">Messages</a>' +
+        '<a href="#notifications">Notifications<span class="tab-badge" id="notifTabBadge" hidden>0</span></a><a href="#pay">Make a payment</a>' +
         (state.user.role === "admin" ? '<a href="#heroqueue">Verify Heroes</a><a href="#stripe">Stripe setup</a>' : '<a href="#hero">Heroes Discount</a>') +
         '<a href="#profile">Account Settings</a><a href="#" id="account-signout">Sign out</a>';
       document.getElementById("account-signout").addEventListener("click", async function (e) {
@@ -1368,48 +1371,114 @@
     h1.innerHTML = '<span>Welcome, </span>' + esc(state.user.name);
     var lede = document.getElementById("acctPageLede");
     if (lede) lede.textContent = "Everything for your website project lives here.";
-    var v = el('<div>' +
+    var v = el('<div class="account-dashboard">' +
       '<div id="dashCart"></div>' +
       '<div id="dashHero"></div>' +
-      '<div id="dashOrder"></div>' +
-      '<div class="account-shortcuts" id="dashShortcuts">' +
-      '<a href="#documents" class="account-shortcut"><strong>&hellip;</strong><span>Documents</span></a>' +
-      '<a href="#favorites" class="account-shortcut"><strong>&hellip;</strong><span>Favorites</span></a>' +
-      '<a href="#notifications" class="account-shortcut"><strong>&hellip;</strong><span>Unread notifications</span></a>' +
-      '<a href="#messages" class="account-shortcut"><strong>&rarr;</strong><span>Messages</span></a>' +
-      '<a href="#brief" class="account-shortcut"><strong>&rarr;</strong><span>Project brief</span></a>' +
+      '<section class="dashboard-command card" id="dashCommand">' +
+        '<div><p class="eyebrow">Your next step</p><h2>Loading your project&hellip;</h2><p>Everything important will appear here.</p></div>' +
+        '<div class="dashboard-command-action"></div>' +
+      '</section>' +
+      '<div class="dashboard-metrics" id="dashMetrics">' +
+        '<a href="#purchases"><strong>&hellip;</strong><span>Purchases</span></a>' +
+        '<a href="#documents"><strong>&hellip;</strong><span>Documents</span></a>' +
+        '<a href="#notifications"><strong>&hellip;</strong><span>Unread updates</span></a>' +
       '</div>' +
-      '<div class="card" style="margin-top:1.5rem;"><h2 style="font-size:1.05rem; margin-bottom:.75rem;">Recently viewed</h2>' +
-      '<div id="dashRecent"><p style="color:var(--ink-faint); font-size:.9rem;">Loading&hellip;</p></div></div>' +
+      '<div class="dashboard-section-head"><div><p class="eyebrow">Projects &amp; orders</p><h2>What you have in progress</h2></div><a href="#purchases">View all purchases</a></div>' +
+      '<div id="dashOrder"></div>' +
+      '<div class="dashboard-section-head"><div><p class="eyebrow">Quick actions</p><h2>Keep your project moving</h2></div></div>' +
+      '<div class="dashboard-actions">' +
+        '<a href="#brief"><span>&rarr;</span><strong>Project brief</strong><small>Tell us what to build</small></a>' +
+        '<a href="#documents"><span>&darr;</span><strong>Documents</strong><small>Receipts and paperwork</small></a>' +
+        '<a href="#messages"><span>&#9993;</span><strong>Message LTS</strong><small>Ask a question directly</small></a>' +
+        '<a href="#pay"><span>$</span><strong>Make a payment</strong><small>Pay a quote or invoice</small></a>' +
+      '</div>' +
       '</div>');
 
     mountCartPrompt(v.querySelector("#dashCart"));
     mountHeroBanner(v.querySelector("#dashHero"));
     mountOrder(v.querySelector("#dashOrder"));
 
-    Promise.all([api("documents"), api("favorites"), api("notifications")]).then(function (results) {
-      var docs = results[0].ok ? (results[0].body.documents || []) : [];
-      var favs = results[1].ok ? results[1].body : { items: [], recentlyViewed: [] };
+    Promise.all([api("orders"), api("documents"), api("notifications")]).then(function (results) {
+      var orders = results[0].ok ? (results[0].body.orders || []) : [];
+      var docs = results[1].ok ? (results[1].body.documents || []) : [];
       var notifs = results[2].ok ? results[2].body : { unreadCount: 0 };
+      var active = orders.filter(function (o) { return ["paid", "brief_submitted", "payment_processing", "payment_review"].indexOf(o.status) !== -1; });
+      var counts = v.querySelectorAll("#dashMetrics strong");
+      counts[0].textContent = orders.filter(function (o) { return o.status !== "cancelled" && o.status !== "superseded"; }).length;
+      counts[1].textContent = docs.length;
+      counts[2].textContent = notifs.unreadCount || 0;
 
-      var counts = v.querySelectorAll("#dashShortcuts strong");
-      counts[0].textContent = docs.length;
-      counts[1].textContent = favs.items.length;
-      counts[2].textContent = notifs.unreadCount;
-
-      var recentEl = v.querySelector("#dashRecent");
-      var recent = favs.recentlyViewed || [];
-      if (!recent.length) {
-        recentEl.innerHTML = '<p style="color:var(--ink-faint); font-size:.9rem;">Nothing viewed yet. Browse the <a href="blog.html" style="color:var(--accent-orange-text); text-decoration:underline;">blog</a> or <a href="services.html" style="color:var(--accent-orange-text); text-decoration:underline;">services</a> to get started.</p>';
-        return;
+      var command = v.querySelector("#dashCommand");
+      var latest = active[0] || orders.find(function (o) { return o.status === "awaiting_payment" || o.status === "checkout_failed"; });
+      if (!latest) {
+        command.innerHTML = '<div><p class="eyebrow">Ready when you are</p><h2>Start with the right website plan.</h2><p>Choose a straightforward plan or configure a one-time build.</p></div><div class="dashboard-command-action"><a class="btn btn-primary" href="pricing.html">Explore plans</a></div>';
+      } else if ((latest.status === "paid" || latest.status === "payment_processing") && latest.needsBrief) {
+        command.innerHTML = '<div><p class="eyebrow">Your next step</p><h2>Complete your project brief.</h2><p>We have your payment. This gives us the details needed to begin ' + esc(latest.summary) + '.</p></div><div class="dashboard-command-action"><a class="btn btn-primary" href="#brief">Start the brief</a></div>';
+      } else if (latest.status === "awaiting_payment" || latest.status === "checkout_failed") {
+        command.innerHTML = '<div><p class="eyebrow">Checkout waiting</p><h2>Finish your secure payment.</h2><p>Your selections are saved. Nothing has been charged yet.</p></div><div class="dashboard-command-action"><a class="btn btn-primary" href="#purchases">Resume purchase</a></div>';
+      } else {
+        command.innerHTML = '<div><p class="eyebrow">Project status</p><h2>Your order is in good hands.</h2><p>' + esc(latest.summary) + ' is confirmed. We\'ll keep your updates and paperwork here.</p></div><div class="dashboard-command-action"><a class="btn btn-primary" href="#messages">Message us</a></div>';
       }
-      recentEl.innerHTML = "";
-      recent.slice(0, 8).forEach(function (item) {
-        var row = el('<p style="margin:.4rem 0;"><a href="' + esc(item.href) + '" style="color:var(--accent-orange-text); text-decoration:underline;">' + esc(item.label) + '</a></p>');
-        recentEl.appendChild(row);
-      });
     });
 
+    return v;
+  };
+
+  views.purchases = function () {
+    if (!requireAuth()) return el("<div></div>");
+    setPageTitle("Purchases");
+    var v = el('<div class="purchase-history"><div class="dashboard-section-head"><div><p class="eyebrow">Order history</p><h2>Your purchases</h2></div><a href="pricing.html">Browse website plans</a></div>' +
+      '<div id="purchaseList"><div class="card"><p>Loading your purchases&hellip;</p></div></div></div>');
+
+    api("orders").then(function (r) {
+      var list = v.querySelector("#purchaseList");
+      if (!r.ok) { list.innerHTML = '<div class="card"><p>We couldn\'t load your purchases. Try again in a moment.</p></div>'; return; }
+      var orders = (r.body.orders || []).filter(function (o) { return o.status !== "superseded"; });
+      if (!orders.length) {
+        list.innerHTML = '<div class="account-empty card"><h3>No purchases yet</h3><p>When you buy a plan, package, or service, its status and receipt will stay here.</p><a class="btn btn-primary" href="pricing.html">Explore website plans</a></div>';
+        return;
+      }
+      list.innerHTML = orders.map(function (o) {
+        var paid = o.status === "paid" || o.status === "brief_submitted";
+        var processing = o.status === "payment_processing";
+        var unpaid = o.status === "awaiting_payment" || o.status === "checkout_failed";
+        var status = paid ? "Paid" : processing ? "Processing" : unpaid ? "Payment needed" : o.status === "cancelled" ? "Cancelled" : "Reviewing";
+        var cls = paid ? "is-paid" : processing ? "is-processing" : unpaid ? "is-due" : "";
+        var total = o.amountPaidCents != null ? o.amountPaidCents : o.chargedTodayCents;
+        var itemRows = (o.items || []).map(function (item) { return '<li>' + esc(item.name) + (item.quantity > 1 ? ' &times; ' + item.quantity : '') + '</li>'; }).join("");
+        return '<article class="purchase-record" data-order="' + esc(o.id) + '">' +
+          '<div class="purchase-record-head"><div><span class="purchase-status ' + cls + '">' + status + '</span><h3>' + esc(o.summary) + '</h3><p>' + esc(new Date(o.paidAt || o.createdAt).toLocaleDateString("en-US", { year:"numeric", month:"short", day:"numeric" })) + ' &middot; Order ' + esc(o.id) + '</p></div><strong class="purchase-record-total">' + money(total) + '</strong></div>' +
+          '<ul class="purchase-record-items">' + itemRows + '</ul>' +
+          '<div class="purchase-record-meta">' +
+            (o.monthlyCents ? '<span><small>Ongoing</small>' + money(o.monthlyCents) + '/month</span>' : '') +
+            (o.balanceAtLaunchCents ? '<span><small>Due at launch</small>' + money(o.balanceAtLaunchCents) + '</span>' : '') +
+            (o.refundStatus ? '<span><small>Refund</small>' + esc(o.refundStatus) + (o.amountRefundedCents ? ' ' + money(o.amountRefundedCents) : '') + '</span>' : '') +
+          '</div><div class="purchase-record-actions">' +
+            (unpaid ? '<button class="btn btn-primary btn-small" data-pay="' + esc(o.id) + '">Resume secure checkout</button>' : '') +
+            (o.receiptDocumentId ? '<a class="btn btn-ghost btn-small" href="#documents">View receipt</a>' : '') +
+            (o.needsBrief && (paid || processing) && !o.briefSubmittedAt ? '<a class="btn btn-ghost btn-small" href="#brief">Project brief</a>' : '') +
+            (o.hasSubscription ? '<button class="btn btn-ghost btn-small" data-billing="' + esc(o.id) + '">Manage billing</button>' : '') +
+          '</div></article>';
+      }).join("");
+
+      list.querySelectorAll("[data-pay]").forEach(function (btn) {
+        btn.addEventListener("click", async function () {
+          btn.disabled = true; btn.textContent = "Opening secure checkout&hellip;";
+          var result = await api("checkout", { method:"POST", body:JSON.stringify({ orderId:btn.getAttribute("data-pay") }) });
+          if (result.ok && result.body.url) { window.location.href = result.body.url; return; }
+          btn.disabled = false; btn.textContent = "Resume secure checkout";
+          alert((result.body && result.body.error) || "Could not open checkout.");
+        });
+      });
+      list.querySelectorAll("[data-billing]").forEach(function (btn) {
+        btn.addEventListener("click", async function () {
+          btn.disabled = true;
+          var result = await api("billing-portal", { method:"POST", body:JSON.stringify({ orderId:btn.getAttribute("data-billing") }) });
+          if (result.ok && result.body.url) { window.location.href = result.body.url; return; }
+          btn.disabled = false; alert((result.body && result.body.error) || "Could not open billing.");
+        });
+      });
+    });
     return v;
   };
 
@@ -1689,6 +1758,9 @@
     container.innerHTML = "";
     if (!view) { container.appendChild(el('<div class="card"><p>That page doesn\'t exist. <a href="#signin">Sign in</a>.</p></div>')); return; }
     container.appendChild(view());
+    document.querySelectorAll("#accountTabs a[href^='#']").forEach(function (link) {
+      link.classList.toggle("is-active", link.getAttribute("href") === "#" + hash);
+    });
   }
 
   window.addEventListener("hashchange", route);

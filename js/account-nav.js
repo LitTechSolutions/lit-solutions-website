@@ -95,9 +95,9 @@
   function renderSignedIn(user) {
     var isAdmin = user.role === 'admin';
     var links = isAdmin
-      ? [['#dashboard', 'Dashboard'], ['#heroqueue', 'Verify Heroes'], ['#stripe', 'Stripe setup'],
+      ? [['#dashboard', 'Overview'], ['#purchases', 'Purchases'], ['#heroqueue', 'Verify Heroes'], ['#stripe', 'Stripe setup'],
          ['#documents', 'Documents'], ['#messages', 'Messages'], ['#profile', 'Account settings']]
-      : [['#dashboard', 'Dashboard'], ['#pay', 'Make a payment'], ['#brief', 'Project brief'],
+      : [['#dashboard', 'Overview'], ['#purchases', 'Purchases'], ['#pay', 'Make a payment'], ['#brief', 'Project brief'],
          ['#documents', 'Documents'], ['#messages', 'Messages'], ['#hero', 'Heroes Discount'],
          ['#profile', 'Account settings']];
 

@@ -12,6 +12,7 @@
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
+  included_files = ["assets/logo-icon.png", "assets/vendor/jspdf/jspdf.umd.min.js"]
 
 # littletechicalsolutions.com was added as a domain alias for brand
 # protection, but Netlify's automatic "redirect non-primary domains to

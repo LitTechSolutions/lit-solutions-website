@@ -84,6 +84,7 @@ function publicOrder(o) {
     monthlyCents: pricing ? pricing.monthlyCents : null,
     balanceAtLaunchCents: pricing ? pricing.balanceAtLaunchCents : null,
     amountPaidCents: o.amountPaidCents != null ? o.amountPaidCents : null,
+    currency: "USD",
     hero: !!o.hero,
     payInFull: !!o.payInFull,
     // Only a build needs a brief; a cart of one-off services does not.
@@ -93,9 +94,14 @@ function publicOrder(o) {
     paidAt: o.paidAt || null,
     briefSubmittedAt: o.briefSubmittedAt || null,
     briefDocumentId: o.briefDocumentId || null,
+    receiptDocumentId: o.receiptDocumentId || null,
+    invoiceReference: o.invoice && o.invoice.reference ? o.invoice.reference : null,
     checkoutError: o.checkoutError || null,
     hasSubscription: !!o.stripeSubscriptionId,
+    subscriptionStatus: o.subscriptionStatus || (o.stripeSubscriptionId ? "active" : null),
     subscriptionEndedAt: o.subscriptionEndedAt || null,
+    refundStatus: o.refundStatus || null,
+    amountRefundedCents: o.amountRefundedCents != null ? o.amountRefundedCents : null,
     // Square-era fields, passed through so an in-flight legacy order is still
     // completable. Null on everything created since the Stripe migration.
     depositLink: o.depositLink || null,

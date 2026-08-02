@@ -92,6 +92,7 @@ test("an admin gets admin destinations, a customer never does", async () => {
   const cust = mount({ user: { name: "Jane Doe", email: "j@x.test", role: "customer" } });
   await settle();
   const custLinks = [...cust.doc.querySelectorAll(".account-drop-links a")].map((a) => a.getAttribute("href"));
+  assert.ok(custLinks.some((h) => h.includes("#purchases")), "customers should reach their order history from every page");
   assert.ok(!custLinks.some((h) => h.includes("#stripe")), "a customer must not be offered admin destinations");
   assert.ok(!custLinks.some((h) => h.includes("#heroqueue")));
 });

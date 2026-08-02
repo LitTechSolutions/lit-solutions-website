@@ -310,6 +310,7 @@ exports.handler = async (event, context, deps = {}) => {
     id: orderId,
     customerId: session.userId,
     customerEmail,
+    customerName: (user && user.name) || existingOrder && existingOrder.customerName || null,
     items: invoice
       ? [{ key: "invoice", name: `Invoice ${invoice.reference}`, quantity: 1 }]
       : items.map(({ product, quantity }) => ({ key: product.key, name: product.name, quantity }))
@@ -345,7 +346,7 @@ exports.handler = async (event, context, deps = {}) => {
   const params = {
     mode,
     lineItems,
-    successUrl: `${origin}/myaccount.html?checkout=success&order=${encodeURIComponent(orderId)}#dashboard`,
+    successUrl: `${origin}/thank-you.html?order=${encodeURIComponent(orderId)}`,
     cancelUrl: `${origin}/cart.html?checkout=cancelled`,
     customerEmail: customerEmail || undefined,
     metadata: { orderId, customerId: session.userId, hero: String(hero), payInFull: String(payInFull) },
