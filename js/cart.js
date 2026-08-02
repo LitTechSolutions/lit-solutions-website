@@ -161,8 +161,12 @@
       el.textContent = n ? String(n) : '';
       el.hidden = !n;
     });
+    // Always visible. Hiding it until the cart had something in it meant a
+    // visitor had no idea the site even had a cart -- and no obvious route to
+    // the things they could buy.
     document.querySelectorAll('[data-cart-link]').forEach(function (el) {
-      el.hidden = !n;
+      el.hidden = false;
+      el.setAttribute('aria-label', n ? 'Your cart, ' + n + ' item' + (n === 1 ? '' : 's') : 'Your cart (empty)');
     });
     // Buttons flip to "In your cart" so a page reflects state without a reload.
     document.querySelectorAll('[data-add-to-cart]').forEach(function (btn) {

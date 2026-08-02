@@ -2558,6 +2558,31 @@ body.has-price-bar .cookie-banner{
 .cart-empty h2{ font-size:1.4rem; margin-bottom:.6rem; }
 .cart-empty p{ color: var(--ink-soft); line-height:1.7; max-width:56ch; margin:0 auto; }
 
+.cart-empty-grid{
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem; margin:2rem 0 1.5rem; text-align:left;
+}
+.cart-empty-card{
+  display:flex; flex-direction:column; gap:.35rem;
+  padding:1.35rem 1.4rem; border:1px solid var(--line); border-radius: var(--radius);
+  background: var(--paper); transition: border-color .16s ease, transform .16s ease;
+}
+.cart-empty-card:hover{ border-color: var(--accent-orange); transform: translateY(-2px); }
+.cart-empty-card--featured{ border-left:4px solid var(--accent-orange); }
+.cart-empty-eyebrow{
+  font-size:.68rem; letter-spacing:.09em; text-transform:uppercase;
+  font-weight:700; color: var(--ink-faint);
+}
+.cart-empty-card strong{ font-family: var(--font-display); font-size:1.1rem; color: var(--ink); }
+.cart-empty-body{ font-size:.86rem; color: var(--ink-soft); line-height:1.6; }
+.cart-empty-cta{
+  margin-top:.4rem; font-size:.84rem; font-weight:600; color: var(--accent-orange-text);
+}
+.cart-empty-foot{
+  font-size:.85rem; color: var(--ink-faint); line-height:1.65; max-width:62ch; margin:0 auto;
+}
+.cart-empty-foot a{ color: var(--accent-orange-text); text-decoration:underline; }
+
 /* Lines on the left, the money on the right, and the money stays in view
    while you scroll a long cart. */
 .cart-layout{ display:grid; grid-template-columns: 1fr 340px; gap:2rem; align-items:start; }

@@ -27,6 +27,8 @@
 const { monthlyCents: catalogMonthly, packageDepositCents, taxCodeFor, monthlyTaxCodeFor } = require("./product_catalog");
 
 const HERO_ONE_TIME_RATE = 0.15;
+// A custom build is professional services, same as every other build.
+const QUOTE_TAX_CODE = "txcd_20060000";
 const HERO_RECURRING_RATE = 0.05;
 
 // Affirm/Klarna reject amounts outside their own limits, and a rejection on
@@ -66,8 +68,38 @@ function bnplAvailable(items, priced) {
 }
 
 /**
+ * A Website Designer configuration behaves exactly like a buy-outright
+ * package -- 50/50 by default, Heroes 15% on the whole thing, because it is
+ * all one-time build work. The only difference is that its total came from
+ * a stored quote rather than a fixed catalog price.
+ */
+function quoteLine(quote, { hero, payInFull }) {
+  const total = hero ? applyDiscount(quote.totalCents, HERO_ONE_TIME_RATE) : quote.totalCents;
+  const listTotal = quote.totalCents;
+  const oneOff = payInFull ? total : Math.ceil(total / 2);
+  const listOneOff = payInFull ? listTotal : Math.ceil(listTotal / 2);
+  return {
+    key: `quote:${quote.id}`,
+    name: `${quote.packageName} — custom build`,
+    kind: "quote",
+    label: payInFull
+      ? `${quote.packageName} — custom build, paid in full`
+      : `${quote.packageName} — custom build, 50% deposit`,
+    quantity: 1,
+    listOneOffCents: listOneOff,
+    oneOffCents: oneOff,
+    listMonthlyCents: 0,
+    monthlyCents: 0,
+    balanceAtLaunchCents: payInFull ? 0 : total - oneOff,
+    taxCode: QUOTE_TAX_CODE,
+    monthlyTaxCode: QUOTE_TAX_CODE,
+    featureCount: (quote.optionalSelected || []).length,
+  };
+}
+
+/**
  * @param {Array<{product: object, quantity: number}>} items
- * @param {{ hero?: boolean, payInFull?: boolean }} [opts]
+ * @param {{ hero?: boolean, payInFull?: boolean, quotes?: object[] }} [opts]
  */
 function priceCart(items, opts = {}) {
   const hero = !!opts.hero;
@@ -115,6 +147,16 @@ function priceCart(items, opts = {}) {
     balanceTotal += balance * qty;
     listOneOffTotal += listOneOff * qty;
     listMonthlyTotal += listMonthly * qty;
+  }
+
+  // Configured builds from the Website Designer, priced from their stored
+  // quote rather than the catalog.
+  for (const quote of opts.quotes || []) {
+    const line = quoteLine(quote, { hero, payInFull });
+    lines.push(line);
+    oneOffTotal += line.oneOffCents;
+    balanceTotal += line.balanceAtLaunchCents;
+    listOneOffTotal += line.listOneOffCents;
   }
 
   // Stripe charges recurring lines immediately, so today's total includes the
@@ -203,4 +245,5 @@ module.exports = {
   priceCart,
   toStripeLineItems,
   lineLabel,
+  quoteLine,
 };

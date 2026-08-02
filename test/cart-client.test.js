@@ -61,10 +61,23 @@ const own = (v) => JSON.parse(JSON.stringify(v));
 
 /* ------------------------------------------------------------- basics --- */
 
-test("an empty cart hides the header link and the badge", () => {
+test("the cart icon is always present; only the badge is conditional", () => {
+  // It used to hide itself until you'd already put something in it, so a
+  // visitor had no idea the site had a cart at all -- and no obvious route to
+  // the things they could buy. The empty cart page now does that job.
   const { doc } = mount();
-  assert.equal(doc.querySelector("[data-cart-link]").hidden, true);
-  assert.equal(doc.querySelector("[data-cart-count]").hidden, true);
+  const link = doc.querySelector("[data-cart-link]");
+  assert.equal(link.hidden, false, "the cart icon must always be reachable");
+  assert.match(link.getAttribute("aria-label"), /empty/i, "screen readers should hear that it's empty");
+  assert.equal(doc.querySelector("[data-cart-count]").hidden, true, "no badge when there's nothing to count");
+});
+
+test("the empty cart offers real routes rather than a dead end", () => {
+  const fs = require("node:fs");
+  const cart = fs.readFileSync(path.join(ROOT, "cart.html"), "utf8");
+  for (const dest of ["website-designer.html", "pricing.html#website-subscription", "pricing.html#ongoing-support"]) {
+    assert.ok(cart.includes(dest), `empty cart should link to ${dest}`);
+  }
 });
 
 test("adding shows the badge with the total number of units, not lines", () => {

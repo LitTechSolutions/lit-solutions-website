@@ -23,6 +23,7 @@ const { getJSON, setJSON, store } = require("./_lib/blob_store");
 const { getProduct } = require("./_lib/product_catalog");
 const { priceCart, toStripeLineItems, bnplAvailable } = require("./_lib/pricing");
 const { TAX } = require("./_lib/product_catalog");
+const { parseCartKey: parseQuoteKey } = require("./designer-quote");
 const { isVerifiedHero } = require("./hero-status");
 const { findUserById } = require("./_lib/users");
 const { createCheckoutSession } = require("./_lib/stripe_api");
@@ -56,6 +57,15 @@ function siteOrigin(event) {
   const host = (event.headers && (event.headers["x-forwarded-host"] || event.headers.host)) || "lit-solutions.tech";
   const proto = (event.headers && event.headers["x-forwarded-proto"]) || "https";
   return `${proto}://${host}`;
+}
+
+/** Quote keys from the Website Designer, pulled out before catalog parsing. */
+function quoteKeysIn(raw) {
+  return String(raw || "")
+    .split(",")
+    .map((s) => s.trim().split(":").slice(0, 2).join(":"))
+    .map(parseQuoteKey)
+    .filter(Boolean);
 }
 
 /** "plan-premium:1,svc-mfa:2" -> validated [{product, quantity}] */
@@ -149,15 +159,27 @@ exports.handler = async (event, context, deps = {}) => {
 
   /* ------------------------------------------------------------ pricing -- */
   if (event.httpMethod === "GET") {
-    const items = parseItems(event.queryStringParameters && event.queryStringParameters.items);
-    if (!items.length) return json(200, { empty: true, hero });
+    const raw = (event.queryStringParameters && event.queryStringParameters.items) || "";
+    const items = parseItems(raw);
+
+    // Configured builds are priced from their stored quote, so the cart page
+    // gets the same figure checkout will charge.
+    const gQuotes = [];
+    for (const qid of quoteKeysIn(raw).slice(0, 3)) {
+      const q = await getJSONFn("quotes", qid);
+      if (q) gQuotes.push(q);
+    }
+    if (!items.length && !gQuotes.length) return json(200, { empty: true, hero });
+
     const payInFull = !!(event.queryStringParameters && event.queryStringParameters.payInFull === "true");
-    const priced = priceCart(items, { hero, payInFull });
+    const priced = priceCart(items, { hero, payInFull, quotes: gQuotes });
     return json(200, {
       hero,
       priced,
-      bnplAvailable: bnplAvailable(items, priceCart(items, { hero, payInFull: true })),
-      canPayInFull: items.some(({ product }) => product.kind === "package"),
+      bnplAvailable: bnplAvailable(items, priceCart(items, { hero, payInFull: true, quotes: gQuotes })),
+      // A configured build splits 50/50 exactly like the fixed packages do.
+      canPayInFull: items.some(({ product }) => product.kind === "package") || gQuotes.length > 0,
+      expiredQuotes: quoteKeysIn(raw).length - gQuotes.length,
     });
   }
 
@@ -189,15 +211,32 @@ exports.handler = async (event, context, deps = {}) => {
   const invoice = existingOrder ? existingOrder.invoice || null : parseInvoice(body);
   if (invoice && invoice.error) return json(400, { error: invoice.error });
 
+  /* ------------------------------------------------ configured build -- */
+  // A Website Designer configuration. Its price is whatever we stored when we
+  // priced it -- never what the cart claims -- so a hand-edited cart can
+  // change which quote is bought, not what it costs.
+  const rawItems = existingOrder
+    ? (existingOrder.items || []).map((i) => `${i.key}:${i.quantity || 1}`).join(",")
+    : (Array.isArray(body.items)
+        ? body.items.map((i) => (typeof i === "string" ? i : `${i && i.key}:${(i && i.quantity) || 1}`)).join(",")
+        : String(body.items || ""));
+  const quoteIds = quoteKeysIn(rawItems);
+  const quotes = [];
+  for (const qid of quoteIds.slice(0, 3)) {
+    const q = await getJSONFn("quotes", qid);
+    if (!q) return json(410, { error: "One of your saved designs has expired. Rebuild it in the Website Designer and we'll price it fresh." });
+    quotes.push(q);
+  }
+
   const items = existingOrder
-    ? parseItems((existingOrder.items || []).map((i) => `${i.key}:${i.quantity || 1}`).join(","))
+    ? parseItems(rawItems)
     : (invoice ? [] : itemsFromBody(body));
-  if (!items.length && !invoice) return json(400, { error: "Your cart is empty." });
+  if (!items.length && !invoice && !quotes.length) return json(400, { error: "Your cart is empty." });
 
   const payInFull = existingOrder ? !!existingOrder.payInFull : !!body.payInFull;
   const signature = invoice
     ? `invoice:${invoice.reference}:${invoice.amountCents}`
-    : cartSignature(items, payInFull);
+    : cartSignature(items, payInFull) + (quotes.length ? `|q=${quotes.map((q) => q.id).sort().join("+")}` : "");
 
   // Coming from the cart rather than resuming a named order: fold into the
   // customer's existing unpaid order for this same cart instead of stacking
@@ -224,7 +263,7 @@ exports.handler = async (event, context, deps = {}) => {
         balanceAtLaunchCents: 0, heroSavingCents: 0, heroSavingMonthlyCents: 0,
         hasRecurring: false, includesFirstMonth: false,
       }
-    : priceCart(items, { hero, payInFull });
+    : priceCart(items, { hero, payInFull, quotes });
   if (priced.chargedTodayCents <= 0) return json(400, { error: "Nothing to charge." });
 
   // Asking for BNPL on a cart that can't take it is a client bug, not a
@@ -239,7 +278,7 @@ exports.handler = async (event, context, deps = {}) => {
     // BNPL provider would actually be asked to settle -- judging it against a
     // 50% deposit could pass a cart the provider then rejects on Stripe's own
     // page, and a rejection there reads as "declined" to a customer.
-    if (!bnplAvailable(items, priceCart(items, { hero, payInFull: true }))) {
+    if (!bnplAvailable(items, priceCart(items, { hero, payInFull: true, quotes }))) {
       return json(400, { error: "Buy now, pay later isn't available for this cart." });
     }
   }
@@ -256,7 +295,9 @@ exports.handler = async (event, context, deps = {}) => {
     customerEmail,
     items: invoice
       ? [{ key: "invoice", name: `Invoice ${invoice.reference}`, quantity: 1 }]
-      : items.map(({ product, quantity }) => ({ key: product.key, name: product.name, quantity })),
+      : items.map(({ product, quantity }) => ({ key: product.key, name: product.name, quantity }))
+          .concat(quotes.map((q) => ({ key: `quote:${q.id}`, name: `${q.packageName} — custom build`, quantity: 1 }))),
+    quotes: quotes.map((q) => ({ id: q.id, package: q.package, totalCents: q.totalCents })),
     invoice: invoice || null,
     // Re-priced on every attempt, so a hero verified between abandoning a
     // checkout and resuming it gets their discount without re-adding anything.
