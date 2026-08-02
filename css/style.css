@@ -1255,28 +1255,39 @@ textarea{ resize: vertical; }
   .main-nav .nav-dropdown-menu a{ padding:.85rem 28px .85rem 44px; border-bottom:1px solid var(--line); }
 }
 
-/* Below ~400px, logo + theme/search/account icons + the "Request Service"
-   button + the nav-toggle hamburger no longer fit on one row even at
-   their smallest sizes (they need ~360px; .wrap's 28px side padding
-   leaves only ~264px at 320-390px viewports) -- confirmed via
-   document.documentElement.scrollWidth exceeding clientWidth by ~70px on
-   every page, not just the Website Designer. Rather than hiding any of
-   the theme/search/account icons (search.html has a footer link as a
-   fallback, but myaccount.html's "Client Sign In" has no other entry
-   point anywhere on the site -- hiding it would make customer accounts
-   unreachable on the narrowest phones), wrap header-actions onto its own
-   second row. .site-header switches from a fixed height to auto so it
-   can actually grow, and .main-nav's dropdown switches from
-   top:var(--header-h) (a hardcoded single-row height) to top:100% so it
-   tracks the header's real height at any number of rows without needing
-   a second hardcoded value here. */
-@media (max-width:400px){
+/* The header's own row can't hold everything on a narrow screen: logo +
+   account + cart + phone + "Request Service" + the hamburger need roughly
+   465px, and .wrap's 28px side padding eats more. This used to wrap at
+   400px, which left a dead band -- every page overflowed horizontally
+   between about 400 and 500px, which is most large phones. Measured, not
+   guessed: the sweep reports scrollWidth 465 in a 430px viewport.
+
+   So the wrap now happens at 560px, comfortably above where the content
+   actually stops fitting. Nothing is hidden that has no other route:
+   search has a footer link, but the account control is the only entry
+   point to signing in anywhere on the site, so it stays visible at every
+   width. .site-header goes height:auto so it can grow, and .main-nav's
+   dropdown uses top:100% rather than a hardcoded single-row height so it
+   tracks the real header height however many rows it ends up with. */
+@media (max-width:560px){
   .site-header{ height:auto; min-height:var(--header-h); }
   .header-inner{ flex-wrap:wrap; row-gap:.5rem; padding-top:.6rem; padding-bottom:.6rem; }
   .logo{ order:0; }
   .nav-toggle{ order:1; }
   .header-actions{ order:2; flex-basis:100%; justify-content:center; }
   .main-nav{ top:100%; }
+}
+
+/* Even wrapped onto its own row, the phone NUMBER plus the button doesn't
+   fit a 320px screen. The number becomes an icon rather than disappearing --
+   tapping to call is the single most valuable thing in this header for a
+   customer with a broken machine. */
+@media (max-width:380px){
+  .phone-link span,
+  .phone-link{ font-size:0; gap:0; }
+  .phone-link svg{ width:20px; height:20px; }
+  .header-actions{ gap:.6rem; }
+  .header-actions .btn-small{ padding:.5rem .7rem; font-size:.7rem; }
 }
 
 @media (max-width: 640px){
