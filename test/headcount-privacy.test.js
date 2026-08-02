@@ -34,7 +34,15 @@ const FORBIDDEN = [
   { re: /\bthe people behind the work\b/i,  why: "plural with one person pictured reads as concealment" },
   { re: /\bteam of one\b/i,                 why: "confirms a solo operation" },
   { re: /\bone technician\b/i,              why: "confirms a solo operation" },
-  { re: /\bthe same person who answers the phone\b/i, why: "confirms a solo operation" },
+  // Deliberately broader than one exact phrasing: I wrote "it's the same
+  // person on the other end of it" while fixing this very rule, and the
+  // narrow pattern sailed straight past it. Any construction that pins the
+  // work to a single individual counts.
+  { re: /\bthe same (person|guy)\b/i,     why: "confirms a solo operation" },
+  { re: /\bjust me\b/i,                   why: "confirms a solo operation" },
+  { re: /\bone[- ]man\b/i,                why: "confirms a solo operation" },
+  { re: /\bI(?:'m| am) the only\b/i,      why: "confirms a solo operation" },
+  { re: /\bsole (employee|technician)\b/i, why: "confirms a solo operation" },
   { re: /\bour staff\b/i,                   why: "implies a staff we've never claimed" },
 ];
 
