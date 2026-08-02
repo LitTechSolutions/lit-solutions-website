@@ -684,6 +684,144 @@
     return v;
   };
 
+  /* ---- orders: pay, then the project brief ----------------------------
+   * Orders are created by checkout.js before it opens the Stripe session, so
+   * by the time anyone lands here the order already exists. This view's job
+   * is to say what state it's in and offer the one action that moves it on.
+   */
+  function money(cents) {
+    if (cents == null) return "";
+    return "$" + (cents / 100).toLocaleString("en-US", {
+      minimumFractionDigits: cents % 100 ? 2 : 0, maximumFractionDigits: 2,
+    });
+  }
+
+  async function mountOrder(host) {
+    if (!host) return;
+
+    // Back from a successful Stripe checkout. The webhook is what actually
+    // marks the order paid, and it can land a second either side of the
+    // redirect -- so say something true while we wait rather than showing
+    // "unpaid" to someone who just paid.
+    var params = new URLSearchParams(window.location.search);
+    var justPaid = params.get("checkout") === "success";
+    var justPaidOrder = params.get("order");
+    if (justPaid) {
+      history.replaceState(null, "", window.location.pathname + window.location.hash);
+      // The cart is theirs no longer -- it's an order now.
+      if (window.LTS_CART) window.LTS_CART.clear();
+    }
+
+    var r = await api("orders");
+    var orders = (r.ok && r.body && r.body.orders) || [];
+    var live = orders.filter(function (o) { return o.status !== "cancelled"; });
+    if (!live.length) { host.innerHTML = ""; return; }
+
+    host.innerHTML = live.map(function (o) { return card(o, justPaid && o.id === justPaidOrder); }).join("");
+    wire();
+
+    function statusLine(o, optimistic) {
+      if (optimistic && o.status === "awaiting_payment") {
+        return { cls: "is-pending", text: "Payment received \u2014 we\u2019re just confirming it with Stripe. This page updates on its own." };
+      }
+      switch (o.status) {
+        case "awaiting_payment": return { cls: "is-pending", text: "Waiting on payment." };
+        case "payment_processing": return { cls: "is-pending", text: "Your payment is settling. Some pay-over-time methods take a day or two \u2014 nothing is held up in the meantime." };
+        case "checkout_failed": return { cls: "is-pending", text: "Checkout didn\u2019t open last time. Nothing was charged." };
+        case "paid": return { cls: "is-confirmed", text: "Payment confirmed. Your build is booked in." };
+        case "brief_submitted": return { cls: "is-confirmed", text: "Paid, and your brief is in. We\u2019ll be in touch within one business day." };
+        default: return { cls: "is-pending", text: "" };
+      }
+    }
+
+    function priceLines(o) {
+      var rows = [];
+      if (o.status === "awaiting_payment" || o.status === "checkout_failed") {
+        if (o.chargedTodayCents != null) rows.push("<strong>" + money(o.chargedTodayCents) + "</strong> due now");
+      } else if (o.amountPaidCents != null) {
+        rows.push("<strong>" + money(o.amountPaidCents) + "</strong> paid");
+      } else if (o.chargedTodayCents != null) {
+        rows.push("<strong>" + money(o.chargedTodayCents) + "</strong> paid");
+      }
+      if (o.monthlyCents) rows.push(money(o.monthlyCents) + "/month");
+      if (o.balanceAtLaunchCents) rows.push(money(o.balanceAtLaunchCents) + " at launch");
+      return rows.join(" &middot; ");
+    }
+
+    function card(o, optimistic) {
+      var st = statusLine(o, optimistic);
+      var unpaid = (o.status === "awaiting_payment" || o.status === "checkout_failed") && !optimistic;
+      var canBrief = (o.status === "paid" || o.status === "payment_processing") && o.needsBrief;
+
+      var actions = [];
+      if (unpaid) actions.push('<button type="button" class="btn btn-primary" data-pay="' + esc(o.id) + '">Pay ' + money(o.chargedTodayCents) + ' securely</button>');
+      if (canBrief) actions.push('<a class="btn btn-primary" href="#brief">Fill in your project brief</a>');
+      if (o.hasSubscription) actions.push('<button type="button" class="btn btn-ghost" data-billing="' + esc(o.id) + '">Manage billing</button>');
+      if (o.status === "brief_submitted") actions.push('<a class="btn btn-ghost" href="#documents">See your paperwork</a>');
+
+      return '<div class="order-card' + (unpaid || canBrief ? ' order-card--action' : '') + '">' +
+        '<p class="eyebrow">Your order</p>' +
+        '<h2>' + esc(o.summary) + '</h2>' +
+        '<p class="order-line">' + priceLines(o) + '</p>' +
+        (o.hero ? '<p class="order-note" style="color:var(--accent-teal-text);">American Heroes Discount applied.</p>' : '') +
+        '<p class="order-status ' + st.cls + '">' + st.text + '</p>' +
+        (canBrief ? '<p class="order-note">One thing left: your project brief. It\u2019s what we build from, and we can\u2019t start without it.</p>' : '') +
+        (unpaid ? '<p class="order-note">Card, Apple Pay or Google Pay \u2014 secure checkout by Stripe. Nothing has been charged yet.</p>' : '') +
+        (actions.length ? '<div class="order-actions">' + actions.join("") + '</div>' : '') +
+        (unpaid ? '<button type="button" class="order-paid-link" data-cancel="' + esc(o.id) + '">Cancel this order</button>' : '') +
+      '</div>';
+    }
+
+    function wire() {
+      host.querySelectorAll("[data-pay]").forEach(function (btn) {
+        btn.addEventListener("click", async function () {
+          btn.disabled = true;
+          var was = btn.textContent;
+          btn.textContent = "Opening secure checkout\u2026";
+          var res = await api("checkout", { method: "POST", body: JSON.stringify({ orderId: btn.getAttribute("data-pay") }) });
+          if (res.ok && res.body && res.body.url) { window.location.href = res.body.url; return; }
+          btn.disabled = false;
+          btn.textContent = was;
+          alert((res.body && res.body.error) || "Couldn\u2019t start checkout. Call us on 804-309-0968 and we\u2019ll take it over the phone.");
+        });
+      });
+
+      host.querySelectorAll("[data-billing]").forEach(function (btn) {
+        btn.addEventListener("click", async function () {
+          btn.disabled = true;
+          var res = await api("billing-portal", { method: "POST", body: JSON.stringify({ orderId: btn.getAttribute("data-billing") }) });
+          if (res.ok && res.body && res.body.url) { window.location.href = res.body.url; return; }
+          btn.disabled = false;
+          alert((res.body && res.body.error) || "Couldn\u2019t open billing just now.");
+        });
+      });
+
+      host.querySelectorAll("[data-cancel]").forEach(function (btn) {
+        btn.addEventListener("click", async function () {
+          if (!window.confirm("Cancel this order? Nothing has been charged, and you can order again any time.")) return;
+          await api("orders", { method: "PATCH", body: JSON.stringify({ id: btn.getAttribute("data-cancel"), action: "cancel" }) });
+          mountOrder(host);
+        });
+      });
+    }
+
+    // The webhook usually lands within a second or two of the redirect. Poll
+    // briefly so the card resolves itself instead of asking them to refresh,
+    // then stop -- an indefinite poll on a quiet dashboard is just noise.
+    if (justPaid) {
+      var tries = 0;
+      var poll = setInterval(async function () {
+        tries++;
+        var rr = await api("orders");
+        var got = ((rr.ok && rr.body && rr.body.orders) || []).find(function (o) { return o.id === justPaidOrder; });
+        if ((got && got.status !== "awaiting_payment") || tries >= 10) {
+          clearInterval(poll);
+          if (got && got.status !== "awaiting_payment") mountOrder(host);
+        }
+      }, 3000);
+    }
+  }
+
   views.hero = function () {
     if (!requireAuth()) return el("<div></div>");
     setPageTitle("American Heroes Discount");

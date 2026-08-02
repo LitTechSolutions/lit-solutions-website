@@ -31,7 +31,7 @@ function loadMyAccountPage(opts) {
   const dom = new JSDOM(html, {
     runScripts: "dangerously",
     pretendToBeVisual: true,
-    url: "http://localhost/myaccount.html",
+    url: opts.url || "http://localhost/myaccount.html",
     beforeParse(window) {
       window.fetch = function (url, fetchOpts) {
         const path = String(url).replace("/.netlify/functions/", "");
@@ -148,6 +148,35 @@ test("a customer with no Care Hub membership stays on myaccount.html and sees th
   assert.ok(capturedRequests.some((r) => r.path === "my-memberships"), "expected the membership check to still run");
   assert.equal(window.location.hash, "#dashboard", "should land on this page's own dashboard as before");
   assert.equal(window.document.getElementById("accountTabs").hidden, false, "the normal tab bar should render since there's no redirect");
+});
+
+test("a successful Stripe return renders the paid order instead of crashing the dashboard", async () => {
+  const orderId = "ef7c8bcc-3113-40f0-9e36-b5d2b514a712";
+  const { window, capturedRequests } = loadMyAccountPage({
+    url: `http://localhost/myaccount.html?checkout=success&order=${orderId}#dashboard`,
+    responses: {
+      account: { body: { user: { id: "admin-1", name: "Dylan Little", email: "dylan@lit-solutions.tech", role: "admin" } } },
+      "my-memberships": { body: { memberships: [] } },
+      orders: { body: { orders: [{
+        id: orderId,
+        status: "paid",
+        summary: "Live Stripe connection test",
+        amountPaidCents: 100,
+        needsBrief: false,
+      }] } },
+      documents: { body: { documents: [] } },
+      favorites: { body: { items: [], recentlyViewed: [] } },
+      notifications: { body: { unreadCount: 0 } },
+    },
+  });
+  await wait(100);
+
+  assert.ok(capturedRequests.some((r) => r.path === "orders"), "the dashboard must load the customer's orders");
+  const orderCard = window.document.querySelector("#dashOrder .order-card");
+  assert.ok(orderCard, "the paid order should render on the dashboard");
+  assert.match(orderCard.textContent, /Live Stripe connection test/);
+  assert.match(orderCard.textContent, /\$1 paid/);
+  assert.match(orderCard.textContent, /Payment confirmed/);
 });
 
 test("an admin with MFA enabled continues to the authenticator-code screen after a correct password", async () => {
