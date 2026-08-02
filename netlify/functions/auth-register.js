@@ -21,10 +21,31 @@ const { getJSON, setJSON } = require("./_lib/blob_store");
 const { sendVerificationEmail } = require("./_lib/verification");
 const { sendEmail } = require("./_lib/email");
 const { loadSettingsDocument } = require("../../src/settings/blobsSettingsStore");
-const { isFeatureEnabled } = require("../../src/settings/settingsStore");
 const { CURRENT_TERMS_VERSION, CURRENT_PRIVACY_VERSION } = require("../../src/domain/consent");
 
 const REGISTRATION_DISABLED_MESSAGE = "Open registration is currently disabled. Please contact us to request an invitation.";
+
+/**
+ * Open registration is OPT-OUT, not opt-in.
+ *
+ * isFeatureEnabled() defaults every flag to off -- fail closed, matching
+ * rbac.js, and correct for flags generally. It was the wrong default for
+ * this one. Nothing in the codebase can write the settings document (there
+ * is no admin endpoint for feature flags), so "open_registration" was off
+ * permanently and could not be turned on. Meanwhile every payment on the
+ * site now requires an account, so the flag silently made the entire
+ * purchase flow unreachable: no signup, therefore no customer, therefore no
+ * checkout. It presented as "the signup email never arrives", because
+ * registration returned 403 long before any email was sent.
+ *
+ * So registration works unless the flag is explicitly present AND disabled.
+ * Turning it OFF is still possible (and is what you'd reach for if signups
+ * were ever abused); it just isn't the accidental default.
+ */
+function openRegistrationAllowed(document) {
+  const flag = document && document.featureFlags && document.featureFlags.open_registration;
+  return !flag || flag.enabled !== false;
+}
 
 // Shown for both a brand-new registration and an already-registered email --
 // deliberately identical, so the response itself can't be used to check
@@ -37,7 +58,7 @@ exports.handler = async (event, context, deps = {}) => {
 
   const loadSettingsDocumentFn = deps.loadSettingsDocument || loadSettingsDocument;
   const settingsDocument = await loadSettingsDocumentFn();
-  if (!isFeatureEnabled(settingsDocument, "open_registration")) {
+  if (!openRegistrationAllowed(settingsDocument)) {
     return json(403, { error: REGISTRATION_DISABLED_MESSAGE, code: "registration_disabled" });
   }
 
@@ -90,3 +111,5 @@ exports.handler = async (event, context, deps = {}) => {
 
   return json(201, { message: GENERIC_MESSAGE });
 };
+
+module.exports.openRegistrationAllowed = openRegistrationAllowed;

@@ -18,12 +18,38 @@ function enabledDoc() {
   return applyFeatureFlagUpdate(createEmptyDocument(), { key: "open_registration", enabled: true, updatedBy: "admin-1" }, { now: () => new Date("2026-07-15T00:00:00.000Z") });
 }
 
-test("registration is disabled by default (no open_registration flag present -- fail closed)", async () => {
+test("registration is ALLOWED when no open_registration flag is present", async () => {
+  // Deliberate reversal (2026-08-01). This used to assert fail-closed, which
+  // is the right default for flags in general -- but nothing in the codebase
+  // can write the settings document, so this flag was off permanently and
+  // could not be turned on. Every payment on the site requires an account,
+  // so the flag silently made the whole purchase flow unreachable. It
+  // presented as "the signup email never arrives", because registration
+  // returned 403 long before any email was sent.
+  //
+  // Registration is therefore opt-OUT: it works unless explicitly disabled.
+  // The next test proves disabling it still works, which is what matters if
+  // signups are ever abused.
   const res = await handler(
     { httpMethod: "POST", headers: {}, body: JSON.stringify({ email: "x@example.com", password: "supersecurepassword", name: "X" }) },
     {},
-    { loadSettingsDocument: async () => disabledDoc() }
+    // rateLimited stubbed so we stop at the next gate rather than reaching
+    // the real blob store, same trick the enabled-flag test below uses.
+    { loadSettingsDocument: async () => disabledDoc(), rateLimited: async () => true }
   );
+  assert.equal(res.statusCode, 429,
+    "reaching the rate limiter rather than a 403 proves an absent flag no longer blocks signup");
+});
+
+test("registration can still be switched off deliberately", async () => {
+  // The escape hatch has to keep working -- this is what you reach for if
+  // open signups are ever abused.
+  const doc = applyFeatureFlagUpdate(createEmptyDocument(),
+    { key: "open_registration", enabled: false, updatedBy: "admin-1" },
+    { now: () => new Date("2026-08-01T00:00:00.000Z") });
+  const res = await handler(
+    { httpMethod: "POST", headers: {}, body: JSON.stringify({ email: "x@example.com", password: "supersecurepassword", name: "X" }) },
+    {}, { loadSettingsDocument: async () => doc, rateLimited: async () => true });
   assert.equal(res.statusCode, 403);
   assert.equal(JSON.parse(res.body).code, "registration_disabled");
 });
