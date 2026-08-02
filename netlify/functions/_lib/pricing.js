@@ -24,7 +24,7 @@
 // chargedTodayCents is therefore the honest headline figure, with the
 // breakdown alongside it.
 
-const { monthlyCents: catalogMonthly, packageDepositCents } = require("./product_catalog");
+const { monthlyCents: catalogMonthly, packageDepositCents, taxCodeFor, monthlyTaxCodeFor } = require("./product_catalog");
 
 const HERO_ONE_TIME_RATE = 0.15;
 const HERO_RECURRING_RATE = 0.05;
@@ -95,6 +95,10 @@ function priceCart(items, opts = {}) {
 
     lines.push({
       key: product.key,
+      // Carried per line so toStripeLineItems doesn't need the catalog again,
+      // and so a plan's build labour and its hosting can be coded separately.
+      taxCode: taxCodeFor(product),
+      monthlyTaxCode: monthlyTaxCodeFor(product),
       name: product.name,
       kind: product.kind,
       label: lineLabel(product, payInFull),
@@ -159,7 +163,12 @@ function toStripeLineItems(priced) {
         price_data: {
           currency: "usd",
           unit_amount: line.oneOffCents,
-          product_data: { name: line.quantity > 1 ? `${line.label} × ${line.quantity}` : line.label },
+          product_data: {
+            name: line.quantity > 1 ? `${line.label} × ${line.quantity}` : line.label,
+            // Required by Stripe Managed Payments: without it the session is
+            // rejected outright with "the product tax code is missing".
+            tax_code: line.taxCode,
+          },
         },
       });
     }
@@ -172,6 +181,7 @@ function toStripeLineItems(priced) {
           recurring: { interval: "month" },
           product_data: {
             name: `${line.name} — monthly${line.quantity > 1 ? ` × ${line.quantity}` : ""}`,
+            tax_code: line.monthlyTaxCode,
           },
         },
       });

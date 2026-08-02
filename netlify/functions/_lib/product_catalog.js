@@ -37,6 +37,27 @@
 
 const CURRENCY = "usd";
 
+/* Stripe product tax codes.
+ * ------------------------
+ * Required because this Stripe account has Managed Payments enabled -- Stripe
+ * acts as merchant of record and works out sales tax, and it will not create
+ * a checkout session for a product whose tax treatment it can't determine.
+ * (Without Managed Payments these would be optional.)
+ *
+ * These are TAX decisions, not code decisions. The mapping below is a
+ * considered default for a services business, but it should be confirmed by
+ * whoever files the return -- getting a code wrong means the wrong tax is
+ * collected, in our name. Codes come from https://docs.stripe.com/tax/tax-codes.
+ *
+ * A plan has TWO components with genuinely different natures: the deposit
+ * buys design and build labour (a professional service), while the monthly
+ * fee buys hosting and maintenance. They are coded separately rather than
+ * forced into one bucket. */
+const TAX = {
+  PROFESSIONAL: "txcd_20060000",  // Professional Services -- design, build, setup labour
+  HOSTING: "txcd_10701100",       // Website Hosting -- keeping a site online
+};
+
 /**
  * kind:
  *   "plan"         website subscription -- one-time deposit + recurring monthly
@@ -48,6 +69,7 @@ const PRODUCTS = [
   /* ---------------------------------------------- website subscriptions -- */
   {
     key: "plan-standard", kind: "plan", category: "Website subscription",
+    taxCode: TAX.PROFESSIONAL, monthlyTaxCode: TAX.HOSTING,
     name: "Standard", page: "plan-standard.html",
     depositCents: 14900, monthlyCents: 7900, minimumTermMonths: 12,
     summary: "Up to 5 pages, custom designed, mobile-responsive, contact form, basic SEO.",
@@ -55,6 +77,7 @@ const PRODUCTS = [
   },
   {
     key: "plan-premium", kind: "plan", category: "Website subscription", featured: true,
+    taxCode: TAX.PROFESSIONAL, monthlyTaxCode: TAX.HOSTING,
     name: "Premium", page: "plan-premium.html",
     depositCents: 24900, monthlyCents: 12900, minimumTermMonths: 12,
     summary: "Up to 10 pages, service pages, blog, FAQ, testimonials, booking, enhanced SEO.",
@@ -62,6 +85,7 @@ const PRODUCTS = [
   },
   {
     key: "plan-executive", kind: "plan", category: "Website subscription",
+    taxCode: TAX.PROFESSIONAL, monthlyTaxCode: TAX.HOSTING,
     name: "Executive", page: "plan-executive.html",
     depositCents: 39900, monthlyCents: 19900, minimumTermMonths: 12,
     summary: "Everything in Premium, plus customer sign-in, 2FA, dashboards and admin editing.",
@@ -70,14 +94,14 @@ const PRODUCTS = [
 
   /* -------------------------------------------------- buy-outright builds -- */
   {
-    key: "package-starter", kind: "package", category: "Website build",
+    key: "package-starter", kind: "package", category: "Website build", taxCode: TAX.PROFESSIONAL,
     name: "Starter website", page: "pricing.html",
     totalCents: 69900,
     summary: "Up to 5 pages, custom design, mobile-responsive, contact form, basic SEO. Yours outright.",
     blurb: "Split 50/50 — half now, half at launch once you've approved it. You own the files and source code.",
   },
   {
-    key: "package-business", kind: "package", category: "Website build",
+    key: "package-business", kind: "package", category: "Website build", taxCode: TAX.PROFESSIONAL,
     name: "Business website", page: "pricing.html",
     totalCents: 129900,
     summary: "Up to 10 pages, individual service pages, booking, testimonials, FAQ and blog. Yours outright.",
@@ -87,25 +111,27 @@ const PRODUCTS = [
   /* ------------------------------------------------- ongoing subscriptions -- */
   {
     key: "care-plan", kind: "subscription", category: "Ongoing support",
+    taxCode: TAX.HOSTING, monthlyTaxCode: TAX.HOSTING,
     name: "Website Care Plan", monthlyCents: 3900,
     summary: "Hosting coordination, small content edits, platform checks and general maintenance.",
     blurb: "Only for sites we built, or sites we can get full source access to. Cancel anytime.",
   },
   {
     key: "it-support", kind: "subscription", category: "Ongoing support",
+    taxCode: TAX.PROFESSIONAL, monthlyTaxCode: TAX.PROFESSIONAL,
     name: "Small Business IT Support", monthlyCents: 7900,
     summary: "A technician on call for day-to-day IT, without a per-visit invoice every time.",
     blurb: "Scope is confirmed with you before your first billing cycle. Cancel anytime.",
   },
 
   /* --------------------------------------------------- fixed-price services -- */
-  { key: "svc-domain-setup", kind: "service", category: "Website services", name: "Domain registration & DNS setup", amountCents: 3900,
+  { key: "svc-domain-setup", kind: "service", category: "Website services", name: "Domain registration & DNS setup", amountCents: 3900, taxCode: TAX.PROFESSIONAL,
     summary: "Our labour. The registrar's own fee is billed to you directly by them." },
-  { key: "svc-email-setup", kind: "service", category: "Website services", name: "Business email setup", amountCents: 5900,
+  { key: "svc-email-setup", kind: "service", category: "Website services", name: "Business email setup", amountCents: 5900, taxCode: TAX.PROFESSIONAL,
     summary: "Google Workspace or Microsoft 365. Our labour; the subscription is billed to you by them." },
-  { key: "svc-seo", kind: "service", category: "Website services", name: "Basic SEO optimization", amountCents: 9900,
+  { key: "svc-seo", kind: "service", category: "Website services", name: "Basic SEO optimization", amountCents: 9900, taxCode: TAX.PROFESSIONAL,
     summary: "Titles, descriptions, sitemap, structured data and clean page structure." },
-  { key: "svc-domain-mgmt", kind: "service", category: "Website services", name: "Domain management", amountCents: 3900,
+  { key: "svc-domain-mgmt", kind: "service", category: "Website services", name: "Domain management", amountCents: 3900, taxCode: TAX.PROFESSIONAL,
     summary: "We keep your DNS and renewals straight. Our labour only." },
 ];
 
@@ -165,6 +191,16 @@ function monthlyCents(product) {
   return product.kind === "plan" || product.kind === "subscription" ? product.monthlyCents : 0;
 }
 
+/** Tax code for the one-time component of a product. */
+function taxCodeFor(product) {
+  return (product && product.taxCode) || TAX.PROFESSIONAL;
+}
+
+/** Tax code for the recurring component, which may differ from the one-time one. */
+function monthlyTaxCodeFor(product) {
+  return (product && (product.monthlyTaxCode || product.taxCode)) || TAX.PROFESSIONAL;
+}
+
 // NOTE: there is deliberately no dueTodayCents / toStripeLineItems /
 // checkoutMode here any more. This file used to carry its own copy of that
 // logic, and having two places that decided money is exactly how a pure
@@ -183,4 +219,7 @@ module.exports = {
   listProducts,
   packageDepositCents,
   monthlyCents,
+  TAX,
+  taxCodeFor,
+  monthlyTaxCodeFor,
 };

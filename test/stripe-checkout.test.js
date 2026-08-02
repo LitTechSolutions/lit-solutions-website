@@ -1032,3 +1032,48 @@ test("an empty blob key is refused immediately instead of hanging", () => {
   }
   assert.equal(assertKey("users", "jane@example.test"), "jane@example.test");
 });
+
+/* ================================================================= tax codes = */
+
+test("every Stripe line item carries a tax code", () => {
+  // Managed Payments rejects a session outright if any product's tax
+  // treatment is undeterminable: "Invalid line_items[0]: the product tax code
+  // is missing". That took the whole checkout down, so assert it for every
+  // product under every pricing combination rather than spot-checking.
+  for (const product of listProducts()) {
+    for (const hero of [false, true]) {
+      for (const payInFull of [false, true]) {
+        const priced = priceCart([{ product, quantity: 1 }], { hero, payInFull });
+        for (const line of toStripeLineItems(priced)) {
+          const code = line.price_data.product_data.tax_code;
+          assert.match(String(code), /^txcd_\d+$/,
+            `${product.key} hero=${hero} full=${payInFull}: bad tax_code ${JSON.stringify(code)}`);
+        }
+      }
+    }
+  }
+});
+
+test("a plan codes its build labour and its hosting separately", () => {
+  // The deposit buys design and build (a professional service); the monthly
+  // fee buys hosting. Forcing both into one bucket would misreport tax on
+  // one of them.
+  const priced = priceCart([{ product: getProduct("plan-standard"), quantity: 1 }], {});
+  const lines = toStripeLineItems(priced);
+  const oneOff = lines.find((l) => !l.price_data.recurring);
+  const monthly = lines.find((l) => l.price_data.recurring);
+
+  assert.equal(oneOff.price_data.product_data.tax_code, "txcd_20060000", "deposit = professional services");
+  assert.equal(monthly.price_data.product_data.tax_code, "txcd_10701100", "monthly = website hosting");
+  assert.notEqual(oneOff.price_data.product_data.tax_code, monthly.price_data.product_data.tax_code);
+});
+
+test("a product added without a tax code still gets a sane one", () => {
+  const { taxCodeFor, monthlyTaxCodeFor, TAX } = require("../netlify/functions/_lib/product_catalog.js");
+  // A missing code must never reach Stripe as undefined -- that is a 400 and
+  // a dead checkout, not a degraded one.
+  assert.equal(taxCodeFor({ key: "new-thing" }), TAX.PROFESSIONAL);
+  assert.equal(monthlyTaxCodeFor({ key: "new-thing" }), TAX.PROFESSIONAL);
+  // A one-time code with no recurring override applies to both.
+  assert.equal(monthlyTaxCodeFor({ taxCode: TAX.HOSTING }), TAX.HOSTING);
+});
