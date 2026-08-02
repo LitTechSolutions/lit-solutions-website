@@ -3,15 +3,19 @@
  * text is clipped. Cheap way to catch the class of bug that unit tests can't:
  * a broken script tag, a missing file, a layout that only fails at 375px. */
 const { chromium } = require("playwright");
+const fs = require("node:fs");
+const path = require("node:path");
 
 const BASE = "http://localhost:8087";
-const PAGES = [
-  "index.html", "pricing.html", "cart.html", "myaccount.html",
-  "plan-standard.html", "plan-premium.html", "plan-executive.html",
-  "website-designer.html", "services.html", "heroes-pricing.html",
-  "service-website.html", "service-networking.html", "service-cybersecurity.html",
-  "faq.html", "terms.html", "about.html",
-];
+const ROOT = path.join(__dirname, "..");
+/* Every page in the repo, discovered rather than listed. The old hardcoded
+ * list covered 16 of 38, which meant more than half the site had never been
+ * checked at any width -- and a list like that goes stale the moment someone
+ * adds a page. */
+const PAGES = fs
+  .readdirSync(ROOT)
+  .filter((f) => f.endsWith(".html"))
+  .sort();
 /* Two viewports was never enough. Layouts don't break at the sizes you
  * design for -- they break in between, at the widths where a grid drops a
  * column or a nav runs out of room. These are the real inflection points:
@@ -52,7 +56,7 @@ const CART = JSON.stringify({
 
   // 10 widths x ~17 pages is 170 page loads; serially that's minutes. Run a
   // handful at a time instead -- still ordered output, just not idle.
-  const CONCURRENCY = 6;
+  const CONCURRENCY = 8;
 
   async function checkOne(ctx, vp, path) {
     const page = await ctx.newPage();
