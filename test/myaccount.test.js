@@ -150,6 +150,51 @@ test("a customer with no Care Hub membership stays on myaccount.html and sees th
   assert.equal(window.document.getElementById("accountTabs").hidden, false, "the normal tab bar should render since there's no redirect");
 });
 
+test("an admin with MFA enabled continues to the authenticator-code screen after a correct password", async () => {
+  const { window, capturedRequests } = loadMyAccountPage({
+    responses: {
+      account: { status: 401, body: { error: "Sign in required." } },
+      "auth-login": { body: { mfaRequired: true, enrollmentRequired: false, message: "Enter your authenticator app code to continue." } },
+    },
+  });
+  await wait(50);
+
+  window.location.hash = "#signin";
+  await wait(20);
+  window.document.getElementById("si-email").value = "admin@example.com";
+  window.document.getElementById("si-password").value = "correct-password";
+  window.document.getElementById("si-submit").dispatchEvent(new window.Event("click", { bubbles: true, cancelable: true }));
+  await wait(50);
+
+  const status = window.document.getElementById("si-status");
+  assert.ok(capturedRequests.some((r) => r.path === "auth-login"), "expected the password to be submitted");
+  assert.match(status.textContent, /Password accepted/);
+  assert.equal(status.querySelector("a").getAttribute("href"), "/care-hub/mfa/verify");
+  assert.notEqual(window.location.hash, "#dashboard", "an MFA response must not enter the account dashboard without a second factor");
+});
+
+test("an admin who has not enrolled in MFA continues to secure setup after a correct password", async () => {
+  const { window } = loadMyAccountPage({
+    responses: {
+      account: { status: 401, body: { error: "Sign in required." } },
+      "auth-login": { body: { mfaRequired: true, enrollmentRequired: true, message: "Set up two-factor authentication to continue." } },
+    },
+  });
+  await wait(50);
+
+  window.location.hash = "#signin";
+  await wait(20);
+  window.document.getElementById("si-email").value = "admin@example.com";
+  window.document.getElementById("si-password").value = "correct-password";
+  window.document.getElementById("si-submit").dispatchEvent(new window.Event("click", { bubbles: true, cancelable: true }));
+  await wait(50);
+
+  const link = window.document.querySelector("#si-status a");
+  assert.ok(link, "expected a visible fallback link to MFA enrollment");
+  assert.equal(link.getAttribute("href"), "/care-hub/mfa/enroll");
+  assert.notEqual(window.location.hash, "#dashboard", "an admin must finish MFA enrollment before receiving a session");
+});
+
 test("an existing session with a Care Hub membership is redirected on a plain page load too, not just at sign-in", async () => {
   const { window, capturedRequests } = loadMyAccountPage({
     responses: {

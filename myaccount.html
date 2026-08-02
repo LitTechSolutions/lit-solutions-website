@@ -439,6 +439,19 @@
 
       busy(btn, true, "Signing in\u2026");
       var r = await api("auth-login", { method: "POST", body: JSON.stringify({ email: email, password: password }) });
+      if (r.ok && r.body && r.body.mfaRequired) {
+        // A correct admin password creates a short-lived MFA cookie rather
+        // than a complete session. Continue that same secure flow in Care
+        // Hub, where enrollment and authenticator-code entry are supported.
+        // Keep a visible link as a fallback if the browser blocks navigation.
+        var mfaDestination = r.body.enrollmentRequired ? "/care-hub/mfa/enroll" : "/care-hub/mfa/verify";
+        busy(btn, false);
+        status.innerHTML = 'Password accepted. Continuing to the secure admin sign-in&hellip; ' +
+          '<a href="' + mfaDestination + '" style="color:var(--accent-orange-text); text-decoration:underline;">Continue now</a>';
+        status.className = "form-note";
+        window.location.href = mfaDestination;
+        return;
+      }
       if (r.ok) {
         status.textContent = "Signed in.";
         status.className = "form-note";
@@ -461,13 +474,6 @@
           state.pendingEmail = email;
           window.location.hash = "#code";
         });
-        return;
-      }
-      if (r.body && r.body.mfaRequired) {
-        // Admin accounts require two-factor, which this portal doesn't
-        // implement -- say so plainly instead of looping them back here.
-        status.innerHTML = 'This account uses two-factor authentication. Sign in through the <a href="/care-hub/login" style="color:var(--accent-orange-text); text-decoration:underline;">staff portal</a>, then come back \u2014 you\u2019ll already be signed in.';
-        status.className = "form-note form-note--error";
         return;
       }
       status.textContent = (r.body && r.body.error) || "Couldn't sign you in. Try again.";
