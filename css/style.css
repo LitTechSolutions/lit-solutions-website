@@ -1059,29 +1059,6 @@ section{ padding: 5.5rem 0; }
 .legal-doc ul li{ margin-bottom:.4rem; }
 .legal-doc strong{ color: var(--ink); }
 
-/* =========================================================
-   Terms agreement checkbox (payment gating)
-   ========================================================= */
-.terms-agree{
-  display:flex; align-items:flex-start; gap:.7rem;
-  background: var(--paper); border: 1px solid var(--line-strong); border-radius: var(--radius);
-  padding: 1rem 1.1rem; margin-bottom: 1.5rem;
-}
-.cart-required-label{
-  margin:1.25rem 0 .45rem; color:var(--ink); font-size:.78rem;
-  font-weight:700; letter-spacing:.04em; text-transform:uppercase;
-}
-.terms-agree input[type="checkbox"]{
-  width:18px; height:18px; flex-shrink:0; margin-top:.15rem; accent-color: var(--accent-orange);
-}
-.terms-agree label{ font-size:.85rem; color: var(--ink-soft); line-height:1.5; cursor:pointer; }
-.terms-agree a{ color: var(--accent-orange-text); text-decoration:underline; font-weight:600; }
-.terms-agree.needs-attention{ border-color: var(--accent-orange); background:var(--notice-bg-strong); }
-.terms-warning{
-  display:none; color: var(--accent-orange-text); font-size:.8rem; font-weight:600; margin: -1rem 0 1.5rem;
-}
-.terms-warning.is-visible{ display:block; }
-.pay-btn.is-locked, .pay-btn-sm.is-locked{ opacity:.58; cursor:pointer; }
 .price-block--wide{ }
 .price-list--columns{ display:grid; grid-template-columns: 1fr 1fr; column-gap: 2rem; }
 .price-list--columns li{ border-bottom: 1px dashed var(--line); }

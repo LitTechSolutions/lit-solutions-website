@@ -1,8 +1,7 @@
 // checkout.js -- turns a cart into a Stripe Checkout Session.
 //
 // GET  /checkout?items=key:qty,key:qty   price a cart (what the cart page shows)
-// POST /checkout {items, payInFull, termsAccepted:true}
-//                                          create the session and return its URL
+// POST /checkout {items, payInFull}      create the session and return its URL
 //
 // Everything about money is decided here, from the server catalog and the
 // account's own hero status. The cart in localStorage supplies product KEYS
@@ -29,7 +28,6 @@ const { checkoutAllowed, DISABLED_MESSAGE } = require("./_lib/checkout_status");
 const { isVerifiedHero } = require("./hero-status");
 const { findUserById } = require("./_lib/users");
 const { createCheckoutSession } = require("./_lib/stripe_api");
-const { CURRENT_TERMS_VERSION, CURRENT_PRIVACY_VERSION } = require("../../src/domain/consent");
 
 const MAX_LINES = 12;
 
@@ -226,19 +224,6 @@ exports.handler = async (event, context, deps = {}) => {
     }
   }
 
-  // Consent is a payment gate, not decorative page copy. New cart and
-  // invoice checkouts must send a literal boolean true. An abandoned order
-  // may resume without asking twice only when the original order already
-  // contains a timestamped acceptance record. This also prevents a caller
-  // from bypassing the checkbox by posting directly to the function.
-  const previouslyAccepted = !!(existingOrder && existingOrder.termsAcceptedAt);
-  if (body.termsAccepted !== true && !previouslyAccepted) {
-    return json(400, {
-      code: "terms_required",
-      error: "Please accept the Terms & Conditions and Privacy Policy before continuing to payment.",
-    });
-  }
-
   /* --------------------------------------------------------- invoice -- */
   const invoice = existingOrder ? existingOrder.invoice || null : parseInvoice(body);
   if (invoice && invoice.error) return json(400, { error: invoice.error });
@@ -340,9 +325,6 @@ exports.handler = async (event, context, deps = {}) => {
     status: "awaiting_payment",
     provider: "stripe",
     cartSignature: signature,
-    termsAcceptedAt: existingOrder && existingOrder.termsAcceptedAt || now,
-    termsVersion: existingOrder && existingOrder.termsVersion || CURRENT_TERMS_VERSION,
-    privacyVersion: existingOrder && existingOrder.privacyVersion || CURRENT_PRIVACY_VERSION,
     createdAt: existingOrder ? existingOrder.createdAt : now,
     updatedAt: now,
   });

@@ -93,8 +93,17 @@
 
         <article class="patch-entry">
           <div class="patch-entry-head">
-            <span class="patch-version patch-version--current">v4.10.2</span>
+            <span class="patch-version patch-version--current">v4.10.3</span>
             <span class="patch-tag">Current</span>
+          </div>
+          <ul class="patch-changes">
+            <li><strong>Simplified checkout by removing the duplicate Terms agreement.</strong> Customers already accept the Terms and Privacy Policy when creating their account, so they are no longer asked for the same agreement again before payment.</li>
+          </ul>
+        </article>
+
+        <article class="patch-entry">
+          <div class="patch-entry-head">
+            <span class="patch-version">v4.10.2</span>
           </div>
           <ul class="patch-changes">
             <li><strong>Fixed the checkout Terms agreement gate.</strong> Customers must now accept the Terms and Privacy Policy before signing in or opening Stripe, and the payment endpoint independently rejects attempts that bypass the page.</li>

@@ -685,14 +685,6 @@ export const strings = {
     cardTitle: "Make a payment",
     cardBody: "Pay an invoice or deposit online.",
     payButton: "Pay now",
-    // Only the trailing sentence -- Dashboard.tsx's JSX already renders "I
-    // have read and agree to the [Terms & Conditions link] and [Privacy
-    // Policy link], including the payment, refund, and dispute policies."
-    // directly (real links can't live in a plain string constant); this
-    // used to duplicate that entire sentence a second time in plain text
-    // right after it.
-    termsAgreeLabel: "This is required before paying.",
-    termsWarning: "Please check the box above to agree to our Terms & Conditions before paying.",
   },
 } as const;
 

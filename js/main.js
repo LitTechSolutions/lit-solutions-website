@@ -277,42 +277,6 @@ document.addEventListener('DOMContentLoaded', () => {
     statNums.forEach(el => statObserver.observe(el));
   }
 
-  // Terms & Conditions gate — payment buttons won't proceed until checked
-  const agreeTerms = document.getElementById('agreeTerms');
-  const termsBlock = document.getElementById('termsAgreeBlock');
-  const termsWarning = document.getElementById('termsWarning');
-  // Any element carrying these classes, not just anchors: the Care Plan and
-  // IT Support controls became <button data-add-to-cart> when those plans
-  // moved to the site's own checkout, and an anchor-only selector would
-  // have quietly dropped them out of the Terms gate.
-  const gatedPayButtons = document.querySelectorAll('.pay-btn, .pay-btn-sm');
-
-  if (agreeTerms && gatedPayButtons.length) {
-    const updateLockState = () => {
-      gatedPayButtons.forEach(btn => {
-        btn.classList.toggle('is-locked', !agreeTerms.checked);
-      });
-      if (agreeTerms.checked) {
-        termsBlock.classList.remove('needs-attention');
-        termsWarning.classList.remove('is-visible');
-      }
-    };
-
-    updateLockState();
-    agreeTerms.addEventListener('change', updateLockState);
-
-    gatedPayButtons.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        if (!agreeTerms.checked) {
-          e.preventDefault();
-          termsBlock.classList.add('needs-attention');
-          termsWarning.classList.add('is-visible');
-          termsBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      });
-    });
-  }
-
   // "Do I qualify?" — smooth scroll to the eligibility list
   const doIQualifyBtn = document.getElementById('doIQualifyBtn');
   const heroGroups = document.getElementById('heroGroups');

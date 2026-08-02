@@ -1,5 +1,4 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Dashboard } from "./Dashboard";
@@ -161,26 +160,13 @@ describe("Dashboard", () => {
     expect(screen.getByRole("link", { name: /see all activity/i })).toHaveAttribute("href", "/activity-timeline");
   });
 
-  it("keeps the existing payment terms gate: pay link is disabled until the terms checkbox is checked", async () => {
+  it("offers payment without repeating the account-creation terms agreement", async () => {
     mocks.accountGet.mockResolvedValue(account());
     renderDashboard();
     await screen.findByText(/make a payment/i);
 
-    // While disabled this <a> has no href at all (see Dashboard.tsx), so it
-    // has no implicit "link" role yet -- query by text instead of role
-    // until the checkbox makes it a real link.
-    const payLink = screen.getByText("Pay now").closest("a");
-    expect(payLink).toHaveAttribute("aria-disabled", "true");
-    expect(payLink).not.toHaveAttribute("href");
-
-    await userEvent.click(payLink!);
-    expect(await screen.findByRole("alert")).toHaveTextContent(/please check the box/i);
-
-    const checkbox = screen.getByRole("checkbox");
-    await userEvent.click(checkbox);
-
-    const enabledPayLink = screen.getByRole("link", { name: /pay now/i });
-    expect(enabledPayLink).toHaveAttribute("aria-disabled", "false");
-    expect(enabledPayLink).toHaveAttribute("href", expect.stringContaining("square.link"));
+    expect(screen.queryByRole("checkbox")).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /pay now/i }))
+      .toHaveAttribute("href", expect.stringContaining("square.link"));
   });
 });

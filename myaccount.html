@@ -1565,11 +1565,6 @@
           '<span class="form-hint">Exactly as shown on your invoice.</span></div>' +
         '<div class="form-row"><label for="pay-desc">What\u2019s it for? <span style="font-weight:400;color:var(--ink-faint);">(optional)</span></label>' +
           '<input id="pay-desc" type="text" placeholder="e.g. Balance at launch"></div>' +
-        '<div class="terms-agree" id="termsAgreeBlock">' +
-          '<input type="checkbox" id="agreeTerms">' +
-          '<label for="agreeTerms">I have read and agree to the <a href="terms.html" target="_blank" rel="noopener">Terms &amp; Conditions</a> and <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>, including the payment, refund, and dispute policies.</label>' +
-        '</div>' +
-        '<p class="terms-warning" id="termsWarning">Please tick the box above before continuing to payment.</p>' +
         '<button type="submit" class="btn btn-primary pay-btn" id="paySubmit">Continue to secure payment</button>' +
         '<p class="form-note" id="payStatus" role="status" aria-live="polite"></p>' +
       '</form>' +
@@ -1596,13 +1591,6 @@
 
     v.querySelector("#payForm").addEventListener("submit", async function (e) {
       e.preventDefault();
-      var agree = v.querySelector("#agreeTerms");
-      if (!agree.checked) {
-        v.querySelector("#termsAgreeBlock").classList.add("needs-attention");
-        v.querySelector("#termsWarning").classList.add("is-visible");
-        say("Please agree to the Terms before continuing.", true);
-        return;
-      }
       var reference = v.querySelector("#pay-ref").value.trim();
       var cleaned = v.querySelector("#pay-amount").value.replace(/[$,\s]/g, "");
       if (!reference) { say("Enter the reference from your invoice so we can match the payment to the job.", true); return; }
@@ -1612,7 +1600,6 @@
       btn.disabled = true;
       say("Opening secure payment\u2026");
       var r = await api("checkout", { method: "POST", body: JSON.stringify({
-        termsAccepted: true,
         invoice: {
           reference: reference,
           amountCents: Math.round(parseFloat(cleaned) * 100),
