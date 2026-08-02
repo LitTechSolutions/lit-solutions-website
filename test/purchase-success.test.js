@@ -21,10 +21,12 @@ function page(fetchImpl) {
     pretendToBeVisual: true,
   });
   let cleared = 0;
+  const adEvents = [];
   dom.window.fetch = fetchImpl;
   dom.window.LTS_CART = { clear: () => { cleared++; } };
+  dom.window.gtag = (...args) => { adEvents.push(args); };
   dom.window.eval(script);
-  return { window: dom.window, cleared: () => cleared };
+  return { window: dom.window, cleared: () => cleared, adEvents };
 }
 
 test("the thank-you page confirms the owned order, clears the cart, and exposes the receipt journey", async () => {
@@ -33,7 +35,7 @@ test("the thank-you page confirms the owned order, clears the cart, and exposes 
     amountPaidCents: 37800, monthlyCents: 12900, balanceAtLaunchCents: 0,
     needsBrief: true, items: [{ key: "plan-premium", name: "Premium", quantity: 1 }],
   };
-  const { window, cleared } = page(async () => response(200, { orders: [order] }));
+  const { window, cleared, adEvents } = page(async () => response(200, { orders: [order] }));
   await wait();
 
   assert.equal(cleared(), 1);
@@ -46,6 +48,12 @@ test("the thank-you page confirms the owned order, clears the cart, and exposes 
   assert.equal(window.dataLayer[0].event, "purchase");
   assert.equal(window.dataLayer[0].ecommerce.transaction_id, "ord-123");
   assert.equal(window.dataLayer[0].ecommerce.value, 378);
+  assert.equal(adEvents[0][0], "event");
+  assert.equal(adEvents[0][1], "conversion");
+  assert.equal(adEvents[0][2].send_to, "AW-18337968564/04L2CKuu5tocELTjnKhE");
+  assert.equal(adEvents[0][2].value, 378);
+  assert.equal(adEvents[0][2].currency, "USD");
+  assert.equal(adEvents[0][2].transaction_id, "ord-123");
   assert.equal(window.location.search, "", "the opaque order id should be removed after capture");
 });
 

@@ -47,6 +47,14 @@
         }),
       },
     });
+    if (typeof window.gtag === "function") {
+      window.gtag("event", "conversion", {
+        send_to: "AW-18337968564/04L2CKuu5tocELTjnKhE",
+        value: Number((order.amountPaidCents / 100).toFixed(2)),
+        currency: "USD",
+        transaction_id: order.id,
+      });
+    }
     try { localStorage.setItem(key, "1"); } catch (e) {}
   }
 

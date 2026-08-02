@@ -421,27 +421,30 @@ document.addEventListener('DOMContentLoaded', () => {
   // above, reused verbatim via the same .price-block-head/.price-list-wrap
   // class pair so a single pattern covers both.
 
-  // Cookie / tracking notice (REQ-60/62). We don't set any tracking
-  // cookies ourselves — Netlify Analytics is cookie-free/server-side, and
-  // localStorage (theme choice) isn't a cookie — so this is a transparency
-  // notice with a single acknowledgement, not an accept/reject gate for
-  // something we don't actually do.
+  // Cookie and advertising-measurement choice. Netlify Analytics remains
+  // server-side and cookie-free. Google Ads measurement is optional, starts
+  // denied, and never enables personalization or enhanced conversions.
   const cookieBanner = document.getElementById('cookie-banner');
   const manageConsentLink = document.getElementById('manageConsentLink');
   if (cookieBanner) {
-    const dismissedKey = 'lts-cookie-notice-dismissed';
-    let dismissed = false;
-    try { dismissed = !!localStorage.getItem(dismissedKey); } catch (e) {}
-    if (!dismissed) cookieBanner.hidden = false;
+    const copy = cookieBanner.querySelector('p');
+    const actions = cookieBanner.querySelector('.cookie-banner-actions');
+    if (copy) copy.innerHTML = 'We use cookie-free Netlify Analytics. With your permission, Google Ads can also use measurement cookies to tell us whether an ad led to a purchase. We do not enable ad personalization or enhanced conversions. See our <a href="privacy.html">Privacy Policy</a>.';
+    if (actions) actions.innerHTML = '<button type="button" class="btn btn-ghost btn-small" data-consent="essential">Essential only</button><button type="button" class="btn btn-primary btn-small" data-consent="measurement">Allow measurement</button>';
+
+    let consentChoice = '';
+    if (window.LTS_ADS_CONSENT_VALUE) consentChoice = window.LTS_ADS_CONSENT_VALUE();
+    if (!consentChoice) cookieBanner.hidden = false;
 
     cookieBanner.querySelectorAll('[data-consent]').forEach(btn => {
       btn.addEventListener('click', () => {
+        if (window.LTS_ADS_CONSENT) window.LTS_ADS_CONSENT(btn.dataset.consent === 'measurement');
         cookieBanner.hidden = true;
-        try { localStorage.setItem(dismissedKey, String(Date.now())); } catch (e) {}
       });
     });
   }
   if (manageConsentLink && cookieBanner) {
+    manageConsentLink.textContent = 'Cookie Settings';
     manageConsentLink.addEventListener('click', (e) => {
       e.preventDefault();
       cookieBanner.hidden = false;

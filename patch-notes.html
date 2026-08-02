@@ -93,8 +93,19 @@
 
         <article class="patch-entry">
           <div class="patch-entry-head">
-            <span class="patch-version patch-version--current">v4.9.1</span>
+            <span class="patch-version patch-version--current">v4.10.0</span>
             <span class="patch-tag">Current</span>
+          </div>
+          <ul class="patch-changes">
+            <li><strong>Connected confirmed Stripe purchases to Google Ads conversion reporting.</strong> A sale is counted only after the server confirms payment, and the event includes the actual purchase value and a duplicate-safe transaction ID.</li>
+            <li><strong>Added a clear advertising-measurement choice.</strong> Google Ads storage starts disabled; visitors may choose “Allow measurement” or “Essential only” and change the choice later. Enhanced conversions and ad personalization remain disabled.</li>
+            <li>Updated the Privacy Policy to describe the unified My Account portal, emailed administrator security codes, Stripe payments, and optional Google Ads measurement.</li>
+          </ul>
+        </article>
+
+        <article class="patch-entry">
+          <div class="patch-entry-head">
+            <span class="patch-version">v4.9.1</span>
           </div>
           <ul class="patch-changes">
             <li><strong>Fixed the account header after sign-in.</strong> Once a customer or administrator is authenticated, the old “Sign in” control is replaced immediately with their account name and menu on desktop and mobile.</li>
@@ -668,6 +679,7 @@
 <script src="js/product-catalog.js"></script>
 <script src="js/cart.js"></script>
 <script src="js/account-nav.js"></script>
+<script src="js/google-ads.js"></script>
 <script src="js/main.js"></script>
 <script src="js/site-version.js"></script>
 </body>
