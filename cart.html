@@ -236,6 +236,31 @@
   var serverPriced = null;   // the authoritative quote, once it arrives
   var pricingSeq = 0;        // guards against a slow response overwriting a fast one
 
+  /* Website Designer builds aren't catalog items -- their price lives against
+   * a stored quote id. GET /designer-quote is public precisely so the cart
+   * can show a real figure before sign-in; without it a configured build
+   * rendered as $0, which is the worst possible number to show someone who
+   * has just spent five minutes choosing features. Display only: checkout
+   * re-prices from the same stored quote. */
+  var quoteCache = {};
+  var quoteFetching = {};
+
+  function fetchQuotes() {
+    C.read().items.forEach(function (item) {
+      var id = (/^quote:(q[a-f0-9]{20})$/.exec(item.key) || [])[1];
+      if (!id || quoteCache[id] || quoteFetching[id]) return;
+      quoteFetching[id] = true;
+      fetch('/.netlify/functions/designer-quote?id=' + encodeURIComponent(id))
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) {
+          quoteFetching[id] = false;
+          if (d && d.quote) { quoteCache[id] = d.quote; paint(); }
+          else { quoteCache[id] = { expired: true }; paint(); }
+        })
+        .catch(function () { quoteFetching[id] = false; });
+    });
+  }
+
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
@@ -285,17 +310,46 @@
     state.items.forEach(function (item) {
       var p = P.get(item.key);
       if (!p) {
-        // A Website Designer build. Priced entirely server-side, so until the
-        // quote comes back there is nothing honest to show but a placeholder.
-        if (/^quote:/.test(item.key)) {
+        var qid = (/^quote:(q[a-f0-9]{20})$/.exec(item.key) || [])[1];
+        if (!qid) return;
+        anyPackage = true;                       // a build splits 50/50 like any package
+        var q = quoteCache[qid];
+
+        if (!q) {                                 // still loading
           lines.push({
-            key: item.key, product: { category: 'Website build', kind: 'quote',
-              summary: 'Your custom configuration, priced when you built it.' },
-            quantity: 1, label: 'Custom website build',
+            key: item.key, pending: true, quantity: 1, label: 'Your custom website build',
+            product: { category: 'Website build', kind: 'quote', summary: 'Pricing your configuration\u2026' },
+            chargedTodayCents: null, listTodayCents: null, monthlyCents: 0, balanceAtLaunchCents: 0,
+          });
+          return;
+        }
+        if (q.expired) {
+          lines.push({
+            key: item.key, expired: true, quantity: 1, label: 'This saved build has expired',
+            product: { category: 'Website build', kind: 'quote',
+              summary: 'Quotes are held for 30 days. Rebuild it in the Website Designer and we\u2019ll price it fresh.',
+              page: 'website-designer.html' },
             chargedTodayCents: 0, listTodayCents: 0, monthlyCents: 0, balanceAtLaunchCents: 0,
           });
-          anyPackage = true;
+          return;
         }
+
+        // Same arithmetic the server uses: hero rate first, then the 50/50
+        // split with the deposit rounded up so the balance is never larger.
+        var full = hero ? Math.round(q.totalCents * 0.85) : q.totalCents;
+        var listFull = q.totalCents;
+        var due = state.payInFull ? full : Math.ceil(full / 2);
+        var listDue = state.payInFull ? listFull : Math.ceil(listFull / 2);
+        lines.push({
+          key: item.key, quantity: 1,
+          label: q.packageName + ' \u2014 custom build' + (state.payInFull ? ', paid in full' : ', 50% deposit'),
+          product: { category: 'Website build', kind: 'quote', page: 'website-designer.html',
+            summary: q.featureCount
+              ? q.packageName + ' base plus ' + q.featureCount + ' added feature' + (q.featureCount === 1 ? '' : 's') + '.'
+              : q.packageName + ' base configuration.' },
+          chargedTodayCents: due, listTodayCents: listDue,
+          monthlyCents: 0, balanceAtLaunchCents: state.payInFull ? 0 : full - due,
+        });
         return;
       }
       if (p.kind === 'package') anyPackage = true;
@@ -359,7 +413,7 @@
 
   function lineHTML(l) {
     var p = l.product || {};
-    var showWas = l.listTodayCents > l.chargedTodayCents;
+    var showWas = l.listTodayCents != null && l.chargedTodayCents != null && l.listTodayCents > l.chargedTodayCents;
     var sub = [];
     if (l.monthlyCents) sub.push(money(l.monthlyCents) + '/month');
     if (l.balanceAtLaunchCents) sub.push(money(l.balanceAtLaunchCents) + ' at launch');
@@ -378,7 +432,7 @@
       '</div>' +
       '<div class="cart-line-right">' +
         (showWas ? '<span class="cart-line-was">' + money(l.listTodayCents) + '</span>' : '') +
-        '<span class="cart-line-price">' + money(l.chargedTodayCents) + '</span>' +
+        '<span class="cart-line-price">' + (l.chargedTodayCents === null ? '\u2026' : money(l.chargedTodayCents)) + '</span>' +
         (sub.length ? '<span class="cart-line-sub">' + sub.join(' &middot; ') + '</span>' : '') +
         (steppable
           ? '<span class="qty">' +
@@ -525,8 +579,9 @@
       });
   });
 
-  document.addEventListener('lts:cart-changed', function () { paint(); quote(); });
+  document.addEventListener('lts:cart-changed', function () { paint(); quote(); fetchQuotes(); });
   paint();
+  fetchQuotes();
 })();
 </script>
 

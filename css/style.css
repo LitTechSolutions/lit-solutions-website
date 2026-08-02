@@ -2476,6 +2476,38 @@ body.has-price-bar .cookie-banner{
 
 
 
+
+/* ---- Heroes: how to claim it ----
+   Lives inside .pricing-cta, which is a dark panel, so every colour here is
+   an on-dark token. Styling it with the light-theme --ink-* variables made
+   the privacy note almost unreadable -- a white card with grey-on-white text
+   sitting on navy. */
+.hero-claim-steps{
+  counter-reset: hero-step; list-style:none; padding:0;
+  margin:1.5rem auto; max-width:56ch; text-align:left; display:grid; gap:.9rem;
+}
+.hero-claim-steps li{
+  counter-increment: hero-step; position:relative; padding-left:2.4rem;
+  font-size:.92rem; color: rgba(245,245,244,0.78); line-height:1.65;
+}
+.hero-claim-steps li::before{
+  content: counter(hero-step); position:absolute; left:0; top:-.05em;
+  width:26px; height:26px; border-radius:50%;
+  background: var(--accent-teal-on-dark); color: var(--navy-deep);
+  font-family: var(--font-display); font-size:.78rem; font-weight:700;
+  display:flex; align-items:center; justify-content:center;
+}
+.hero-claim-steps strong{ color: var(--on-dark); }
+.hero-claim-steps a{ color: var(--accent-orange-on-dark); text-decoration:underline; }
+
+.pricing-cta .hero-claim-privacy{
+  max-width:60ch; margin:0 auto 1.6rem; padding:1rem 1.2rem;
+  background: rgba(255,255,255,0.06);
+  border-left:3px solid var(--accent-teal-on-dark); border-radius:0 8px 8px 0;
+  font-size:.85rem; color: rgba(245,245,244,0.78); line-height:1.7; text-align:left;
+}
+.pricing-cta .hero-claim-privacy strong{ color: var(--on-dark); }
+
 /* ---- Closing CTA on the service pages ---- */
 .service-cta-routes{
   display:flex; flex-wrap:wrap; gap:.75rem; justify-content:center; margin-top:1.5rem;

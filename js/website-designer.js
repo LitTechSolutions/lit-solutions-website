@@ -671,10 +671,16 @@ document.addEventListener('DOMContentLoaded', () => {
       addToCartBtn.textContent = tDyn('adding_to_cart', 'Saving your build\u2026');
       if (status) { status.textContent = ''; status.className = 'form-status'; }
 
+      // A hung request must not leave the button saying "Saving your build"
+      // forever with no way forward -- give it a deadline and a real error.
+      const controller = new AbortController();
+      const deadline = setTimeout(function () { controller.abort(); }, 15000);
+
       try {
         const res = await fetch('/.netlify/functions/designer-quote', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          signal: controller.signal,
           body: JSON.stringify({
             package: state.package,
             optionalSelected: sel.optionalSelected,
@@ -696,12 +702,16 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error('We could not add that to your cart.');
       } catch (err) {
         if (status) {
-          status.textContent = (err && err.message) ||
+          status.textContent = (err && err.name === 'AbortError')
+            ? 'That took too long. Check your connection and try again \u2014 or call 804-309-0968 and we\u2019ll take it from here.'
+            : (err && err.message) ||
             'Something went wrong \u2014 please call 804-309-0968 and we\u2019ll take it from here.';
           status.className = 'form-status form-status--error';
         }
         addToCartBtn.disabled = false;
         addToCartBtn.textContent = originalLabel;
+      } finally {
+        clearTimeout(deadline);
       }
     });
   }
