@@ -19,14 +19,38 @@
 
 const crypto = require("node:crypto");
 const { readCookie, getSession, json, rateLimited } = require("./_lib/auth_utils");
-const { getJSON, setJSON } = require("./_lib/blob_store");
+const { getJSON, setJSON, store } = require("./_lib/blob_store");
 const { getProduct } = require("./_lib/product_catalog");
 const { priceCart, toStripeLineItems, bnplAvailable } = require("./_lib/pricing");
+const { TAX } = require("./_lib/product_catalog");
 const { isVerifiedHero } = require("./hero-status");
 const { findUserById } = require("./_lib/users");
 const { createCheckoutSession } = require("./_lib/stripe_api");
 
 const MAX_LINES = 12;
+
+/* Paying a quoted job or an invoice.
+ * -----------------------------------
+ * Not a catalog item: the amount is whatever we quoted, so it comes from the
+ * customer reading their own invoice. That is exactly what the old Square
+ * "Make a Payment" link did -- an open-amount page anyone could load -- but
+ * this version is signed in, recorded against the account, and shows up in
+ * their order history with the reference they typed. Bounds keep a typo or a
+ * fat finger from becoming a five-figure charge. */
+const INVOICE_MIN_CENTS = 100;        // $1
+const INVOICE_MAX_CENTS = 5000000;    // $50,000 -- above this, we'll take it by phone
+
+function parseInvoice(body) {
+  if (!body || !body.invoice) return null;
+  const raw = body.invoice;
+  const cents = Math.round(Number(raw.amountCents));
+  if (!Number.isFinite(cents) || cents < INVOICE_MIN_CENTS || cents > INVOICE_MAX_CENTS) {
+    return { error: `Enter an amount between $${INVOICE_MIN_CENTS / 100} and $${(INVOICE_MAX_CENTS / 100).toLocaleString("en-US")}. For anything larger, call us on 804-309-0968.` };
+  }
+  const reference = String(raw.reference || "").trim().slice(0, 60);
+  if (!reference) return { error: "Enter the invoice or quote reference so we can match your payment to the job." };
+  return { amountCents: cents, reference, description: String(raw.description || "").trim().slice(0, 200) };
+}
 
 function siteOrigin(event) {
   const host = (event.headers && (event.headers["x-forwarded-host"] || event.headers.host)) || "lit-solutions.tech";
@@ -49,6 +73,53 @@ function parseItems(raw) {
     out.push({ product, quantity });
   }
   return out;
+}
+
+/** A stable fingerprint of what a cart is, so the same cart can be recognised. */
+function cartSignature(items, payInFull) {
+  return items
+    .map(({ product, quantity }) => `${product.key}:${quantity}`)
+    .sort()
+    .join(",") + `|full=${payInFull ? 1 : 0}`;
+}
+
+/**
+ * Every attempt used to mint a brand-new order before opening the Stripe
+ * session, so a customer whose card was declined -- or who hit any transient
+ * error -- collected a dead "Checkout didn't open last time" card per try.
+ * Six debugging attempts in one evening produced six of them.
+ *
+ * So: reuse the customer's existing unpaid order when the cart is unchanged,
+ * and retire any older dead ones. Nothing paid is ever touched.
+ */
+async function reusableOrderFor(customerId, signature, deps = {}) {
+  const storeFn = deps.store || store;
+  const getJSONFn = deps.getJSON || getJSON;
+  const setJSONFn = deps.setJSON || setJSON;
+
+  const s = storeFn("orders");
+  const { blobs } = await s.list();
+  const unpaid = [];
+  for (const b of blobs) {
+    const o = await getJSONFn("orders", b.key);
+    if (!o || o.customerId !== customerId) continue;
+    if (o.status !== "awaiting_payment" && o.status !== "checkout_failed") continue;
+    unpaid.push(o);
+  }
+  unpaid.sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+
+  const match = unpaid.find((o) => o.cartSignature === signature) || null;
+
+  // Anything else unpaid is abandoned by definition -- the customer is
+  // checking out with a different cart. Retire it so the dashboard shows
+  // what they're actually buying rather than a history of attempts.
+  for (const o of unpaid) {
+    if (match && o.id === match.id) continue;
+    o.status = "superseded";
+    o.supersededAt = (deps.now ? deps.now() : new Date()).toISOString();
+    await setJSONFn("orders", o.id, o);
+  }
+  return match;
 }
 
 function itemsFromBody(body) {
@@ -114,13 +185,46 @@ exports.handler = async (event, context, deps = {}) => {
     }
   }
 
+  /* --------------------------------------------------------- invoice -- */
+  const invoice = existingOrder ? existingOrder.invoice || null : parseInvoice(body);
+  if (invoice && invoice.error) return json(400, { error: invoice.error });
+
   const items = existingOrder
     ? parseItems((existingOrder.items || []).map((i) => `${i.key}:${i.quantity || 1}`).join(","))
-    : itemsFromBody(body);
-  if (!items.length) return json(400, { error: "Your cart is empty." });
+    : (invoice ? [] : itemsFromBody(body));
+  if (!items.length && !invoice) return json(400, { error: "Your cart is empty." });
 
   const payInFull = existingOrder ? !!existingOrder.payInFull : !!body.payInFull;
-  const priced = priceCart(items, { hero, payInFull });
+  const signature = invoice
+    ? `invoice:${invoice.reference}:${invoice.amountCents}`
+    : cartSignature(items, payInFull);
+
+  // Coming from the cart rather than resuming a named order: fold into the
+  // customer's existing unpaid order for this same cart instead of stacking
+  // another one beside it.
+  if (!existingOrder) {
+    existingOrder = await (deps.reusableOrderFor || reusableOrderFor)(session.userId, signature, deps);
+  }
+  // An invoice is priced by the quote it came from, so the Heroes Discount
+  // is NOT applied again here -- it was already applied when we quoted.
+  const priced = invoice
+    ? {
+        lines: [{
+          key: "invoice", name: `Invoice ${invoice.reference}`, kind: "invoice",
+          label: invoice.description || `Invoice ${invoice.reference}`,
+          quantity: 1,
+          listOneOffCents: invoice.amountCents, oneOffCents: invoice.amountCents,
+          listMonthlyCents: 0, monthlyCents: 0, balanceAtLaunchCents: 0,
+          taxCode: TAX.PROFESSIONAL, monthlyTaxCode: TAX.PROFESSIONAL,
+        }],
+        hero: false, payInFull: true,
+        oneOffCents: invoice.amountCents, monthlyCents: 0,
+        chargedTodayCents: invoice.amountCents,
+        listChargedTodayCents: invoice.amountCents,
+        balanceAtLaunchCents: 0, heroSavingCents: 0, heroSavingMonthlyCents: 0,
+        hasRecurring: false, includesFirstMonth: false,
+      }
+    : priceCart(items, { hero, payInFull });
   if (priced.chargedTodayCents <= 0) return json(400, { error: "Nothing to charge." });
 
   // Asking for BNPL on a cart that can't take it is a client bug, not a
@@ -150,7 +254,10 @@ exports.handler = async (event, context, deps = {}) => {
     id: orderId,
     customerId: session.userId,
     customerEmail,
-    items: items.map(({ product, quantity }) => ({ key: product.key, name: product.name, quantity })),
+    items: invoice
+      ? [{ key: "invoice", name: `Invoice ${invoice.reference}`, quantity: 1 }]
+      : items.map(({ product, quantity }) => ({ key: product.key, name: product.name, quantity })),
+    invoice: invoice || null,
     // Re-priced on every attempt, so a hero verified between abandoning a
     // checkout and resuming it gets their discount without re-adding anything.
     pricing: priced,
@@ -158,6 +265,7 @@ exports.handler = async (event, context, deps = {}) => {
     payInFull,
     status: "awaiting_payment",
     provider: "stripe",
+    cartSignature: signature,
     createdAt: existingOrder ? existingOrder.createdAt : now,
     updatedAt: now,
   });

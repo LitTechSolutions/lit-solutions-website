@@ -2636,6 +2636,36 @@ body.has-price-bar .cookie-banner{
   .cart-line-right{ align-items:flex-start; text-align:left; flex-direction:row; flex-wrap:wrap; justify-content:space-between; width:100%; }
 }
 
+
+/* ---- Pay an invoice (payment.html) ---- */
+.invoice-form{ margin-top:1.25rem; }
+.invoice-fields{ display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.invoice-form .form-row{ margin-bottom:1rem; }
+.invoice-form label{
+  display:block; font-weight:600; font-size:.88rem; color: var(--ink); margin-bottom:.35rem;
+}
+.form-optional{ font-weight:400; color: var(--ink-faint); }
+.invoice-form input[type="text"]{
+  width:100%; padding:.7rem .85rem; font: inherit; font-size:.95rem;
+  border:1px solid var(--line); border-radius:10px; background: var(--paper); color: var(--ink);
+}
+.invoice-form input[type="text"]:focus{
+  outline:none; border-color: var(--accent-orange); box-shadow:0 0 0 3px var(--accent-orange-dark);
+}
+.input-prefixed{ position:relative; display:block; }
+.input-prefixed > span{
+  position:absolute; left:.85rem; top:50%; transform:translateY(-50%);
+  color: var(--ink-faint); font-size:.95rem; pointer-events:none;
+}
+.input-prefixed input{ padding-left:1.9rem !important; }
+.form-hint{ display:block; margin-top:.3rem; font-size:.78rem; color: var(--ink-faint); }
+.pay-fineprint{
+  margin-top:.9rem; font-size:.8rem; color: var(--ink-faint); line-height:1.65; max-width:60ch;
+}
+@media (max-width:620px){
+  .invoice-fields{ grid-template-columns:1fr; gap:0; }
+}
+
 /* ---- Dashboard order card & project brief ---- */
 .order-card{
   background: var(--paper-alt); border:1px solid var(--line); border-radius: var(--radius);

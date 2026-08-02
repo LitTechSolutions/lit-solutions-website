@@ -253,7 +253,7 @@
    * without this they'd land on an empty dashboard and have to find their
    * way back to a cart they'd already filled. Whitelisted, because an open
    * redirect on a page that handles sign-in is not a small thing. */
-  var NEXT_DESTINATIONS = { cart: "cart.html", pricing: "pricing.html" };
+  var NEXT_DESTINATIONS = { cart: "cart.html", pricing: "pricing.html", payment: "payment.html" };
 
   function pendingNext() {
     try {
@@ -533,7 +533,11 @@
 
     var r = await api("orders");
     var orders = (r.ok && r.body && r.body.orders) || [];
-    var live = orders.filter(function (o) { return o.status !== "cancelled"; });
+    // "superseded" is an order the customer replaced by checking out with a
+    // different cart; "cancelled" is one they abandoned. Neither is news.
+    var live = orders.filter(function (o) {
+      return o.status !== "cancelled" && o.status !== "superseded";
+    });
     if (!live.length) { host.innerHTML = ""; return; }
 
     host.innerHTML = live.map(function (o) { return card(o, justPaid && o.id === justPaidOrder); }).join("");

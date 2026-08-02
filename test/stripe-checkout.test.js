@@ -1127,3 +1127,74 @@ test("the wrapper disables Managed Payments unless explicitly asked for", async 
     if (origMode === undefined) delete process.env.STRIPE_MODE; else process.env.STRIPE_MODE = origMode;
   }
 });
+
+/* ========================================== one order per cart, not per try = */
+
+test("a retried checkout reuses the same order instead of stacking dead ones", async () => {
+  reset();
+  seedUser(CUST, null);
+  const cart = { items: [{ key: "svc-seo", quantity: 1 }] };
+
+  // First attempt fails the way a declined card or a bad config would.
+  await checkout.handler(req("POST", cart), {}, deps(CUST, {
+    idGenerator: () => "ord-1",
+    createCheckoutSession: async () => { throw new Error("boom"); },
+  }));
+  assert.equal(blobs.get(k("orders", "ord-1")).status, "checkout_failed");
+
+  // Second attempt with the SAME cart must not create a second order.
+  await checkout.handler(req("POST", cart), {}, deps(CUST, { idGenerator: () => "ord-2" }));
+
+  const orderIds = [...blobs.keys()].filter((x) => x.startsWith("orders::")).map((x) => x.slice(8));
+  assert.deepEqual(orderIds, ["ord-1"], `expected one order, got ${orderIds.join(", ")}`);
+  assert.equal(blobs.get(k("orders", "ord-1")).status, "awaiting_payment");
+});
+
+test("checking out a different cart retires the abandoned one", async () => {
+  reset();
+  seedUser(CUST, null);
+  await checkout.handler(req("POST", { items: [{ key: "svc-seo", quantity: 1 }] }), {},
+    deps(CUST, { idGenerator: () => "ord-old" }));
+
+  // Customer changes their mind and buys something else entirely.
+  await checkout.handler(req("POST", { items: [{ key: "plan-premium", quantity: 1 }] }), {},
+    deps(CUST, { idGenerator: () => "ord-new" }));
+
+  assert.equal(blobs.get(k("orders", "ord-old")).status, "superseded",
+    "the abandoned cart shouldn't keep sitting on the dashboard");
+  assert.equal(blobs.get(k("orders", "ord-new")).status, "awaiting_payment");
+});
+
+test("a paid order is never reused, superseded, or otherwise disturbed", async () => {
+  reset();
+  seedUser(CUST, null);
+  // A completed purchase, exactly as the webhook leaves it.
+  blobs.set(k("orders", "ord-paid"), {
+    id: "ord-paid", customerId: CUST.userId, customerEmail: CUST_EMAIL,
+    items: [{ key: "svc-seo", name: "Basic SEO optimization", quantity: 1 }],
+    status: "paid", provider: "stripe", createdAt: "2026-08-01T00:00:00.000Z",
+    cartSignature: "svc-seo:1|full=0",
+  });
+
+  // Same cart again -- a repeat purchase, which must be a NEW order.
+  await checkout.handler(req("POST", { items: [{ key: "svc-seo", quantity: 1 }] }), {},
+    deps(CUST, { idGenerator: () => "ord-fresh" }));
+
+  assert.equal(blobs.get(k("orders", "ord-paid")).status, "paid", "a paid order must never be touched");
+  assert.equal(blobs.get(k("orders", "ord-fresh")).status, "awaiting_payment");
+});
+
+test("one customer's abandoned orders never touch another's", async () => {
+  reset();
+  seedUser(CUST, null);
+  const other = { sessionId: "s-9", userId: "cust-99", role: "customer", expiresAt: 4102444800000 };
+  seedUser(other, null, "other@example.test");
+
+  await checkout.handler(req("POST", { items: [{ key: "svc-seo", quantity: 1 }] }), {},
+    deps(CUST, { idGenerator: () => "ord-mine" }));
+  await checkout.handler(req("POST", { items: [{ key: "plan-premium", quantity: 1 }] }), {},
+    deps(other, { idGenerator: () => "ord-theirs" }));
+
+  assert.equal(blobs.get(k("orders", "ord-mine")).status, "awaiting_payment",
+    "another customer's checkout must not supersede mine");
+});

@@ -85,7 +85,7 @@
     <div class="wrap">
       <p class="eyebrow">Payments</p>
       <h1>Payments &amp; Subscriptions.</h1>
-      <p class="section-lede">All payments are processed securely by Square or Stripe &mdash; we never see or store your card information either way. Use the one-time option to settle a quoted job or an invoice; monthly plans and anything bought from the site go through your account, so your receipts and paperwork stay in one place.</p>
+      <p class="section-lede">Every payment here runs through your account and is processed securely by Stripe &mdash; we never see or store your card details. Settle a quote or invoice, start a monthly plan, or buy a website; whichever you pick, the receipt and the paperwork end up in the same place.</p>
     </div>
   </section>
 
@@ -111,11 +111,39 @@
         <div class="price-list-wrap">
           <div style="padding: 0 1.75rem 1.75rem;">
             <p class="pay-block-copy">
-              Use this to pay for services we've quoted or invoiced — a website package, a repair job, a deposit, or any amount listed on your quote or signed agreement. Enter the exact total shown there, after agreeing to our Terms above.
+              Use this to pay a quote or invoice we've already sent you &mdash; a repair job, a deposit, a balance at launch, or anything listed on your signed agreement. Enter the reference and the exact amount shown on it.
             </p>
-            <a href="https://square.link/u/2oozkfhz" class="btn btn-primary pay-btn" target="_blank" rel="noopener">
-              Make a Payment
-            </a>
+
+            <form class="invoice-form" id="invoiceForm" novalidate>
+              <div class="invoice-fields">
+                <div class="form-row">
+                  <label for="inv-ref">Invoice or quote reference</label>
+                  <input id="inv-ref" name="reference" type="text" inputmode="text" autocomplete="off"
+                         placeholder="e.g. INV-1042" aria-describedby="inv-ref-help" required>
+                  <span class="form-hint" id="inv-ref-help">Top of the invoice or quote we sent you.</span>
+                </div>
+                <div class="form-row">
+                  <label for="inv-amount">Amount to pay</label>
+                  <div class="input-prefixed">
+                    <span aria-hidden="true">$</span>
+                    <input id="inv-amount" name="amount" type="text" inputmode="decimal"
+                           placeholder="0.00" aria-describedby="inv-amount-help" required>
+                  </div>
+                  <span class="form-hint" id="inv-amount-help">Exactly as shown on your invoice.</span>
+                </div>
+              </div>
+              <div class="form-row">
+                <label for="inv-desc">What's it for? <span class="form-optional">(optional)</span></label>
+                <input id="inv-desc" name="description" type="text" placeholder="e.g. Balance at launch — Riverside Plumbing">
+              </div>
+
+              <button type="submit" class="btn btn-primary pay-btn" id="invoicePay">Continue to secure payment</button>
+              <p class="form-note" id="invoiceStatus" role="status" aria-live="polite"></p>
+              <p class="pay-fineprint">
+                You'll sign in (or create an account) first, so your receipt and paperwork stay in one place.
+                Payment is handled by Stripe &mdash; card, Apple&nbsp;Pay or Google&nbsp;Pay. We never see your card details.
+              </p>
+            </form>
 
             <div class="pay-reference">
               <div class="pay-reference-item">
@@ -220,7 +248,7 @@
 
       <div class="price-note">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
-        <p>Payments are securely processed by Square and Stripe. Little Technical Solutions LLC does not collect, see, or store your card details.</p>
+        <p>Payments are securely processed by Stripe. Little Technical Solutions LLC does not collect, see, or store your card details.</p>
         <p><strong>Before you pay, here is the refund policy in plain English</strong> — you should not have to go read the Terms to find it. Cancel before we start and your deposit is refunded in full, less any transaction fee our processor has already taken. Cancel partway through and we refund the portion covering work not yet performed, and we will show you that breakdown in writing. After delivery, if something was not done as agreed, tell us within <strong>30 days</strong> and we will fix it at no charge or refund that portion. Our labor also carries a <strong>30-day workmanship warranty</strong>. Full detail in our <a href="terms.html">Terms</a>, sections 4 and 6A.</p>
         <p>Please contact us before opening a dispute with your bank or card issuer — nearly every billing problem is something we can sort out the same day. Nothing in our terms limits your legal right to dispute a charge with your card issuer.</p>
       </div>
@@ -343,6 +371,97 @@
 
 <script src="js/product-catalog.js"></script>
 <script src="js/cart.js"></script>
+
+<script>
+/* Pay an invoice.
+ *
+ * The amount comes from the customer reading their own invoice -- exactly
+ * what the old open-amount Square link did -- but this version is signed in,
+ * bounded server-side, and recorded against their account so the receipt and
+ * the paperwork live with everything else they've bought.
+ */
+(function () {
+  'use strict';
+  var form = document.getElementById('invoiceForm');
+  if (!form) return;
+  var status = document.getElementById('invoiceStatus');
+  var btn = document.getElementById('invoicePay');
+  var agree = document.getElementById('agreeTerms');
+
+  function say(msg, bad) {
+    status.textContent = msg;
+    status.className = 'form-note' + (bad ? ' form-note--error' : '');
+  }
+
+  function centsFrom(value) {
+    var cleaned = String(value || '').replace(/[$,\s]/g, '');
+    if (!/^\d+(\.\d{1,2})?$/.test(cleaned)) return null;
+    return Math.round(parseFloat(cleaned) * 100);
+  }
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    // Same Terms gate the rest of this page uses.
+    if (agree && !agree.checked) {
+      agree.closest('.terms-agree')?.classList.add('needs-attention');
+      document.getElementById('termsWarning')?.classList.add('is-visible');
+      agree.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    var reference = document.getElementById('inv-ref').value.trim();
+    var cents = centsFrom(document.getElementById('inv-amount').value);
+    if (!reference) { say('Enter the reference from your invoice so we can match the payment to the job.', true); return; }
+    if (cents === null) { say('Enter the amount as it appears on your invoice, like 249 or 249.50.', true); return; }
+    if (cents < 100) { say('That amount is below our $1 minimum.', true); return; }
+
+    btn.disabled = true;
+    say('Opening secure payment\u2026');
+
+    try {
+      var res = await fetch('/.netlify/functions/checkout', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ invoice: {
+          reference: reference,
+          amountCents: cents,
+          description: document.getElementById('inv-desc').value.trim(),
+        } }),
+      });
+      var body = await res.json().catch(function () { return {}; });
+
+      if (res.status === 401) {
+        // Not signed in. Send them to create an account and come straight back.
+        try {
+          sessionStorage.setItem('lts-pending-invoice', JSON.stringify({ reference: reference, cents: cents }));
+        } catch (err) {}
+        window.location.href = 'myaccount.html?next=payment#signin';
+        return;
+      }
+      if (res.ok && body.url) { window.location.href = body.url; return; }
+      say((body && body.error) || "We couldn't start that payment. Call us on 804-309-0968 and we'll take it over the phone.", true);
+      if (body && body.adminDetail) say(body.error + ' \u2014 ' + body.adminDetail, true);
+    } catch (err) {
+      say('Could not reach the server. Check your connection and try again.', true);
+    }
+    btn.disabled = false;
+  });
+
+  // Coming back from signing in: restore what they typed rather than making
+  // them find the invoice again.
+  try {
+    var pending = JSON.parse(sessionStorage.getItem('lts-pending-invoice') || 'null');
+    if (pending) {
+      sessionStorage.removeItem('lts-pending-invoice');
+      document.getElementById('inv-ref').value = pending.reference || '';
+      if (pending.cents) document.getElementById('inv-amount').value = (pending.cents / 100).toFixed(2);
+      say('Signed in \u2014 your invoice details are still here. Press continue when ready.');
+    }
+  } catch (err) {}
+})();
+</script>
 <script src="js/main.js"></script>
 <script src="js/site-version.js"></script>
 </body>

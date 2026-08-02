@@ -1,4 +1,4 @@
-// Covers the Square payment/subscription terms-gate (F011): an unchecked
+// Covers the payment/subscription terms-gate (F011): an unchecked
 // consent checkbox must block every "pay-btn"/"pay-btn-sm" link until
 // checked, never precheck itself, and re-lock if unchecked again. Loads
 // the real payment.html + js/main.js into jsdom rather than re-implementing
@@ -56,7 +56,7 @@ test("terms-gate: checkbox has an accessible label linking Terms and Privacy Pol
 
 test("terms-gate: clicking a pay button while unchecked is blocked and surfaces the warning", () => {
   const window = loadPaymentPage();
-  const btn = window.document.querySelector("a.pay-btn");
+  const btn = window.document.querySelector(".pay-btn");
   const warning = window.document.getElementById("termsWarning");
   assert.equal(warning.classList.contains("is-visible"), false, "warning should start hidden");
 
@@ -71,7 +71,7 @@ test("terms-gate: clicking a pay button while unchecked is blocked and surfaces 
 test("terms-gate: checking the box unlocks every gated button", () => {
   const window = loadPaymentPage();
   const checkbox = window.document.getElementById("agreeTerms");
-  const buttons = Array.from(window.document.querySelectorAll("a.pay-btn, a.pay-btn-sm"));
+  const buttons = Array.from(window.document.querySelectorAll(".pay-btn, .pay-btn-sm"));
   assert.ok(buttons.length > 0, "expected at least one gated payment button on the page");
   assert.ok(buttons.every((b) => b.classList.contains("is-locked")), "all buttons should start locked");
 
@@ -88,7 +88,7 @@ test("terms-gate: checking the box unlocks every gated button", () => {
 test("terms-gate: unchecking again re-locks every gated button", () => {
   const window = loadPaymentPage();
   const checkbox = window.document.getElementById("agreeTerms");
-  const buttons = Array.from(window.document.querySelectorAll("a.pay-btn, a.pay-btn-sm"));
+  const buttons = Array.from(window.document.querySelectorAll(".pay-btn, .pay-btn-sm"));
 
   checkbox.checked = true;
   checkbox.dispatchEvent(new window.Event("change", { bubbles: true }));
