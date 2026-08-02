@@ -34,11 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const bundleTilesContainer = document.getElementById('wdBundleTiles');
   const customRequestEl = document.getElementById('wdCustomRequest');
   const quickFormStatus = document.getElementById('wdCheckoutStatus');
-  const doneMessageEl = document.getElementById('wdDoneMessage');
-  const wdPromptYesBtn = document.getElementById('wdPromptYesBtn');
-  const wdFinishLaterBtn = document.getElementById('wdFinishLaterBtn');
-  const wdOpenWorksheetAgainBtn = document.getElementById('wdOpenWorksheetAgainBtn');
-  const wdWorksheetFallback = document.getElementById('wdWorksheetFallback');
   const wdWorksheetFallbackLink = document.getElementById('wdWorksheetFallbackLink');
 
   const priceAmountEl = document.getElementById('wdPriceAmount');
@@ -89,7 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // window.jspdf is either fully present or the load genuinely failed --
   // there's no async "still loading" state to account for here.
   const JSPDF_READY = !!(window.jspdf && typeof window.jspdf.jsPDF === 'function');
-  const heroesCheckbox = document.getElementById('wdHeroesDiscount');
   const startOverBtn = document.getElementById('wdStartOver');
   const HEROES_DISCOUNT_RATE = 0.15; // 15% off one-time work -- matches heroes-pricing.html
   const BUNDLE_DISCOUNT_RATE = 0.10; // baked into every bundle's flat price -- see header comment
@@ -263,14 +257,14 @@ document.addEventListener('DOMContentLoaded', () => {
     steps.forEach(s => {
       const stepNum = s.dataset.step;
       s.classList.toggle('is-active', stepNum === name);
-      if (name === '2' || name === 'prompt' || name === 'worksheet-opened' || name === 'done') s.disabled = false;
+      if (name === '2') s.disabled = false;
     });
     // Move focus to the new panel's heading so screen-reader/keyboard users
     // land on the new content instead of a now-hidden or stale element, and
     // scroll that panel itself into view rather than the whole page's top
     // (the tool sits well below the page's own hero/launch-banner section).
     const activePanel = document.querySelector(`.wd-panel[data-panel="${name}"]`);
-    if ((name === '2' || name === 'prompt' || name === 'worksheet-opened' || name === 'done') && activePanel) {
+    if (name === '2' && activePanel) {
       activePanel.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
     }
     const heading = activePanel && activePanel.querySelector('h2[tabindex="-1"]');
@@ -464,8 +458,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     priceNoteEl.textContent = heroes
-      ? tDyn('note_starting_price_with_heroes', 'Starting price -- Heroes Discount applied (pending confirmation)')
-      : tDyn('note_starting_price', 'Starting price');
+      ? tDyn('note_starting_price_with_heroes', 'Heroes Discount applied at checkout')
+      : tDyn('note_starting_price', 'Half now, half at launch');
 
     const baseLabel = tDyn(state.package === 'business' ? 'cost_row_base_business' : 'cost_row_base_starter', state.package === 'business' ? 'Business base' : 'Starter base');
     let html = `<div class="wd-cost-row wd-cost-row--base"><span>${escHtml(baseLabel)}</span><strong>${fmtMoney(state.basePrice)}</strong></div>`;
@@ -551,22 +545,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('[data-back]').forEach(btn => {
     btn.addEventListener('click', () => showPanel(btn.dataset.back));
   });
-  function finishLater() {
-    doneMessageEl.textContent = tDyn('done_message_quick_only',
-      "Got it -- we'll reach out using the contact method you picked. If you'd rather add your project details now, you can always start another Website Designer request.");
-    clearDraft();
-    showPanel('done');
-  }
 
   // The resume token travels only as a URL fragment (never a query string,
   // so it's never sent to the server as part of this navigation, and never
   // logged) -- see netlify/functions/website-designer.js for the full
   // security model (hash-only storage, 24h expiry, single use, timing-safe
   // validation).
-  function worksheetUrl() {
-    if (!state.quickLeadId || !state.resumeToken) return null;
-    return 'website-project-brief.html#resume=' + encodeURIComponent(state.quickLeadId + '.' + state.resumeToken);
-  }
 
   // Deliberately does NOT pass the literal 'noopener' feature string to
   // window.open() -- per spec (and confirmed in Safari on macOS/iOS), a
@@ -582,42 +566,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // can't navigate this one via window.opener), while keeping the return
   // value meaningful so a genuinely blocked popup still falls back to the
   // direct link instead of silently doing nothing.
-  function openWorksheet() {
-    const url = worksheetUrl();
-    if (!url) return;
-    const win = window.open(url, '_blank');
-    // A plain truthiness check on `win` isn't enough: Safari on macOS has
-    // been observed handing back a real (non-null) Window reference even
-    // when the popup was actually blocked, unlike Chromium which reliably
-    // returns null in that case. On a genuinely-opened tab, `win.closed`
-    // reads false at this point (it was just created); on Safari's blocked-
-    // but-truthy case it reads back true immediately, so checking it closes
-    // the gap the null check alone misses.
-    if (!win || win.closed || typeof win.closed === 'undefined') {
-      if (wdWorksheetFallbackLink) wdWorksheetFallbackLink.href = url;
-      if (wdWorksheetFallback) wdWorksheetFallback.hidden = false;
-      return;
-    }
-    try { win.opener = null; } catch (e) { /* best-effort hardening only */ }
-    if (wdWorksheetFallback) wdWorksheetFallback.hidden = true;
-    showPanel('worksheet-opened');
-  }
 
-  document.querySelectorAll('[data-prompt-choice="no"]').forEach(btn => {
-    btn.addEventListener('click', finishLater);
-  });
-  wdPromptYesBtn?.addEventListener('click', openWorksheet);
-  wdFinishLaterBtn?.addEventListener('click', finishLater);
-  wdOpenWorksheetAgainBtn?.addEventListener('click', openWorksheet);
-  heroesCheckbox?.addEventListener('change', () => {
-    if (state.package) updatePriceAndBreakdown();
-    saveDraft();
-  });
   customRequestEl?.addEventListener('input', saveDraft);
 
+  // The sticky bar's button is the same action as the one at the bottom of
+  // the page -- someone who has finished choosing shouldn't have to scroll
+  // to find it.
   reviewSubmitBtn?.addEventListener('click', () => {
-    const target = document.getElementById('wdStep3Heading');
-    if (target) target.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
+    const addBtn = document.getElementById('wdAddToCart');
+    if (addBtn) addBtn.click();
   });
 
   // Debounced draft save on every keystroke in the quick-quote form (event
@@ -749,10 +706,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // The full content brief, file uploads, and full-submission PDF/POST now
-  // live entirely in website-project-brief.html / js/website-project-brief.js
-  // (opened in a new tab via openWorksheet() above) -- this page never
-  // shows the complete brief inline again.
+  // The full content brief lives in the project brief, which unlocks in the
+  // customer's account once payment lands -- not on this page, and no longer
+  // behind a "want to add details now?" prompt after a lead form.
 
   // Resume an interrupted session (accidental refresh/navigation) --
   // silent, since sessionStorage only ever holds this same tab's own
