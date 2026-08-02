@@ -1611,11 +1611,14 @@
       var btn = v.querySelector("#paySubmit");
       btn.disabled = true;
       say("Opening secure payment\u2026");
-      var r = await api("checkout", { method: "POST", body: JSON.stringify({ invoice: {
-        reference: reference,
-        amountCents: Math.round(parseFloat(cleaned) * 100),
-        description: v.querySelector("#pay-desc").value.trim(),
-      } }) });
+      var r = await api("checkout", { method: "POST", body: JSON.stringify({
+        termsAccepted: true,
+        invoice: {
+          reference: reference,
+          amountCents: Math.round(parseFloat(cleaned) * 100),
+          description: v.querySelector("#pay-desc").value.trim(),
+        },
+      }) });
       if (r.ok && r.body && r.body.url) { window.location.href = r.body.url; return; }
       btn.disabled = false;
       say((r.body && (r.body.adminDetail || r.body.error)) ||

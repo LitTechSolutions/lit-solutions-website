@@ -103,6 +103,19 @@ test("terms-gate: unchecking again re-locks every gated button", () => {
   assert.equal(evt.defaultPrevented, true, "click must be blocked again after unchecking");
 });
 
+test("cart's own checkout handler enforces consent before sign-in and sends explicit acceptance", () => {
+  // The shared main.js gate used to run after the cart's own click handler,
+  // allowing that earlier handler to redirect despite preventDefault(). Pin
+  // enforcement in the actual cart action as well as its request payload.
+  const cart = fs.readFileSync(path.join(__dirname, "..", "cart.html"), "utf8");
+  const ownHandler = cart.slice(cart.indexOf("checkoutEl.addEventListener('click'"), cart.indexOf("document.addEventListener('lts:cart-changed'"));
+  assert.match(ownHandler, /if \(!agreeTerms\.checked\)[\s\S]*showTermsRequired\(\);[\s\S]*return;/);
+  assert.ok(ownHandler.indexOf("if (!agreeTerms.checked)") < ownHandler.indexOf("if (!signedIn)"),
+    "consent must be checked before the sign-in redirect");
+  assert.match(ownHandler, /termsAccepted:\s*true/,
+    "the checkout endpoint must receive explicit consent, not infer it from the page");
+});
+
 test("one-time vs. recurring is distinguished before the customer pays", () => {
   // This used to read payment.html's "One-Time Payment" / "Subscriptions"
   // headings. That page is gone -- billing lives in the cart and the account

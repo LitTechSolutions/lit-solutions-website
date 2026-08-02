@@ -72,12 +72,22 @@ function seedUser(session, heroState, email) {
   });
 }
 
-const req = (method, body, qs) => ({
-  httpMethod: method,
-  body: body ? JSON.stringify(body) : undefined,
-  queryStringParameters: qs || null,
-  headers: { host: "lit-solutions.tech", "x-forwarded-proto": "https" },
-});
+// Most checkout tests exercise pricing/payment behavior after the customer
+// has accepted the legal gate. A test opts out explicitly when it is testing
+// the gate itself, so an omitted flag elsewhere does not bury the scenario
+// under an unrelated 400 response.
+const req = (method, body, qs, options = {}) => {
+  let payload = body;
+  if (method === "POST" && body && options.acceptTerms !== false && body.termsAccepted === undefined) {
+    payload = { ...body, termsAccepted: true };
+  }
+  return {
+    httpMethod: method,
+    body: payload ? JSON.stringify(payload) : undefined,
+    queryStringParameters: qs || null,
+    headers: { host: "lit-solutions.tech", "x-forwarded-proto": "https" },
+  };
+};
 
 let lastSessionParams = null;
 function deps(session, extra = {}) {
@@ -194,6 +204,34 @@ test("checkout requires a session", async () => {
   const res = await checkout.handler(req("POST", { items: [{ key: "plan-premium", quantity: 1 }] }), {},
     { readCookie: () => null, getSession: async () => null });
   assert.equal(res.statusCode, 401);
+});
+
+test("checkout refuses missing, false, or non-boolean terms acceptance before creating an order", async () => {
+  reset();
+  seedUser(CUST, null);
+
+  for (const termsAccepted of [undefined, false, "true"]) {
+    const body = { items: [{ key: "plan-premium", quantity: 1 }] };
+    if (termsAccepted !== undefined) body.termsAccepted = termsAccepted;
+    const res = await checkout.handler(req("POST", body, null, { acceptTerms: false }), {}, deps(CUST));
+    assert.equal(res.statusCode, 400);
+    assert.equal(JSON.parse(res.body).code, "terms_required");
+    assert.equal(blobs.has(k("orders", "ord-test")), false, "no order may exist without explicit acceptance");
+    assert.equal(lastSessionParams, null, "Stripe must not be called without explicit acceptance");
+  }
+});
+
+test("checkout records the accepted legal versions on the order", async () => {
+  reset();
+  lastSessionParams = null;
+  seedUser(CUST, null);
+  const res = await checkout.handler(
+    req("POST", { items: [{ key: "plan-premium", quantity: 1 }] }), {}, deps(CUST));
+  assert.equal(res.statusCode, 200);
+  const order = blobs.get(k("orders", "ord-test"));
+  assert.equal(order.termsAcceptedAt, NOW().toISOString());
+  assert.equal(order.termsVersion, "2026-07-15");
+  assert.equal(order.privacyVersion, "2026-07-15");
 });
 
 test("the discount comes from the account, never from the request", async () => {

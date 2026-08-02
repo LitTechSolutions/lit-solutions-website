@@ -168,11 +168,12 @@
 
               <ol class="cart-steps" id="cartSteps"></ol>
 
+              <p class="cart-required-label">Required before checkout</p>
               <div class="terms-agree" id="termsAgreeBlock">
-                <input type="checkbox" id="agreeTerms">
+                <input type="checkbox" id="agreeTerms" aria-required="true" aria-describedby="termsWarning">
                 <label for="agreeTerms">I have read and agree to the <a href="terms.html" target="_blank" rel="noopener">Terms &amp; Conditions</a> and <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>, including the payment, refund, and dispute policies.</label>
               </div>
-              <p class="terms-warning" id="termsWarning">Please tick the box above before continuing to payment.</p>
+              <p class="terms-warning" id="termsWarning" role="alert" aria-live="polite">Please accept the Terms and Privacy Policy before continuing.</p>
 
               <button type="button" class="btn btn-primary btn-block pay-btn" id="cartCheckout">Continue to checkout</button>
 
@@ -233,6 +234,9 @@
   var heroActive = document.getElementById('heroActive');
   var heroPending= document.getElementById('heroPending');
   var heroOffer  = document.getElementById('heroOffer');
+  var agreeTerms = document.getElementById('agreeTerms');
+  var termsBlock = document.getElementById('termsAgreeBlock');
+  var termsWarning = document.getElementById('termsWarning');
 
   var C = window.LTS_CART, P = window.LTS_PRODUCTS, money = P.money;
 
@@ -241,6 +245,29 @@
   var checkoutOpen = true;   // assume open; the server is the authority
   var serverPriced = null;   // the authoritative quote, once it arrives
   var pricingSeq = 0;        // guards against a slow response overwriting a fast one
+
+  function checkoutConsentKey() {
+    var state = C.read();
+    return C.toQuery() + '|full=' + (state.payInFull ? '1' : '0');
+  }
+
+  function showTermsRequired() {
+    termsBlock.classList.add('needs-attention');
+    termsWarning.classList.add('is-visible');
+    agreeTerms.setAttribute('aria-invalid', 'true');
+    agreeTerms.focus();
+  }
+
+  function clearTermsRequired() {
+    termsBlock.classList.remove('needs-attention');
+    termsWarning.classList.remove('is-visible');
+    agreeTerms.removeAttribute('aria-invalid');
+  }
+
+  agreeTerms.addEventListener('change', function () {
+    if (agreeTerms.checked) clearTermsRequired();
+    paint();
+  });
 
   /* Website Designer builds aren't catalog items -- their price lives against
    * a stored quote id. GET /designer-quote is public precisely so the cart
@@ -520,9 +547,13 @@
 
     document.getElementById('cartPaused').hidden = checkoutOpen;
     checkoutEl.disabled = !checkoutOpen;
+    checkoutEl.classList.toggle('is-locked', checkoutOpen && !agreeTerms.checked);
+    checkoutEl.setAttribute('aria-disabled', checkoutOpen && !agreeTerms.checked ? 'true' : 'false');
     checkoutEl.textContent = !checkoutOpen
       ? 'Checkout temporarily unavailable'
-      : (signedIn ? 'Pay ' + money(v.chargedTodayCents) + ' securely' : 'Sign in to check out');
+      : (!agreeTerms.checked
+          ? (signedIn ? 'Accept the terms to pay ' + money(v.chargedTodayCents) : 'Accept the terms to sign in')
+          : (signedIn ? 'Pay ' + money(v.chargedTodayCents) + ' securely' : 'Sign in to check out'));
     fineEl.innerHTML = signedIn
       ? 'Secure checkout by Stripe. We never see or store your card details.'
       : 'Sign in or create an account &mdash; it takes a minute, and it\'s where your receipt, your project brief and your paperwork live.';
@@ -549,11 +580,19 @@
   });
 
   checkoutEl.addEventListener('click', function () {
+    // This check belongs in the cart action itself. The shared page script
+    // also adds visual treatment, but it loads after this handler and cannot
+    // be the authority for whether checkout proceeds.
+    if (!agreeTerms.checked) {
+      showTermsRequired();
+      return;
+    }
     if (!signedIn) {
       // Sign IN, not register: most people arriving here already have an
       // account, and the sign-in panel carries a "create one" link for those
       // who don't. Sending everyone to a signup form assumes they're new.
       // They come straight back here afterwards either way.
+      try { sessionStorage.setItem('lts-checkout-consent-return', checkoutConsentKey()); } catch (e) {}
       window.location.href = 'myaccount.html?next=cart#signin';
       return;
     }
@@ -565,7 +604,11 @@
       method: 'POST',
       credentials: 'same-origin',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items: C.read().items, payInFull: C.read().payInFull }),
+      body: JSON.stringify({
+        items: C.read().items,
+        payInFull: C.read().payInFull,
+        termsAccepted: true,
+      }),
     })
       .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
       .then(function (res) {
@@ -595,6 +638,18 @@
   });
 
   document.addEventListener('lts:cart-changed', function () { paint(); quote(); fetchQuotes(); });
+
+  // Carry one explicit acceptance across the sign-in round trip, and only
+  // for the exact cart/pay-in-full choice that the customer reviewed.
+  try {
+    var acceptedBeforeSignIn = sessionStorage.getItem('lts-checkout-consent-return');
+    if (acceptedBeforeSignIn && acceptedBeforeSignIn === checkoutConsentKey()) {
+      agreeTerms.checked = true;
+      sessionStorage.removeItem('lts-checkout-consent-return');
+    } else if (acceptedBeforeSignIn) {
+      sessionStorage.removeItem('lts-checkout-consent-return');
+    }
+  } catch (e) {}
   paint();
   fetchQuotes();
 })();
