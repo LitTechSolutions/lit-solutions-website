@@ -52,7 +52,6 @@
       </div>
       <a href="website-designer.html">Website Designer</a>
       <a href="about.html">About</a>
-      <a href="payment.html">Pay a Bill</a>
     </nav>
 
     <div class="header-actions">
@@ -115,7 +114,6 @@
       <a href="services.html">Services</a>
       <a href="website-designer.html">Website Designer</a>
       <a href="pricing.html">Pricing</a>
-      <a href="payment.html">Pay a Bill</a>
       <a href="heroes-pricing.html">Heroes Discount</a>
       <a href="about.html">About</a>
       <a href="team.html">Who You'll Work With</a>
@@ -195,6 +193,7 @@
     "American Heroes Discount": "15% off one-time work, 5% off monthly \u2014 confirmed before you pay.",
     "Verify Heroes Discount requests": "Approve or decline eligibility. Their cart shows full price until you do.",
     "Stripe setup": "One-time wiring. The key already in Netlify does the work.",
+    "Make a payment": "Settle a quote or invoice we\u2019ve sent you. It lands in your order history like everything else.",
   };
   function setPageTitle(text, lede) {
     document.title = text + " — My Account — Little Technical Solutions LLC";
@@ -219,7 +218,7 @@
     var tabsEl = document.getElementById("accountTabs");
     if (state.user) {
       tabsEl.hidden = false;
-      tabsEl.innerHTML = '<a href="#dashboard">Dashboard</a><a href="#documents">Documents</a><a href="#messages">Messages</a>' +
+      tabsEl.innerHTML = '<a href="#dashboard">Dashboard</a><a href="#pay">Make a payment</a><a href="#documents">Documents</a><a href="#messages">Messages</a>' +
         '<a href="#favorites">Favorites</a><a href="#notifications">Notifications<span class="tab-badge" id="notifTabBadge" hidden>0</span></a>' +
         (state.user.role === "admin" ? '<a href="#heroqueue">Verify Heroes</a><a href="#stripe">Stripe setup</a>' : '<a href="#hero">Heroes Discount</a>') +
         '<a href="#profile">Account Settings</a><a href="#" id="account-signout">Sign out</a>';
@@ -252,7 +251,7 @@
    * without this they'd land on an empty dashboard and have to find their
    * way back to a cart they'd already filled. Whitelisted, because an open
    * redirect on a page that handles sign-in is not a small thing. */
-  var NEXT_DESTINATIONS = { cart: "cart.html", pricing: "pricing.html", payment: "payment.html" };
+  var NEXT_DESTINATIONS = { cart: "cart.html", pricing: "pricing.html" };
 
   function pendingNext() {
     try {
@@ -1078,6 +1077,85 @@
         }, function () { copy.textContent = "Select it manually"; });
       });
     }
+
+    return v;
+  };
+
+  /* Settling a quote or invoice.
+   *
+   * This used to be a top-level "Pay a Bill" page with an open-amount Square
+   * link that anyone could load, signed in or not. Billing belongs with the
+   * rest of someone's account: the amount still comes from the invoice they
+   * were sent, but the payment is attached to them, bounded server-side, and
+   * lands in the same order history as everything else they've bought.
+   */
+  views.pay = function () {
+    if (!requireAuth()) return el("<div></div>");
+    setPageTitle("Make a payment");
+
+    var v = el('<div class="card">' +
+      '<h2 style="font-size:1.15rem;">Pay a quote or invoice</h2>' +
+      '<p style="color:var(--ink-soft); font-size:.92rem; margin-top:.5rem; line-height:1.7;">' +
+        'For work we\u2019ve already quoted or invoiced &mdash; a repair, a deposit, a balance at launch. ' +
+        'Enter the reference and the exact amount from the invoice we sent you.</p>' +
+      '<form id="payForm" novalidate style="margin-top:1.5rem;">' +
+        '<div class="form-row"><label for="pay-ref">Invoice or quote reference</label>' +
+          '<input id="pay-ref" type="text" autocomplete="off" placeholder="e.g. INV-1042" aria-required="true">' +
+          '<span class="form-hint">It\u2019s at the top of the invoice we sent you.</span></div>' +
+        '<div class="form-row"><label for="pay-amount">Amount</label>' +
+          '<div class="input-prefixed"><span aria-hidden="true">$</span>' +
+          '<input id="pay-amount" type="text" inputmode="decimal" placeholder="0.00" aria-required="true"></div>' +
+          '<span class="form-hint">Exactly as shown on your invoice.</span></div>' +
+        '<div class="form-row"><label for="pay-desc">What\u2019s it for? <span style="font-weight:400;color:var(--ink-faint);">(optional)</span></label>' +
+          '<input id="pay-desc" type="text" placeholder="e.g. Balance at launch"></div>' +
+        '<div class="terms-agree" id="termsAgreeBlock">' +
+          '<input type="checkbox" id="agreeTerms">' +
+          '<label for="agreeTerms">I have read and agree to the <a href="terms.html" target="_blank" rel="noopener">Terms &amp; Conditions</a> and <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>, including the payment, refund, and dispute policies.</label>' +
+        '</div>' +
+        '<p class="terms-warning" id="termsWarning">Please tick the box above before continuing to payment.</p>' +
+        '<button type="submit" class="btn btn-primary pay-btn" id="paySubmit">Continue to secure payment</button>' +
+        '<p class="form-note" id="payStatus" role="status" aria-live="polite"></p>' +
+      '</form>' +
+      '<p style="color:var(--ink-faint); font-size:.82rem; margin-top:1.25rem; line-height:1.65;">' +
+        'Card, Apple Pay or Google Pay, handled by Stripe &mdash; we never see your card details. ' +
+        'Not sure what you owe? Call <a href="tel:+18043090968" style="color:var(--accent-orange-text);text-decoration:underline;">804-309-0968</a> ' +
+        'and we\u2019ll tell you before you pay anything. Our refund terms are in the ' +
+        '<a href="terms.html" style="color:var(--accent-orange-text);text-decoration:underline;">Terms</a>, sections 4 and 6A.</p>' +
+    '</div>');
+
+    var status = v.querySelector("#payStatus");
+    function say(msg, bad) {
+      status.textContent = msg;
+      status.className = "form-note" + (bad ? " form-note--error" : "");
+    }
+
+    v.querySelector("#payForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      var agree = v.querySelector("#agreeTerms");
+      if (!agree.checked) {
+        v.querySelector("#termsAgreeBlock").classList.add("needs-attention");
+        v.querySelector("#termsWarning").classList.add("is-visible");
+        say("Please agree to the Terms before continuing.", true);
+        return;
+      }
+      var reference = v.querySelector("#pay-ref").value.trim();
+      var cleaned = v.querySelector("#pay-amount").value.replace(/[$,\s]/g, "");
+      if (!reference) { say("Enter the reference from your invoice so we can match the payment to the job.", true); return; }
+      if (!/^\d+(\.\d{1,2})?$/.test(cleaned)) { say("Enter the amount as it appears on your invoice, like 249 or 249.50.", true); return; }
+
+      var btn = v.querySelector("#paySubmit");
+      btn.disabled = true;
+      say("Opening secure payment\u2026");
+      var r = await api("checkout", { method: "POST", body: JSON.stringify({ invoice: {
+        reference: reference,
+        amountCents: Math.round(parseFloat(cleaned) * 100),
+        description: v.querySelector("#pay-desc").value.trim(),
+      } }) });
+      if (r.ok && r.body && r.body.url) { window.location.href = r.body.url; return; }
+      btn.disabled = false;
+      say((r.body && (r.body.adminDetail || r.body.error)) ||
+        "We couldn\u2019t start that payment. Call us on 804-309-0968 and we\u2019ll take it over the phone.", true);
+    });
 
     return v;
   };

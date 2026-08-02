@@ -54,7 +54,6 @@
       </div>
       <a href="website-designer.html">Website Designer</a>
       <a href="about.html">About</a>
-      <a href="payment.html">Pay a Bill</a>
     </nav>
 
     <div class="header-actions">
@@ -138,7 +137,13 @@
 
               <ol class="cart-steps" id="cartSteps"></ol>
 
-              <button type="button" class="btn btn-primary btn-block" id="cartCheckout">Continue to checkout</button>
+              <div class="terms-agree" id="termsAgreeBlock">
+                <input type="checkbox" id="agreeTerms">
+                <label for="agreeTerms">I have read and agree to the <a href="terms.html" target="_blank" rel="noopener">Terms &amp; Conditions</a> and <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>, including the payment, refund, and dispute policies.</label>
+              </div>
+              <p class="terms-warning" id="termsWarning">Please tick the box above before continuing to payment.</p>
+
+              <button type="button" class="btn btn-primary btn-block pay-btn" id="cartCheckout">Continue to checkout</button>
 
               <div class="cart-wallets" id="cartWallets" hidden>
                 <span>Apple&nbsp;Pay</span><span>Google&nbsp;Pay</span><span>Card</span><span id="walletBnpl" hidden>Pay over time</span>
@@ -498,7 +503,6 @@
       <a href="services.html">Services</a>
       <a href="website-designer.html">Website Designer</a>
       <a href="pricing.html">Pricing</a>
-      <a href="payment.html">Pay a Bill</a>
       <a href="heroes-pricing.html">Heroes Discount</a>
       <a href="about.html">About</a>
       <a href="team.html">Who You'll Work With</a>

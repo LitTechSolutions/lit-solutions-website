@@ -8,7 +8,7 @@ const BASE = "http://localhost:8087";
 const PAGES = [
   "index.html", "pricing.html", "cart.html", "myaccount.html",
   "plan-standard.html", "plan-premium.html", "plan-executive.html",
-  "payment.html", "website-designer.html", "services.html", "heroes-pricing.html",
+  "website-designer.html", "services.html", "heroes-pricing.html",
   "service-website.html", "service-networking.html", "service-cybersecurity.html",
   "faq.html", "terms.html", "about.html",
 ];

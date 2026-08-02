@@ -97,8 +97,9 @@
     var links = isAdmin
       ? [['#dashboard', 'Dashboard'], ['#heroqueue', 'Verify Heroes'], ['#stripe', 'Stripe setup'],
          ['#documents', 'Documents'], ['#messages', 'Messages'], ['#profile', 'Account settings']]
-      : [['#dashboard', 'Dashboard'], ['#brief', 'Project brief'], ['#documents', 'Documents'],
-         ['#messages', 'Messages'], ['#hero', 'Heroes Discount'], ['#profile', 'Account settings']];
+      : [['#dashboard', 'Dashboard'], ['#pay', 'Make a payment'], ['#brief', 'Project brief'],
+         ['#documents', 'Documents'], ['#messages', 'Messages'], ['#hero', 'Heroes Discount'],
+         ['#profile', 'Account settings']];
 
     host.innerHTML =
       '<div class="account-menu">' +

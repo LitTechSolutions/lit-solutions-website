@@ -56,7 +56,21 @@
 
 [[redirects]]
   from = "/subscriptions.html"
-  to = "/payment.html#subscriptions"
+  to = "/pricing.html#website-subscription"
+  status = 301
+
+# "Pay a Bill" is gone. Billing now lives where the rest of someone's
+# paperwork does -- in their account -- rather than on a public page with an
+# open-amount payment link anyone could load. Bookmarks and any inbound link
+# land on the replacement.
+[[redirects]]
+  from = "/payment.html"
+  to = "/myaccount.html#pay"
+  status = 301
+
+[[redirects]]
+  from = "/payment"
+  to = "/myaccount.html#pay"
   status = 301
 
 # Care Hub is a client-side-routed single-page app (React Router) --
