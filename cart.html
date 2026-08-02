@@ -413,7 +413,7 @@
 
   function stepsHTML(v) {
     var s = [];
-    if (!signedIn) s.push('<li><strong>Sign in</strong> &mdash; or create an account if you're new. We email you a 6-digit code to confirm it.</li>');
+    if (!signedIn) s.push('<li><strong>Sign in</strong> &mdash; or create an account if you&rsquo;re new. We email you a 6-digit code to confirm it.</li>');
     s.push('<li><strong>Pay securely</strong> through Stripe &mdash; card, Apple Pay or Google Pay.</li>');
     if (v.lines.some(function (l) { return (l.product || {}).kind === 'plan' || (l.product || {}).kind === 'package'; })) {
       s.push('<li><strong>Fill in your project brief</strong> &mdash; it unlocks in your account the moment payment lands.</li>');
