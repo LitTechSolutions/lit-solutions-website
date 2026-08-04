@@ -9,6 +9,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const formNote = document.getElementById('formNote');
   const missingNote = document.getElementById('missingFieldsNote');
 
+  // Focused landing pages can open the general intake form with a safe,
+  // fixed prompt. Only known campaign keys are accepted; arbitrary query
+  // text is never copied into the form.
+  const servicePrompts = {
+    'home-tech': 'I\u2019m interested in the $79 Northern Neck Home Tech Visit. The problem I need help with is: ',
+    'local-website-review': 'I\u2019d like a free local business website review. My current website (if any) is: ',
+  };
+  const requestedService = new URLSearchParams(window.location.search).get('service');
+  const reasonField = form.elements.reason;
+  if (reasonField && servicePrompts[requestedService] && !reasonField.value.trim()) {
+    reasonField.value = servicePrompts[requestedService];
+  }
+
   function isGroupField(el) {
     return el.hasAttribute('data-required') && el.querySelector('input[type="radio"]');
   }
@@ -118,6 +131,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (response.ok) {
         const data = await response.json().catch(() => ({}));
         const ref = data && data.id ? `#ref=${encodeURIComponent(data.id)}` : '';
+        if (window.LTS_TRACK) {
+          window.LTS_TRACK('form_submit', {
+            form_name: 'intake',
+            funnel: requestedService || 'general',
+          });
+        }
         window.location.href = `request-submitted.html${ref}`;
       } else {
         const data = await response.json().catch(() => ({}));

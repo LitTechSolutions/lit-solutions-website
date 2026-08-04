@@ -28,6 +28,13 @@ actually changes.
   websites, computers, networking, cybersecurity, and small-business IT —
   not primarily an "AI website company." Do not exaggerate credentials,
   business age, staffing, or response capacity in any customer-facing copy.
+- **Conflict-of-interest boundary (owner decision, 2026-08-04):** do not
+  market LTS as a government-contractor or DoD-contractor website specialist.
+  The focused website acquisition path is for private-sector Northern Neck
+  service businesses (for example auto, marine, home services, hospitality,
+  cleaning, and professional services). Existing delivered client work may
+  remain documented truthfully, but it must not become contractor-targeted
+  prospecting or positioning.
 - **Headcount stays private (as of v26, refined in v27):** the owner
   explicitly asked for employee count to be kept private. Customer-facing
   copy should not state or imply the business is a solo/one-person
@@ -74,7 +81,7 @@ actually changes.
   version's folder is what actually deploys.
 - The version follows semver: **major** = large redesign/rework,
   **minor** = feature addition, **patch** = bug/security fix only.
-  Current: `4.5.0`. It is tracked internally and in `patch-notes.html`;
+  Current: `4.13.0`. It is tracked internally and in `patch-notes.html`;
   it is no longer displayed to customers (see next bullet).
 - **The version string is no longer shown to customers (v27).** The
   footer "Website Version 4.x.x" line and its `<span id="siteVersion">`
@@ -104,6 +111,10 @@ states them in sync:
   time now starts only after a quote is approved.
 - **No trip charge inside the on-site service area** (`pricing.html`,
   `faq.html`).
+- **$79 Northern Neck Home Tech Visit** includes up to one hour of computer,
+  Wi-Fi, printer, router, or device assistance. Additional labor or parts are
+  quoted before proceeding; it is invoice-based rather than an online-cart
+  item.
 - **Domain/files/source released within 10 business days, free**
   (`terms.html` §9, `faq.html`).
 - **No SSN-bearing documents by email** for the Heroes Discount, deleted

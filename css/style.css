@@ -473,6 +473,63 @@ p{ margin:0; }
 .trust-strip-inner a:hover, .trust-strip-inner a:focus-visible{ color: #FFFFFF; border-bottom-color: var(--accent-orange-on-dark); }
 .trust-strip-inner a:focus-visible{ outline-color: var(--accent-orange-on-dark); }
 
+/* Focused acquisition paths: two clear entry points without replacing the
+   broader service catalogue below. */
+.acquisition-paths{ padding:clamp(3.8rem,7vw,6rem) 0; background:linear-gradient(180deg,#f8fbff 0%,var(--paper) 100%); }
+.acquisition-paths-head{ margin-inline:auto; text-align:center; }
+.acquisition-paths-head .section-lede{ margin-inline:auto; }
+.acquisition-path-grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.35rem; }
+.acquisition-card{ position:relative; overflow:hidden; padding:clamp(1.6rem,3vw,2.4rem); border:1px solid var(--line); border-radius:26px; background:#fff; box-shadow:0 18px 52px rgba(20,33,61,.07); }
+.acquisition-card::after{ content:""; position:absolute; width:220px; height:220px; right:-110px; top:-120px; border-radius:50%; background:var(--select-bg); pointer-events:none; }
+.acquisition-card--home{ border-top:4px solid var(--accent-orange); }
+.acquisition-card--business{ border-top:4px solid var(--accent-teal); }
+.acquisition-card-topline{ position:relative; z-index:1; display:flex; justify-content:space-between; gap:1rem; align-items:center; margin-bottom:1.4rem; color:var(--ink-faint); font-family:var(--font-display); font-size:.75rem; font-weight:700; letter-spacing:.07em; text-transform:uppercase; }
+.acquisition-card-topline strong{ color:var(--accent-orange-text); font-size:.86rem; }
+.acquisition-card h3{ position:relative; z-index:1; max-width:18ch; font-size:clamp(1.45rem,2.6vw,2rem); line-height:1.12; letter-spacing:-.025em; }
+.acquisition-card p{ margin-top:1rem; color:var(--ink-soft); }
+.acquisition-card ul{ display:grid; gap:.55rem; margin:1.35rem 0 1.65rem; }
+.acquisition-card li{ position:relative; padding-left:1.35rem; color:var(--ink-soft); font-size:.9rem; }
+.acquisition-card li::before{ content:"✓"; position:absolute; left:0; color:var(--accent-teal-text); font-weight:800; }
+
+/* Focused service-page offer treatments. */
+.focused-offer{ padding:clamp(3.5rem,7vw,5.5rem) 0; background:linear-gradient(135deg,#f7fbff,#fff8f1); }
+.focused-offer-panel{ display:grid; grid-template-columns:minmax(220px,.7fr) minmax(0,1.7fr); gap:clamp(2rem,6vw,5rem); align-items:center; padding:clamp(1.75rem,4vw,3.25rem); border:1px solid rgba(0,113,227,.16); border-radius:30px; background:#fff; box-shadow:0 28px 80px rgba(20,33,61,.10); }
+.focused-offer-price{ min-height:240px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; border-radius:24px; color:#fff; background:linear-gradient(150deg,var(--navy-mid),var(--navy-deep)); box-shadow:0 18px 45px rgba(20,33,61,.22); }
+.focused-offer-kicker{ color:var(--accent-orange-on-dark); font-family:var(--font-display); font-size:.75rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; }
+.focused-offer-price strong{ display:block; margin:.25rem 0; font-family:var(--font-heading); font-size:clamp(4rem,9vw,6.5rem); line-height:1; letter-spacing:-.07em; }
+.focused-offer-price sup{ font-size:.32em; vertical-align:top; position:relative; top:.25em; margin-right:.12em; }
+.focused-offer-price > span:last-child{ color:rgba(255,255,255,.68); font-size:.86rem; }
+.focused-offer-copy h2,.local-business-path h2{ margin:.35rem 0 1rem; font-size:clamp(1.8rem,3.4vw,2.8rem); line-height:1.08; letter-spacing:-.035em; }
+.focused-offer-list{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.65rem 1.2rem; margin:1.5rem 0; }
+.focused-offer-list span{ position:relative; padding-left:1.25rem; color:var(--ink-soft); font-size:.9rem; }
+.focused-offer-list span::before{ content:""; position:absolute; left:0; top:.52em; width:7px; height:7px; border-radius:50%; background:var(--accent-teal); }
+.focused-offer-note{ padding:1rem 1.1rem; border-left:3px solid var(--accent-orange); background:var(--paper-alt); color:var(--ink-soft); font-size:.88rem; }
+.focused-offer-actions{ display:flex; flex-wrap:wrap; gap:.75rem; align-items:center; margin-top:1.4rem; }
+.focused-offer-actions .text-link{ color:var(--accent-orange-text); font-weight:700; text-decoration:underline; text-underline-offset:3px; }
+.local-business-path{ background:#fff; }
+.local-business-path-grid{ display:grid; grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr); gap:clamp(2.5rem,7vw,6rem); align-items:center; }
+.local-business-outcomes{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; }
+.local-business-outcomes article{ min-height:190px; padding:1.4rem; border:1px solid var(--line); border-radius:22px; background:var(--paper-alt); }
+.local-business-outcomes span{ display:inline-grid; place-items:center; width:34px; height:34px; margin-bottom:1rem; border-radius:50%; color:#fff; background:var(--navy-mid); font-size:.72rem; font-weight:800; }
+.local-business-outcomes h3{ font-size:1.05rem; margin-bottom:.5rem; }
+.local-business-outcomes p{ color:var(--ink-soft); font-size:.87rem; line-height:1.6; }
+.funnel-page .why-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); }
+.funnel-page .why-number{ display:inline-grid; place-items:center; width:34px; height:34px; margin-bottom:1rem; border-radius:50%; color:#fff; background:var(--navy-mid); font-size:.72rem; font-weight:800; }
+.funnel-page .service-detail-hero .section-lede{ max-width:66ch; }
+.funnel-page .focused-offer,.funnel-page .local-business-path{ scroll-margin-top:calc(var(--header-h) + 16px); }
+
+@media (max-width:820px){
+  .acquisition-path-grid,.focused-offer-panel,.local-business-path-grid,.funnel-page .why-grid{ grid-template-columns:1fr; }
+  .focused-offer-price{ min-height:210px; }
+}
+@media (max-width:580px){
+  .local-business-outcomes,.focused-offer-list{ grid-template-columns:1fr; }
+  .acquisition-card{ border-radius:22px; }
+  .focused-offer-panel{ border-radius:22px; }
+  .focused-offer-actions .btn{ width:100%; text-align:center; }
+  .funnel-page .service-detail-hero .hero-actions .btn,.funnel-page .contact .hero-actions .btn{ width:100%; text-align:center; }
+}
+
 /* =========================================================
    Section shared
    ========================================================= */

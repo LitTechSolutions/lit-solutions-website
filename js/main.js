@@ -526,7 +526,10 @@ document.addEventListener('DOMContentLoaded', () => {
               statusEl.classList.add('form-note--error');
             }
           }
-          if (res.ok) bookingRequestForm.reset();
+          if (res.ok) {
+            if (window.LTS_TRACK) window.LTS_TRACK('form_submit', { form_name: 'booking' });
+            bookingRequestForm.reset();
+          }
         })
         .catch(() => {
           if (statusEl) {
@@ -563,7 +566,10 @@ document.addEventListener('DOMContentLoaded', () => {
               statusEl.classList.add('is-error');
             }
           }
-          if (res.ok) form.reset();
+          if (res.ok) {
+            if (window.LTS_TRACK) window.LTS_TRACK('form_submit', { form_name: 'newsletter' });
+            form.reset();
+          }
         })
         .catch(() => {
           if (statusEl) {

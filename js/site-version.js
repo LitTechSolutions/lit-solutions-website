@@ -3,7 +3,7 @@
 // <span id="siteVersion"></span> placeholder and this script tag -- but a
 // release now only means editing SITE_VERSION here once, instead of
 // hand-sweeping the literal string across all 33 public page footers.
-window.SITE_VERSION = "4.12.1";
+window.SITE_VERSION = "4.13.0";
 
 document.addEventListener('DOMContentLoaded', () => {
   const el = document.getElementById('siteVersion');

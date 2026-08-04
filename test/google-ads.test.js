@@ -7,8 +7,8 @@ const { JSDOM } = require("jsdom");
 const ROOT = path.join(__dirname, "..");
 const SCRIPT = fs.readFileSync(path.join(ROOT, "js", "google-ads.js"), "utf8");
 
-function load(choice) {
-  const dom = new JSDOM("<!doctype html><html><head></head><body></body></html>", {
+function load(choice, body = "") {
+  const dom = new JSDOM(`<!doctype html><html><head></head><body data-funnel="home-tech">${body}</body></html>`, {
     url: "https://lit-solutions.tech/plan-standard.html",
     runScripts: "outside-only",
   });
@@ -56,6 +56,32 @@ test("essential-only preference remains denied on the next page", () => {
   const consent = layerCalls(second, "consent")[0];
   assert.equal(consent[2].ad_storage, "denied");
   assert.equal(consent[2].analytics_storage, "denied");
+});
+
+test("phone, text, and primary CTA clicks emit privacy-safe conversion events", () => {
+  const window = load("granted", `
+    <a id="phone" href="tel:+18043090968" data-track-label="hero_phone">Call</a>
+    <a id="text" href="sms:+18043090968" data-track-label="hero_text">Text</a>
+    <a id="form" href="intake.html?service=home-tech" data-track-cta data-track-label="hero_form">Form</a>
+  `);
+  ["phone", "text", "form"].forEach((id) => {
+    window.document.getElementById(id).dispatchEvent(new window.MouseEvent("click", { bubbles: true, cancelable: true }));
+  });
+  const events = window.dataLayer.filter((item) => item && item.event === "lts_conversion");
+  assert.deepEqual(Array.from(events, (item) => item.conversion_event), ["phone_click", "text_click", "cta_click"]);
+  assert.ok(events.every((item) => item.funnel === "home-tech"));
+  assert.ok(events.every((item) => !JSON.stringify(item).includes("8043090968")), "the destination phone number must not enter analytics");
+});
+
+test("form tracking rejects free-form fields and unsupported event names", () => {
+  const window = load("granted");
+  assert.equal(window.LTS_TRACK("form_submit", { form_name: "intake", email: "private@example.com", reason: "private message" }), true);
+  assert.equal(window.LTS_TRACK("made_up_event", {}), false);
+  const event = window.dataLayer.find((item) => item && item.event === "lts_conversion");
+  assert.equal(event.conversion_event, "form_submit");
+  assert.equal(event.form_name, "intake");
+  assert.equal(event.email, undefined);
+  assert.equal(event.reason, undefined);
 });
 
 test("all public pages load the privacy-aware tag before the main UI", () => {

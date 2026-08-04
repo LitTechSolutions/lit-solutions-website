@@ -66,6 +66,19 @@
   to = "/myaccount.html#pay"
   status = 301
 
+# Focused campaign URLs stay extensionless and memorable while the static
+# source remains one HTML file per page. These rewrites must precede the
+# catch-all 404 below.
+[[redirects]]
+  from = "/home-tech-visit"
+  to = "/home-tech-visit.html"
+  status = 200
+
+[[redirects]]
+  from = "/local-business-websites"
+  to = "/local-business-websites.html"
+  status = 200
+
 # Care Hub was retired in v4.9. Old bookmarks now enter the single account
 # path. Force these redirects so stale built files cannot be served.
 [[redirects]]

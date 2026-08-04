@@ -39,19 +39,31 @@
     "title": "Services",
     "href": "services.html",
     "scope": "Services",
-    "excerpt": "Five categories, one technician — website, computer, network, security, and business IT services."
+    "excerpt": "Five categories with one clear point of contact — website, computer, network, security, and business IT services."
   },
   {
-    "title": "Website Services",
+    "title": "Websites for Northern Neck Service Businesses",
     "href": "service-website.html",
     "scope": "Services",
-    "excerpt": "Custom website design, redesigns, hosting, maintenance, clear ownership choices, and real client work."
+    "excerpt": "Mobile-first websites for local service businesses, designed to turn searches into calls, bookings, and quote requests."
   },
   {
-    "title": "Computer Services",
+    "title": "Northern Neck Computer and Wi-Fi Help",
     "href": "service-computer.html",
     "scope": "Services",
-    "excerpt": "Computer repair, troubleshooting, hardware upgrades, virus removal."
+    "excerpt": "$79 home technology visits for computer, Wi-Fi, printer, router, and device help across the regular Northern Neck service area."
+  },
+  {
+    "title": "$79 Northern Neck Home Tech Visit",
+    "href": "home-tech-visit.html",
+    "scope": "Services",
+    "excerpt": "Up to one hour of in-home computer, Wi-Fi, printer, router, or smart-device help with no trip charge inside the regular service area."
+  },
+  {
+    "title": "Free Local Business Website Review",
+    "href": "local-business-websites.html",
+    "scope": "Services",
+    "excerpt": "A conversion-focused review for established Northern Neck auto, marine, home-service, hospitality, cleaning, and professional-service businesses."
   },
   {
     "title": "Networking",
